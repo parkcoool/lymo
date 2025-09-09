@@ -1,5 +1,7 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 
+import GlobalStyle from "~/styles/globalStyle";
+
 import type { Route } from "./+types/root";
 
 export const links: Route.LinksFunction = () => [
@@ -25,6 +27,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <GlobalStyle />
         {children}
         <ScrollRestoration />
         <Scripts />
