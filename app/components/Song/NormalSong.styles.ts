@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const Wrapper = styled.button`
   display: flex;
-  width: 420px;
   padding: 10px;
   align-items: center;
   gap: 15px;

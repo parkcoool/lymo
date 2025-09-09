@@ -4,9 +4,16 @@ interface CompactSongProps {
   id: string;
   title: string;
   coverUrl: string | null;
+  className?: string;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
-export default function CompactSong({ id, title, coverUrl }: CompactSongProps) {
+export default function CompactSong({
+  id,
+  title,
+  coverUrl,
+  ...props
+}: CompactSongProps) {
   const handleClick = () => {
     // TODO: Implement song click functionality
   };
@@ -17,6 +24,7 @@ export default function CompactSong({ id, title, coverUrl }: CompactSongProps) {
       aria-label={title}
       title={title}
       onClick={handleClick}
+      {...props}
     >
       <S.TitleWrapper>
         <S.Title>{title}</S.Title>

@@ -5,6 +5,8 @@ interface NormalSongProps {
   title: string;
   artist: string;
   coverUrl: string | null;
+  className?: string;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 export default function NormalSong({
@@ -12,13 +14,19 @@ export default function NormalSong({
   title,
   artist,
   coverUrl,
+  ...props
 }: NormalSongProps) {
   const handleClick = () => {
     // TODO: Implement song click functionality
   };
 
   return (
-    <S.Wrapper aria-label={title} title={title} onClick={handleClick}>
+    <S.Wrapper
+      aria-label={title}
+      title={title}
+      onClick={handleClick}
+      {...props}
+    >
       <S.Cover coverUrl={coverUrl ?? ""} />
       <S.Right>
         <S.Title>{title}</S.Title>

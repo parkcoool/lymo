@@ -10,6 +10,8 @@ interface DetailSongProps {
   artist: string;
   duration: number;
   coverUrl: string | null;
+  className?: string;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 export default function NormalSong({
@@ -18,13 +20,19 @@ export default function NormalSong({
   artist,
   duration,
   coverUrl,
+  ...props
 }: DetailSongProps) {
   const handleClick = () => {
     // TODO: Implement song click functionality
   };
 
   return (
-    <S.Wrapper aria-label={title} title={title} onClick={handleClick}>
+    <S.Wrapper
+      aria-label={title}
+      title={title}
+      onClick={handleClick}
+      {...props}
+    >
       <S.Left>
         <S.Cover coverUrl={coverUrl ?? ""} />
         <S.Info>
