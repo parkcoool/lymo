@@ -22,6 +22,7 @@ export const Wrapper = styled.div<{ $gradient: boolean }>`
   top: 0;
   left: 0;
   right: 0;
+  z-index: 1000;
 `;
 
 export const Left = styled.div`
