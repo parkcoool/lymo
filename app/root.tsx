@@ -1,6 +1,8 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { ThemeProvider } from "styled-components";
 
 import GlobalStyle from "~/styles/globalStyle";
+import theme from "~/styles/theme";
 
 import type { Route } from "./+types/root";
 
@@ -28,7 +30,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <GlobalStyle />
-        {children}
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
