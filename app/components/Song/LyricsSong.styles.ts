@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import IconWrapper from "~/components/IconWrapper";
+
 export const Wrapper = styled.div<{ $coverColor: string }>`
   display: flex;
   width: 200px;
@@ -20,7 +22,16 @@ export const Info = styled.div`
   align-self: stretch;
 `;
 
-export const LyricsWrapper = styled.div`
+export const InfoText = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3px;
+  flex: 1 0 0;
+`;
+
+export const Lyrics = styled.div`
   display: flex;
   height: 180px;
   padding: 10px;
@@ -40,12 +51,12 @@ export const Footer = styled.div`
   align-self: stretch;
 `;
 
-export const Cover = styled.img<{ coverUrl: string }>`
+export const Cover = styled.img`
   width: 40px;
   height: 40px;
   flex-shrink: 0;
   border-radius: 8px;
-  background: url(${(props) => props.coverUrl}) lightgray 50% / cover no-repeat;
+  object-fit: cover;
 `;
 
 export const Title = styled.h1`
@@ -76,8 +87,11 @@ export const Artist = styled.h2`
   line-height: normal;
 `;
 
-export const Lyrics = styled.p`
-  align-self: stretch;
+export const SeteneceContainer = styled.ol`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
   color: ${({ theme }) => theme.colors.onBackground};
   font-size: 16px;
   font-style: normal;
@@ -85,7 +99,7 @@ export const Lyrics = styled.p`
   line-height: 120%;
 `;
 
-export const PlayCircleIconWrapper = styled.div`
+export const PlayCircleIconWrapper = styled(IconWrapper)`
   width: 32px;
   height: 32px;
   color: ${({ theme }) => theme.colors.onBackground};

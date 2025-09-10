@@ -34,7 +34,7 @@ export default function NormalSong({
       {...props}
     >
       <S.Left>
-        <S.Cover coverUrl={coverUrl ?? ""} />
+        <S.Cover src={coverUrl ?? ""} />
         <S.Info>
           <S.Title>{title}</S.Title>
           <S.Description>{`${artist} ㆍ ${convertSecondsToString(duration)}`}</S.Description>

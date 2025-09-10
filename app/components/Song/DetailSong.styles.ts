@@ -1,13 +1,17 @@
 import styled from "styled-components";
 
+import IconWrapper from "~/components/IconWrapper";
+
 export const Wrapper = styled.button`
   display: flex;
   padding: 20px 30px;
+  box-sizing: border-box;
   align-items: center;
   gap: 15px;
   cursor: pointer;
   border: none;
   background: none;
+  width: 100%;
 `;
 
 export const Left = styled.div`
@@ -17,12 +21,12 @@ export const Left = styled.div`
   flex: 1 0 0;
 `;
 
-export const Cover = styled.img<{ coverUrl: string }>`
+export const Cover = styled.img`
   width: 60px;
   height: 60px;
   flex-shrink: 0;
   border-radius: 8px;
-  background: url(${(props) => props.coverUrl}) lightgray 50% / cover no-repeat;
+  object-fit: cover;
 `;
 
 export const Info = styled.div`
@@ -43,7 +47,7 @@ export const Right = styled.div`
   flex: 1 0 0;
 `;
 
-export const Title = styled.span`
+export const Title = styled.h1`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -55,9 +59,10 @@ export const Title = styled.span`
   font-style: normal;
   font-weight: 700;
   line-height: 100%;
+  text-align: left;
 `;
 
-export const Description = styled.span`
+export const Description = styled.h2`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -69,9 +74,10 @@ export const Description = styled.span`
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+  text-align: left;
 `;
 
-export const PlayCircleIconWrapper = styled.div`
+export const PlayCircleIconWrapper = styled(IconWrapper)`
   width: 32px;
   height: 32px;
   color: ${({ theme }) => theme.colors.onBackground};

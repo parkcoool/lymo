@@ -31,13 +31,24 @@ export default function LyricsSong({
   return (
     <S.Wrapper $coverColor={coverColor} {...props}>
       <S.Info>
-        <S.Cover coverUrl={coverUrl ?? ""} />
-        <S.Title>{title}</S.Title>
-        <S.Artist>{artist}</S.Artist>
+        <S.Cover src={coverUrl ?? ""} />
+        <S.InfoText>
+          <S.Title>{title}</S.Title>
+          <S.Artist>{artist}</S.Artist>
+        </S.InfoText>
       </S.Info>
-      <S.LyricsWrapper>
-        <S.Lyrics>{lyrics}</S.Lyrics>
-      </S.LyricsWrapper>
+      <S.Lyrics>
+        <S.SeteneceContainer>
+          {lyrics
+            .split("\n")
+            .filter((line) => line.trim() !== "")
+            .map((line) => (
+              <li key={line}>
+                <p>{line}</p>
+              </li>
+            ))}
+        </S.SeteneceContainer>
+      </S.Lyrics>
       <S.Footer>
         <S.PlayCircleIconWrapper>
           <MdPlayCircle />

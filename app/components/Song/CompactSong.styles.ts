@@ -12,6 +12,8 @@ export const Wrapper = styled.button<{ coverUrl: string }>`
   background: url(${(props) => props.coverUrl}) lightgray 50% / cover no-repeat;
   cursor: pointer;
   border: none;
+  padding: 0;
+  overflow: hidden;
 `;
 
 export const TitleWrapper = styled.div`
@@ -28,7 +30,7 @@ export const TitleWrapper = styled.div`
   );
 `;
 
-export const Title = styled.span`
+export const Title = styled.h1`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -40,4 +42,5 @@ export const Title = styled.span`
   font-style: normal;
   font-weight: 500;
   line-height: 100%;
+  text-align: left;
 `;

@@ -27,7 +27,7 @@ export default function NormalSong({
       onClick={handleClick}
       {...props}
     >
-      <S.Cover coverUrl={coverUrl ?? ""} />
+      <S.Cover src={coverUrl ?? ""} />
       <S.Right>
         <S.Title>{title}</S.Title>
         <S.Artist>{artist}</S.Artist>
