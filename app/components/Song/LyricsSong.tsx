@@ -1,5 +1,8 @@
-import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useRef } from "react";
 import { MdPlayCircle } from "react-icons/md";
+
+import { getDominantColorFromElement } from "~/utils/getDominantColorFromElement";
 
 import * as S from "./LyricsSong.styles";
 
@@ -21,8 +24,17 @@ export default function LyricsSong({
   lyrics,
   ...props
 }: LyricsSongProps) {
-  // TODO: Replace with actual dominant color extraction
-  const coverColor = useMemo(() => "#ffffff", [coverUrl]);
+  const coverElementRef = useRef<HTMLImageElement>(null);
+
+  // 커버 대표 색상
+  const { data: coverColor } = useQuery({
+    queryKey: ["coverColor", id],
+    queryFn: async () => {
+      if (coverElementRef.current == null) throw new Error();
+      return await getDominantColorFromElement(coverElementRef.current);
+    },
+    initialData: "#ffffff",
+  });
 
   const handlePlay = () => {
     // TODO: Implement song play functionality
@@ -31,7 +43,11 @@ export default function LyricsSong({
   return (
     <S.Wrapper $coverColor={coverColor} {...props}>
       <S.Info>
-        <S.Cover src={coverUrl ?? ""} />
+        <S.Cover
+          crossOrigin="anonymous"
+          src={coverUrl ?? ""}
+          ref={coverElementRef}
+        />
         <S.InfoText>
           <S.Title>{title}</S.Title>
           <S.Artist>{artist}</S.Artist>

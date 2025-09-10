@@ -69,7 +69,7 @@ Your skin makes me cry`}
             id={"2"}
             title={"song title"}
             artist={"artist name"}
-            coverUrl={"https://placehold.co/200x200"}
+            coverUrl={"https://placehold.co/200x200/orange/white"}
             lyrics={`When you were here before
 Couldn't look you in the eye
 You're just like an angel

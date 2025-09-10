@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.button<{ coverUrl: string }>`
+export const Wrapper = styled.button<{ $coverUrl: string }>`
   display: flex;
   width: 140px;
   height: 140px;
@@ -9,7 +9,7 @@ export const Wrapper = styled.button<{ coverUrl: string }>`
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: 8px;
-  background: url(${(props) => props.coverUrl}) lightgray 50% / cover no-repeat;
+  background: url(${(props) => props.$coverUrl}) lightgray 50% / cover no-repeat;
   cursor: pointer;
   border: none;
   padding: 0;

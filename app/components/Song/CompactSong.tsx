@@ -20,7 +20,7 @@ export default function CompactSong({
 
   return (
     <S.Wrapper
-      coverUrl={coverUrl ?? ""}
+      $coverUrl={coverUrl ?? ""}
       aria-label={title}
       title={title}
       onClick={handleClick}
