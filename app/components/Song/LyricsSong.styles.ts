@@ -4,7 +4,6 @@ import IconWrapper from "~/components/IconWrapper";
 
 export const Wrapper = styled.div<{ $coverColor: string }>`
   display: flex;
-  width: 200px;
   min-height: 300px;
   flex-direction: column;
   align-items: flex-start;
@@ -12,6 +11,7 @@ export const Wrapper = styled.div<{ $coverColor: string }>`
   background:
     linear-gradient(135deg, rgba(0, 0, 0, 0.6) 10%, rgba(0, 0, 0, 0.8) 90%),
     ${(props) => props.$coverColor};
+  flex: 0 0 200px;
 `;
 
 export const Info = styled.div`
