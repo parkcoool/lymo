@@ -1,1 +1,1 @@
-export type AppBarVariant = "none" | "home" | "player" | "search";
+export type AppBarVariant = "home" | "player" | "search";
