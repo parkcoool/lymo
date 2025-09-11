@@ -74,7 +74,7 @@ export default function SongOverview({
       {/* 설명 */}
       {description !== null && (
         <S.OverviewWrapper $showAll={!isOverflowing || showAll}>
-          <div ref={overviewRef}>
+          <S.OverviewContent ref={overviewRef}>
             {description ? (
               <S.Overview>{description}</S.Overview>
             ) : (
@@ -84,7 +84,7 @@ export default function SongOverview({
                 <S.OverviewSkeleton />
               </>
             )}
-          </div>
+          </S.OverviewContent>
         </S.OverviewWrapper>
       )}
 

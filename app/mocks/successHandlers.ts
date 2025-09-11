@@ -3,7 +3,9 @@ import type MockAdapter from "axios-mock-adapter";
 import type { GetLyricalSongsResponse } from "~/apis/getLyricalSongs";
 import type { GetPopularSongsResponse } from "~/apis/getPopularSongs";
 import type { GetSongResponse } from "~/apis/getSong";
+import type { GetSongOverviewResponse } from "~/apis/getSongOverview";
 import lyricsPreviews from "~/mocks/lyricsPreviews";
+import overviews from "~/mocks/overviews";
 import songs from "~/mocks/songs";
 
 const successHandlers = (mock: MockAdapter) => {
@@ -42,6 +44,19 @@ const successHandlers = (mock: MockAdapter) => {
       const song = songs.find((s) => s.id === songId);
       if (song) {
         return [200, { song }];
+      }
+      return [404];
+    });
+
+  // getSongOverview
+  mock
+    .onGet("/song/overview")
+    .withDelayInMs(Math.random() * 2000 + 4000)
+    .reply<GetSongOverviewResponse>((config) => {
+      const songId = config.params?.songId;
+      const overview = overviews[songId];
+      if (overview) {
+        return [200, { overview }];
       }
       return [404];
     });

@@ -101,7 +101,7 @@ export const Description = styled.h2`
 `;
 
 export const DescriptionSkeleton = styled(Skeleton)`
-  width: 250px;
+  width: 100%;
   height: 16px;
   border-radius: 4px;
   opacity: 0.5;
@@ -121,6 +121,13 @@ export const OverviewWrapper = styled(motion.div).attrs({
   z-index: 1;
 
   ${({ $showAll }) => !$showAll && `max-height: 96px;`}
+`;
+
+export const OverviewContent = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 `;
 
 export const Overview = styled(motion.p).attrs({ layout: true })`

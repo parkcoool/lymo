@@ -1,8 +1,10 @@
+import { useQuery } from "@tanstack/react-query";
 import { LayoutGroup } from "motion/react";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router";
 import { useTheme } from "styled-components";
 
+import getSongOverview from "~/apis/getSongOverview";
 import FooterPlayer from "~/components/FooterPlayer";
 import LyricsParagraph from "~/components/LyricsParagraph";
 import LyricsSentence from "~/components/LyricsSentence";
@@ -36,6 +38,11 @@ export default function Player({ params }: Route.LoaderArgs) {
 
   // 노래 데이터 로드 및 플레이어 상태에 반영
   const song = usePlaySongEffect(songId);
+  const { data: overview } = useQuery({
+    queryKey: ["songOverview", songId],
+    queryFn: () => getSongOverview({ songId }),
+    select: (data) => data.data.overview,
+  });
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
@@ -63,9 +70,7 @@ export default function Player({ params }: Route.LoaderArgs) {
           album={song?.album}
           createdAt={song?.createdAt}
           coverUrl={song?.coverUrl ?? bonusData?.coverUrl}
-          description={
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-          }
+          description={overview}
           coverElementRef={coverElementRef}
         />
 
