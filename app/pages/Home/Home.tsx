@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import { MdLyrics, MdTrendingUp } from "react-icons/md";
 import { useNavigate } from "react-router";
 
@@ -13,14 +13,14 @@ import {
   PopularSongListSkeleton,
 } from "~/components/PopularSongList";
 import usePlayerStore from "~/contexts/usePlayerStore";
-import useHomePageAppBarEffect from "~/hooks/useHomePageAppBarEffect";
+import useHomePageSearchBoxWidth from "~/hooks/useHomePageSearchBoxWidth";
 
 import * as S from "./Home.styles";
 
 export default function Home() {
-  const navigate = useNavigate();
   const { isPlaying, song, playPause } = usePlayerStore();
-  useHomePageAppBarEffect();
+  const searchBoxWidth = useHomePageSearchBoxWidth();
+  const navigate = useNavigate();
 
   const handlePlayerExpand = () => {
     if (song) navigate(`/player/${song.id}`);
@@ -28,16 +28,20 @@ export default function Home() {
 
   return (
     <S.Container>
-      {/* 검색 섹션 */}
-      <S.SearchSection>
+      {/* 최상단 섹션 */}
+      <S.HeroSection>
         <S.Brand>
           <S.LogoIconWrapper>
             <LogoIcon />
           </S.LogoIconWrapper>
           Lymo
         </S.Brand>
-        <S.SearchBox>음악 검색</S.SearchBox>
-      </S.SearchSection>
+      </S.HeroSection>
+
+      {/* 검색 박스 */}
+      <S.SearchBoxWrapper>
+        <S.SearchBox $width={`${searchBoxWidth}%`}>음악 검색</S.SearchBox>
+      </S.SearchBoxWrapper>
 
       {/* 인기 섹션 */}
       <S.Section>

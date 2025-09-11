@@ -7,7 +7,7 @@ import IconButton from "../IconButton";
 import * as S from "./AppBar.styles";
 
 interface AppBarProps {
-  variant: "none" | "home" | "player" | "search";
+  variant: "home" | "player" | "search";
   searchQuery?: string;
   songTitle?: string;
 }
@@ -20,7 +20,7 @@ export default function AppBar({
   const navigate = useNavigate();
 
   const isBackButtonVisible = variant === "player" || variant === "search";
-  const isSearchBoxVisible = variant === "home" || variant === "search";
+  const isSearchBoxVisible = variant === "search";
   const isSongTitleVisible = variant === "player";
   const searchBoxText = variant === "search" ? searchQuery : "음악 검색";
 
@@ -29,9 +29,9 @@ export default function AppBar({
   };
 
   return (
-    <S.Wrapper $gradient={variant === "player"}>
+    <S.Wrapper>
       <S.Left>
-        <AnimatePresence initial={false} mode="wait">
+        <AnimatePresence initial={false} mode="popLayout">
           {/* 뒤로 가기 버튼 */}
           {isBackButtonVisible && (
             <motion.div

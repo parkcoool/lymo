@@ -7,25 +7,25 @@ import usePlayerStore from "~/contexts/usePlayerStore";
 import type { AppBarVariant } from "~/types/appBar";
 
 const AppBarVariants: Map<string, AppBarVariant> = new Map([
-  ["", "none"],
+  ["", "home"],
   ["player", "player"],
   ["search", "search"],
 ]);
 
 export default function MainLayout() {
   const pathname = useLocation().pathname.split("/")[1];
-  const { overrideVariant, searchQuery } = useAppBarStore();
+  const { searchQuery } = useAppBarStore();
   const { song } = usePlayerStore();
 
-  const baseVariant = useMemo(
-    () => AppBarVariants.get(pathname) ?? "none",
+  const variant = useMemo(
+    () => AppBarVariants.get(pathname) ?? "home",
     [pathname]
   );
 
   return (
     <>
       <AppBar
-        variant={overrideVariant ?? baseVariant}
+        variant={variant}
         searchQuery={searchQuery}
         songTitle={song?.title ?? ""}
       />
