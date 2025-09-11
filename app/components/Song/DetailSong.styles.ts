@@ -2,15 +2,12 @@ import styled from "styled-components";
 
 import IconWrapper from "~/components/IconWrapper";
 
-export const Wrapper = styled.button`
+export const Wrapper = styled.div`
   display: flex;
   padding: 20px 30px;
   box-sizing: border-box;
   align-items: center;
   gap: 15px;
-  cursor: pointer;
-  border: none;
-  background: none;
   width: 100%;
 `;
 

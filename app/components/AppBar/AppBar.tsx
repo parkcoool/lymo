@@ -41,9 +41,11 @@ export default function AppBar({
         {isSongTitleVisible && <S.SongTitle>{songTitle}</S.SongTitle>}
       </S.Left>
       <S.Right>
-        <S.PersonIconWrapper>
-          <MdPerson />
-        </S.PersonIconWrapper>
+        <IconButton>
+          <S.PersonIconWrapper>
+            <MdPerson />
+          </S.PersonIconWrapper>
+        </IconButton>
       </S.Right>
     </S.Wrapper>
   );
