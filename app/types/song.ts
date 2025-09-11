@@ -20,7 +20,7 @@ export interface CompactSong {
   coverUrl: string;
 }
 
-export interface CompactSongWithGoodLyrics extends CompactSong {
+export interface CompactLyricalSong extends CompactSong {
   lyricsPreview: string;
 }
 
