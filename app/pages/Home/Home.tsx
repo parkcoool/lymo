@@ -1,11 +1,39 @@
+import { useEffect } from "react";
 import { MdLyrics, MdTrendingUp } from "react-icons/md";
 
 import LogoIcon from "~/assets/logo.svg?react";
 import { CompactSong, LyricsSong } from "~/components/Song";
+import { useAppBarStore } from "~/contexts/useAppBarStore";
 
 import * as S from "./Home.styles";
 
 export default function Home() {
+  const { setVariant } = useAppBarStore();
+
+  // 검색 상자가 뷰포트에서 벗어나면 AppBar의 variant를 "home"으로 설정
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setVariant("none");
+        } else {
+          setVariant("home");
+        }
+      });
+    });
+
+    const searchSection = document.getElementById("search-box");
+    if (searchSection) {
+      observer.observe(searchSection);
+    }
+
+    return () => {
+      if (searchSection) {
+        observer.unobserve(searchSection);
+      }
+    };
+  }, []);
+
   return (
     <S.Container>
       {/* 검색 섹션 */}
@@ -16,7 +44,7 @@ export default function Home() {
           </S.LogoIconWrapper>
           Lymo
         </S.Brand>
-        <S.SearchBox>음악 검색</S.SearchBox>
+        <S.SearchBox id="search-box">음악 검색</S.SearchBox>
       </S.SearchSection>
 
       {/* 인기 섹션 */}

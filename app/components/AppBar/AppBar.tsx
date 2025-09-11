@@ -2,30 +2,24 @@ import { MdChevronLeft, MdPerson } from "react-icons/md";
 
 import * as S from "./AppBar.styles";
 
-type AppBarProps =
-  | {
-      variant: "none" | "home";
-    }
-  | {
-      variant: "player";
-      songTitle: string;
-    }
-  | {
-      variant: "search";
-      searchQuery: string;
-    };
+interface AppBarProps {
+  variant: "none" | "home" | "player" | "search";
+  searchQuery?: string;
+  songTitle?: string;
+}
 
-export default function AppBar(props: AppBarProps) {
-  const isBackButtonVisible =
-    props.variant === "player" || props.variant === "search";
-  const isSearchBoxVisible =
-    props.variant === "home" || props.variant === "search";
-  const isSongTitleVisible = props.variant === "player";
-  const searchBoxText =
-    props.variant === "search" ? props.searchQuery : "음악 검색";
+export default function AppBar({
+  variant,
+  searchQuery,
+  songTitle,
+}: AppBarProps) {
+  const isBackButtonVisible = variant === "player" || variant === "search";
+  const isSearchBoxVisible = variant === "home" || variant === "search";
+  const isSongTitleVisible = variant === "player";
+  const searchBoxText = variant === "search" ? searchQuery : "음악 검색";
 
   return (
-    <S.Wrapper $gradient={props.variant === "player"}>
+    <S.Wrapper $gradient={variant === "player"}>
       <S.Left>
         {isBackButtonVisible && (
           <S.LeftIconWrapper>
@@ -33,7 +27,7 @@ export default function AppBar(props: AppBarProps) {
           </S.LeftIconWrapper>
         )}
         {isSearchBoxVisible && <S.SearchBox>{searchBoxText}</S.SearchBox>}
-        {isSongTitleVisible && <S.SongTitle>{props.songTitle}</S.SongTitle>}
+        {isSongTitleVisible && <S.SongTitle>{songTitle}</S.SongTitle>}
       </S.Left>
       <S.Right>
         <S.PersonIconWrapper>
