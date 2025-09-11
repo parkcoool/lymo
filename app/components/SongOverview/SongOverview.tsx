@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MdArrowDropDown } from "react-icons/md";
 
 import * as S from "./SongOverview.styles";
@@ -6,7 +6,7 @@ import * as S from "./SongOverview.styles";
 interface SongOverviewProps {
   title: string;
   artist: string;
-  album: string;
+  album: string | null;
   createdAt: string;
   coverUrl: string | null;
   description: string | null;
@@ -28,6 +28,9 @@ export default function SongOverview({
   const handleShowAll = () => {
     setShowAll((prev) => !prev);
   };
+
+  // 발매 연도
+  const year = useMemo(() => new Date(createdAt).getFullYear(), [createdAt]);
 
   // 설명이 넘치는지 감지
   const [isOverflowing, setIsOverflowing] = useState(true);
@@ -53,7 +56,7 @@ export default function SongOverview({
         />
         <S.SongInfoRight>
           <S.Title>{title}</S.Title>
-          <S.Description>{`${artist} • ${album} • ${createdAt}`}</S.Description>
+          <S.Description>{`${artist} • ${album} • ${year}`}</S.Description>
         </S.SongInfoRight>
       </S.SongInfo>
 

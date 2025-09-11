@@ -9,19 +9,24 @@ import SongOverview from "~/components/SongOverview";
 import usePlayerStore from "~/contexts/usePlayerStore";
 import useThemeStore from "~/contexts/useThemeStore";
 import useCoverColor from "~/hooks/useCoverColor";
+import usePlaySongEffect from "~/hooks/usePlaySongEffect";
 import darkenHexColor from "~/utils/darkenHexColor";
 
 import type { Route } from "./+types/Player";
 import * as S from "./Player.styles";
 
 export default function Player({ params }: Route.LoaderArgs) {
+  const songId = params.songId;
+
   const { setDynamicBackground, resetDynamicBackground } = useThemeStore();
-  const { setSong, isPlaying, playPause } = usePlayerStore();
+  const { isPlaying, playPause } = usePlayerStore();
   const theme = useTheme();
+
+  const song = usePlaySongEffect(songId);
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
-  const coverColor = useCoverColor(coverElementRef, params.songId);
+  const coverColor = useCoverColor(coverElementRef, songId);
 
   // 커버 색상에 따라 배경색 변경
   useEffect(() => {
@@ -36,26 +41,15 @@ export default function Player({ params }: Route.LoaderArgs) {
     [coverColor, theme.colors.background]
   );
 
-  // 현재 재생 중인 노래 변경
-  useEffect(() => {
-    setSong({
-      id: params.songId,
-      title: "Song Title",
-      artist: "Artist",
-      duration: 240,
-      coverUrl: "https://picsum.photos/200",
-    });
-  }, []);
-
   return (
     <S.Container>
       <LayoutGroup>
         <SongOverview
-          title={"Song Title"}
-          artist={"Artist"}
-          album={"Album"}
-          createdAt={"2022-01-01"}
-          coverUrl={"https://picsum.photos/200"}
+          title={song.title}
+          artist={song.artist}
+          album={song.album}
+          createdAt={song.createdAt}
+          coverUrl={song.coverUrl}
           description={
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
           }
@@ -97,9 +91,9 @@ export default function Player({ params }: Route.LoaderArgs) {
 
       <S.Footer $backgroundColor={backgroundColor} $percentage={30}>
         <FooterPlayer
-          coverUrl={"https://picsum.photos/200"}
-          title={"Song Title"}
-          artist={"Artist"}
+          title={song.title}
+          artist={song.artist}
+          coverUrl={song.coverUrl}
           isPlaying={isPlaying}
           onPlayPause={playPause}
         />
