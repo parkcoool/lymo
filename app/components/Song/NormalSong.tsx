@@ -6,7 +6,7 @@ interface NormalSongProps {
   id: string;
   title: string;
   artist: string;
-  coverUrl: string | null;
+  coverUrl: string;
   className?: string;
   ref?: React.Ref<HTMLButtonElement>;
 }
@@ -21,7 +21,7 @@ export default function NormalSong({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/player/${id}`);
+    navigate(`/player/${id}`, { state: { title, artist, coverUrl } });
   };
 
   return (

@@ -36,7 +36,7 @@ const successHandlers = (mock: MockAdapter) => {
   // getSong
   mock
     .onGet("/song")
-    .withDelayInMs(Math.random() * 2000)
+    .withDelayInMs(Math.random() * 2000 + 2000)
     .reply<GetSongResponse>((config) => {
       const songId = config.params?.songId;
       const song = songs.find((s) => s.id === songId);

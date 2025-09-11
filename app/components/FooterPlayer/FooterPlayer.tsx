@@ -5,9 +5,9 @@ import IconButton from "../IconButton";
 import * as S from "./FooterPlayer.styles";
 
 interface FooterPlayerProps {
-  coverUrl: string;
-  title: string;
-  artist: string;
+  coverUrl?: string;
+  title?: string;
+  artist?: string;
   isPlaying: boolean;
   onPlayPause: () => void;
 }

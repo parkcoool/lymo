@@ -5,7 +5,7 @@ import * as S from "./CompactSong.styles";
 interface CompactSongProps {
   id: string;
   title: string;
-  coverUrl: string | null;
+  coverUrl: string;
   className?: string;
   ref?: React.Ref<HTMLButtonElement>;
 }
@@ -19,7 +19,7 @@ export default function CompactSong({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/player/${id}`);
+    navigate(`/player/${id}`, { state: { title, coverUrl } });
   };
 
   return (

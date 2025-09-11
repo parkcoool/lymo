@@ -75,12 +75,3 @@ export const SearchBox = styled.button`
   cursor: pointer;
   white-space: nowrap;
 `;
-
-export const SongTitle = styled.h1`
-  color: ${({ theme }) => theme.colors.onBackground};
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 120%;
-  white-space: nowrap;
-`;

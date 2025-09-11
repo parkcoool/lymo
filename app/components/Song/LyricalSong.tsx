@@ -13,7 +13,7 @@ interface LyricalSongProps {
   id: string;
   title: string;
   artist: string;
-  coverUrl: string | null;
+  coverUrl: string;
   lyrics: string;
   className?: string;
   ref?: React.Ref<HTMLDivElement>;
@@ -35,7 +35,7 @@ export default function LyricalSong({
   const coverColor = useCoverColor(coverElementRef, id);
 
   const handleClick = () => {
-    navigate(`/player/${id}`);
+    navigate(`/player/${id}`, { state: { title, artist, coverUrl } });
   };
 
   return (

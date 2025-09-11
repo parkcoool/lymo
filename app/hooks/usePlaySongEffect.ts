@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 import getSong from "~/apis/getSong";
@@ -8,7 +8,7 @@ import type { Song } from "~/types/song";
 export default function usePlaySongEffect(songId: string) {
   const { setSong } = usePlayerStore();
 
-  const { data: song, isFetched } = useSuspenseQuery({
+  const { data: song, isFetched } = useQuery({
     queryKey: ["song", songId],
     queryFn: () => getSong({ songId }),
     select: (res) => res.data.song,
@@ -17,6 +17,7 @@ export default function usePlaySongEffect(songId: string) {
   // 노래 데이터가 로드 완료됐을 시
   useEffect(() => {
     if (!isFetched || !song) return;
+
     setSong({
       id: song.id,
       title: song.title,
@@ -26,5 +27,5 @@ export default function usePlaySongEffect(songId: string) {
     });
   }, [isFetched]);
 
-  return song as Song;
+  return song as Song | undefined;
 }

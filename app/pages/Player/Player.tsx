@@ -1,5 +1,6 @@
 import { LayoutGroup } from "motion/react";
 import { useEffect, useMemo, useRef } from "react";
+import { useLocation } from "react-router";
 import { useTheme } from "styled-components";
 
 import FooterPlayer from "~/components/FooterPlayer";
@@ -15,6 +16,13 @@ import darkenHexColor from "~/utils/darkenHexColor";
 import type { Route } from "./+types/Player";
 import * as S from "./Player.styles";
 
+interface BonusData {
+  title: string;
+  artist?: string;
+  duration?: number;
+  coverUrl: string;
+}
+
 export default function Player({ params }: Route.LoaderArgs) {
   const songId = params.songId;
 
@@ -22,6 +30,11 @@ export default function Player({ params }: Route.LoaderArgs) {
   const { isPlaying, playPause } = usePlayerStore();
   const theme = useTheme();
 
+  // state로 전달된 보너스 데이터
+  const location = useLocation();
+  const bonusData = location.state as BonusData | undefined;
+
+  // 노래 데이터 로드 및 플레이어 상태에 반영
   const song = usePlaySongEffect(songId);
 
   // 커버 대표 색상
@@ -45,11 +58,11 @@ export default function Player({ params }: Route.LoaderArgs) {
     <S.Container>
       <LayoutGroup>
         <SongOverview
-          title={song.title}
-          artist={song.artist}
-          album={song.album}
-          createdAt={song.createdAt}
-          coverUrl={song.coverUrl}
+          title={song?.title ?? bonusData?.title}
+          artist={song?.artist ?? bonusData?.artist}
+          album={song?.album}
+          createdAt={song?.createdAt}
+          coverUrl={song?.coverUrl ?? bonusData?.coverUrl}
           description={
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
           }
@@ -91,9 +104,9 @@ export default function Player({ params }: Route.LoaderArgs) {
 
       <S.Footer $backgroundColor={backgroundColor} $percentage={30}>
         <FooterPlayer
-          title={song.title}
-          artist={song.artist}
-          coverUrl={song.coverUrl}
+          title={song?.title ?? bonusData?.title}
+          artist={song?.artist ?? bonusData?.artist}
+          coverUrl={song?.coverUrl ?? bonusData?.coverUrl}
           isPlaying={isPlaying}
           onPlayPause={playPause}
         />

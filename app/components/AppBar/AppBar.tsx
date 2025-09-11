@@ -8,19 +8,13 @@ import * as S from "./AppBar.styles";
 interface AppBarProps {
   variant: "home" | "player" | "search";
   searchQuery?: string;
-  songTitle?: string;
 }
 
-export default function AppBar({
-  variant,
-  searchQuery,
-  songTitle,
-}: AppBarProps) {
+export default function AppBar({ variant, searchQuery }: AppBarProps) {
   const navigate = useNavigate();
 
   const isBackButtonVisible = variant === "player" || variant === "search";
   const isSearchBoxVisible = variant === "search";
-  const isSongTitleVisible = variant === "player";
   const searchBoxText = variant === "search" ? searchQuery : "음악 검색";
 
   const handleBackButtonClick = () => {
@@ -41,9 +35,6 @@ export default function AppBar({
 
         {/* 검색창 */}
         {isSearchBoxVisible && <S.SearchBox>{searchBoxText}</S.SearchBox>}
-
-        {/* 노래 제목 */}
-        {isSongTitleVisible && <S.SongTitle>{songTitle}</S.SongTitle>}
       </S.Left>
       <S.Right>
         <IconButton>

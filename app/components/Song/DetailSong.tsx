@@ -12,7 +12,7 @@ interface DetailSongProps {
   title: string;
   artist: string;
   duration: number;
-  coverUrl: string | null;
+  coverUrl: string;
   className?: string;
   ref?: React.Ref<HTMLDivElement>;
 }
@@ -28,7 +28,7 @@ export default function DetailSong({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/player/${id}`);
+    navigate(`/player/${id}`, { state: { title, artist, duration, coverUrl } });
   };
 
   return (

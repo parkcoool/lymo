@@ -3,6 +3,8 @@ import styled from "styled-components";
 
 import IconWrapper from "~/components/IconWrapper";
 
+import Skeleton from "../Skeleton";
+
 export const Wrapper = styled(motion.div).attrs({
   layout: true,
 })`
@@ -46,6 +48,12 @@ export const Cover = styled.img`
   object-fit: cover;
 `;
 
+export const CoverSkeleton = styled(Skeleton)`
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+`;
+
 export const SongInfoRight = styled.div`
   display: flex;
   flex-direction: column;
@@ -70,6 +78,13 @@ export const Title = styled.h1`
   text-align: left;
 `;
 
+export const TitleSkeleton = styled(Skeleton)`
+  width: 150px;
+  height: 16px;
+  border-radius: 4px;
+  opacity: 0.5;
+`;
+
 export const Description = styled.h2`
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -81,8 +96,15 @@ export const Description = styled.h2`
   font-size: 16px;
   font-style: normal;
   font-weight: 500;
-  line-height: normal;
+  line-height: 100%;
   text-align: left;
+`;
+
+export const DescriptionSkeleton = styled(Skeleton)`
+  width: 250px;
+  height: 16px;
+  border-radius: 4px;
+  opacity: 0.5;
 `;
 
 export const OverviewWrapper = styled(motion.div).attrs({
@@ -113,6 +135,13 @@ export const Overview = styled(motion.p).attrs({ layout: true })`
   line-height: normal;
   white-space: pre-wrap;
   word-break: break-word;
+`;
+
+export const OverviewSkeleton = styled(Skeleton)`
+  width: 100%;
+  height: 16px;
+  border-radius: 4px;
+  opacity: 0.5;
 `;
 
 export const ShowAllButton = styled.button`
