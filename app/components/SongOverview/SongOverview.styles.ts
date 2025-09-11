@@ -17,17 +17,7 @@ export const Wrapper = styled(motion.div).attrs({
   border-radius: 16px;
   position: relative;
   overflow: hidden;
-`;
-
-export const Background = styled(motion.img).attrs({ layout: true })`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  filter: blur(16px) brightness(0.3);
+  background-color: rgba(255, 255, 255, 0.2);
 `;
 
 export const SongInfo = styled(motion.div).attrs({

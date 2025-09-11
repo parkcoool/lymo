@@ -97,9 +97,6 @@ export default function SongOverview({
           {showAll ? "간략히 보기" : "자세히 보기"}
         </S.ShowAllButton>
       )}
-
-      {/* 배경 */}
-      <S.Background src={coverUrl ?? ""} />
     </S.Wrapper>
   );
 }
