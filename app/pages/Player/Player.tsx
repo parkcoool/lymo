@@ -1,5 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useTheme } from "styled-components";
 
+import FooterPlayer from "~/components/FooterPlayer";
 import LyricsParagraph from "~/components/LyricsParagraph";
 import LyricsSentence from "~/components/LyricsSentence";
 import SongOverview from "~/components/SongOverview";
@@ -13,7 +15,8 @@ import * as S from "./Player.styles";
 
 export default function Player({ params }: Route.LoaderArgs) {
   const { setDynamicBackground, resetDynamicBackground } = useThemeStore();
-  const { setSong } = usePlayerStore();
+  const { setSong, isPlaying, playPause } = usePlayerStore();
+  const theme = useTheme();
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
@@ -24,6 +27,13 @@ export default function Player({ params }: Route.LoaderArgs) {
     if (coverColor) setDynamicBackground(darkenHexColor(coverColor, 70));
     return () => resetDynamicBackground();
   }, [coverColor]);
+
+  // 배경색
+  const backgroundColor = useMemo(
+    () =>
+      coverColor ? darkenHexColor(coverColor, 80) : theme.colors.background,
+    [coverColor, theme.colors.background]
+  );
 
   // 현재 재생 중인 노래 변경
   useEffect(() => {
@@ -81,6 +91,16 @@ export default function Player({ params }: Route.LoaderArgs) {
           />
         </LyricsParagraph>
       </S.Lyrics>
+
+      <S.Footer $backgroundColor={backgroundColor} $percentage={30}>
+        <FooterPlayer
+          coverUrl={"https://picsum.photos/200"}
+          title={"Song Title"}
+          artist={"Artist"}
+          isPlaying={isPlaying}
+          onPlayPause={playPause}
+        />
+      </S.Footer>
     </S.Container>
   );
 }
