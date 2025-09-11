@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router";
 import { useTheme } from "styled-components";
 
+import getLyrics from "~/apis/getLyrics";
 import getSongOverview from "~/apis/getSongOverview";
 import FooterPlayer from "~/components/FooterPlayer";
 import LyricsParagraph from "~/components/LyricsParagraph";
@@ -44,6 +45,20 @@ export default function Player({ params }: Route.LoaderArgs) {
     select: (data) => data.data.overview,
   });
 
+  // 가사 데이터 로드
+  const { data: lyrics } = useQuery({
+    queryKey: ["lyrics", song?.lyricsId],
+    queryFn: () =>
+      song
+        ? getLyrics({
+            lyricsProvider: song?.lyricsProvider,
+            lyricsId: song?.lyricsId,
+          })
+        : null,
+    select: (data) => data?.data.lyrics,
+    enabled: song !== undefined,
+  });
+
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
   const coverColor = useCoverColor(coverElementRef, songId);
@@ -75,35 +90,17 @@ export default function Player({ params }: Route.LoaderArgs) {
         />
 
         <S.Lyrics>
-          <LyricsParagraph
-            isActive
-            summary={
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-            }
-            onReport={() => console.log("Report")}
-          >
-            <LyricsSentence
-              isActive
-              sentence="Hey Jude"
-              translation="헤이 주드"
-            />
-            <LyricsSentence
-              sentence="Don't make it bad"
-              translation="나쁘게 만들지 마"
-            />
-            <LyricsSentence
-              sentence="Take a sad song and make it better"
-              translation="슬픈 노래를 가져다가 더 좋게 만들어"
-            />
-            <LyricsSentence
-              sentence="Remember to let her into your heart"
-              translation="그녀를 네 마음에 들이도록 기억해"
-            />
-            <LyricsSentence
-              sentence="Then you can start to make it better"
-              translation="그러면 더 좋게 만들 수 있어"
-            />
-          </LyricsParagraph>
+          {lyrics?.map((paragraph, paragraphIndex) => (
+            <LyricsParagraph key={paragraphIndex}>
+              {paragraph.sentences.map((sentence, sentenceIndex) => (
+                <LyricsSentence
+                  key={sentenceIndex}
+                  sentence={sentence.text}
+                  translation={sentence.translation}
+                />
+              ))}
+            </LyricsParagraph>
+          ))}
         </S.Lyrics>
       </LayoutGroup>
 

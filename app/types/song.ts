@@ -28,10 +28,12 @@ export interface LyricalSong extends CompactSong {
 export interface LyricsSentence {
   text: string;
   translation: string | null;
+  start: number;
+  end: number;
 }
 
 export interface LyricsParagraph {
-  sentences: { [timestamp: number]: LyricsSentence };
+  sentences: LyricsSentence[];
   description: string | null;
 }
 

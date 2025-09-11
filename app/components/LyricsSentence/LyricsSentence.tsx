@@ -2,7 +2,7 @@ import * as S from "./LyricsSentence.styles";
 
 interface LyricsParagraphProps {
   sentence: string;
-  translation: string;
+  translation: string | null;
   isActive?: boolean;
 }
 
@@ -14,7 +14,9 @@ export default function LyricsParagraph({
   return (
     <S.Wrapper>
       <S.Sentence $isActive={isActive}>{sentence}</S.Sentence>
-      <S.Translation $isActive={isActive}>{translation}</S.Translation>
+      {translation && (
+        <S.Translation $isActive={isActive}>{translation}</S.Translation>
+      )}
     </S.Wrapper>
   );
 }
