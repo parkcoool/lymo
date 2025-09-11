@@ -12,7 +12,7 @@ export const Wrapper = styled.div`
 export const Sentence = styled.p<{ $isActive: boolean }>`
   font-size: 24px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: ${({ $isActive }) => ($isActive ? 700 : 500)};
   line-height: 120%;
   color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.onBackground : theme.colors.onBackgroundSubtle};
