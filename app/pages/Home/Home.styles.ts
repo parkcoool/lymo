@@ -92,7 +92,7 @@ export const SectionContent = styled.div`
 
 export const MiniPlayerWrapper = styled.div`
   position: fixed;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
 `;
