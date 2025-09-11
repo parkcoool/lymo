@@ -2,10 +2,10 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
-  width: 100%;
-  min-height: 100vh;
-  padding: 70px 0;
-  box-sizing: border-box;
+  padding: 90px 10px 20px 10px;
   flex-direction: column;
   align-items: flex-start;
+  gap: 20px;
+  flex: 1 0 0;
+  align-self: stretch;
 `;
