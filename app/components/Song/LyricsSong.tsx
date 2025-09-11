@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 import { MdPlayCircle } from "react-icons/md";
 
+import useCoverColor from "~/hooks/useCoverColor";
 import { getDominantColorFromElement } from "~/utils/getDominantColorFromElement";
 
 import * as S from "./LyricsSong.styles";
@@ -24,17 +25,9 @@ export default function LyricsSong({
   lyrics,
   ...props
 }: LyricsSongProps) {
-  const coverElementRef = useRef<HTMLImageElement>(null);
-
   // 커버 대표 색상
-  const { data: coverColor } = useQuery({
-    queryKey: ["coverColor", id],
-    queryFn: async () => {
-      if (coverElementRef.current == null) throw new Error();
-      return await getDominantColorFromElement(coverElementRef.current);
-    },
-    initialData: "#ffffff",
-  });
+  const coverElementRef = useRef<HTMLImageElement>(null);
+  const coverColor = useCoverColor(coverElementRef, id);
 
   const handlePlay = () => {
     // TODO: Implement song play functionality
