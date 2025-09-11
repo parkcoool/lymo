@@ -1,12 +1,24 @@
+import { motion } from "motion/react";
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
+export const Wrapper = styled(motion.div).attrs({
+  whileHover: { scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.1)" },
+  whileTap: { scale: 0.98, backgroundColor: "rgba(255, 255, 255, 0.1)" },
+})`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   gap: 5px;
   align-self: stretch;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  border-radius: 16px;
+  padding: 10px;
+  -webkit-tap-highlight-color: transparent;
 `;
 
 export const Sentence = styled.p<{ $isActive: boolean }>`

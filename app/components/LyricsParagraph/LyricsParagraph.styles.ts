@@ -4,7 +4,7 @@ import IconWrapper from "../IconWrapper";
 
 export const Container = styled.div<{ $isActive: boolean }>`
   display: flex;
-  padding: 15px;
+  padding: 10px;
   flex-direction: column;
   align-items: flex-start;
   gap: 20px;
@@ -23,7 +23,7 @@ export const SetenceContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
+  gap: 10px;
   align-self: stretch;
 `;
 
