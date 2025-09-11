@@ -3,6 +3,10 @@ import reset from "styled-reset";
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
+
+  html {
+    background-color: ${({ theme }) => theme.colors.background};
+  }
   
   html, body, form, fieldset, table, tr, td, img {
     margin: 0;

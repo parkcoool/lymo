@@ -31,8 +31,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <GlobalStyle />
         <ThemeProvider theme={theme}>
+          <GlobalStyle />
           <QueryClientProvider client={queryClient}>
             {children}
           </QueryClientProvider>
