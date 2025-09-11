@@ -1,4 +1,4 @@
-import { Suspense, useRef } from "react";
+import { Suspense } from "react";
 import { MdLyrics, MdTrendingUp } from "react-icons/md";
 import { useNavigate } from "react-router";
 

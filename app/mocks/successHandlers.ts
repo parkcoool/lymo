@@ -2,6 +2,7 @@ import type MockAdapter from "axios-mock-adapter";
 
 import type { GetLyricalSongsResponse } from "~/apis/getLyricalSongs";
 import type { GetPopularSongsResponse } from "~/apis/getPopularSongs";
+import type { GetSongResponse } from "~/apis/getSong";
 import lyricsPreviews from "~/mocks/lyricsPreviews";
 import songs from "~/mocks/songs";
 
@@ -30,6 +31,19 @@ const successHandlers = (mock: MockAdapter) => {
         coverUrl: song.coverUrl,
         lyricsPreview: lyricsPreviews[song.id] ?? "",
       })),
+    });
+
+  // getSong
+  mock
+    .onGet("/song")
+    .withDelayInMs(Math.random() * 2000)
+    .reply<GetSongResponse>((config) => {
+      const songId = config.params?.songId;
+      const song = songs.find((s) => s.id === songId);
+      if (song) {
+        return [200, { song }];
+      }
+      return [404];
     });
 };
 
