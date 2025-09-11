@@ -15,6 +15,7 @@ export default function Player({ params }: Route.LoaderArgs) {
   const { setSongTitle } = useAppBarStore();
   const { setDynamicBackground, resetDynamicBackground } = useThemeStore();
 
+  // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
   const coverColor = useCoverColor(coverElementRef, params.songId);
 

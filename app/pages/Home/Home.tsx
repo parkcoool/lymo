@@ -1,38 +1,13 @@
-import { useEffect } from "react";
 import { MdLyrics, MdTrendingUp } from "react-icons/md";
 
 import LogoIcon from "~/assets/logo.svg?react";
 import { CompactSong, LyricsSong } from "~/components/Song";
-import { useAppBarStore } from "~/contexts/useAppBarStore";
+import useHomePageAppBarEffect from "~/hooks/useHomePageAppBarEffect";
 
 import * as S from "./Home.styles";
 
 export default function Home() {
-  const { setOverrideVariant, resetOverrideVariant } = useAppBarStore();
-
-  // 검색 상자가 뷰포트에서 벗어나면 AppBar의 variant를 "home"으로 설정
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setOverrideVariant("none");
-        } else {
-          resetOverrideVariant();
-        }
-      });
-    });
-
-    const searchSection = document.getElementById("search-box");
-    if (searchSection) {
-      observer.observe(searchSection);
-    }
-
-    return () => {
-      if (searchSection) {
-        observer.unobserve(searchSection);
-      }
-    };
-  }, []);
+  useHomePageAppBarEffect();
 
   return (
     <S.Container>
