@@ -3,9 +3,10 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { ThemeProvider } from "styled-components";
 
 import GlobalStyle from "~/styles/globalStyle";
-import theme from "~/styles/theme";
 
 import type { Route } from "./+types/root";
+import useThemeStore from "./contexts/useThemeStore";
+
 const queryClient = new QueryClient();
 
 export const links: Route.LinksFunction = () => [
@@ -22,6 +23,8 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { theme } = useThemeStore();
+
   return (
     <html lang="ko">
       <head>

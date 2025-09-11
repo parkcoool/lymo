@@ -10,7 +10,6 @@ export const Container = styled.div`
   box-sizing: border-box;
   flex-direction: column;
   align-items: flex-start;
-  background-color: ${(props) => props.theme.colors.background};
 `;
 
 export const SearchSection = styled.section`

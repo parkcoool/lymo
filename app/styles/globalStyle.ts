@@ -4,8 +4,9 @@ import reset from "styled-reset";
 const GlobalStyle = createGlobalStyle`
   ${reset}
 
-  html {
+  body {
     background-color: ${({ theme }) => theme.colors.background};
+    transition: background-color 0.3s ease;
   }
   
   html, body, form, fieldset, table, tr, td, img {
@@ -25,7 +26,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
   }
 `;
 

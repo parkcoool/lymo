@@ -1,9 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 import { MdPlayCircle } from "react-icons/md";
+import { useTheme } from "styled-components";
 
 import useCoverColor from "~/hooks/useCoverColor";
-import { getDominantColorFromElement } from "~/utils/getDominantColorFromElement";
 
 import * as S from "./LyricsSong.styles";
 
@@ -25,6 +24,8 @@ export default function LyricsSong({
   lyrics,
   ...props
 }: LyricsSongProps) {
+  const theme = useTheme();
+
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
   const coverColor = useCoverColor(coverElementRef, id);
@@ -34,7 +35,7 @@ export default function LyricsSong({
   };
 
   return (
-    <S.Wrapper $coverColor={coverColor} {...props}>
+    <S.Wrapper $coverColor={coverColor ?? theme.colors.background} {...props}>
       <S.Info>
         <S.Cover
           crossOrigin="anonymous"

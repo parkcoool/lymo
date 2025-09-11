@@ -10,6 +10,7 @@ interface SongOverviewProps {
   createdAt: string;
   coverUrl: string | null;
   description: string | null;
+  coverElementRef?: React.Ref<HTMLImageElement>;
 }
 
 export default function SongOverview({
@@ -19,6 +20,7 @@ export default function SongOverview({
   createdAt,
   coverUrl,
   description,
+  coverElementRef,
 }: SongOverviewProps) {
   const [showAll, setShowAll] = useState(false);
 
@@ -30,7 +32,11 @@ export default function SongOverview({
     <S.Wrapper>
       {/* 노래 정보 */}
       <S.SongInfo>
-        <S.Cover src={coverUrl ?? ""} />
+        <S.Cover
+          src={coverUrl ?? ""}
+          crossOrigin="anonymous"
+          ref={coverElementRef}
+        />
         <S.SongInfoRight>
           <S.Title>{title}</S.Title>
           <S.Description>{`${artist} • ${album} • ${createdAt}`}</S.Description>
