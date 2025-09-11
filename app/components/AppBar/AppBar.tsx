@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "motion/react";
 import { MdChevronLeft, MdPerson } from "react-icons/md";
 import { useNavigate } from "react-router";
 
@@ -31,47 +30,20 @@ export default function AppBar({
   return (
     <S.Wrapper>
       <S.Left>
-        <AnimatePresence initial={false} mode="popLayout">
-          {/* 뒤로 가기 버튼 */}
-          {isBackButtonVisible && (
-            <motion.div
-              key="back-button"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-            >
-              <IconButton onClick={handleBackButtonClick}>
-                <S.LeftIconWrapper>
-                  <MdChevronLeft />
-                </S.LeftIconWrapper>
-              </IconButton>
-            </motion.div>
-          )}
+        {/* 뒤로 가기 버튼 */}
+        {isBackButtonVisible && (
+          <IconButton onClick={handleBackButtonClick}>
+            <S.LeftIconWrapper>
+              <MdChevronLeft />
+            </S.LeftIconWrapper>
+          </IconButton>
+        )}
 
-          {/* 검색창 */}
-          {isSearchBoxVisible && (
-            <S.SearchBox
-              key="search-box"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-            >
-              {searchBoxText}
-            </S.SearchBox>
-          )}
+        {/* 검색창 */}
+        {isSearchBoxVisible && <S.SearchBox>{searchBoxText}</S.SearchBox>}
 
-          {/* 노래 제목 */}
-          {isSongTitleVisible && (
-            <S.SongTitle
-              key="song-title"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-            >
-              {songTitle}
-            </S.SongTitle>
-          )}
-        </AnimatePresence>
+        {/* 노래 제목 */}
+        {isSongTitleVisible && <S.SongTitle>{songTitle}</S.SongTitle>}
       </S.Left>
       <S.Right>
         <IconButton>
