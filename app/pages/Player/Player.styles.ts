@@ -9,3 +9,11 @@ export const Container = styled.div`
   flex: 1 0 0;
   align-self: stretch;
 `;
+
+export const Lyrics = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  align-self: stretch;
+`;
