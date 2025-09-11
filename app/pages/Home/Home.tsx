@@ -1,9 +1,14 @@
+import { Suspense } from "react";
 import { MdLyrics, MdTrendingUp } from "react-icons/md";
 import { useNavigate } from "react-router";
 
 import LogoIcon from "~/assets/logo.svg?react";
 import MiniPlayer from "~/components/Miniplayer";
-import { CompactSong, LyricsSong } from "~/components/Song";
+import {
+  PopularSongList,
+  PopularSongListSkeleton,
+} from "~/components/PopularSongList";
+import { LyricsSong } from "~/components/Song";
 import usePlayerStore from "~/contexts/usePlayerStore";
 import useHomePageAppBarEffect from "~/hooks/useHomePageAppBarEffect";
 
@@ -40,21 +45,9 @@ export default function Home() {
           인기
         </S.SectionTitle>
         <S.SectionContent>
-          <CompactSong
-            id={"1"}
-            title={"song title"}
-            coverUrl={"https://placehold.co/200x200"}
-          />
-          <CompactSong
-            id={"2"}
-            title={"song title"}
-            coverUrl={"https://placehold.co/200x200"}
-          />
-          <CompactSong
-            id={"3"}
-            title={"song title"}
-            coverUrl={"https://placehold.co/200x200"}
-          />
+          <Suspense fallback={<PopularSongListSkeleton />}>
+            <PopularSongList />
+          </Suspense>
         </S.SectionContent>
       </S.Section>
 
