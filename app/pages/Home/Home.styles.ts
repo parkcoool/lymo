@@ -26,7 +26,7 @@ export const SearchBoxWrapper = styled.div`
   position: sticky;
   top: 10px;
   z-index: 1001;
-  padding: 0 5%;
+  padding: 0 max(5%, 64px);
   display: flex;
   justify-content: center;
   height: 50px;
@@ -53,14 +53,9 @@ export const LogoIconWrapper = styled(IconWrapper)`
   color: ${(props) => props.theme.colors.onBackground};
 `;
 
-export const SearchBox = styled.button.attrs<{ $width: string }>(
-  ({ $width }) => ({
-    style: {
-      width: $width,
-    },
-  })
-)`
+export const SearchBox = styled.button`
   display: flex;
+  width: 100%;
   padding: 0 20px;
   box-sizing: border-box;
   justify-content: space-between;

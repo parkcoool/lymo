@@ -56,7 +56,7 @@ export default function SongOverview({
         />
         <S.SongInfoRight>
           <S.Title>{title}</S.Title>
-          <S.Description>{`${artist} • ${album} • ${year}`}</S.Description>
+          <S.Description>{`${artist} • ${album ? `${album} • ` : ""}${year}`}</S.Description>
         </S.SongInfoRight>
       </S.SongInfo>
 

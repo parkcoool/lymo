@@ -13,13 +13,11 @@ import {
   PopularSongListSkeleton,
 } from "~/components/PopularSongList";
 import usePlayerStore from "~/contexts/usePlayerStore";
-import useHomePageSearchBoxWidth from "~/hooks/useHomePageSearchBoxWidth";
 
 import * as S from "./Home.styles";
 
 export default function Home() {
   const { isPlaying, song, playPause } = usePlayerStore();
-  const searchBoxWidth = useHomePageSearchBoxWidth();
   const navigate = useNavigate();
 
   const handlePlayerExpand = () => {
@@ -40,7 +38,7 @@ export default function Home() {
 
       {/* 검색 박스 */}
       <S.SearchBoxWrapper>
-        <S.SearchBox $width={`${searchBoxWidth}%`}>음악 검색</S.SearchBox>
+        <S.SearchBox>음악 검색</S.SearchBox>
       </S.SearchBoxWrapper>
 
       {/* 인기 섹션 */}
