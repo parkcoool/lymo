@@ -4,7 +4,8 @@ import IconWrapper from "~/components/IconWrapper";
 
 export const Wrapper = styled.div<{ $coverColor: string }>`
   display: flex;
-  min-height: 300px;
+  width: 200px;
+  height: 350px;
   flex-direction: column;
   align-items: flex-start;
   border-radius: 8px;
@@ -33,7 +34,7 @@ export const InfoText = styled.div`
 
 export const Lyrics = styled.div`
   display: flex;
-  height: 180px;
+  height: 100%;
   padding: 10px;
   flex-direction: column;
   justify-content: center;

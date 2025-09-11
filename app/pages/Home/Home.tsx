@@ -3,12 +3,15 @@ import { MdLyrics, MdTrendingUp } from "react-icons/md";
 import { useNavigate } from "react-router";
 
 import LogoIcon from "~/assets/logo.svg?react";
+import {
+  LyricalSongList,
+  LyricalSongListSkeleton,
+} from "~/components/LyricalSongList";
 import MiniPlayer from "~/components/Miniplayer";
 import {
   PopularSongList,
   PopularSongListSkeleton,
 } from "~/components/PopularSongList";
-import { LyricsSong } from "~/components/Song";
 import usePlayerStore from "~/contexts/usePlayerStore";
 import useHomePageAppBarEffect from "~/hooks/useHomePageAppBarEffect";
 
@@ -60,36 +63,9 @@ export default function Home() {
           가사가 좋은 음악
         </S.SectionTitle>
         <S.SectionContent>
-          <LyricsSong
-            id={"1"}
-            title={"song title"}
-            artist={"artist name"}
-            coverUrl={"https://placehold.co/200x200"}
-            lyrics={`When you were here before
-Couldn't look you in the eye
-You're just like an angel
-Your skin makes me cry`}
-          />
-          <LyricsSong
-            id={"2"}
-            title={"song title"}
-            artist={"artist name"}
-            coverUrl={"https://placehold.co/200x200/orange/white"}
-            lyrics={`When you were here before
-Couldn't look you in the eye
-You're just like an angel
-Your skin makes me cry`}
-          />
-          <LyricsSong
-            id={"3"}
-            title={"song title"}
-            artist={"artist name"}
-            coverUrl={"https://placehold.co/200x200"}
-            lyrics={`When you were here before
-Couldn't look you in the eye
-You're just like an angel
-Your skin makes me cry`}
-          />
+          <Suspense fallback={<LyricalSongListSkeleton />}>
+            <LyricalSongList />
+          </Suspense>
         </S.SectionContent>
       </S.Section>
 

@@ -1,6 +1,6 @@
 import api from "~/apis";
 
-interface getPopularSongsProps {
+interface GetPopularSongsProps {
   page?: number;
 }
 
@@ -14,7 +14,7 @@ export interface GetPopularSongsResponse {
 
 export default async function getPopularSongs({
   page = 0,
-}: getPopularSongsProps) {
+}: GetPopularSongsProps) {
   return await api.get<GetPopularSongsResponse>("/song/popular", {
     params: { page },
   });

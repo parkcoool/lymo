@@ -20,7 +20,8 @@ export interface CompactSong {
   coverUrl: string;
 }
 
-export interface CompactLyricalSong extends CompactSong {
+export interface LyricalSong extends CompactSong {
+  artist: string;
   lyricsPreview: string;
 }
 
