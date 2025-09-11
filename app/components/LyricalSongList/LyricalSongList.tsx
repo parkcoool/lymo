@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import getLyricalSongs from "~/apis/getLyricalSongs";
-import { LyricsSong } from "~/components/Song";
+import { LyricalSong } from "~/components/Song";
 
 export default function LyricalSongList() {
   const { data: lyricalSongs } = useSuspenseQuery({
@@ -13,7 +13,7 @@ export default function LyricalSongList() {
   return (
     <>
       {lyricalSongs?.map((song) => (
-        <LyricsSong
+        <LyricalSong
           key={song.id}
           id={song.id}
           title={song.title}

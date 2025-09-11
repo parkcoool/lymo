@@ -7,9 +7,9 @@ import useCoverColor from "~/hooks/useCoverColor";
 
 import IconButton from "../IconButton";
 
-import * as S from "./LyricsSong.styles";
+import * as S from "./LyricalSong.styles";
 
-interface LyricsSongProps {
+interface LyricalSongProps {
   id: string;
   title: string;
   artist: string;
@@ -19,14 +19,14 @@ interface LyricsSongProps {
   ref?: React.Ref<HTMLDivElement>;
 }
 
-export default function LyricsSong({
+export default function LyricalSong({
   id,
   title,
   artist,
   coverUrl,
   lyrics,
   ...props
-}: LyricsSongProps) {
+}: LyricalSongProps) {
   const theme = useTheme();
   const navigate = useNavigate();
 
