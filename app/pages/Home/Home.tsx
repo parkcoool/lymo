@@ -1,12 +1,15 @@
 import { MdLyrics, MdTrendingUp } from "react-icons/md";
 
 import LogoIcon from "~/assets/logo.svg?react";
+import MiniPlayer from "~/components/Miniplayer";
 import { CompactSong, LyricsSong } from "~/components/Song";
+import usePlayerStore from "~/contexts/usePlayerStore";
 import useHomePageAppBarEffect from "~/hooks/useHomePageAppBarEffect";
 
 import * as S from "./Home.styles";
 
 export default function Home() {
+  const { isPlaying, song, playPause } = usePlayerStore();
   useHomePageAppBarEffect();
 
   return (
@@ -90,6 +93,20 @@ Your skin makes me cry`}
           />
         </S.SectionContent>
       </S.Section>
+
+      {/* 미니 플레이어 */}
+      {song && (
+        <S.MiniPlayerWrapper>
+          <MiniPlayer
+            id={song.id}
+            coverUrl={song.coverUrl}
+            title={song.title}
+            artist={song.artist}
+            isPlaying={isPlaying}
+            onPlayPause={playPause}
+          />
+        </S.MiniPlayerWrapper>
+      )}
     </S.Container>
   );
 }

@@ -8,7 +8,7 @@ export interface Song {
   lyricsId: string | null;
   sourceProvider: SourceProvider;
   sourceId: string;
-  coverUrl: string | null;
+  coverUrl: string;
   createdAt: string;
 }
 
@@ -17,7 +17,7 @@ export interface CompactSong {
   title: string;
   artist: string;
   duration: number;
-  coverUrl: string | null;
+  coverUrl: string;
 }
 
 export interface CompactSongWithGoodLyrics extends CompactSong {

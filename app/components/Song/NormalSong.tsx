@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router";
+
 import * as S from "./NormalSong.styles";
 
 interface NormalSongProps {
@@ -16,8 +18,10 @@ export default function NormalSong({
   coverUrl,
   ...props
 }: NormalSongProps) {
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    // TODO: Implement song click functionality
+    navigate(`/player/${id}`);
   };
 
   return (

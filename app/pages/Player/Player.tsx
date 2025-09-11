@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import LyricsParagraph from "~/components/LyricsParagraph";
 import LyricsSentence from "~/components/LyricsSentence";
 import SongOverview from "~/components/SongOverview";
-import { useAppBarStore } from "~/contexts/useAppBarStore";
+import usePlayerStore from "~/contexts/usePlayerStore";
 import useThemeStore from "~/contexts/useThemeStore";
 import useCoverColor from "~/hooks/useCoverColor";
 import darkenHexColor from "~/utils/darkenHexColor";
@@ -12,27 +12,29 @@ import type { Route } from "./+types/Player";
 import * as S from "./Player.styles";
 
 export default function Player({ params }: Route.LoaderArgs) {
-  const { setSongTitle } = useAppBarStore();
   const { setDynamicBackground, resetDynamicBackground } = useThemeStore();
+  const { setSong } = usePlayerStore();
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
   const coverColor = useCoverColor(coverElementRef, params.songId);
-
-  // 앱바 음악 제목 설정
-  useEffect(() => {
-    setSongTitle("Song Title");
-
-    return () => {
-      setSongTitle("");
-    };
-  }, []);
 
   // 커버 색상에 따라 배경색 변경
   useEffect(() => {
     if (coverColor) setDynamicBackground(darkenHexColor(coverColor, 70));
     return () => resetDynamicBackground();
   }, [coverColor]);
+
+  // 현재 재생 중인 노래 변경
+  useEffect(() => {
+    setSong({
+      id: params.songId,
+      title: "Song Title",
+      artist: "Artist",
+      duration: 240,
+      coverUrl: "https://picsum.photos/200",
+    });
+  }, []);
 
   return (
     <S.Container>

@@ -1,4 +1,5 @@
 import { MdPlayCircle } from "react-icons/md";
+import { useNavigate } from "react-router";
 
 import convertSecondsToString from "~/utils/convertSecondsToString";
 
@@ -22,8 +23,10 @@ export default function NormalSong({
   coverUrl,
   ...props
 }: DetailSongProps) {
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    // TODO: Implement song click functionality
+    navigate(`/player/${id}`);
   };
 
   return (

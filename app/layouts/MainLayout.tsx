@@ -3,20 +3,22 @@ import { Outlet, useLocation } from "react-router";
 
 import AppBar from "~/components/AppBar";
 import { useAppBarStore } from "~/contexts/useAppBarStore";
+import usePlayerStore from "~/contexts/usePlayerStore";
 import type { AppBarVariant } from "~/types/appBar";
 
-const AppBarVariants: Record<string, AppBarVariant> = {
-  "": "home",
-  player: "player",
-  search: "search",
-};
+const AppBarVariants: Map<string, AppBarVariant> = new Map([
+  ["", "home"],
+  ["player", "player"],
+  ["search", "search"],
+]);
 
 export default function MainLayout() {
   const pathname = useLocation().pathname.split("/")[1];
-  const { overrideVariant, searchQuery, songTitle } = useAppBarStore();
+  const { overrideVariant, searchQuery } = useAppBarStore();
+  const { song } = usePlayerStore();
 
   const baseVariant = useMemo(
-    () => AppBarVariants[pathname] ?? "none",
+    () => AppBarVariants.get(pathname) ?? "none",
     [pathname]
   );
 
@@ -25,7 +27,7 @@ export default function MainLayout() {
       <AppBar
         variant={overrideVariant ?? baseVariant}
         searchQuery={searchQuery}
-        songTitle={songTitle}
+        songTitle={song?.title ?? ""}
       />
       <Outlet />
     </>

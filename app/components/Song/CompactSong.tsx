@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router";
+
 import * as S from "./CompactSong.styles";
 
 interface CompactSongProps {
@@ -14,15 +16,17 @@ export default function CompactSong({
   coverUrl,
   ...props
 }: CompactSongProps) {
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    // TODO: Implement song click functionality
+    navigate(`/player/${id}`);
   };
 
   return (
     <S.Wrapper
       $coverUrl={coverUrl ?? ""}
-      aria-label={title}
-      title={title}
+      aria-label={`${title} 재생하기`}
+      title={`${title} 재생하기`}
       onClick={handleClick}
       {...props}
     >

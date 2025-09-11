@@ -1,8 +1,11 @@
 import { useRef } from "react";
 import { MdPlayCircle } from "react-icons/md";
+import { useNavigate } from "react-router";
 import { useTheme } from "styled-components";
 
 import useCoverColor from "~/hooks/useCoverColor";
+
+import IconButton from "../IconButton";
 
 import * as S from "./LyricsSong.styles";
 
@@ -25,13 +28,14 @@ export default function LyricsSong({
   ...props
 }: LyricsSongProps) {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
   const coverColor = useCoverColor(coverElementRef, id);
 
-  const handlePlay = () => {
-    // TODO: Implement song play functionality
+  const handleClick = () => {
+    navigate(`/player/${id}`);
   };
 
   return (
@@ -60,9 +64,15 @@ export default function LyricsSong({
         </S.SeteneceContainer>
       </S.Lyrics>
       <S.Footer>
-        <S.PlayCircleIconWrapper>
-          <MdPlayCircle />
-        </S.PlayCircleIconWrapper>
+        <IconButton
+          onClick={handleClick}
+          aria-label={`${title} 재생하기`}
+          title={`${title} 재생하기`}
+        >
+          <S.PlayCircleIconWrapper>
+            <MdPlayCircle />
+          </S.PlayCircleIconWrapper>
+        </IconButton>
       </S.Footer>
     </S.Wrapper>
   );

@@ -1,4 +1,7 @@
 import { MdChevronLeft, MdPerson } from "react-icons/md";
+import { useNavigate } from "react-router";
+
+import IconButton from "../IconButton";
 
 import * as S from "./AppBar.styles";
 
@@ -13,18 +16,26 @@ export default function AppBar({
   searchQuery,
   songTitle,
 }: AppBarProps) {
+  const navigate = useNavigate();
+
   const isBackButtonVisible = variant === "player" || variant === "search";
   const isSearchBoxVisible = variant === "home" || variant === "search";
   const isSongTitleVisible = variant === "player";
   const searchBoxText = variant === "search" ? searchQuery : "음악 검색";
 
+  const handleBackButtonClick = () => {
+    navigate(-1);
+  };
+
   return (
     <S.Wrapper $gradient={variant === "player"}>
       <S.Left>
         {isBackButtonVisible && (
-          <S.LeftIconWrapper>
-            <MdChevronLeft />
-          </S.LeftIconWrapper>
+          <IconButton onClick={handleBackButtonClick}>
+            <S.LeftIconWrapper>
+              <MdChevronLeft />
+            </S.LeftIconWrapper>
+          </IconButton>
         )}
         {isSearchBoxVisible && <S.SearchBox>{searchBoxText}</S.SearchBox>}
         {isSongTitleVisible && <S.SongTitle>{songTitle}</S.SongTitle>}
