@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import styled from "styled-components";
 
 import IconWrapper from "../IconWrapper";
@@ -58,7 +59,7 @@ export const PersonIconWrapper = styled(IconWrapper)`
   color: ${({ theme }) => theme.colors.onBackground};
 `;
 
-export const SearchBox = styled.button`
+export const SearchBox = styled(motion.button)`
   display: flex;
   padding: 0 15px;
   height: 40px;
@@ -78,7 +79,7 @@ export const SearchBox = styled.button`
   white-space: nowrap;
 `;
 
-export const SongTitle = styled.h1`
+export const SongTitle = styled(motion.h1)`
   color: ${({ theme }) => theme.colors.onBackground};
   font-size: 24px;
   font-style: normal;
