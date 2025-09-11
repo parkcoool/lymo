@@ -25,6 +25,8 @@ export default function useHomePageAppBarEffect() {
       if (searchSection) {
         observer.unobserve(searchSection);
       }
+      observer.disconnect();
+      resetOverrideVariant();
     };
   }, []);
 }

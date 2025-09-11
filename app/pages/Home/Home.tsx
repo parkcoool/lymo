@@ -1,4 +1,5 @@
 import { MdLyrics, MdTrendingUp } from "react-icons/md";
+import { useNavigate } from "react-router";
 
 import LogoIcon from "~/assets/logo.svg?react";
 import MiniPlayer from "~/components/Miniplayer";
@@ -9,8 +10,13 @@ import useHomePageAppBarEffect from "~/hooks/useHomePageAppBarEffect";
 import * as S from "./Home.styles";
 
 export default function Home() {
+  const navigate = useNavigate();
   const { isPlaying, song, playPause } = usePlayerStore();
   useHomePageAppBarEffect();
+
+  const handlePlayerExpand = () => {
+    if (song) navigate(`/player/${song.id}`);
+  };
 
   return (
     <S.Container>
@@ -104,6 +110,7 @@ Your skin makes me cry`}
             artist={song.artist}
             isPlaying={isPlaying}
             onPlayPause={playPause}
+            onExpand={handlePlayerExpand}
           />
         </S.MiniPlayerWrapper>
       )}

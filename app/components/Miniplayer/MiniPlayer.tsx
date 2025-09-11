@@ -1,9 +1,11 @@
 import { useMemo, useRef } from "react";
-import { MdPause, MdPlayArrow } from "react-icons/md";
+import { MdArrowDropUp, MdPause, MdPlayArrow } from "react-icons/md";
 import { useTheme } from "styled-components";
 
 import useCoverColor from "~/hooks/useCoverColor";
 import darkenHexColor from "~/utils/darkenHexColor";
+
+import IconButton from "../IconButton";
 
 import * as S from "./MiniPlayer.styles";
 
@@ -14,6 +16,7 @@ interface MiniPlayerProps {
   artist: string;
   isPlaying: boolean;
   onPlayPause: () => void;
+  onExpand: () => void;
 }
 
 export default function MiniPlayer({
@@ -23,6 +26,7 @@ export default function MiniPlayer({
   artist,
   isPlaying,
   onPlayPause,
+  onExpand,
 }: MiniPlayerProps) {
   const theme = useTheme();
 
@@ -45,9 +49,21 @@ export default function MiniPlayer({
         </S.Info>
       </S.Left>
       <S.Right>
-        <S.ActionIconWrapper>
-          {isPlaying ? <MdPause /> : <MdPlayArrow />}
-        </S.ActionIconWrapper>
+        <IconButton onClick={onExpand} aria-label="펼치기" title="펼치기">
+          <S.ActionIconWrapper>
+            <MdArrowDropUp />
+          </S.ActionIconWrapper>
+        </IconButton>
+
+        <IconButton
+          onClick={onPlayPause}
+          aria-label={isPlaying ? "일시정지" : "재생"}
+          title={isPlaying ? "일시정지" : "재생"}
+        >
+          <S.ActionIconWrapper>
+            {isPlaying ? <MdPause /> : <MdPlayArrow />}
+          </S.ActionIconWrapper>
+        </IconButton>
       </S.Right>
     </S.Wrapper>
   );

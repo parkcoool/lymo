@@ -29,10 +29,10 @@ export const Right = styled.div`
 `;
 
 export const Cover = styled.img`
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   flex-shrink: 0;
-  border-radius: 8px;
+  border-radius: 16px;
   object-fit: cover;
 `;
 
