@@ -1,21 +1,23 @@
 import { create } from "zustand";
 
-type AppBarVariant = "none" | "home" | "player" | "search";
+import type { AppBarVariant } from "~/types/appBar";
 
 interface AppBarState {
-  variant: AppBarVariant;
+  overrideVariant?: AppBarVariant;
   searchQuery: string;
   songTitle: string;
-  setVariant: (variant: AppBarVariant) => void;
+  setOverrideVariant: (variant: AppBarVariant) => void;
+  resetOverrideVariant: () => void;
   setSearchQuery: (query: string) => void;
   setSongTitle: (title: string) => void;
 }
 
 export const useAppBarStore = create<AppBarState>((set) => ({
-  variant: "none",
+  overrideVariant: undefined,
   searchQuery: "",
   songTitle: "",
-  setVariant: (variant) => set({ variant }),
+  setOverrideVariant: (variant) => set({ overrideVariant: variant }),
+  resetOverrideVariant: () => set({ overrideVariant: undefined }),
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSongTitle: (title) => set({ songTitle: title }),
 }));

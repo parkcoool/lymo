@@ -8,16 +8,16 @@ import { useAppBarStore } from "~/contexts/useAppBarStore";
 import * as S from "./Home.styles";
 
 export default function Home() {
-  const { setVariant } = useAppBarStore();
+  const { setOverrideVariant, resetOverrideVariant } = useAppBarStore();
 
   // 검색 상자가 뷰포트에서 벗어나면 AppBar의 variant를 "home"으로 설정
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          setVariant("none");
+          setOverrideVariant("none");
         } else {
-          setVariant("home");
+          resetOverrideVariant();
         }
       });
     });

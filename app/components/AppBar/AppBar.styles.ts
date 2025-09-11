@@ -10,11 +10,11 @@ export const Wrapper = styled.div<{ $gradient: boolean }>`
   align-items: center;
   gap: 15px;
   flex-shrink: 0;
-  background-color: ${({ $gradient, theme }) =>
+  background: ${({ $gradient, theme }) =>
     $gradient
       ? `linear-gradient(
           180deg,
-          ${theme.colors.dynamicBackground ?? theme.colors.background}ff 0%,
+          ${theme.colors.dynamicBackground ?? theme.colors.background}ff 25%,
           ${theme.colors.dynamicBackground ?? theme.colors.background}00 100%
         )`
       : (theme.colors.dynamicBackground ?? theme.colors.background)};
@@ -23,7 +23,7 @@ export const Wrapper = styled.div<{ $gradient: boolean }>`
   left: 0;
   right: 0;
   z-index: 1000;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease;
 `;
 
 export const Left = styled.div`
