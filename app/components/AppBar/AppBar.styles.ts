@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import IconWrapper from "../IconWrapper";
 
-export const Wrapper = styled.div<{ $gradient: boolean }>`
+export const Wrapper = styled.div`
   display: flex;
   height: 70px;
   padding: 0 15px;
@@ -11,14 +11,12 @@ export const Wrapper = styled.div<{ $gradient: boolean }>`
   align-items: center;
   gap: 15px;
   flex-shrink: 0;
-  background: ${({ $gradient, theme }) =>
-    $gradient
-      ? `linear-gradient(
-          180deg,
-          ${theme.colors.dynamicBackground ?? theme.colors.background}ff 25%,
-          ${theme.colors.dynamicBackground ?? theme.colors.background}00 100%
-        )`
-      : (theme.colors.dynamicBackground ?? theme.colors.background)};
+  background: ${({ theme }) =>
+    `linear-gradient(
+      180deg,
+      ${theme.colors.dynamicBackground ?? theme.colors.background}ff 25%,
+      ${theme.colors.dynamicBackground ?? theme.colors.background}00 100%
+    )`};
   position: fixed;
   top: 0;
   left: 0;

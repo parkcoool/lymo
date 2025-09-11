@@ -7,7 +7,7 @@ export default function useHomePageAppBarEffect() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 330) {
+      if (window.scrollY > 390) {
         setOverrideVariant("home");
       } else {
         resetOverrideVariant();
