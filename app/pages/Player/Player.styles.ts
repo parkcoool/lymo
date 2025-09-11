@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -10,7 +11,9 @@ export const Container = styled.div`
   align-self: stretch;
 `;
 
-export const Lyrics = styled.div`
+export const Lyrics = styled(motion.div).attrs({
+  layout: true,
+})`
   display: flex;
   flex-direction: column;
   align-items: flex-start;

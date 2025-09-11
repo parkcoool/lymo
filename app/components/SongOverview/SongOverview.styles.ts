@@ -1,8 +1,11 @@
+import { motion } from "motion/react";
 import styled from "styled-components";
 
 import IconWrapper from "~/components/IconWrapper";
 
-export const Wrapper = styled.div`
+export const Wrapper = styled(motion.div).attrs({
+  layout: true,
+})`
   display: flex;
   padding: 20px;
   flex-direction: column;
@@ -14,7 +17,7 @@ export const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-export const Background = styled.img`
+export const Background = styled(motion.img).attrs({ layout: true })`
   position: absolute;
   top: 0;
   left: 0;
@@ -25,7 +28,9 @@ export const Background = styled.img`
   filter: blur(16px) brightness(0.3);
 `;
 
-export const SongInfo = styled.div`
+export const SongInfo = styled(motion.div).attrs({
+  layout: true,
+})`
   display: flex;
   align-items: center;
   gap: 15px;
@@ -80,7 +85,11 @@ export const Description = styled.h2`
   text-align: left;
 `;
 
-export const OverviewWrapper = styled.div`
+export const OverviewWrapper = styled(motion.div).attrs({
+  layout: true,
+})<{
+  $showAll: boolean;
+}>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -88,9 +97,11 @@ export const OverviewWrapper = styled.div`
   align-self: stretch;
   overflow: hidden;
   z-index: 1;
+
+  ${({ $showAll }) => !$showAll && `max-height: 96px;`}
 `;
 
-export const Overview = styled.p<{ $showAll: boolean }>`
+export const Overview = styled(motion.p).attrs({ layout: true })`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   align-self: stretch;
@@ -100,16 +111,8 @@ export const Overview = styled.p<{ $showAll: boolean }>`
   font-style: normal;
   font-weight: 500;
   line-height: normal;
-
-  ${({ $showAll }) =>
-    $showAll
-      ? `
-      -webkit-line-clamp: unset;
-      overflow: visible;
-    `
-      : `
-      -webkit-line-clamp: 3;
-      overflow: hidden;`}
+  white-space: pre-wrap;
+  word-break: break-word;
 `;
 
 export const ShowAllButton = styled.button`
@@ -127,6 +130,7 @@ export const ShowAllButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  z-index: 1;
 `;
 
 export const ArrowDropDownIconWrapper = styled(IconWrapper)`
