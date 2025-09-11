@@ -7,7 +7,7 @@ import usePlayerStore from "~/contexts/usePlayerStore";
 import type { AppBarVariant } from "~/types/appBar";
 
 const AppBarVariants: Map<string, AppBarVariant> = new Map([
-  ["", "home"],
+  ["", "none"],
   ["player", "player"],
   ["search", "search"],
 ]);

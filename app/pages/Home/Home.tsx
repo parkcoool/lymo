@@ -28,7 +28,7 @@ export default function Home() {
           </S.LogoIconWrapper>
           Lymo
         </S.Brand>
-        <S.SearchBox id="search-box">음악 검색</S.SearchBox>
+        <S.SearchBox>음악 검색</S.SearchBox>
       </S.SearchSection>
 
       {/* 인기 섹션 */}

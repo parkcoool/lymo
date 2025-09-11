@@ -6,26 +6,19 @@ export default function useHomePageAppBarEffect() {
   const { setOverrideVariant, resetOverrideVariant } = useAppBarStore();
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setOverrideVariant("none");
-        } else {
-          resetOverrideVariant();
-        }
-      });
-    });
+    const handleScroll = () => {
+      if (window.scrollY > 330) {
+        setOverrideVariant("home");
+      } else {
+        resetOverrideVariant();
+      }
+    };
 
-    const searchSection = document.getElementById("search-box");
-    if (searchSection) {
-      observer.observe(searchSection);
-    }
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
 
     return () => {
-      if (searchSection) {
-        observer.unobserve(searchSection);
-      }
-      observer.disconnect();
+      window.removeEventListener("scroll", handleScroll);
       resetOverrideVariant();
     };
   }, []);
