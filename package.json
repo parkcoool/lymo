@@ -1,6 +1,9 @@
 {
   "name": "lymo",
   "type": "module",
+  "workspaces": [
+    "functions"
+  ],
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
