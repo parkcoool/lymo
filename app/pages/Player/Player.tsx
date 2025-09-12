@@ -8,7 +8,10 @@ import getLyrics from "~/apis/getLyrics";
 import getSongOverview from "~/apis/getSongOverview";
 import FooterPlayer from "~/components/FooterPlayer";
 import LyricsParagraph from "~/components/LyricsParagraph";
-import LyricsSentence from "~/components/LyricsSentence";
+import {
+  LyricsSentence,
+  LyricsSetenceSkeleton,
+} from "~/components/LyricsSentence";
 import SongOverview from "~/components/SongOverview";
 import usePlayerStore from "~/contexts/usePlayerStore";
 import useThemeStore from "~/contexts/useThemeStore";
@@ -90,17 +93,21 @@ export default function Player({ params }: Route.LoaderArgs) {
         />
 
         <S.Lyrics>
-          {lyrics?.map((paragraph, paragraphIndex) => (
-            <LyricsParagraph key={paragraphIndex}>
-              {paragraph.sentences.map((sentence, sentenceIndex) => (
-                <LyricsSentence
-                  key={sentenceIndex}
-                  sentence={sentence.text}
-                  translation={sentence.translation}
-                />
-              ))}
-            </LyricsParagraph>
-          ))}
+          {lyrics !== undefined ? (
+            lyrics?.map((paragraph, paragraphIndex) => (
+              <LyricsParagraph key={paragraphIndex}>
+                {paragraph.sentences.map((sentence, sentenceIndex) => (
+                  <LyricsSentence
+                    key={sentenceIndex}
+                    sentence={sentence.text}
+                    translation={sentence.translation}
+                  />
+                ))}
+              </LyricsParagraph>
+            ))
+          ) : (
+            <LyricsSetenceSkeleton />
+          )}
         </S.Lyrics>
       </LayoutGroup>
 
