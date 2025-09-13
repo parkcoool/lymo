@@ -8,4 +8,6 @@ typings/
 # Node.js dependency directory
 node_modules/
 *.local
+
 .genkit/
+serviceAccountKey.json

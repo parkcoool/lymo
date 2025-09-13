@@ -4,13 +4,13 @@ import { z } from "genkit";
 import parseLyrics from "../utils/parseLyrics";
 import ai from "../core/genkit";
 
-const getLyricsInputSchema = z.object({
+export const getLyricsInputSchema = z.object({
   title: z.string().describe("The title of the song"),
   artist: z.string().describe("The artist of the song"),
   duration: z.number().describe("The duration of the song in seconds"),
 });
 
-const getLyricsOutputSchema = z.object({
+export const getLyricsOutputSchema = z.object({
   lyrics: z.array(
     z.tuple([
       z.number().describe("The start time of the sentence in seconds"),

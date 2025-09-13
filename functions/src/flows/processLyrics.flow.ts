@@ -2,13 +2,13 @@ import { z } from "genkit";
 
 import ai from "../core/genkit";
 
-const processLyricsInputSchema = z.object({
+export const processLyricsInputSchema = z.object({
   title: z.string().describe("The title of the song"),
   artist: z.string().describe("The artist of the song"),
   duration: z.number().describe("The duration of the song in seconds"),
 });
 
-const processLyricsOutputSchema = z.object({
+export const processLyricsOutputSchema = z.object({
   overview: z.string().describe("An overall analysis of the lyrics"),
   paragraphs: z
     .array(

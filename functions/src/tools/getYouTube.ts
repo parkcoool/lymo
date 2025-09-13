@@ -7,18 +7,19 @@ import parseISO8601Duration from "../utils/parseISO8601Duration";
 
 dotenv.config();
 
-const getYouTubeInputSchema = z.object({
+export const getYouTubeInputSchema = z.object({
   title: z.string().describe("The title of the song"),
   artist: z.string().describe("The artist of the song"),
 });
 
-const getYouTubeOutputSchema = z.object({
+export const getYouTubeOutputSchema = z.object({
   videoId: z.string().describe("The YouTube video ID of the song"),
+  videoTitle: z.string().describe("The title of the YouTube video"),
   duration: z.number().describe("The duration of the song in seconds"),
 });
 
 type YouTubeSearchResponse = {
-  items: { id: { videoId: string } }[];
+  items: { id: { videoId: string }; snippet: { title: string } }[];
 };
 
 type YouTubeVideoResponse = {
@@ -40,7 +41,7 @@ const getYouTube = ai.defineTool(
       {
         params: {
           key: process.env.YOUTUBE_API_KEY,
-          part: "id",
+          part: "id, snippet",
           q: `${title} ${artist} audio`,
           type: "video",
           videoEmbeddable: "true",
@@ -55,6 +56,7 @@ const getYouTube = ai.defineTool(
       throw new Error("No video found on YouTube");
 
     const videoId = searchResponse.data.items[0].id.videoId;
+    const videoTitle = searchResponse.data.items[0].snippet.title;
 
     // 유튜브 비디오 길이 조회
     const videoResponse = await axios.get<YouTubeVideoResponse>(
@@ -77,7 +79,7 @@ const getYouTube = ai.defineTool(
       videoResponse.data.items[0].contentDetails.duration
     );
 
-    return { videoId, duration };
+    return { videoId, videoTitle, duration };
   }
 );
 
