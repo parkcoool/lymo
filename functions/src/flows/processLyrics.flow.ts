@@ -1,7 +1,6 @@
-import { type Genkit, z } from "genkit";
-import dotenv from "dotenv";
+import { z } from "genkit";
 
-dotenv.config();
+import ai from "../core/genkit";
 
 const processLyricsInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -38,16 +37,15 @@ const processLyricsOutputSchema = z.object({
     .describe("The paragraphs of the lyrics"),
 });
 
-export const registerProcessLyricsFlow = (ai: Genkit) =>
-  ai.defineFlow(
-    {
-      name: "lyricsProcessFlow",
-      inputSchema: processLyricsInputSchema,
-      outputSchema: processLyricsOutputSchema,
-    },
-    async ({ title, artist, duration }) => {
-      const { output } = await ai.generate({
-        system: `
+export const processLyricsFlow = ai.defineFlow(
+  {
+    name: "lyricsProcessFlow",
+    inputSchema: processLyricsInputSchema,
+    outputSchema: processLyricsOutputSchema,
+  },
+  async ({ title, artist, duration }) => {
+    const { output } = await ai.generate({
+      system: `
           너는 음악 평론가이자 가사 분석 전문가야.
           주어지는 곡의 가사를 분석해서, 곡에 대한 전반적인 소개와 각 문단에 대한 해석을 제공해줘.
           가져온 가사에 포함된 타임스탬프 값과 가사 원문은 절대로 변경하지 마.
@@ -57,26 +55,26 @@ export const registerProcessLyricsFlow = (ai: Genkit) =>
           각 문단과 라인의 분량이 너무 짧거나 해석이 불필요한 경우, 해석을 생략할 수 있어.
           만약 가사를 찾을 수 없으면, overview는 "가사를 찾을 수 없습니다."로, paragraphs는 빈 배열로 응답해줘.
           `,
-        prompt: `
+      prompt: `
           {
             "title": "${title}",
             "artist": "${artist}",
             "duration": ${duration}
           }
           위 JSON 객체는 사용자가 요청한 노래의 메타데이터야.`,
-        tools: ["getLyrics"],
-        output: {
-          schema: processLyricsOutputSchema,
-        },
-        config: {
-          temperature: 0.3,
-        },
-      });
+      tools: ["getLyrics"],
+      output: {
+        schema: processLyricsOutputSchema,
+      },
+      config: {
+        temperature: 0.3,
+      },
+    });
 
-      if (output === null) {
-        throw new Error("Response doesn't satisfy schema.");
-      }
-
-      return output;
+    if (output === null) {
+      throw new Error("Response doesn't satisfy schema.");
     }
-  );
+
+    return output;
+  }
+);
