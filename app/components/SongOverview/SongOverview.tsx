@@ -39,7 +39,7 @@ export default function SongOverview({
   );
 
   // 설명이 넘치는지 감지
-  const [isOverflowing, setIsOverflowing] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(true);
   useEffect(() => {
     const observer = new ResizeObserver(() => {
       if (overviewRef.current) {
