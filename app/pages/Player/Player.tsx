@@ -30,7 +30,7 @@ export default function Player({ params }: Route.LoaderArgs) {
   const songId = params.songId;
 
   const { setDynamicBackground, resetDynamicBackground } = useThemeStore();
-  const { isPlaying, playPause } = usePlayerStore();
+  const { isPlaying, playPause, time } = usePlayerStore();
   const theme = useTheme();
 
   // state로 전달된 보너스 데이터
@@ -92,7 +92,14 @@ export default function Player({ params }: Route.LoaderArgs) {
         </S.Lyrics>
       </LayoutGroup>
 
-      <S.Footer $backgroundColor={backgroundColor} $percentage={30}>
+      <S.Footer
+        $backgroundColor={backgroundColor}
+        style={
+          {
+            "--progress": `${(1 - time / (song?.duration ?? 1)) * 100}%`,
+          } as React.CSSProperties
+        }
+      >
         <FooterPlayer
           title={song?.title ?? bonusData?.title}
           artist={song?.artist ?? bonusData?.artist}

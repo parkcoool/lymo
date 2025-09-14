@@ -13,6 +13,8 @@ interface PlayerState {
     sourceProvider: SourceProvider,
     sourceId: string
   ) => void;
+  time: number;
+  setTime: (time: number) => void;
 }
 
 const usePlayerStore = create<PlayerState>((set) => ({
@@ -26,6 +28,8 @@ const usePlayerStore = create<PlayerState>((set) => ({
     })),
   setSong: (song, sourceProvider, sourceId) =>
     set({ song, sourceProvider, sourceId }),
+  time: 0,
+  setTime: (time) => set({ time }),
 }));
 
 export default usePlayerStore;

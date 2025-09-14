@@ -23,7 +23,6 @@ export const Lyrics = styled(motion.div).attrs({
 
 export const Footer = styled.div<{
   $backgroundColor: string;
-  $percentage: number;
 }>`
   display: flex;
   padding: 10px;
@@ -41,7 +40,7 @@ export const Footer = styled.div<{
     position: absolute;
     top: 0;
     left: 0;
-    right: ${(props) => 100 - props.$percentage}%;
+    right: var(--progress, 100%);
     height: 2px;
     background-color: ${({ theme }) => theme.colors.primary};
   }
