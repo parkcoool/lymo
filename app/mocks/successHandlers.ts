@@ -2,7 +2,7 @@ import type MockAdapter from "axios-mock-adapter";
 
 import type { GetLyricalSongsResponse } from "~/apis/getLyricalSongs";
 import type { GetLyricsResponse } from "~/apis/getLyrics";
-import type { GetPopularSongsResponse } from "~/apis/getPopularSongs";
+import type { SongDocument } from "~/apis/getPopularSongs";
 import type { GetSongResponse } from "~/apis/getSong";
 import type { GetSongOverviewResponse } from "~/apis/getSongOverview";
 import lyricsPreviews from "~/mocks/lyricsPreviews";
@@ -13,7 +13,7 @@ import processLyrics from "./processLyrics";
 
 const successHandlers = (mock: MockAdapter) => {
   // getPopularSongs
-  mock.onGet("/song/popular").reply<GetPopularSongsResponse>(200, {
+  mock.onGet("/song/popular").reply<SongDocument>(200, {
     songs: songs.map((song) => ({
       id: song.id,
       title: song.title,

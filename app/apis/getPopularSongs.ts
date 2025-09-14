@@ -1,21 +1,44 @@
-import api from "~/apis";
+import { collection, getDocs, limit, query } from "firebase/firestore";
+
+import { db } from "~/firebase";
 
 interface GetPopularSongsProps {
   page?: number;
 }
 
-export interface GetPopularSongsResponse {
-  songs: {
-    id: string;
-    title: string;
-    coverUrl: string;
+export interface SongDocument {
+  id: string;
+  title: string;
+  artist: string;
+  album: string;
+  coverUrl: string;
+  duration: number;
+  sourceProvider: string;
+  sourceId: string;
+  overview: string;
+  lyrics: {
+    summary: string | null;
+    setences: {
+      start: number;
+      end: number;
+      text: string;
+      translation: string | null;
+    };
   }[];
+
+  publishedAt: string;
 }
 
 export default async function getPopularSongs({
   page = 0,
 }: GetPopularSongsProps) {
-  return await api.get<GetPopularSongsResponse>("/song/popular", {
-    params: { page },
+  // TODO: Replace with actual popular song collection
+
+  const songRef = collection(db, "song");
+  const songSnap = await getDocs(songRef);
+  const result: SongDocument[] = [];
+  songSnap.forEach((doc) => {
+    result.push({ id: doc.id, ...doc.data() } as SongDocument);
   });
+  return result;
 }

@@ -7,7 +7,6 @@ export default function PopularSongList() {
   const { data: popularSongs } = useSuspenseQuery({
     queryKey: ["popularSongs"],
     queryFn: async () => getPopularSongs({}),
-    select: (data) => data.data.songs,
   });
 
   return (
