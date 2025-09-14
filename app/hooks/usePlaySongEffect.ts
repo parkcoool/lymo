@@ -3,7 +3,6 @@ import { useEffect } from "react";
 
 import getSong from "~/apis/getSong";
 import usePlayerStore from "~/contexts/usePlayerStore";
-import type { Song } from "~/types/song";
 
 export default function usePlaySongEffect(songId: string) {
   const { setSong } = usePlayerStore();
@@ -11,7 +10,6 @@ export default function usePlaySongEffect(songId: string) {
   const { data: song, isFetched } = useQuery({
     queryKey: ["song", songId],
     queryFn: () => getSong({ songId }),
-    select: (res) => res.data.song,
   });
 
   // 노래 데이터가 로드 완료됐을 시
@@ -27,5 +25,5 @@ export default function usePlaySongEffect(songId: string) {
     });
   }, [isFetched]);
 
-  return song as Song | undefined;
+  return song;
 }

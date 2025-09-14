@@ -1,27 +1,25 @@
-import api from "~/apis";
+import { doc, getDoc } from "firebase/firestore";
+
+import { db } from "~/firebase";
+import type { SongDetailDocument, SongDocument } from "~/types/song";
 
 interface GetSongProps {
   songId: string;
 }
 
-export interface GetSongResponse {
-  song: {
-    id: string;
-    title: string;
-    artist: string;
-    album: string | null;
-    duration: number;
-    lyricsProvider: "LRCLib" | null;
-    lyricsId: string | null;
-    sourceProvider: "YouTube";
-    sourceId: string;
-    coverUrl: string;
-    createdAt: string;
-  };
-}
-
 export default async function getSong({ songId }: GetSongProps) {
-  return await api.get<GetSongResponse>("/song", {
-    params: { songId },
-  });
+  const songRef = doc(db, "song", songId);
+  const detailRef = doc(db, "song", songId, "detail", "content");
+
+  const [songSnap, detailSnap] = await Promise.all([
+    getDoc(songRef),
+    getDoc(detailRef),
+  ]);
+
+  const result = {
+    id: songSnap.id,
+    ...songSnap.data(),
+    ...detailSnap.data(),
+  } as SongDocument & SongDetailDocument;
+  return result;
 }

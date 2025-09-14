@@ -24,7 +24,7 @@ export default function LyricsParagraph({
 
   return (
     <S.Container $isActive={isActive}>
-      <S.SetenceContainer>{children}</S.SetenceContainer>
+      <S.SentenceContainer>{children}</S.SentenceContainer>
       {summary && !hide && (
         <S.SummaryWrapper>
           <S.Summary>{summary}</S.Summary>

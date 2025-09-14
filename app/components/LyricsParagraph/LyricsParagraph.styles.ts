@@ -19,7 +19,7 @@ export const Container = styled.div<{ $isActive: boolean }>`
     );`}
 `;
 
-export const SetenceContainer = styled.div`
+export const SentenceContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;

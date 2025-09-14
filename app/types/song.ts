@@ -40,3 +40,29 @@ export interface LyricsParagraph {
 export type LyricsProvider = "LRCLib";
 
 export type SourceProvider = "YouTube";
+
+export interface SongDocument {
+  id: string;
+  title: string;
+  artist: string;
+  album: string;
+  coverUrl: string;
+  duration: number;
+  publishedAt: string | null;
+}
+
+export interface SongDetailDocument {
+  id: string;
+  sourceProvider: string;
+  sourceId: string;
+  overview: string;
+  lyrics: {
+    summary: string | null;
+    sentences: {
+      start: number;
+      end: number;
+      text: string;
+      translation: string | null;
+    }[];
+  }[];
+}

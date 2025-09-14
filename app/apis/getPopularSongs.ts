@@ -1,32 +1,10 @@
-import { collection, getDocs, limit, query } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 import { db } from "~/firebase";
+import type { SongDocument } from "~/types/song";
 
 interface GetPopularSongsProps {
   page?: number;
-}
-
-export interface SongDocument {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  coverUrl: string;
-  duration: number;
-  sourceProvider: string;
-  sourceId: string;
-  overview: string;
-  lyrics: {
-    summary: string | null;
-    setences: {
-      start: number;
-      end: number;
-      text: string;
-      translation: string | null;
-    };
-  }[];
-
-  publishedAt: string;
 }
 
 export default async function getPopularSongs({

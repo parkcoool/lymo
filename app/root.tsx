@@ -1,20 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import MockAdapter from "axios-mock-adapter";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { ThemeProvider } from "styled-components";
 
 import GlobalStyle from "~/styles/globalStyle";
 
 import type { Route } from "./+types/root";
-import api from "./apis";
 import useThemeStore from "./contexts/useThemeStore";
-import successHandlers from "./mocks/successHandlers";
 
 const queryClient = new QueryClient();
-
-// API 모킹 등록
-const mock = new MockAdapter(api);
-successHandlers(mock);
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://cdn.jsdelivr.net" },

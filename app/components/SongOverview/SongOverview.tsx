@@ -7,7 +7,7 @@ interface SongOverviewProps {
   title?: string;
   artist?: string;
   album?: string | null;
-  createdAt?: string;
+  createdAt?: string | null;
   coverUrl?: string;
   description?: string | null;
   coverElementRef?: React.Ref<HTMLImageElement>;
@@ -31,7 +31,10 @@ export default function SongOverview({
 
   // 발매 연도
   const year = useMemo(
-    () => (createdAt ? new Date(createdAt).getFullYear() : undefined),
+    () =>
+      typeof createdAt === "string"
+        ? new Date(createdAt).getFullYear()
+        : createdAt,
     [createdAt]
   );
 
@@ -63,8 +66,8 @@ export default function SongOverview({
         )}
         <S.SongInfoRight>
           {title ? <S.Title>{title}</S.Title> : <S.TitleSkeleton />}
-          {artist && album !== undefined && year ? (
-            <S.Description>{`${artist} • ${album ? `${album} • ` : ""}${year}`}</S.Description>
+          {artist && album !== undefined && year !== undefined ? (
+            <S.Description>{`${artist} • ${album ? `${album} • ` : ""}${year ?? ""}`}</S.Description>
           ) : (
             <S.DescriptionSkeleton />
           )}

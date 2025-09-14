@@ -22,7 +22,7 @@ export const processLyricsOutputSchema = z.object({
   paragraphs: z
     .array(
       z.object({
-        setences: z.array(
+        sentences: z.array(
           z
             .object({
               start: z

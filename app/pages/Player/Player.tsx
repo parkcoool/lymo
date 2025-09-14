@@ -1,16 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import { LayoutGroup } from "motion/react";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router";
 import { useTheme } from "styled-components";
 
-import getLyrics from "~/apis/getLyrics";
-import getSongOverview from "~/apis/getSongOverview";
 import FooterPlayer from "~/components/FooterPlayer";
 import LyricsParagraph from "~/components/LyricsParagraph";
 import {
   LyricsSentence,
-  LyricsSetenceSkeleton,
+  LyricsSentenceSkeleton,
 } from "~/components/LyricsSentence";
 import SongOverview from "~/components/SongOverview";
 import usePlayerStore from "~/contexts/usePlayerStore";
@@ -42,25 +39,6 @@ export default function Player({ params }: Route.LoaderArgs) {
 
   // 노래 데이터 로드 및 플레이어 상태에 반영
   const song = usePlaySongEffect(songId);
-  const { data: overview } = useQuery({
-    queryKey: ["songOverview", songId],
-    queryFn: () => getSongOverview({ songId }),
-    select: (data) => data.data.overview,
-  });
-
-  // 가사 데이터 로드
-  const { data: lyrics } = useQuery({
-    queryKey: ["lyrics", song?.lyricsId],
-    queryFn: () =>
-      song
-        ? getLyrics({
-            lyricsProvider: song?.lyricsProvider,
-            lyricsId: song?.lyricsId,
-          })
-        : null,
-    select: (data) => data?.data.lyrics,
-    enabled: song !== undefined,
-  });
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
@@ -86,15 +64,15 @@ export default function Player({ params }: Route.LoaderArgs) {
           title={song?.title ?? bonusData?.title}
           artist={song?.artist ?? bonusData?.artist}
           album={song?.album}
-          createdAt={song?.createdAt}
+          createdAt={song?.publishedAt}
           coverUrl={song?.coverUrl ?? bonusData?.coverUrl}
-          description={overview}
+          description={song?.overview}
           coverElementRef={coverElementRef}
         />
 
         <S.Lyrics>
-          {lyrics !== undefined ? (
-            lyrics?.map((paragraph, paragraphIndex) => (
+          {song?.lyrics !== undefined ? (
+            song?.lyrics.map((paragraph, paragraphIndex) => (
               <LyricsParagraph key={paragraphIndex}>
                 {paragraph.sentences.map((sentence, sentenceIndex) => (
                   <LyricsSentence
@@ -106,7 +84,7 @@ export default function Player({ params }: Route.LoaderArgs) {
               </LyricsParagraph>
             ))
           ) : (
-            <LyricsSetenceSkeleton />
+            <LyricsSentenceSkeleton />
           )}
         </S.Lyrics>
       </LayoutGroup>

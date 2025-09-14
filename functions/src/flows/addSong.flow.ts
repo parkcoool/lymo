@@ -164,6 +164,7 @@ export const addSongFlow = ai.defineFlow(
 
     const docRef = songCollection.doc();
     const detailCollectionRef = docRef.collection("detail");
+    const detailDocRef = detailCollectionRef.doc("content");
 
     // db 등록
     await Promise.all([
@@ -175,7 +176,7 @@ export const addSongFlow = ai.defineFlow(
         duration,
         publishedAt: song.publishedAt,
       }),
-      detailCollectionRef.add({
+      detailDocRef.set({
         sourceProvider: "YouTube",
         sourceId: videoId,
         overview,
