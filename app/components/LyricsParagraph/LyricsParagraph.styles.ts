@@ -41,7 +41,8 @@ export const SummaryWrapper = styled(motion.div).attrs({ layout: true })<{
   align-self: stretch;
   border-radius: 16px;
   background-color: ${({ theme, $isActive }) =>
-    $isActive ? theme.colors.surface : `${theme.colors.surface}80`};
+    $isActive ? `${theme.colors.surface}b3` : `${theme.colors.surface}80`};
+  backdrop-filter: blur(4px);
   ${({ $isActive }) =>
     $isActive &&
     `
