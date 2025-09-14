@@ -53,7 +53,7 @@ export interface SongDocument {
 
 export interface SongDetailDocument {
   id: string;
-  sourceProvider: string;
+  sourceProvider: SourceProvider;
   sourceId: string;
   overview: string;
   lyrics: {

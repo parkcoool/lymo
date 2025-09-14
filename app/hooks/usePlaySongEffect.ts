@@ -5,7 +5,7 @@ import getSong from "~/apis/getSong";
 import usePlayerStore from "~/contexts/usePlayerStore";
 
 export default function usePlaySongEffect(songId: string) {
-  const { setSong } = usePlayerStore();
+  const { setSong, playPause } = usePlayerStore();
 
   const { data: song, isFetched } = useQuery({
     queryKey: ["song", songId],
@@ -16,13 +16,18 @@ export default function usePlaySongEffect(songId: string) {
   useEffect(() => {
     if (!isFetched || !song) return;
 
-    setSong({
-      id: song.id,
-      title: song.title,
-      artist: song.artist,
-      duration: song.duration,
-      coverUrl: song.coverUrl,
-    });
+    setSong(
+      {
+        id: song.id,
+        title: song.title,
+        artist: song.artist,
+        duration: song.duration,
+        coverUrl: song.coverUrl,
+      },
+      song.sourceProvider,
+      song.sourceId
+    );
+    playPause(true);
   }, [isFetched]);
 
   return song;

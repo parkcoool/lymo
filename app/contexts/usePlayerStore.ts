@@ -1,19 +1,31 @@
 import { create } from "zustand";
 
-import type { CompactSong } from "~/types/song";
+import type { CompactSong, SourceProvider } from "~/types/song";
 
 interface PlayerState {
   isPlaying: boolean;
   song: CompactSong | null;
-  playPause: () => void;
-  setSong: (song: CompactSong) => void;
+  sourceProvider: SourceProvider | null;
+  sourceId: string | null;
+  playPause: (play?: boolean) => void;
+  setSong: (
+    song: CompactSong,
+    sourceProvider: SourceProvider,
+    sourceId: string
+  ) => void;
 }
 
 const usePlayerStore = create<PlayerState>((set) => ({
   isPlaying: false,
   song: null,
-  playPause: () => set((state) => ({ isPlaying: !state.isPlaying })),
-  setSong: (song) => set({ song }),
+  sourceProvider: null,
+  sourceId: null,
+  playPause: (play?: boolean) =>
+    set((state) => ({
+      isPlaying: play ?? !state.isPlaying,
+    })),
+  setSong: (song, sourceProvider, sourceId) =>
+    set({ song, sourceProvider, sourceId }),
 }));
 
 export default usePlayerStore;
