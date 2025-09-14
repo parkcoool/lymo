@@ -73,7 +73,10 @@ export default function Player({ params }: Route.LoaderArgs) {
         <S.Lyrics>
           {song?.lyrics !== undefined ? (
             song?.lyrics.map((paragraph, paragraphIndex) => (
-              <LyricsParagraph key={paragraphIndex}>
+              <LyricsParagraph
+                key={paragraphIndex}
+                summary={paragraph.summary ?? undefined}
+              >
                 {paragraph.sentences.map((sentence, sentenceIndex) => (
                   <LyricsSentence
                     key={sentenceIndex}
