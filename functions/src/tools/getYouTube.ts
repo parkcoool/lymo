@@ -1,11 +1,11 @@
 import axios from "axios";
 import { z } from "genkit";
-import dotenv from "dotenv";
+import { defineSecret } from "firebase-functions/params";
 
 import ai from "../core/genkit";
 import parseISO8601Duration from "../utils/parseISO8601Duration";
 
-dotenv.config();
+const youtubeApiKey = defineSecret("YOUTUBE_API_KEY");
 
 export const getYouTubeInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -26,7 +26,7 @@ type YouTubeVideoResponse = {
   items: { contentDetails: { duration: string } }[];
 };
 
-const getYouTube = ai.defineTool(
+export const getYouTube = ai.defineTool(
   {
     name: "getYouTube",
     inputSchema: getYouTubeInputSchema,
@@ -40,9 +40,9 @@ const getYouTube = ai.defineTool(
       "https://www.googleapis.com/youtube/v3/search",
       {
         params: {
-          key: process.env.YOUTUBE_API_KEY,
+          key: youtubeApiKey.value(),
           part: "id, snippet",
-          q: `${title} ${artist} audio`,
+          q: `${artist} ${title} lyrics`,
           type: "video",
           videoEmbeddable: "true",
           videoSyndicated: "true",
@@ -63,7 +63,7 @@ const getYouTube = ai.defineTool(
       "https://www.googleapis.com/youtube/v3/videos",
       {
         params: {
-          key: process.env.YOUTUBE_API_KEY,
+          key: youtubeApiKey.value(),
           part: "contentDetails",
           id: videoId,
         },
@@ -82,5 +82,3 @@ const getYouTube = ai.defineTool(
     return { videoId, videoTitle, duration };
   }
 );
-
-export default getYouTube;

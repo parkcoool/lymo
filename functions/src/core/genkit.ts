@@ -1,12 +1,16 @@
-import { genkit } from "genkit";
+import { Genkit, genkit } from "genkit";
 import { googleAI } from "@genkit-ai/google-genai";
-import dotenv from "dotenv";
+import { defineSecret } from "firebase-functions/params";
 
-dotenv.config();
+const geminiApiKey = defineSecret("GEMINI_API_KEY");
 
-const ai = genkit({
+const ai: Genkit = genkit({
   model: "googleai/gemini-2.5-flash",
-  plugins: [googleAI({ apiKey: process.env.GOOGLE_API_KEY! })],
+  plugins: [
+    googleAI({
+      apiKey: geminiApiKey.value(),
+    }),
+  ],
 });
 
 export default ai;

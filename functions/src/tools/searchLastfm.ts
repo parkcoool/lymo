@@ -1,7 +1,10 @@
+import { defineSecret } from "firebase-functions/params";
 import axios from "axios";
 import { z } from "genkit";
 
 import ai from "../core/genkit";
+
+const lastfmApiKey = defineSecret("LASTFM_API_KEY");
 
 export const searchLastfmInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -41,7 +44,7 @@ type LastfmSearchResponse = {
   };
 };
 
-const searchLastfm = ai.defineTool(
+export const searchLastfm = ai.defineTool(
   {
     name: "searchLastfm",
     inputSchema: searchLastfmInputSchema,
@@ -54,7 +57,7 @@ const searchLastfm = ai.defineTool(
       "https://ws.audioscrobbler.com/2.0/?method=track.getInfo",
       {
         params: {
-          api_key: process.env.LASTFM_API_KEY,
+          api_key: lastfmApiKey.value(),
           track: title,
           artist,
           format: "json",
@@ -92,5 +95,3 @@ const searchLastfm = ai.defineTool(
     };
   }
 );
-
-export default searchLastfm;

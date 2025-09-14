@@ -2,9 +2,9 @@ import admin from "firebase-admin";
 import { z } from "genkit";
 
 import ai from "../core/genkit";
-import getYouTube from "../tools/getYouTube";
-import searchLRCLib, { searchLRCLibOutputSchema } from "../tools/searchLRCLib";
-import searchLastfm from "../tools/searchLastfm";
+import { getYouTube } from "../tools/getYouTube";
+import { searchLRCLib, searchLRCLibOutputSchema } from "../tools/searchLRCLib";
+import { searchLastfm } from "../tools/searchLastfm";
 import { processLyricsFlow } from "./processLyrics.flow";
 
 export const addSongInputSchema = z.object({
@@ -75,7 +75,7 @@ export const addSongFlow = ai.defineFlow(
           * 확정된 노래의 공식 영문 제목(englishTitle)을 추론한다. (주의: 기계 번역이나 직역이 아님)
 
       ### 예외 처리 규칙(Rules)
-      주어진 정보만으로 아티스트의 공식 활동명이나 노래의 공식 제목을 알 수 없으면 각 값은 null을 반환한다.
+      주어진 정보만으로 아티스트의 공식 활동명이나 노래의 공식 제목을 알 수 없으면 각 값은 null 값으로 설정한다.
       `,
       prompt: `
           {
@@ -143,15 +143,15 @@ export const addSongFlow = ai.defineFlow(
       return null;
     }
 
-    const id = `${lrclibResult.title}-${lrclibResult.artist}`.replace(
-      / /g,
-      "_"
-    );
-    const doc = admin.firestore().collection("song").doc(id);
+    const songCollection = admin.firestore().collection("song");
+    const existingDoc = await songCollection
+      .where("title", "==", song.title)
+      .where("artist", "==", song.artist)
+      .get();
 
     // 중복 등록 방지
-    if ((await doc.get()).exists) {
-      return id;
+    if (existingDoc.size > 0) {
+      return existingDoc.docs[0].id;
     }
 
     const { overview, paragraphs } = await processLyricsFlow({
@@ -161,6 +161,8 @@ export const addSongFlow = ai.defineFlow(
       lyrics: lrclibResult.lyrics,
       summary: song.summary,
     });
+
+    const doc = songCollection.doc();
 
     // db 등록
     await doc.set({

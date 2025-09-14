@@ -29,7 +29,7 @@ export const searchLRCLibOutputSchema = z.object({
 
 type LRCLibSearchResponse = LRCLibSong[];
 
-const searchLRCLib = ai.defineTool(
+export const searchLRCLib = ai.defineTool(
   {
     name: "searchLRCLib",
     inputSchema: searchLRCLibInputSchema,
@@ -78,5 +78,3 @@ const searchLRCLib = ai.defineTool(
     };
   }
 );
-
-export default searchLRCLib;
