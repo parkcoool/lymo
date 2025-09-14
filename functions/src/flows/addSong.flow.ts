@@ -144,14 +144,14 @@ export const addSongFlow = ai.defineFlow(
     }
 
     const songCollection = admin.firestore().collection("song");
-    const existingDoc = await songCollection
+    const matchingSongRef = await songCollection
       .where("title", "==", song.title)
       .where("artist", "==", song.artist)
       .get();
 
     // 중복 등록 방지
-    if (existingDoc.size > 0) {
-      return existingDoc.docs[0].id;
+    if (matchingSongRef.size > 0) {
+      return matchingSongRef.docs[0].id;
     }
 
     const { overview, paragraphs } = await processLyricsFlow({
@@ -162,22 +162,27 @@ export const addSongFlow = ai.defineFlow(
       summary: song.summary,
     });
 
-    const doc = songCollection.doc();
+    const docRef = songCollection.doc();
+    const detailCollectionRef = docRef.collection("detail");
 
     // db 등록
-    await doc.set({
-      title: song.title,
-      artist: song.artist,
-      album: song.album,
-      coverUrl: song.coverUrl,
-      duration,
-      sourceProvider: "YouTube",
-      sourceId: videoId,
-      overview,
-      lyrics: paragraphs,
-      publishedAt: song.publishedAt,
-    });
+    await Promise.all([
+      docRef.set({
+        title: song.title,
+        artist: song.artist,
+        album: song.album,
+        coverUrl: song.coverUrl,
+        duration,
+        publishedAt: song.publishedAt,
+      }),
+      detailCollectionRef.add({
+        sourceProvider: "YouTube",
+        sourceId: videoId,
+        overview,
+        lyrics: paragraphs,
+      }),
+    ]);
 
-    return doc.id;
+    return docRef.id;
   }
 );
