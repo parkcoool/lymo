@@ -1,22 +1,9 @@
 import axios from "axios";
-import { z } from "genkit";
 import { defineSecret } from "firebase-functions/params";
 
-import ai from "../core/genkit";
 import parseISO8601Duration from "../utils/parseISO8601Duration";
 
 const youtubeApiKey = defineSecret("YOUTUBE_API_KEY");
-
-export const getYouTubeInputSchema = z.object({
-  title: z.string().describe("The title of the song"),
-  artist: z.string().describe("The artist of the song"),
-});
-
-export const getYouTubeOutputSchema = z.object({
-  videoId: z.string().describe("The YouTube video ID of the song"),
-  videoTitle: z.string().describe("The title of the YouTube video"),
-  duration: z.number().describe("The duration of the song in seconds"),
-});
 
 type YouTubeSearchResponse = {
   items: { id: { videoId: string }; snippet: { title: string } }[];
@@ -26,39 +13,39 @@ type YouTubeVideoResponse = {
   items: { contentDetails: { duration: string } }[];
 };
 
-export const getYouTube = ai.defineTool(
-  {
-    name: "getYouTube",
-    inputSchema: getYouTubeInputSchema,
-    outputSchema: getYouTubeOutputSchema,
-    description:
-      "Fetch the YouTube video ID and duration of a song given its title and artist",
-  },
-  async ({ title, artist }) => {
-    // 유튜브 비디오 검색
-    const searchResponse = await axios.get<YouTubeSearchResponse>(
-      "https://www.googleapis.com/youtube/v3/search",
-      {
-        params: {
-          key: youtubeApiKey.value(),
-          part: "id, snippet",
-          q: `${artist} ${title} lyrics`,
-          type: "video",
-          videoEmbeddable: "true",
-          videoSyndicated: "true",
-        },
-      }
-    );
+interface GetYouTubeProps {
+  title: string;
+  artist: string;
+}
 
-    if (searchResponse.status !== 200)
-      throw new Error("Failed to fetch video from YouTube");
-    if (searchResponse.data.items.length === 0)
-      throw new Error("No video found on YouTube");
+export async function* getYouTube({ title, artist }: GetYouTubeProps) {
+  // 유튜브 비디오 검색
+  const searchResponse = await axios.get<YouTubeSearchResponse>(
+    "https://www.googleapis.com/youtube/v3/search",
+    {
+      params: {
+        key: youtubeApiKey.value(),
+        part: "id, snippet",
+        q: `${artist} ${title} lyrics`,
+        type: "video",
+        videoEmbeddable: "true",
+        videoSyndicated: "true",
+      },
+    }
+  );
 
-    const videoId = searchResponse.data.items[0].id.videoId;
-    const videoTitle = searchResponse.data.items[0].snippet.title;
+  if (searchResponse.status !== 200)
+    throw new Error("Failed to fetch video from YouTube");
+  if (searchResponse.data.items.length === 0)
+    throw new Error("No video found on YouTube");
 
-    // 유튜브 비디오 길이 조회
+  const videos = searchResponse.data.items.slice(0, 3); // 상위 3개 결과만 고려
+
+  // 유튜브 비디오 길이 조회
+  for (const video of videos) {
+    const videoId = video.id.videoId;
+    const videoTitle = video.snippet.title;
+
     const videoResponse = await axios.get<YouTubeVideoResponse>(
       "https://www.googleapis.com/youtube/v3/videos",
       {
@@ -79,6 +66,6 @@ export const getYouTube = ai.defineTool(
       videoResponse.data.items[0].contentDetails.duration
     );
 
-    return { videoId, videoTitle, duration };
+    yield { videoId, videoTitle, duration };
   }
-);
+}
