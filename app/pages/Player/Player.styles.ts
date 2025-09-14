@@ -12,6 +12,7 @@ export const Container = styled.div`
 `;
 
 export const SongOverviewWrapper = styled.div`
+  align-self: stretch;
   margin: 0 10px;
 `;
 
