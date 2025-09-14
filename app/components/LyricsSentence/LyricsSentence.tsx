@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 import * as S from "./LyricsSentence.styles";
 
 interface LyricsParagraphProps {
@@ -11,8 +13,25 @@ export default function LyricsParagraph({
   translation,
   isActive = false,
 }: LyricsParagraphProps) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isActive) {
+      const element = ref.current;
+      if (!element) return;
+
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - 400;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  }, [isActive]);
+
   return (
-    <S.Wrapper>
+    <S.Wrapper ref={ref}>
       <S.Sentence $isActive={isActive}>{sentence}</S.Sentence>
       {translation && (
         <S.Translation $isActive={isActive}>{translation}</S.Translation>

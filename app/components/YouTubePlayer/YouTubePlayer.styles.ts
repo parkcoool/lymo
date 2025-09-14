@@ -4,6 +4,6 @@ export const Wrapper = styled.div`
   position: fixed;
   bottom: 0;
   left: 0;
-  opacity: 0.5;
+  display: none;
   pointer-events: none;
 `;

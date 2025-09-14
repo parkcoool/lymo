@@ -24,34 +24,32 @@ export default function LyricsParagraph({
 
   return (
     <S.Container $isActive={isActive}>
-      <S.SentenceContainer>{children}</S.SentenceContainer>
       {summary && !hide && (
-        <S.SummaryWrapper>
+        <S.SummaryWrapper $isActive={isActive}>
           <S.Summary>{summary}</S.Summary>
-          {onReport && (
-            <S.SummaryFooter>
-              <IconButton
-                onClick={onReport}
-                title="문제 신고"
-                aria-label="문제 신고"
-              >
-                <S.SummaryActionIconWrapper>
-                  <MdReport />
-                </S.SummaryActionIconWrapper>
-              </IconButton>
-              <IconButton
-                onClick={handleHide}
-                title="설명 숨기기"
-                aria-label="설명 숨기기"
-              >
-                <S.SummaryActionIconWrapper>
-                  <MdClose />
-                </S.SummaryActionIconWrapper>
-              </IconButton>
-            </S.SummaryFooter>
-          )}
+          <S.SummaryFooter>
+            <IconButton
+              onClick={onReport}
+              title="문제 신고"
+              aria-label="문제 신고"
+            >
+              <S.SummaryActionIconWrapper>
+                <MdReport />
+              </S.SummaryActionIconWrapper>
+            </IconButton>
+            <IconButton
+              onClick={handleHide}
+              title="설명 숨기기"
+              aria-label="설명 숨기기"
+            >
+              <S.SummaryActionIconWrapper>
+                <MdClose />
+              </S.SummaryActionIconWrapper>
+            </IconButton>
+          </S.SummaryFooter>
         </S.SummaryWrapper>
       )}
+      <S.SentenceContainer>{children}</S.SentenceContainer>
     </S.Container>
   );
 }

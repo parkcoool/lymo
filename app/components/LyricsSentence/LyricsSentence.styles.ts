@@ -28,6 +28,9 @@ export const Sentence = styled.p<{ $isActive: boolean }>`
   line-height: 120%;
   color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.onBackground : theme.colors.onBackgroundSubtle};
+  transition:
+    font-weight 0.2s ease,
+    color 0.2s ease;
 `;
 
 export const Translation = styled.p<{ $isActive: boolean }>`
@@ -37,4 +40,7 @@ export const Translation = styled.p<{ $isActive: boolean }>`
   line-height: 120%;
   color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.onBackground : theme.colors.onBackgroundSubtle};
+  transition:
+    font-weight 0.2s ease,
+    color 0.2s ease;
 `;

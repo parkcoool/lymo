@@ -3,12 +3,16 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
-  padding: 90px 10px 100px 10px;
+  padding: 90px 0 100px 0;
   flex-direction: column;
   align-items: flex-start;
   gap: 20px;
   flex: 1 0 0;
   align-self: stretch;
+`;
+
+export const SongOverviewWrapper = styled.div`
+  margin: 0 10px;
 `;
 
 export const Lyrics = styled(motion.div).attrs({
@@ -34,6 +38,7 @@ export const Footer = styled.div<{
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 101;
 
   &:after {
     content: "";

@@ -60,15 +60,17 @@ export default function Player({ params }: Route.LoaderArgs) {
   return (
     <S.Container>
       <LayoutGroup>
-        <SongOverview
-          title={song?.title ?? bonusData?.title}
-          artist={song?.artist ?? bonusData?.artist}
-          album={song?.album}
-          createdAt={song?.publishedAt}
-          coverUrl={song?.coverUrl ?? bonusData?.coverUrl}
-          description={song?.overview}
-          coverElementRef={coverElementRef}
-        />
+        <S.SongOverviewWrapper>
+          <SongOverview
+            title={song?.title ?? bonusData?.title}
+            artist={song?.artist ?? bonusData?.artist}
+            album={song?.album}
+            createdAt={song?.publishedAt}
+            coverUrl={song?.coverUrl ?? bonusData?.coverUrl}
+            description={song?.overview}
+            coverElementRef={coverElementRef}
+          />
+        </S.SongOverviewWrapper>
 
         <S.Lyrics>
           {song?.lyrics !== undefined ? (
@@ -76,12 +78,18 @@ export default function Player({ params }: Route.LoaderArgs) {
               <LyricsParagraph
                 key={paragraphIndex}
                 summary={paragraph.summary ?? undefined}
+                isActive={
+                  time >= paragraph.sentences[0].start &&
+                  time <=
+                    paragraph.sentences[paragraph.sentences.length - 1].end
+                }
               >
                 {paragraph.sentences.map((sentence, sentenceIndex) => (
                   <LyricsSentence
                     key={sentenceIndex}
                     sentence={sentence.text}
                     translation={sentence.translation}
+                    isActive={time >= sentence.start && time <= sentence.end}
                   />
                 ))}
               </LyricsParagraph>

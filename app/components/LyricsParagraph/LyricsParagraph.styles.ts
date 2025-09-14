@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import styled from "styled-components";
 
 import IconWrapper from "../IconWrapper";
@@ -10,6 +11,7 @@ export const Container = styled.div<{ $isActive: boolean }>`
   gap: 20px;
   align-self: stretch;
   border-radius: 16px;
+  margin: 0 5px;
   ${({ $isActive }) =>
     $isActive &&
     `background: linear-gradient(
@@ -27,7 +29,9 @@ export const SentenceContainer = styled.div`
   align-self: stretch;
 `;
 
-export const SummaryWrapper = styled.div`
+export const SummaryWrapper = styled(motion.div).attrs({ layout: true })<{
+  $isActive: boolean;
+}>`
   display: flex;
   padding: 20px;
   flex-direction: column;
@@ -36,7 +40,17 @@ export const SummaryWrapper = styled.div`
   gap: 10px;
   align-self: stretch;
   border-radius: 16px;
-  background-color: ${({ theme }) => theme.colors.surface}80;
+  background-color: ${({ theme, $isActive }) =>
+    $isActive ? theme.colors.surface : `${theme.colors.surface}80`};
+  ${({ $isActive }) =>
+    $isActive &&
+    `
+    position: sticky;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+  `}
+  top: 80px;
+  transition: background-color 0.3s ease;
 `;
 
 export const Summary = styled.p`
