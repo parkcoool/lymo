@@ -2,10 +2,12 @@ import admin from "firebase-admin";
 import { z } from "genkit";
 
 import ai from "../core/genkit";
-import { getYouTube } from "../tools/getYouTube";
-import { searchLRCLib, searchLRCLibOutputSchema } from "../tools/searchLRCLib";
+import { getYouTube, type YouTubeVideo } from "../utils/getYouTube";
+import { searchLRCLibOutputSchema } from "../tools/searchLRCLib";
 import { searchLastfm } from "../tools/searchLastfm";
+import { trySearchLRCLib } from "../tools/trySearchLRCLib";
 import { processLyricsFlow } from "./processLyrics.flow";
+import { inferSongMetadataFlow } from "./inferSongMetadata";
 
 export const addSongInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -37,10 +39,15 @@ export const metadataNormalizerOutputSchema = z.object({
     .nullable(),
 });
 
-// 1. 유튜브 검색을 통해 유튜브 동영상 제목, 트랙 길이 획득
-// 2. 유튜브 동영상 제목을 이용하여 LLM을 통해 제목/아티스트명 1차 교정
-// 3. LRCLib에서 음악 검색 후 가사 획득, 제목/아티스트명 2차 교정
-// 4. Last.fm에서 공식적인 정보 획득
+/**
+ * 음악 제목과 아티스트명을 입력받아 정확한 메타데이터와 가사를 포함한 음악 정보를 DB에 등록하는 플로우
+ * 1. 입력받은 제목/아티스트명을 이용하여 유튜브에서 동영상 검색
+ * 2. 입력받은 제목/아티스트명과 검색한 유튜브 동영상 제목을 바탕으로 LLM을 이용해 제목/아티스트명을 1차 교정
+ * 3. 교정한 제목/아티스트명과 유튜브 동영상 길이를 바탕으로 LRCLib에서 가사를 검색하고 제목/아티스트명을 2차 교정
+ * 4. 교정한 제목/아티스트명을 바탕으로 Last.fm에서 공식적인 메타데이터(앨범명, 발매일, 커버 이미지 등) 획득
+ * 5. 가사 요약 및 문단 분할을 위해 `processLyricsFlow` 플로우 실행
+ * 6. Firestore에 음악 메타데이터 및 가사 등록
+ */
 export const addSongFlow = ai.defineFlow(
   {
     name: "addSongFlow",
@@ -48,115 +55,58 @@ export const addSongFlow = ai.defineFlow(
     outputSchema: addSongOutputSchema,
   },
   async ({ title, artist }) => {
-    const combinations: [string, string][] = [];
-    let lrclibResult: z.infer<typeof searchLRCLibOutputSchema>["song"] = null;
-    let videoId = "";
-    let duration = 0;
+    // 1. 입력받은 제목/아티스트명을 이용하여 유튜브에서 동영상 검색
+
+    let inferredMetadata: z.infer<
+      typeof metadataNormalizerOutputSchema
+    > | null = null;
+    let lrcLibResult: z.infer<typeof searchLRCLibOutputSchema> | null = null;
+    let youtubeVideo: YouTubeVideo | null = null;
+
     const videos = getYouTube({ title, artist });
-
     for await (const video of videos) {
-      // 1. 유튜브 검색을 통해 유튜브 동영상 제목, 트랙 길이 획득
-      if (combinations.length === 0) {
-        // 2. 유튜브 동영상 제목을 이용하여 LLM을 통해 제목/아티스트명 1차 교정
-        const { output: metadatas } = await ai.generate({
-          system: `
-          # 역할(Role)
-          너는 음악 메타데이터를 구축하고 관리하는 최고 수준의 전문가이다. 너의 최우선 가치는 '정확성'과 '일관성'이다.
-    
-          # 임무(Task)
-          너는 오타가 있을 수 있는 {rawTitle}, {rawArtist}과 참조용 {videoTitle}을 입력받는다. 이 정보를 바탕으로 아래 단계를 논리적으로 수행하여 최종 결과를 JSON 형식으로 반환해야 한다.
-    
-          # 처리 단계(Chain-of-Thought)
-          1.  **분석 및 추론:**
-              * {videoTitle}의 내용을 분석하여 가장 가능성이 높은 정확한 아티스트와 노래 제목을 추론한다.
-    
-          2.  **정보 교정 및 확정:**
-              * 추론을 바탕으로 정확한 한국어 아티스트명(koreanArtist)과 노래 제목(koreanTitle)을 확정한다.
-    
-          3.  **영문명 탐색:**
-              * 확정된 아티스트의 공식 영문 활동명(englishArtist)을 추론한다. (주의: 단순 로마자 표기가 아님)
-              * 확정된 노래의 공식 영문 제목(englishTitle)을 추론한다. (주의: 기계 번역이나 직역이 아님)
-    
-          ### 예외 처리 규칙(Rules)
-          주어진 정보만으로 아티스트의 공식 활동명이나 노래의 공식 제목을 알 수 없으면 각 값은 null 값으로 설정한다.
-          `,
-          prompt: `
-              {
-                "rawTitle": "${title}",
-                "rawArtist": "${artist}",
-                "videoTitle": "${video.videoTitle}"
-              }`,
-          output: {
-            schema: metadataNormalizerOutputSchema,
-          },
-          config: {
-            temperature: 0.3,
-          },
+      // 2. 입력받은 제목/아티스트명과 검색한 유튜브 동영상 제목을 바탕으로 LLM을 이용해 제목/아티스트명을 1차 교정
+      if (inferredMetadata === null) {
+        inferredMetadata = await inferSongMetadataFlow({
+          title,
+          artist,
+          reference: video.videoTitle,
         });
-
-        if (metadatas === null) {
-          throw new Error("Response doesn't satisfy schema.");
-        }
-
-        const { koreanArtist, englishArtist, koreanTitle, englishTitle } =
-          metadatas;
-
-        // 가능한 모든 제목/아티스트명 조합 생성
-        if (koreanTitle && koreanArtist)
-          combinations.push([koreanTitle, koreanArtist]);
-        if (englishTitle && englishArtist)
-          combinations.push([englishTitle, englishArtist]);
-        if (koreanTitle && englishArtist)
-          combinations.push([koreanTitle, englishArtist]);
-        if (englishTitle && koreanArtist)
-          combinations.push([englishTitle, koreanArtist]);
-        if (combinations.length === 0) combinations.push([title, artist]);
       }
 
-      // 3. LRCLib에서 음악 검색 후 가사 획득, 제목/아티스트명 2차 교정
-      lrclibResult = null;
-      for (const [tryTitle, tryArtist] of combinations) {
-        const { song: trySong } = await searchLRCLib({
-          title: tryTitle,
-          artist: tryArtist,
-          duration: video.duration,
-        });
+      // 3. 교정한 제목/아티스트명과 유튜브 동영상 길이를 바탕으로 LRCLib에서 가사를 검색하고 제목/아티스트명을 2차 교정
+      lrcLibResult = await trySearchLRCLib({
+        ...inferredMetadata,
+        duration: video.duration,
+      });
 
-        // 음악을 못 찾았으면 다음 조합 시도
-        if (trySong === null) continue;
-        lrclibResult = trySong;
-        break;
-      }
-
-      // 적합한 후보가 없으면 index를 증가시키고 다시 시도
-      if (lrclibResult !== null) {
-        videoId = video.videoId;
-        duration = video.duration;
+      // 가사를 찾았으면 반복문 종료
+      if (lrcLibResult) {
+        youtubeVideo = video;
         break;
       }
     }
 
     // 유튜브 검색 결과를 다 사용했는데도 못 찾았으면 null 반환
-    if (lrclibResult === null) {
+    if (youtubeVideo === null || lrcLibResult === null) {
       return null;
     }
 
-    // 4. Last.fm에서 공식적인 정보 획득
+    // 4. 교정한 제목/아티스트명을 바탕으로 Last.fm에서 공식적인 메타데이터(앨범명, 발매일, 커버 이미지 등) 획득
     const lastfmResult = await searchLastfm({
-      title: lrclibResult.title,
-      artist: lrclibResult.artist,
+      title: lrcLibResult.title,
+      artist: lrcLibResult.artist,
     });
 
     // Last.fm에서 못 찾았으면 null 반환
-    const { song } = lastfmResult;
-    if (song === null) {
+    if (lastfmResult === null) {
       return null;
     }
 
     const songCollection = admin.firestore().collection("song");
     const matchingSongRef = await songCollection
-      .where("title", "==", song.title)
-      .where("artist", "==", song.artist)
+      .where("title", "==", lastfmResult.title)
+      .where("artist", "==", lastfmResult.artist)
       .get();
 
     // 중복 등록 방지
@@ -164,14 +114,16 @@ export const addSongFlow = ai.defineFlow(
       return matchingSongRef.docs[0].id;
     }
 
+    // 5. 가사 요약 및 문단 분할을 위해 `processLyricsFlow` 플로우 실행
     const { overview, paragraphs } = await processLyricsFlow({
-      title: lrclibResult.title,
-      artist: lrclibResult.artist,
-      album: song.album,
-      lyrics: lrclibResult.lyrics,
-      summary: song.summary,
+      title: lastfmResult.title,
+      artist: lastfmResult.artist,
+      album: lastfmResult.album,
+      lyrics: lrcLibResult.lyrics,
+      summary: lastfmResult.summary,
     });
 
+    // 6. Firestore에 음악 메타데이터 및 가사 등록
     const docRef = songCollection.doc();
     const detailCollectionRef = docRef.collection("detail");
     const detailDocRef = detailCollectionRef.doc("content");
@@ -179,16 +131,16 @@ export const addSongFlow = ai.defineFlow(
     // db 등록
     await Promise.all([
       docRef.set({
-        title: song.title,
-        artist: song.artist,
-        album: song.album,
-        coverUrl: song.coverUrl,
-        duration: duration,
-        publishedAt: song.publishedAt,
+        title: lastfmResult.title,
+        artist: lastfmResult.artist,
+        album: lastfmResult.album,
+        coverUrl: lastfmResult.coverUrl,
+        duration: youtubeVideo?.duration,
+        publishedAt: lastfmResult.publishedAt,
       }),
       detailDocRef.set({
         sourceProvider: "YouTube",
-        sourceId: videoId,
+        sourceId: youtubeVideo?.videoId,
         overview,
         lyrics: paragraphs,
       }),

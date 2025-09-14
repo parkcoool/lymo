@@ -11,21 +11,19 @@ export const searchLastfmInputSchema = z.object({
   artist: z.string().describe("The artist of the song"),
 });
 
-export const searchLastfmOutputSchema = z.object({
-  song: z
-    .object({
-      title: z.string().describe("The title of the song"),
-      artist: z.string().describe("The artist of the song"),
-      album: z.string().describe("The album of the song"),
-      coverUrl: z.string().describe("The cover URL of the song"),
-      publishedAt: z
-        .string()
-        .describe("The published date of the song")
-        .nullable(),
-      summary: z.string().describe("The summary of the song").nullable(),
-    })
-    .nullable(),
-});
+export const searchLastfmOutputSchema = z
+  .object({
+    title: z.string().describe("The title of the song"),
+    artist: z.string().describe("The artist of the song"),
+    album: z.string().describe("The album of the song"),
+    coverUrl: z.string().describe("The cover URL of the song"),
+    publishedAt: z
+      .string()
+      .describe("The published date of the song")
+      .nullable(),
+    summary: z.string().describe("The summary of the song").nullable(),
+  })
+  .nullable();
 
 type LastfmSearchResponse = {
   track?: {
@@ -70,7 +68,7 @@ export const searchLastfm = ai.defineTool(
 
     const track = response.data.track;
     if (!track) {
-      return { song: null };
+      return null;
     }
 
     const coverUrl =
@@ -84,14 +82,12 @@ export const searchLastfm = ai.defineTool(
     }
 
     return {
-      song: {
-        title: track.name,
-        artist: track.artist.name,
-        album: track.album.title,
-        coverUrl,
-        publishedAt,
-        summary,
-      },
+      title: track.name,
+      artist: track.artist.name,
+      album: track.album.title,
+      coverUrl,
+      publishedAt,
+      summary,
     };
   }
 );

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { defineSecret } from "firebase-functions/params";
 
-import parseISO8601Duration from "../utils/parseISO8601Duration";
+import parseISO8601Duration from "./parseISO8601Duration";
 
 const youtubeApiKey = defineSecret("YOUTUBE_API_KEY");
 
@@ -18,7 +18,16 @@ interface GetYouTubeProps {
   artist: string;
 }
 
-export async function* getYouTube({ title, artist }: GetYouTubeProps) {
+export interface YouTubeVideo {
+  videoId: string;
+  videoTitle: string;
+  duration: number;
+}
+
+export async function* getYouTube({
+  title,
+  artist,
+}: GetYouTubeProps): AsyncGenerator<YouTubeVideo> {
   // 유튜브 비디오 검색
   const searchResponse = await axios.get<YouTubeSearchResponse>(
     "https://www.googleapis.com/youtube/v3/search",

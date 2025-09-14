@@ -11,21 +11,19 @@ export const searchLRCLibInputSchema = z.object({
   duration: z.number().describe("The duration of the song in seconds"),
 });
 
-export const searchLRCLibOutputSchema = z.object({
-  song: z
-    .object({
-      lyrics: z.array(
-        z.tuple([
-          z.number().describe("The start time of the sentence in seconds"),
-          z.string().describe("The text of the sentence"),
-        ])
-      ),
-      title: z.string().describe("The title of the song"),
-      artist: z.string().describe("The artist of the song"),
-      album: z.string().describe("The album of the song"),
-    })
-    .nullable(),
-});
+export const searchLRCLibOutputSchema = z
+  .object({
+    lyrics: z.array(
+      z.tuple([
+        z.number().describe("The start time of the sentence in seconds"),
+        z.string().describe("The text of the sentence"),
+      ])
+    ),
+    title: z.string().describe("The title of the song"),
+    artist: z.string().describe("The artist of the song"),
+    album: z.string().describe("The album of the song"),
+  })
+  .nullable();
 
 type LRCLibSearchResponse = LRCLibSong[];
 
@@ -63,18 +61,17 @@ export const searchLRCLib = ai.defineTool(
 
     // 적합한 후보가 없으면 null 반환
     if (song === null) {
-      return { song: null };
+      return null;
     }
 
     // 형식 변환
     const lyrics = parseLyrics(song.syncedLyrics!);
+
     return {
-      song: {
-        lyrics,
-        title: song.name,
-        artist: song.artistName,
-        album: song.albumName,
-      },
+      lyrics,
+      title: song.name,
+      artist: song.artistName,
+      album: song.albumName,
     };
   }
 );
