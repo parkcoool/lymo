@@ -5,30 +5,33 @@ import getSong from "~/apis/getSong";
 import usePlayerStore from "~/contexts/usePlayerStore";
 
 export default function usePlaySongEffect(songId: string) {
-  const { setSong, playPause } = usePlayerStore();
+  const { player, song, setSong, setTime } = usePlayerStore();
 
-  const { data: song, isFetched } = useQuery({
+  const { data: newSong, isFetched } = useQuery({
     queryKey: ["song", songId],
     queryFn: () => getSong({ songId }),
   });
 
   // 노래 데이터가 로드 완료됐을 시
   useEffect(() => {
-    if (!isFetched || !song) return;
+    if (song?.id !== songId) {
+      setTime(0);
+    }
+
+    if (!isFetched || !newSong) return;
 
     setSong(
       {
-        id: song.id,
-        title: song.title,
-        artist: song.artist,
-        duration: song.duration,
-        coverUrl: song.coverUrl,
+        id: newSong.id,
+        title: newSong.title,
+        artist: newSong.artist,
+        duration: newSong.duration,
+        coverUrl: newSong.coverUrl,
       },
-      song.sourceProvider,
-      song.sourceId
+      newSong.sourceProvider,
+      newSong.sourceId
     );
-    playPause(true);
   }, [isFetched]);
 
-  return song;
+  return newSong;
 }

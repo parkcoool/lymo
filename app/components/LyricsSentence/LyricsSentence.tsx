@@ -6,14 +6,16 @@ interface LyricsParagraphProps {
   sentence: string;
   translation: string | null;
   isActive?: boolean;
+  onClick?: () => void;
 }
 
-export default function LyricsParagraph({
+export default function LyricsSentence({
   sentence,
   translation,
   isActive = false,
+  onClick,
 }: LyricsParagraphProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isActive) {
@@ -31,7 +33,7 @@ export default function LyricsParagraph({
   }, [isActive]);
 
   return (
-    <S.Wrapper ref={ref}>
+    <S.Wrapper ref={ref} onClick={onClick}>
       <S.Sentence $isActive={isActive}>{sentence}</S.Sentence>
       {translation && (
         <S.Translation $isActive={isActive}>{translation}</S.Translation>

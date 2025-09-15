@@ -17,11 +17,20 @@ import usePlayerStore from "~/contexts/usePlayerStore";
 import * as S from "./Home.styles";
 
 export default function Home() {
-  const { isPlaying, song, playPause } = usePlayerStore();
+  const { isPlaying, song, player } = usePlayerStore();
   const navigate = useNavigate();
 
   const handlePlayerExpand = () => {
     if (song) navigate(`/player/${song.id}`);
+  };
+
+  const handlePlayPause = () => {
+    if (!player.current) return;
+    if (isPlaying) {
+      player.current.pause();
+    } else {
+      player.current.play();
+    }
   };
 
   return (
@@ -80,7 +89,7 @@ export default function Home() {
             title={song.title}
             artist={song.artist}
             isPlaying={isPlaying}
-            onPlayPause={playPause}
+            onPlayPause={handlePlayPause}
             onExpand={handlePlayerExpand}
           />
         </S.MiniPlayerWrapper>

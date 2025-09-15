@@ -30,7 +30,7 @@ export default function Player({ params }: Route.LoaderArgs) {
   const songId = params.songId;
 
   const { setDynamicBackground, resetDynamicBackground } = useThemeStore();
-  const { isPlaying, playPause, time } = usePlayerStore();
+  const { isPlaying, time, setTime, player } = usePlayerStore();
   const theme = useTheme();
 
   // state로 전달된 보너스 데이터
@@ -56,6 +56,23 @@ export default function Player({ params }: Route.LoaderArgs) {
       coverColor ? darkenHexColor(coverColor, 80) : theme.colors.background,
     [coverColor, theme.colors.background]
   );
+
+  // 재생/일시정지 핸들러
+  const handlePlayPause = () => {
+    if (!player.current) return;
+    if (isPlaying) {
+      player.current.pause();
+    } else {
+      player.current.play();
+    }
+  };
+
+  // 문장 클릭 핸들러
+  const handleSentenceClick = (start: number) => {
+    if (!player.current) return;
+    player.current.currentTime = start + 0.1;
+    setTime(start + 0.1);
+  };
 
   return (
     <S.Container>
@@ -90,6 +107,7 @@ export default function Player({ params }: Route.LoaderArgs) {
                     sentence={sentence.text}
                     translation={sentence.translation}
                     isActive={time >= sentence.start && time <= sentence.end}
+                    onClick={() => handleSentenceClick(sentence.start)}
                   />
                 ))}
               </LyricsParagraph>
@@ -113,7 +131,7 @@ export default function Player({ params }: Route.LoaderArgs) {
           artist={song?.artist ?? bonusData?.artist}
           coverUrl={song?.coverUrl ?? bonusData?.coverUrl}
           isPlaying={isPlaying}
-          onPlayPause={playPause}
+          onPlayPause={handlePlayPause}
         />
       </S.Footer>
     </S.Container>

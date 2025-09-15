@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import { create } from "zustand";
 
 import type { CompactSong, SourceProvider } from "~/types/song";
@@ -7,7 +8,7 @@ interface PlayerState {
   song: CompactSong | null;
   sourceProvider: SourceProvider | null;
   sourceId: string | null;
-  playPause: (play?: boolean) => void;
+  setIsPlaying: (isPlaying: boolean) => void;
   setSong: (
     song: CompactSong,
     sourceProvider: SourceProvider,
@@ -15,6 +16,7 @@ interface PlayerState {
   ) => void;
   time: number;
   setTime: (time: number) => void;
+  player: RefObject<HTMLVideoElement | null>;
 }
 
 const usePlayerStore = create<PlayerState>((set) => ({
@@ -22,14 +24,12 @@ const usePlayerStore = create<PlayerState>((set) => ({
   song: null,
   sourceProvider: null,
   sourceId: null,
-  playPause: (play?: boolean) =>
-    set((state) => ({
-      isPlaying: play ?? !state.isPlaying,
-    })),
+  setIsPlaying: (isPlaying: boolean) => set({ isPlaying }),
   setSong: (song, sourceProvider, sourceId) =>
     set({ song, sourceProvider, sourceId }),
   time: 0,
   setTime: (time) => set({ time }),
+  player: { current: null },
 }));
 
 export default usePlayerStore;

@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import ReactPlayer from "react-player";
 
 import usePlayerStore from "~/contexts/usePlayerStore";
@@ -6,12 +6,12 @@ import usePlayerStore from "~/contexts/usePlayerStore";
 import * as S from "./YouTubePlayer.styles";
 
 export default function YouTubePlayer() {
-  const { isPlaying, sourceProvider, sourceId, setTime } = usePlayerStore();
-  const playerRef = useRef<HTMLVideoElement | null>(null);
+  const { setIsPlaying, player, sourceProvider, sourceId, setTime } =
+    usePlayerStore();
 
-  const setPlayerRef = useCallback((player: HTMLVideoElement) => {
-    if (!player) return;
-    playerRef.current = player;
+  const setPlayerRef = useCallback((ref: HTMLVideoElement) => {
+    if (!ref) return;
+    player.current = ref;
   }, []);
 
   return (
@@ -21,8 +21,12 @@ export default function YouTubePlayer() {
         <ReactPlayer
           ref={setPlayerRef}
           src={`https://www.youtube.com/watch?v=${sourceId}`}
-          playing={isPlaying}
-          onTimeUpdate={() => setTime(playerRef.current?.currentTime || 0)}
+          onTimeUpdate={() => setTime(player.current?.currentTime || 0)}
+          onPlaying={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onEnded={() => setIsPlaying(false)}
+          onError={() => setIsPlaying(false)}
+          onReady={() => player.current?.play()}
         />
       </S.Wrapper>
     )

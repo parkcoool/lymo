@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import styled from "styled-components";
 
-export const Wrapper = styled(motion.div).attrs({
+export const Wrapper = styled(motion.button).attrs({
   whileHover: { scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.1)" },
   whileTap: { scale: 0.98, backgroundColor: "rgba(255, 255, 255, 0.1)" },
 })`
@@ -18,6 +18,7 @@ export const Wrapper = styled(motion.div).attrs({
   cursor: pointer;
   border-radius: 16px;
   padding: 10px;
+  text-align: left;
   -webkit-tap-highlight-color: transparent;
 `;
 
