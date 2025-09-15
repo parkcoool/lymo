@@ -1,21 +1,18 @@
-import styled from "styled-components";
-
-import Skeleton from "~/components/Skeleton";
-
-const SentenceSkeleton = styled(Skeleton)`
-  width: 70%;
-  border-radius: 8px;
-  flex: 0 0 24px;
-`;
+import * as S from "./LyricsSentenceSkeleton.styles";
 
 export default function LyricsSentenceSkeleton() {
   return (
-    <>
-      <SentenceSkeleton />
-      <SentenceSkeleton />
-      <SentenceSkeleton />
-      <SentenceSkeleton />
-      <SentenceSkeleton />
-    </>
+    <S.Wrapper>
+      <S.SentenceSkeleton />
+      <S.TranslationSkeleton />
+      <S.SentenceSkeleton />
+      <S.TranslationSkeleton />
+      <S.SentenceSkeleton />
+      <S.TranslationSkeleton />
+      <S.SentenceSkeleton />
+      <S.TranslationSkeleton />
+      <S.SentenceSkeleton />
+      <S.TranslationSkeleton />
+    </S.Wrapper>
   );
 }
