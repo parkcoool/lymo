@@ -8,10 +8,11 @@ export const processLyricsInputSchema = z.object({
   album: z.string().nullable().describe("The album of the song"),
   lyrics: z
     .array(
-      z.tuple([
-        z.number().describe("The start time of the sentence in seconds"),
-        z.string().describe("The text of the sentence"),
-      ])
+      z.object({
+        start: z.number().describe("The start time of the sentence in seconds"),
+        end: z.number().describe("The end time of the sentence in seconds"),
+        text: z.string().describe("The text of the sentence"),
+      })
     )
     .describe("The lyrics of the song"),
   summary: z.string().nullable().describe("A brief summary of the song"),

@@ -14,10 +14,11 @@ export const searchLRCLibInputSchema = z.object({
 export const searchLRCLibOutputSchema = z
   .object({
     lyrics: z.array(
-      z.tuple([
-        z.number().describe("The start time of the sentence in seconds"),
-        z.string().describe("The text of the sentence"),
-      ])
+      z.object({
+        start: z.number().describe("The start time of the sentence in seconds"),
+        end: z.number().describe("The end time of the sentence in seconds"),
+        text: z.string().describe("The text of the sentence"),
+      })
     ),
     title: z.string().describe("The title of the song"),
     artist: z.string().describe("The artist of the song"),
