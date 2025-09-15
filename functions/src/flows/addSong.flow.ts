@@ -6,7 +6,7 @@ import { searchYouTube, YouTubeVideo } from "../tools/searchYouTube";
 import { LRCLibResult } from "../tools/searchLRCLib";
 import { searchLastfm } from "../tools/searchLastfm";
 import { trySearchLRCLib } from "../tools/trySearchLRCLib";
-import { processLyricsFlow } from "./processLyrics.flow";
+import { translateLyricsFlow } from "./translateLyrics.flow";
 import { inferSongMetadataFlow } from "./inferSongMetadata";
 
 export const addSongInputSchema = z.object({
@@ -45,8 +45,8 @@ export const metadataNormalizerOutputSchema = z.object({
  * 2. 입력받은 제목/아티스트명과 검색한 유튜브 동영상 제목을 바탕으로 LLM을 이용해 제목/아티스트명을 1차 교정
  * 3. 교정한 제목/아티스트명과 유튜브 동영상 길이를 바탕으로 LRCLib에서 가사를 검색하고 제목/아티스트명을 2차 교정
  * 4. 교정한 제목/아티스트명을 바탕으로 Last.fm에서 공식적인 메타데이터(앨범명, 발매일, 커버 이미지 등) 획득
- * 5. 가사 요약 및 문단 분할을 위해 `processLyricsFlow` 플로우 실행
- * 6. Firestore에 음악 메타데이터 및 가사 등록
+ * 5. 가사 번역을 위해 `translateLyricsFlow` 플로우 실행
+ * 6.
  */
 export const addSongFlow = ai.defineFlow(
   {
@@ -119,13 +119,12 @@ export const addSongFlow = ai.defineFlow(
       return matchingSongRef.docs[0].id;
     }
 
-    // 5. 가사 요약 및 문단 분할을 위해 `processLyricsFlow` 플로우 실행
-    const { overview, paragraphs } = await processLyricsFlow({
+    // 5. 가사 번역을 위해 `translateLyricsFlow` 플로우 실행
+    const lyrics = await translateLyricsFlow({
       title: lastfmResult.title,
       artist: lastfmResult.artist,
       album: lastfmResult.album,
       lyrics: lrcLibResult.lyrics,
-      summary: lastfmResult.summary,
     });
 
     // 6. Firestore에 음악 메타데이터 및 가사 등록
@@ -146,8 +145,7 @@ export const addSongFlow = ai.defineFlow(
       detailDocRef.set({
         sourceProvider: "YouTube",
         sourceId: youtubeVideo?.videoId,
-        overview,
-        lyrics: paragraphs,
+        lyrics,
       }),
     ]);
 

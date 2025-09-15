@@ -1,17 +1,17 @@
 import { onCallGenkit } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 
-import { processLyricsFlow } from "./processLyrics.flow";
+import { translateLyricsFlow } from "./translateLyrics.flow";
 
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
 
-const processLyrics = onCallGenkit(
+const translateLyrics = onCallGenkit(
   {
     authPolicy: (auth) => auth?.token?.email_verified ?? false,
     secrets: [geminiApiKey],
     region: "asia-northeast3",
   },
-  processLyricsFlow
+  translateLyricsFlow
 );
 
-export default processLyrics;
+export default translateLyrics;
