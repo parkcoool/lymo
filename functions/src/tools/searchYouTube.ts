@@ -30,13 +30,24 @@ export const searchYouTube = ai.defineTool(
   async ({ title, artist }) => {
     // 유튜브 비디오 검색
     const videos = await yt.search(`${title} ${artist} lyrics`);
-    const result = videos.map((video) => {
+    const result: YouTubeVideo[] = [];
+
+    videos.forEach((video) => {
       const videoId: string = video.id.videoId;
       const videoTitle: string = video.snippet.title;
       const duration: number = parseDuration(video.snippet.duration);
 
-      return { videoId, videoTitle, duration };
+      if (
+        ["karaoke", "노래방"].some((word) =>
+          videoTitle.toLowerCase().includes(word)
+        )
+      ) {
+        return;
+      }
+
+      result.push({ videoId, videoTitle, duration });
     });
+
     return result;
   }
 );
