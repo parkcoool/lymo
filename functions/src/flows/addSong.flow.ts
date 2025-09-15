@@ -2,7 +2,7 @@ import admin from "firebase-admin";
 import { z } from "genkit";
 
 import ai from "../core/genkit";
-import { getYouTube, type YouTubeVideo } from "../utils/getYouTube";
+import { searchYouTube, YouTubeVideo } from "../tools/searchYouTube";
 import { searchLRCLibOutputSchema } from "../tools/searchLRCLib";
 import { searchLastfm } from "../tools/searchLastfm";
 import { trySearchLRCLib } from "../tools/trySearchLRCLib";
@@ -63,8 +63,8 @@ export const addSongFlow = ai.defineFlow(
     let lrcLibResult: z.infer<typeof searchLRCLibOutputSchema> | null = null;
     let youtubeVideo: YouTubeVideo | null = null;
 
-    const videos = getYouTube({ title, artist });
-    for await (const video of videos) {
+    const videos = (await searchYouTube({ title, artist })).slice(0, 5); // 상위 5개 결과만 사용
+    for (const video of videos) {
       // 2. 입력받은 제목/아티스트명과 검색한 유튜브 동영상 제목을 바탕으로 LLM을 이용해 제목/아티스트명을 1차 교정
       if (inferredMetadata === null) {
         inferredMetadata = await inferSongMetadataFlow({
