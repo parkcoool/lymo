@@ -3,7 +3,7 @@ import { z } from "genkit";
 
 import ai from "../core/genkit";
 import { searchYouTube, YouTubeVideo } from "../tools/searchYouTube";
-import { searchLRCLibOutputSchema } from "../tools/searchLRCLib";
+import { LRCLibResult } from "../tools/searchLRCLib";
 import { searchLastfm } from "../tools/searchLastfm";
 import { trySearchLRCLib } from "../tools/trySearchLRCLib";
 import { processLyricsFlow } from "./processLyrics.flow";
@@ -60,7 +60,9 @@ export const addSongFlow = ai.defineFlow(
     let inferredMetadata: z.infer<
       typeof metadataNormalizerOutputSchema
     > | null = null;
-    let lrcLibResult: z.infer<typeof searchLRCLibOutputSchema> | null = null;
+
+    let minimumDurationGap = Infinity;
+    let lrcLibResult: LRCLibResult | null = null;
     let youtubeVideo: YouTubeVideo | null = null;
 
     const videos = (await searchYouTube({ title, artist })).slice(0, 5); // 상위 5개 결과만 사용
@@ -75,20 +77,23 @@ export const addSongFlow = ai.defineFlow(
       }
 
       // 3. 교정한 제목/아티스트명과 유튜브 동영상 길이를 바탕으로 LRCLib에서 가사를 검색하고 제목/아티스트명을 2차 교정
-      lrcLibResult = await trySearchLRCLib({
+      const foundLRCLib = await trySearchLRCLib({
         ...inferredMetadata,
         duration: video.duration,
       });
 
-      // 가사를 찾았으면 반복문 종료
-      if (lrcLibResult) {
+      if (foundLRCLib === null) continue;
+
+      // 재생 시간 차이가 가장 적은 결과를 선택
+      const durationGap = Math.abs(foundLRCLib.duration - video.duration);
+      if (durationGap < minimumDurationGap) {
+        minimumDurationGap = durationGap;
         youtubeVideo = video;
-        break;
+        lrcLibResult = foundLRCLib;
       }
     }
 
-    // 유튜브 검색 결과를 다 사용했는데도 못 찾았으면 null 반환
-    if (youtubeVideo === null || lrcLibResult === null) {
+    if (lrcLibResult === null || youtubeVideo === null) {
       return null;
     }
 

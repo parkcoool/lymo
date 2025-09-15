@@ -23,10 +23,15 @@ export const searchLRCLibOutputSchema = z
     title: z.string().describe("The title of the song"),
     artist: z.string().describe("The artist of the song"),
     album: z.string().describe("The album of the song"),
+    duration: z.number().describe("The duration of the song in seconds"),
   })
   .nullable();
 
 type LRCLibSearchResponse = LRCLibSong[];
+
+export type LRCLibResult = NonNullable<
+  z.infer<typeof searchLRCLibOutputSchema>
+>;
 
 export const searchLRCLib = ai.defineTool(
   {
@@ -73,6 +78,7 @@ export const searchLRCLib = ai.defineTool(
       title: song.name,
       artist: song.artistName,
       album: song.albumName,
+      duration: song.duration,
     };
   }
 );

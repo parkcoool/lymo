@@ -49,7 +49,7 @@ export const processLyricsOutputSchema = z.object({
 
 export const processLyricsFlow = ai.defineFlow(
   {
-    name: "lyricsProcessFlow",
+    name: "processLyricsFlow",
     inputSchema: processLyricsInputSchema,
     outputSchema: processLyricsOutputSchema,
   },
