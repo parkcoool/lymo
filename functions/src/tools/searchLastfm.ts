@@ -15,7 +15,7 @@ export const searchLastfmOutputSchema = z
   .object({
     title: z.string().describe("The title of the song"),
     artist: z.string().describe("The artist of the song"),
-    album: z.string().describe("The album of the song"),
+    album: z.string().nullable().describe("The album of the song"),
     coverUrl: z.string().describe("The cover URL of the song"),
     publishedAt: z
       .string()
@@ -31,7 +31,7 @@ type LastfmSearchResponse = {
     artist: {
       name: string;
     };
-    album: {
+    album?: {
       title: string;
       image: { "#text": string; size: string }[];
     };
@@ -84,7 +84,7 @@ export const searchLastfm = ai.defineTool(
     return {
       title: track.name,
       artist: track.artist.name,
-      album: track.album.title,
+      album: track.album?.title ?? null,
       coverUrl,
       publishedAt,
       summary,

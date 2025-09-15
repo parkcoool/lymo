@@ -53,7 +53,7 @@ export const searchLRCLib = ai.defineTool(
     // 후보 검증
     let song: LRCLibSong | null = null;
     for (const candidate of songs) {
-      if (Math.abs(candidate.duration - duration) > 5) continue;
+      if (Math.abs(candidate.duration - duration) > 2) continue;
       const { syncedLyrics: lyricsString } = candidate;
       if (lyricsString === null || lyricsString === "") continue;
       song = candidate;
