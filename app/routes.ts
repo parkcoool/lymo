@@ -6,13 +6,14 @@ import {
 } from "@react-router/dev/routes";
 
 export default [
-  layout("./layouts/MainLayout.tsx", [
-    layout("./layouts/MiniPlayerLayout.tsx", [
-      index("./pages/Home/Home.tsx"),
-      route("/search/:query", "./pages/Search/SearchResult.tsx"),
+  layout("./layouts/PlayerLayout.tsx", [
+    layout("./layouts/AppBarLayout.tsx", [
+      layout("./layouts/MiniPlayerLayout.tsx", [
+        index("./pages/Home/Home.tsx"),
+        route("/search/:query", "./pages/Search/SearchResult.tsx"),
+      ]),
+      route("/player/:songId", "./pages/Player/Player.tsx"),
     ]),
-    route("/player/:songId", "./pages/Player/Player.tsx"),
+    route("/search", "./pages/Search/Search.tsx"),
   ]),
-
-  route("/search", "./pages/Search/Search.tsx"),
 ] satisfies RouteConfig;

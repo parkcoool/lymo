@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { Outlet, useLocation } from "react-router";
 
 import AppBar from "~/components/AppBar";
-import YouTubePlayer from "~/components/YouTubePlayer/YouTubePlayer";
 import type { AppBarVariant } from "~/types/appBar";
 
 const AppBarVariants: Map<string, AppBarVariant> = new Map([
@@ -29,7 +28,6 @@ export default function MainLayout() {
     <>
       <AppBar variant={variant} searchQuery={searchQuery} />
       <Outlet />
-      <YouTubePlayer />
     </>
   );
 }
