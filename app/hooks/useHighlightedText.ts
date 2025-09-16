@@ -7,10 +7,10 @@ import { useMemo } from "react";
  * @returns 분리된 텍스트 조각과 하이라이트 여부를 담은 객체 배열
  */
 export default function useHighlightedText(text: string, query: string) {
-  const highlightedParts = useMemo(() => {
+  const [highlightedParts, highlighted] = useMemo(() => {
     // 쿼리가 비어있거나 공백만 있다면, 전체 텍스트를 하이라이트 없이 반환합니다.
     if (!query.trim()) {
-      return [{ text, highlight: false }];
+      return [[{ text, highlight: false }], false];
     }
 
     // 쿼리를 공백 기준으로 단어들로 나누고, 빈 문자열은 제거합니다.
@@ -18,7 +18,7 @@ export default function useHighlightedText(text: string, query: string) {
 
     // 쿼리 단어가 없으면, 전체 텍스트를 하이라이트 없이 반환합니다.
     if (queryWords.length === 0) {
-      return [{ text, highlight: false }];
+      return [[{ text, highlight: false }], false];
     }
 
     // 나중에 단어가 쿼리에 포함되는지 빠르게 확인하기 위해 Set을 생성합니다.
@@ -36,12 +36,18 @@ export default function useHighlightedText(text: string, query: string) {
     // 정규식을 기준으로 텍스트를 분리합니다. 결과 배열에서 빈 문자열은 제거합니다.
     const parts = text.split(regex).filter(Boolean);
 
+    // 하이라이트된 부분이 하나라도 있는지 여부를 나타내는 불리언 값
+    const highlighted = parts.some((part) => queryWordsSet.has(part));
+
     // 각 텍스트 조각을 순회하며, 쿼리 단어 Set에 포함되는지 여부에 따라 highlight 속성을 결정합니다.
-    return parts.map((part) => ({
-      text: part,
-      highlight: queryWordsSet.has(part),
-    }));
+    return [
+      parts.map((part) => ({
+        text: part,
+        highlight: queryWordsSet.has(part),
+      })),
+      highlighted,
+    ];
   }, [text, query]); // text나 query가 변경될 때만 이 로직을 다시 실행합니다.
 
-  return highlightedParts;
+  return [highlightedParts, highlighted] as const;
 }

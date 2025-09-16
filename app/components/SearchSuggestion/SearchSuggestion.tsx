@@ -10,14 +10,20 @@ interface SearchSuggestionProps {
   suggestion: string;
   query: string;
   onSearch: () => void;
+  showOnlyWhenHighlighted?: boolean;
 }
 
 export default function SearchSuggestion({
   suggestion,
   query,
   onSearch,
+  showOnlyWhenHighlighted = false,
 }: SearchSuggestionProps) {
-  const highlightedText = useHighlightedText(suggestion, query);
+  const [highlightedText, highlighted] = useHighlightedText(suggestion, query);
+
+  if (showOnlyWhenHighlighted && !highlighted) {
+    return null;
+  }
 
   return (
     <S.Wrapper>

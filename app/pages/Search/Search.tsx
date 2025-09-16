@@ -4,12 +4,14 @@ import { useNavigate } from "react-router";
 
 import IconButton from "~/components/IconButton";
 import SearchHistory from "~/components/SearchHistory/SearchHistory";
+import { useSearchHistoryStore } from "~/contexts/useSearchHistoryStore";
 
 import * as S from "./Search.styles";
 
 export default function Home() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const { histories, deleteHistory, addHistory } = useSearchHistoryStore();
 
   const handleBackButtonClick = () => {
     navigate(-1);
@@ -17,6 +19,11 @@ export default function Home() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
+  };
+
+  const handleSearch = (query: string) => {
+    addHistory(query);
+    navigate(`/search?query=${encodeURIComponent(query)}`);
   };
 
   return (
@@ -34,25 +41,38 @@ export default function Home() {
             value={query}
             onChange={handleInputChange}
           />
-          <S.SearchIconWrapper>
-            <MdSearch />
-          </S.SearchIconWrapper>
+          <IconButton onClick={() => handleSearch(query)}>
+            <S.SearchIconWrapper>
+              <MdSearch />
+            </S.SearchIconWrapper>
+          </IconButton>
         </S.SearchInput>
       </S.SearchBox>
 
       <S.SugggestionContainer>
-        <SearchHistory
-          history="이 문장은 검색어 예시입니다."
-          query={query}
-          onDelete={() => {}}
-          onSearch={() => {}}
-        />
-        <SearchHistory
-          history="가까운 듯 먼 그대여"
-          query={query}
-          onDelete={() => {}}
-          onSearch={() => {}}
-        />
+        {/* 쿼리가 빈 문자열이면 검색 기록 표시 */}
+        {query.length === 0 &&
+          histories.map((history) => (
+            <SearchHistory
+              key={history}
+              history={history}
+              onDelete={() => deleteHistory(history)}
+              onSearch={() => handleSearch(history)}
+            />
+          ))}
+
+        {/* 쿼리가 빈 문자열이 아니면 */}
+        {query.length > 0 &&
+          histories.map((history) => (
+            <SearchHistory
+              key={history}
+              history={history}
+              query={query}
+              onDelete={() => deleteHistory(history)}
+              onSearch={() => handleSearch(history)}
+              showOnlyWhenHighlighted
+            />
+          ))}
       </S.SugggestionContainer>
     </>
   );

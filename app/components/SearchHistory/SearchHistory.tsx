@@ -11,6 +11,7 @@ interface SearchHistoryProps {
   query?: string;
   onDelete: () => void;
   onSearch: () => void;
+  showOnlyWhenHighlighted?: boolean;
 }
 
 export default function SearchHistory({
@@ -18,8 +19,16 @@ export default function SearchHistory({
   query,
   onDelete,
   onSearch,
+  showOnlyWhenHighlighted = false,
 }: SearchHistoryProps) {
-  const highlightedText = useHighlightedText(history, query ?? "");
+  const [highlightedText, highlighted] = useHighlightedText(
+    history,
+    query ?? ""
+  );
+
+  if (showOnlyWhenHighlighted && !highlighted) {
+    return null;
+  }
 
   return (
     <S.Wrapper>
