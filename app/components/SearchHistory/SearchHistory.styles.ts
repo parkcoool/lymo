@@ -23,7 +23,7 @@ export const Right = styled.div`
   gap: 10px;
 `;
 
-export const SearchIconWrapper = styled(IconWrapper)`
+export const HistoryIconWrapper = styled(IconWrapper)`
   width: 24px;
   height: 24px;
   color: ${(props) => props.theme.colors.onBackground};
