@@ -64,11 +64,11 @@ export const translateLyricsFlow = ai.defineFlow(
       - 분할한 문단 단위는 "[PARAGRAPH_SEPARATOR]"로 구분할 것.
 
       ### 출력 예시 (Output Example)
-      [1] This is the first sentence.
-      [2] null
+      [0] This is the first sentence.
+      [1] null
       [PARAGRAPH_SEPARATOR]
-      [3] This is the third sentence.
-      [4] This is the fourth sentence.
+      [2] This is the third sentence.
+      [3] This is the fourth sentence.
       `,
       prompt: JSON.stringify({
         title,
