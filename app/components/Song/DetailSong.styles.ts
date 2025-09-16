@@ -4,7 +4,7 @@ import IconWrapper from "~/components/IconWrapper";
 
 export const Wrapper = styled.div`
   display: flex;
-  padding: 20px 30px;
+  padding: 10px 20px;
   box-sizing: border-box;
   align-items: center;
   gap: 15px;
