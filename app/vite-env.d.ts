@@ -13,6 +13,8 @@ interface ImportMetaEnv {
   readonly VITE_FIREBASE_MESSAGINGSENDERID: string;
   readonly VITE_FIREBASE_APPID: string;
   readonly VITE_FIREBASE_MEASUREMENTID: string;
+  readonly VITE_ALGOLIA_ID: string;
+  readonly VITE_ALGOLIA_API_KEY: string;
 }
 
 interface ImportMeta {

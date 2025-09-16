@@ -12,15 +12,17 @@ const AppBarVariants: Map<string, AppBarVariant> = new Map([
 ]);
 
 export default function MainLayout() {
-  const pathname = useLocation().pathname.split("/")[1];
-  const searchQuery =
-    pathname === "search"
-      ? decodeURIComponent(useLocation().pathname.split("/")[2])
-      : undefined;
+  const pathnames = useLocation().pathname.split("/");
+
+  const searchQuery = useMemo(
+    () =>
+      pathnames[1] === "search" ? decodeURIComponent(pathnames[2]) : undefined,
+    [pathnames]
+  );
 
   const variant = useMemo(
-    () => AppBarVariants.get(pathname) ?? "home",
-    [pathname]
+    () => AppBarVariants.get(pathnames[1]) ?? "home",
+    [pathnames]
   );
 
   return (

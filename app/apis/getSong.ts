@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
 
-import { db } from "~/firebase";
+import { db } from "~/core/firebase";
 import type { SongDetailDocument, SongDocument } from "~/types/song";
 
 interface GetSongProps {
