@@ -103,10 +103,3 @@ export const SectionContent = styled.div`
   align-self: stretch;
   overflow-x: auto;
 `;
-
-export const MiniPlayerWrapper = styled.div`
-  position: fixed;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
-`;

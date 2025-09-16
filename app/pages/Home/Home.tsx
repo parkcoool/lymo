@@ -7,34 +7,18 @@ import {
   LyricalSongList,
   LyricalSongListSkeleton,
 } from "~/components/LyricalSongList";
-import MiniPlayer from "~/components/Miniplayer";
 import {
   PopularSongList,
   PopularSongListSkeleton,
 } from "~/components/PopularSongList";
-import usePlayerStore from "~/contexts/usePlayerStore";
 
 import * as S from "./Home.styles";
 
 export default function Home() {
-  const { isPlaying, song, player } = usePlayerStore();
   const navigate = useNavigate();
-
-  const handlePlayerExpand = () => {
-    if (song) navigate(`/player/${song.id}`);
-  };
 
   const handleSearchBoxClick = () => {
     navigate("/search");
-  };
-
-  const handlePlayPause = () => {
-    if (!player.current) return;
-    if (isPlaying) {
-      player.current.pause();
-    } else {
-      player.current.play();
-    }
   };
 
   return (
@@ -83,21 +67,6 @@ export default function Home() {
           </Suspense>
         </S.SectionContent>
       </S.Section>
-
-      {/* 미니 플레이어 */}
-      {song && (
-        <S.MiniPlayerWrapper>
-          <MiniPlayer
-            id={song.id}
-            coverUrl={song.coverUrl}
-            title={song.title}
-            artist={song.artist}
-            isPlaying={isPlaying}
-            onPlayPause={handlePlayPause}
-            onExpand={handlePlayerExpand}
-          />
-        </S.MiniPlayerWrapper>
-      )}
     </S.Container>
   );
 }
