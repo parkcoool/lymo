@@ -3,7 +3,6 @@ import { Outlet, useLocation } from "react-router";
 
 import AppBar from "~/components/AppBar";
 import YouTubePlayer from "~/components/YouTubePlayer/YouTubePlayer";
-import { useAppBarStore } from "~/contexts/useAppBarStore";
 import type { AppBarVariant } from "~/types/appBar";
 
 const AppBarVariants: Map<string, AppBarVariant> = new Map([
@@ -14,7 +13,10 @@ const AppBarVariants: Map<string, AppBarVariant> = new Map([
 
 export default function MainLayout() {
   const pathname = useLocation().pathname.split("/")[1];
-  const { searchQuery } = useAppBarStore();
+  const searchQuery =
+    pathname === "search"
+      ? decodeURIComponent(useLocation().pathname.split("/")[2])
+      : undefined;
 
   const variant = useMemo(
     () => AppBarVariants.get(pathname) ?? "home",

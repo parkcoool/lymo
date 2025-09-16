@@ -8,7 +8,7 @@ import { useSearchHistoryStore } from "~/contexts/useSearchHistoryStore";
 
 import * as S from "./Search.styles";
 
-export default function Home() {
+export default function Search() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const { histories, deleteHistory, addHistory } = useSearchHistoryStore();
@@ -22,8 +22,9 @@ export default function Home() {
   };
 
   const handleSearch = (query: string) => {
-    addHistory(query);
-    navigate(`/search?query=${encodeURIComponent(query)}`);
+    const trimmedQuery = query.trim();
+    addHistory(trimmedQuery);
+    navigate(`/search/${encodeURIComponent(trimmedQuery)}`, { replace: true });
   };
 
   return (

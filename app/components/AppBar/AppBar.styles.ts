@@ -59,7 +59,7 @@ export const PersonIconWrapper = styled(IconWrapper)`
 export const SearchBox = styled.button`
   display: flex;
   padding: 0 15px;
-  height: 40px;
+  height: 50px;
   justify-content: space-between;
   align-items: center;
   flex: 1 0 0;
