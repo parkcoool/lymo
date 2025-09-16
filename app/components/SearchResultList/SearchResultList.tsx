@@ -1,18 +1,21 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import searchSongs from "~/apis/searchSongs";
+import AddSongDialog from "~/components/AddSongDialog";
 import { DetailSong } from "~/components/Song";
 import usePlayerStore from "~/contexts/usePlayerStore";
-
-import AddSongDialog from "../AddSongDialog";
 
 import * as S from "./SearchResultList.styles";
 
 interface SearchResultListProps {
   query: string;
+  onOpenAddSongModal: () => void;
 }
 
-export default function SearchResultList({ query }: SearchResultListProps) {
+export default function SearchResultList({
+  query,
+  onOpenAddSongModal,
+}: SearchResultListProps) {
   const { song } = usePlayerStore();
   const { data: searchResults } = useSuspenseQuery({
     queryKey: ["searchResults", query],
@@ -40,14 +43,21 @@ export default function SearchResultList({ query }: SearchResultListProps) {
           exit={{ y: "100%" }}
           transition={{ type: "spring", stiffness: 300, damping: 30, delay: 1 }}
         >
-          <S.StyledNormalDialog $long={song !== null} variant="normal" />
+          <S.StyledNormalDialog
+            $long={song !== null}
+            variant="normal"
+            onOpenAddSongModal={onOpenAddSongModal}
+          />
         </S.NormalDialogWrapper>
       )}
 
       {/* 검색 결과가 없을 때 */}
       {searchResults?.length === 0 && (
         <S.ExtendedDialogWrapper>
-          <AddSongDialog variant="extended" />
+          <AddSongDialog
+            variant="extended"
+            onOpenAddSongModal={onOpenAddSongModal}
+          />
         </S.ExtendedDialogWrapper>
       )}
     </>

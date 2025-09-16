@@ -7,21 +7,19 @@ export type AddSongDialogVariant = "normal" | "extended";
 
 interface AddSongDialogProps {
   variant: AddSongDialogVariant;
+  onOpenAddSongModal: () => void;
   className?: string;
 }
 
 export default function AddSongDialog({
   variant,
+  onOpenAddSongModal,
   className,
 }: AddSongDialogProps) {
   const navigate = useNavigate();
 
   const handleSearch = () => {
     navigate("/search", { replace: true });
-  };
-
-  const handleAddSong = () => {
-    // TODO
   };
 
   return (
@@ -46,7 +44,7 @@ export default function AddSongDialog({
             다시 검색하기
           </S.Button>
         )}
-        <S.Button onClick={handleAddSong}>
+        <S.Button onClick={onOpenAddSongModal}>
           <S.ButtonIconWrapper>
             <MdAdd />
           </S.ButtonIconWrapper>

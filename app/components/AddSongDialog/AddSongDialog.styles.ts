@@ -57,6 +57,7 @@ export const Subtitle = styled.div<{ $variant: AddSongDialogVariant }>`
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+  align-self: stretch;
 `;
 
 export const ButtonContainer = styled.div<{ $variant: AddSongDialogVariant }>`
