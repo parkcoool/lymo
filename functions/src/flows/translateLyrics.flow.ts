@@ -50,7 +50,7 @@ export const translateLyricsFlow = ai.defineFlow(
       전문 가사 번역가
 
       #### 가사 분석 지침 (Lyrics Analysis Guidelines)
-      - 의미적으로 연결되는 가사 문장들을 하나의 문단으로 묶을 것
+      - 송 폼 (verse, chorus, bridge 등)을 인식하고, 이 단위로 문단을 분할할 것
       - 제공된 문장 구분을 쪼개거나 병합하지 말 것
       - 한국어인 문장은 영어로, 영어인 문장은 한국어로 번역할 것
       - 문화적 맥락이 강한 표현(예: 관용구, 속담 등)은 자연스러운 현지 표현으로 번역할 것
