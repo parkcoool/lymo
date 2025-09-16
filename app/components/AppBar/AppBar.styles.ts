@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import styled from "styled-components";
 
 import IconWrapper from "../IconWrapper";
@@ -16,7 +17,7 @@ export const Wrapper = styled.div`
       ${theme.colors.dynamicBackground ?? theme.colors.background}ff 25%,
       ${theme.colors.dynamicBackground ?? theme.colors.background}00 100%
     )`};
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
@@ -56,7 +57,7 @@ export const PersonIconWrapper = styled(IconWrapper)`
   color: ${({ theme }) => theme.colors.onBackground};
 `;
 
-export const SearchBox = styled.button`
+export const SearchBox = styled(motion.button)`
   display: flex;
   padding: 0 15px;
   height: 50px;

@@ -13,32 +13,21 @@ export const Container = styled.div`
 
 export const HeroSection = styled.section`
   display: flex;
-  height: 300px;
-  padding-bottom: 50px;
+  height: 80vh;
+  padding-top: 20vh;
   box-sizing: border-box;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   align-self: stretch;
-`;
-
-export const SearchBoxWrapper = styled.div`
-  position: sticky;
-  top: 10px;
-  z-index: 1001;
-  padding: 0 max(5%, 64px);
-  display: flex;
-  justify-content: center;
-  height: 50px;
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: calc(100vh - 500px);
+  gap: 40px;
 `;
 
 export const Brand = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  height: 40px;
   opacity: 0.8;
   color: ${(props) => props.theme.colors.onBackground};
   font-size: 24px;
@@ -55,8 +44,9 @@ export const LogoIconWrapper = styled(IconWrapper)`
 
 export const SearchBox = styled.button`
   display: flex;
-  width: 100%;
-  padding: 0 20px;
+  width: 80%;
+  padding: 0 15px;
+  height: 50px;
   box-sizing: border-box;
   justify-content: space-between;
   align-items: center;

@@ -31,12 +31,10 @@ export default function Home() {
           </S.LogoIconWrapper>
           Lymo
         </S.Brand>
-      </S.HeroSection>
 
-      {/* 검색 박스 */}
-      <S.SearchBoxWrapper>
+        {/* 검색 박스 */}
         <S.SearchBox onClick={handleSearchBoxClick}>음악 검색</S.SearchBox>
-      </S.SearchBoxWrapper>
+      </S.HeroSection>
 
       {/* 인기 섹션 */}
       <S.Section>

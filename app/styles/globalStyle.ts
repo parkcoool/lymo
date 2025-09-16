@@ -7,6 +7,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.colors.background};
     transition: background-color 0.3s ease;
+    position: relative;
   }
   
   html, body, form, fieldset, table, tr, td, img {

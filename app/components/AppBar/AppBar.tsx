@@ -1,5 +1,8 @@
+import { AnimatePresence } from "motion/react";
 import { MdChevronLeft, MdPerson } from "react-icons/md";
 import { useNavigate } from "react-router";
+
+import useSearchBoxVisible from "~/hooks/useSearchBoxVisible";
 
 import IconButton from "../IconButton";
 
@@ -13,8 +16,11 @@ interface AppBarProps {
 export default function AppBar({ variant, searchQuery }: AppBarProps) {
   const navigate = useNavigate();
 
+  const isSearchBoxVisibleInHome = useSearchBoxVisible();
+
   const isBackButtonVisible = variant === "player" || variant === "search";
-  const isSearchBoxVisible = variant === "search";
+  const isSearchBoxVisible =
+    variant === "search" || (variant === "home" && !isSearchBoxVisibleInHome);
   const searchBoxText = variant === "search" ? searchQuery : "음악 검색";
 
   const handleBackButtonClick = () => {
@@ -38,11 +44,19 @@ export default function AppBar({ variant, searchQuery }: AppBarProps) {
         )}
 
         {/* 검색창 */}
-        {isSearchBoxVisible && (
-          <S.SearchBox onClick={handleSearchBoxClick}>
-            {searchBoxText}
-          </S.SearchBox>
-        )}
+        <AnimatePresence initial={false}>
+          {isSearchBoxVisible && (
+            <S.SearchBox
+              onClick={handleSearchBoxClick}
+              key="search-box"
+              initial={{ opacity: 0, y: "-100%" }}
+              animate={{ opacity: 1, y: "0%" }}
+              exit={{ opacity: 0, y: "-100%" }}
+            >
+              {searchBoxText}
+            </S.SearchBox>
+          )}
+        </AnimatePresence>
       </S.Left>
       <S.Right>
         <IconButton>
