@@ -23,8 +23,14 @@ export default function Search() {
 
   const handleSearch = (query: string) => {
     const trimmedQuery = query.trim();
+    if (trimmedQuery.length === 0) return false;
     addHistory(trimmedQuery);
     navigate(`/search/${encodeURIComponent(trimmedQuery)}`, { replace: true });
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch(query);
   };
 
   return (
@@ -35,14 +41,15 @@ export default function Search() {
             <MdChevronLeft />
           </S.LeftIconWrapper>
         </IconButton>
-        <S.SearchInput>
+        <S.SearchInput onSubmit={handleFormSubmit}>
           <S.TextInput
+            id="search-input"
             placeholder="음악 검색"
             autoFocus
             value={query}
             onChange={handleInputChange}
           />
-          <IconButton onClick={() => handleSearch(query)}>
+          <IconButton type="submit">
             <S.SearchIconWrapper>
               <MdSearch />
             </S.SearchIconWrapper>

@@ -21,7 +21,7 @@ export const LeftIconWrapper = styled(IconWrapper)`
   color: ${({ theme }) => theme.colors.onBackground};
 `;
 
-export const SearchInput = styled.div`
+export const SearchInput = styled.form`
   display: flex;
   padding: 0 15px;
   height: 50px;
