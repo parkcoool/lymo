@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import SearchResultHeader from "~/components/SearchResultHeader/SearchResultHeader";
+import SearchResultHeader from "~/components/SearchResultHeader";
 import {
   SearchResultList,
   SearchResultListSkeleton,

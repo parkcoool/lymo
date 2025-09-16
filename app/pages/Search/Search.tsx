@@ -3,7 +3,7 @@ import { MdChevronLeft, MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router";
 
 import IconButton from "~/components/IconButton";
-import SearchHistory from "~/components/SearchHistory/SearchHistory";
+import SearchHistory from "~/components/SearchHistory";
 import { useSearchHistoryStore } from "~/contexts/useSearchHistoryStore";
 
 import * as S from "./Search.styles";
