@@ -12,6 +12,7 @@ export const summarizeSongInputSchema = z.object({
 
 export const summarizeSongOutputSchema = z
   .string()
+  .nullable()
   .describe("The summary of the song");
 
 export const summarizeSongFlow = ai.defineFlow(
@@ -36,6 +37,7 @@ export const summarizeSongFlow = ai.defineFlow(
       - 요약문은 2~3 문단으로 구성할 것
       - 문단은 줄바꿈 문자 2개로 구분할 것
       - 요약문은 한국어로 작성할 것
+      - 요약이 불가능한 경우, "null"을 반환할 것
       `,
       prompt: JSON.stringify({
         title,
@@ -52,6 +54,8 @@ export const summarizeSongFlow = ai.defineFlow(
       sendChunk(chunk.text);
     }
 
-    return (await response).text;
+    const result = (await response).text.trim();
+    if (result === "" || result.toLowerCase() === "null") return null;
+    return result;
   }
 );

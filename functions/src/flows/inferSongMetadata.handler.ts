@@ -1,6 +1,6 @@
 import { onCallGenkit } from "firebase-functions/v2/https";
 
-import { inferSongMetadataFlow } from "./inferSongMetadata";
+import { inferSongMetadataFlow } from "./inferSongMetadata.flow";
 
 const inferSongMetadata = onCallGenkit(
   {
