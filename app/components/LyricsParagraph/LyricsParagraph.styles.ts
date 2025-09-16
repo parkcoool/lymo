@@ -8,7 +8,7 @@ export const Container = styled.div<{ $isActive: boolean }>`
   padding: 10px;
   flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
+  gap: 10px;
   align-self: stretch;
   border-radius: 16px;
   margin: 0 5px;
@@ -25,7 +25,7 @@ export const SentenceContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 0px;
   align-self: stretch;
 `;
 
@@ -33,11 +33,11 @@ export const SummaryWrapper = styled(motion.div).attrs({ layout: true })<{
   $isActive: boolean;
 }>`
   display: flex;
-  padding: 20px;
+  padding: 15px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   align-self: stretch;
   border-radius: 16px;
   background-color: ${({ theme, $isActive }) =>
@@ -50,13 +50,13 @@ export const SummaryWrapper = styled(motion.div).attrs({ layout: true })<{
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     z-index: 100;
   `}
-  top: 80px;
+  top: 60px;
   transition: background-color 0.3s ease;
 `;
 
 export const Summary = styled.p`
   color: ${({ theme }) => theme.colors.onSurface};
-  font-size: 16px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 500;
   line-height: 120%;

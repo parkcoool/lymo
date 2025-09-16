@@ -23,7 +23,7 @@ export const Wrapper = styled(motion.button).attrs({
 `;
 
 export const Sentence = styled.p<{ $isActive: boolean }>`
-  font-size: 24px;
+  font-size: ${({ $isActive }) => ($isActive ? "24px" : "20px")};
   font-style: normal;
   font-weight: ${({ $isActive }) => ($isActive ? 700 : 500)};
   line-height: 120%;
@@ -31,11 +31,12 @@ export const Sentence = styled.p<{ $isActive: boolean }>`
     $isActive ? theme.colors.onBackground : theme.colors.onBackgroundSubtle};
   transition:
     font-weight 0.2s ease,
+    font-size 0.2s ease,
     color 0.2s ease;
 `;
 
 export const Translation = styled.p<{ $isActive: boolean }>`
-  font-size: 15px;
+  font-size: ${({ $isActive }) => ($isActive ? "16px" : "14px")};
   font-style: normal;
   font-weight: 500;
   line-height: 120%;
@@ -43,5 +44,6 @@ export const Translation = styled.p<{ $isActive: boolean }>`
     $isActive ? theme.colors.onBackground : theme.colors.onBackgroundSubtle};
   transition:
     font-weight 0.2s ease,
+    font-size 0.2s ease,
     color 0.2s ease;
 `;

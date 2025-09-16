@@ -23,7 +23,10 @@ export default function LyricsSentence({
       if (!element) return;
 
       const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - 400;
+      const offsetPosition =
+        elementPosition +
+        window.pageYOffset -
+        Math.max(window.innerHeight / 2, 300);
 
       window.scrollTo({
         top: offsetPosition,
