@@ -10,6 +10,9 @@ declare module "styled-components" {
       surface: string;
       onSurface: string;
       onSurfaceSubtle: string;
+      secondaryBackground: string;
+      onSecondaryBackground: string;
+      onSecondaryBackgroundSubtle: string;
       dynamicBackground?: string;
     };
   }

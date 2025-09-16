@@ -9,6 +9,9 @@ const theme: DefaultTheme = {
     surface: "#ECF0F1",
     onSurface: "#2F3030",
     onSurfaceSubtle: "#595959",
+    secondaryBackground: "#321F1C",
+    onSecondaryBackground: "#EBE9E8",
+    onSecondaryBackgroundSubtle: "#C2BCBB",
   },
 };
 
