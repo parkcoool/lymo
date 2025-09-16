@@ -24,6 +24,10 @@ export default function Home() {
     if (song) navigate(`/player/${song.id}`);
   };
 
+  const handleSearchBoxClick = () => {
+    navigate("/search");
+  };
+
   const handlePlayPause = () => {
     if (!player.current) return;
     if (isPlaying) {
@@ -47,7 +51,7 @@ export default function Home() {
 
       {/* 검색 박스 */}
       <S.SearchBoxWrapper>
-        <S.SearchBox>음악 검색</S.SearchBox>
+        <S.SearchBox onClick={handleSearchBoxClick}>음악 검색</S.SearchBox>
       </S.SearchBoxWrapper>
 
       {/* 인기 섹션 */}

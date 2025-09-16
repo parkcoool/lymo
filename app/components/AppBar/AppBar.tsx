@@ -21,6 +21,10 @@ export default function AppBar({ variant, searchQuery }: AppBarProps) {
     navigate(-1);
   };
 
+  const handleSearchBoxClick = () => {
+    navigate("/search");
+  };
+
   return (
     <S.Wrapper>
       <S.Left>
@@ -34,7 +38,11 @@ export default function AppBar({ variant, searchQuery }: AppBarProps) {
         )}
 
         {/* 검색창 */}
-        {isSearchBoxVisible && <S.SearchBox>{searchBoxText}</S.SearchBox>}
+        {isSearchBoxVisible && (
+          <S.SearchBox onClick={handleSearchBoxClick}>
+            {searchBoxText}
+          </S.SearchBox>
+        )}
       </S.Left>
       <S.Right>
         <IconButton>
