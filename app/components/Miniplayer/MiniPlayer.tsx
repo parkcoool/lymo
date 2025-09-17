@@ -30,9 +30,7 @@ export default function MiniPlayer({
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
-  const coverColor = coverUrl
-    ? useCoverColor(coverElementRef, coverUrl)
-    : undefined;
+  const coverColor = useCoverColor(coverElementRef, coverUrl ?? null);
   const backgroundColor = useMemo(
     () =>
       coverColor ? darkenHexColor(coverColor, 70) : theme.colors.background,

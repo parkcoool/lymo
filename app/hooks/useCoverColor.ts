@@ -12,6 +12,7 @@ export default function useCoverColor(
       if (coverElementRef.current == null) throw new Error();
       return await getDominantColorFromElement(coverElementRef.current);
     },
+    enabled: coverUrl != null,
   });
 
   return coverColor;
