@@ -9,6 +9,8 @@ import useThemeStore from "./contexts/useThemeStore";
 
 const queryClient = new QueryClient();
 
+export const meta: Route.MetaFunction = () => [{ title: "Lymo" }];
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://cdn.jsdelivr.net" },
   {

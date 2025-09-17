@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import IconWrapper from "~/components/IconWrapper";
+import Skeleton from "~/components/Skeleton";
 
 export const Wrapper = styled.div<{ $coverColor: string }>`
   display: flex;
@@ -34,6 +35,12 @@ export const Cover = styled.img`
   flex-shrink: 0;
   border-radius: 16px;
   object-fit: cover;
+`;
+
+export const CoverSkeleton = styled(Skeleton)`
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
 `;
 
 export const Info = styled.div`

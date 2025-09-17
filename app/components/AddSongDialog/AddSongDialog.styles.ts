@@ -14,6 +14,7 @@ export const Wrapper = styled.div<{ $variant: AddSongDialogVariant }>`
   align-self: stretch;
   background-color: ${({ $variant, theme }) =>
     $variant === "normal" ? theme.colors.secondaryBackground : "transparent"};
+  ${({ $variant }) => $variant === "extended" && `height: 300px;`};
 `;
 
 export const Header = styled.div<{ $variant: AddSongDialogVariant }>`

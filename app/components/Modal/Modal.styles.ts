@@ -10,11 +10,8 @@ export const ModalOverlay = styled(motion.div)`
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   z-index: 1000;
-  padding: 10px;
 `;
 
-export const ModalContent = styled(motion.div)`
-  max-width: 800px;
-`;
+export const ModalContent = styled(motion.div)``;

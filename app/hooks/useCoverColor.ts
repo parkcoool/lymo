@@ -4,10 +4,10 @@ import { getDominantColorFromElement } from "~/utils/getDominantColorFromElement
 
 export default function useCoverColor(
   coverElementRef: React.RefObject<HTMLImageElement | null>,
-  songId: string
+  coverUrl: string | null
 ) {
   const { data: coverColor } = useQuery({
-    queryKey: ["coverColor", songId],
+    queryKey: ["coverColor", coverUrl],
     queryFn: async () => {
       if (coverElementRef.current == null) throw new Error();
       return await getDominantColorFromElement(coverElementRef.current);

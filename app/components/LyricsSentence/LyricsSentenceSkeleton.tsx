@@ -2,7 +2,7 @@ import * as S from "./LyricsSentenceSkeleton.styles";
 
 export default function LyricsSentenceSkeleton() {
   return (
-    <S.Wrapper>
+    <S.Container>
       <S.SentenceSkeleton />
       <S.TranslationSkeleton />
       <S.SentenceSkeleton />
@@ -13,6 +13,6 @@ export default function LyricsSentenceSkeleton() {
       <S.TranslationSkeleton />
       <S.SentenceSkeleton />
       <S.TranslationSkeleton />
-    </S.Wrapper>
+    </S.Container>
   );
 }

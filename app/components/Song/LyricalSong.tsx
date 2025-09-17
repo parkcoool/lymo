@@ -3,6 +3,7 @@ import { MdPlayCircle } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { useTheme } from "styled-components";
 
+import useFetchingSongStore from "~/contexts/useFetchingSongStore";
 import useCoverColor from "~/hooks/useCoverColor";
 
 import IconButton from "../IconButton";
@@ -29,13 +30,21 @@ export default function LyricalSong({
 }: LyricalSongProps) {
   const theme = useTheme();
   const navigate = useNavigate();
+  const setFetchingSong = useFetchingSongStore(
+    (state) => state.setFetchingSong
+  );
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
   const coverColor = useCoverColor(coverElementRef, id);
 
   const handleClick = () => {
-    navigate(`/player/${id}`, { state: { title, artist, coverUrl } });
+    setFetchingSong({
+      fetchType: "get",
+      id,
+      initialData: { id, title, artist, coverUrl },
+    });
+    navigate(`/player`);
   };
 
   return (

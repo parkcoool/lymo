@@ -1,32 +1,41 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import ReactPlayer from "react-player";
 
-import usePlayerStore from "~/contexts/usePlayerStore";
+import usePlayingSongStore from "~/contexts/usePlayingSongStore";
 
 import * as S from "./YouTubePlayer.styles";
 
 export default function YouTubePlayer() {
-  const { setIsPlaying, player, sourceProvider, sourceId, setTime } =
-    usePlayerStore();
+  const { song, setIsPlaying, playerRef, setTime } = usePlayingSongStore();
 
   const setPlayerRef = useCallback((ref: HTMLVideoElement) => {
     if (!ref) return;
-    player.current = ref;
+    playerRef.current = ref;
   }, []);
 
+  useEffect(() => {
+    setTime(0);
+  }, [song]);
+
+  const handleTimeUpdate = useCallback(() => {
+    if (!playerRef.current) return;
+    setTime(playerRef.current.currentTime);
+  }, [setTime, playerRef]);
+
   return (
-    sourceProvider === "YouTube" &&
-    sourceId && (
+    song &&
+    song.sourceProvider === "YouTube" &&
+    song.sourceId && (
       <S.Wrapper>
         <ReactPlayer
           ref={setPlayerRef}
-          src={`https://www.youtube.com/watch?v=${sourceId}`}
-          onTimeUpdate={() => setTime(player.current?.currentTime || 0)}
+          src={`https://www.youtube.com/watch?v=${song.sourceId}`}
+          onTimeUpdate={handleTimeUpdate}
           onPlaying={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onEnded={() => setIsPlaying(false)}
           onError={() => setIsPlaying(false)}
-          onReady={() => player.current?.play()}
+          onReady={() => playerRef.current?.play()}
         />
       </S.Wrapper>
     )

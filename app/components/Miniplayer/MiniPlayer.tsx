@@ -10,17 +10,15 @@ import IconButton from "../IconButton";
 import * as S from "./MiniPlayer.styles";
 
 interface MiniPlayerProps {
-  id: string;
-  coverUrl: string;
-  title: string;
-  artist: string;
+  coverUrl?: string | null;
+  title?: string;
+  artist?: string;
   isPlaying: boolean;
   onPlayPause: () => void;
   onExpand: () => void;
 }
 
 export default function MiniPlayer({
-  id,
   coverUrl,
   title,
   artist,
@@ -32,7 +30,9 @@ export default function MiniPlayer({
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
-  const coverColor = useCoverColor(coverElementRef, id);
+  const coverColor = coverUrl
+    ? useCoverColor(coverElementRef, coverUrl)
+    : undefined;
   const backgroundColor = useMemo(
     () =>
       coverColor ? darkenHexColor(coverColor, 70) : theme.colors.background,
@@ -42,7 +42,11 @@ export default function MiniPlayer({
   return (
     <S.Wrapper $coverColor={backgroundColor}>
       <S.Left>
-        <S.Cover ref={coverElementRef} src={coverUrl} alt={title} />
+        {coverUrl ? (
+          <S.Cover ref={coverElementRef} src={coverUrl} alt={title} />
+        ) : (
+          <S.CoverSkeleton />
+        )}
         <S.Info>
           <S.Title>{title}</S.Title>
           <S.Artist>{artist}</S.Artist>

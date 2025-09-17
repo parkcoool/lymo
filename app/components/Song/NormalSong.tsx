@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router";
 
+import useFetchingSongStore from "~/contexts/useFetchingSongStore";
+
 import * as S from "./NormalSong.styles";
 
 interface NormalSongProps {
@@ -19,9 +21,17 @@ export default function NormalSong({
   ...props
 }: NormalSongProps) {
   const navigate = useNavigate();
+  const setFetchingSong = useFetchingSongStore(
+    (state) => state.setFetchingSong
+  );
 
   const handleClick = () => {
-    navigate(`/player/${id}`, { state: { title, artist, coverUrl } });
+    setFetchingSong({
+      fetchType: "get",
+      id,
+      initialData: { id, title, artist, coverUrl },
+    });
+    navigate(`/player`);
   };
 
   return (

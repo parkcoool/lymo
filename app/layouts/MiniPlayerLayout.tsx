@@ -1,24 +1,24 @@
 import { Outlet, useNavigate } from "react-router";
 
 import MiniPlayer from "~/components/Miniplayer/MiniPlayer";
-import usePlayerStore from "~/contexts/usePlayerStore";
+import usePlayingSongStore from "~/contexts/usePlayingSongStore";
 
 import * as S from "./MiniPlayerLayout.styles";
 
 export default function MiniPlayerLayout() {
-  const { isPlaying, song, player } = usePlayerStore();
+  const { isPlaying, song, playerRef } = usePlayingSongStore();
   const navigate = useNavigate();
 
   const handlePlayerExpand = () => {
-    if (song) navigate(`/player/${song.id}`);
+    navigate("/player");
   };
 
   const handlePlayPause = () => {
-    if (!player.current) return;
+    if (!playerRef.current) return;
     if (isPlaying) {
-      player.current.pause();
+      playerRef.current.pause();
     } else {
-      player.current.play();
+      playerRef.current.play();
     }
   };
 
@@ -30,7 +30,6 @@ export default function MiniPlayerLayout() {
       {song && (
         <S.MiniPlayerWrapper>
           <MiniPlayer
-            id={song.id}
             coverUrl={song.coverUrl}
             title={song.title}
             artist={song.artist}

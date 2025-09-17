@@ -2,14 +2,15 @@ import styled from "styled-components";
 
 import IconWrapper from "../IconWrapper";
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.form`
   display: flex;
-  width: min(90vw, 500px);
-  padding: 20px;
+  width: 100vw;
+  padding: 30px;
+  box-sizing: border-box;
   flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
-  border-radius: 16px;
+  gap: 30px;
+  border-radius: 16px 16px 0 0;
   background-color: ${({ theme }) => theme.colors.secondaryBackground};
 `;
 
@@ -17,7 +18,7 @@ export const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 5px;
+  gap: 10px;
   align-self: stretch;
 `;
 
@@ -40,7 +41,7 @@ export const LabelIconWrapper = styled(IconWrapper)`
 export const Input = styled.input.attrs({ type: "text" })`
   width: 100%;
   display: flex;
-  padding: 10px 15px;
+  padding: 15px;
   align-items: center;
   align-self: stretch;
   border-radius: 32px;
@@ -71,7 +72,7 @@ export const Description = styled.p`
   align-self: stretch;
 `;
 
-export const Button = styled.button`
+export const Button = styled.button.attrs({ type: "submit" })`
   display: flex;
   padding: 10px 15px;
   justify-content: center;

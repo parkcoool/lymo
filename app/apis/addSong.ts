@@ -9,16 +9,21 @@ interface AddSongProps {
 
 type AddSongResponse = number | null;
 
-interface AddSongStream {
+export interface AddSongStream {
   title?: string;
   artist?: string;
-  album?: string;
-  coverUrl?: string;
-  publishedAt?: string;
-  summary?: string;
+  album?: string | null;
+  coverUrl?: string | null;
+  publishedAt?: string | null;
+  summary?: string | null;
   lyrics?: {
     summary?: string | null;
-    sentences: { text: string; translation?: string | null }[];
+    sentences: {
+      start: number;
+      end: number;
+      text: string;
+      translation?: string | null;
+    }[];
   }[];
 }
 

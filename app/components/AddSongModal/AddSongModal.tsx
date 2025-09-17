@@ -1,4 +1,8 @@
+import { useState } from "react";
 import { MdAdd, MdMusicNote, MdPerson } from "react-icons/md";
+import { useNavigate } from "react-router";
+
+import useFetchingSongStore from "~/contexts/useFetchingSongStore";
 
 import Modal from "../Modal";
 
@@ -10,9 +14,27 @@ interface AddSongModalProps {
 }
 
 export default function AddSongModal({ isOpen, onClose }: AddSongModalProps) {
+  const navigate = useNavigate();
+  const setFetchingSong = useFetchingSongStore(
+    (state) => state.setFetchingSong
+  );
+
+  const [title, setTitle] = useState("");
+  const [artist, setArtist] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFetchingSong({
+      fetchType: "add",
+      title,
+      artist,
+    });
+    navigate(`/player`);
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <S.Wrapper>
+      <S.Wrapper onSubmit={handleSubmit}>
         <S.InputWrapper>
           <S.Label htmlFor="title-input">
             <S.LabelIconWrapper>
@@ -20,7 +42,14 @@ export default function AddSongModal({ isOpen, onClose }: AddSongModalProps) {
             </S.LabelIconWrapper>
             음악 이름
           </S.Label>
-          <S.Input id="title-input" placeholder="음악 이름" autoFocus />
+          <S.Input
+            id="title-input"
+            placeholder="음악 이름"
+            autoFocus
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
         </S.InputWrapper>
 
         <S.InputWrapper>
@@ -30,7 +59,13 @@ export default function AddSongModal({ isOpen, onClose }: AddSongModalProps) {
             </S.LabelIconWrapper>
             아티스트명
           </S.Label>
-          <S.Input id="artist-input" placeholder="아티스트명" />
+          <S.Input
+            id="artist-input"
+            placeholder="아티스트명"
+            value={artist}
+            onChange={(e) => setArtist(e.target.value)}
+            required
+          />
         </S.InputWrapper>
 
         <S.Footer>

@@ -2,8 +2,8 @@ import admin from "firebase-admin";
 import { z } from "genkit";
 
 import ai from "../core/genkit";
-import { searchYouTube, YouTubeVideo } from "../tools/searchYouTube";
-import { LRCLibResult } from "../tools/searchLRCLib";
+import { searchYouTube, type YouTubeVideo } from "../tools/searchYouTube";
+import type { LRCLibResult } from "../tools/searchLRCLib";
 import { searchLastfm } from "../tools/searchLastfm";
 import { trySearchLRCLib } from "../tools/trySearchLRCLib";
 import { translateLyricsFlow } from "./translateLyrics.flow";
@@ -239,7 +239,7 @@ export const addSongFlow = ai.defineFlow(
       detailDocRef.set({
         sourceProvider: "YouTube",
         sourceId: youtubeResult?.videoId,
-        overview: result.summary,
+        summary: result.summary,
         lyrics: result.lyrics,
       }),
     ]);

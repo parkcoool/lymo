@@ -1,25 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MdArrowDropDown } from "react-icons/md";
 
-import * as S from "./SongOverview.styles";
+import * as S from "./SongSummary.styles";
 
 interface SongOverviewProps {
   title?: string;
   artist?: string;
   album?: string | null;
-  createdAt?: string | null;
-  coverUrl?: string;
-  description?: string | null;
+  publishedAt?: string | null;
+  coverUrl?: string | null;
+  summary?: string | null;
   coverElementRef?: React.Ref<HTMLImageElement>;
 }
 
-export default function SongOverview({
+export default function SongSummary({
   title,
   artist,
   album,
-  createdAt,
+  publishedAt,
   coverUrl,
-  description,
+  summary,
   coverElementRef,
 }: SongOverviewProps) {
   const [showAll, setShowAll] = useState(false);
@@ -32,10 +32,10 @@ export default function SongOverview({
   // 발매 연도
   const year = useMemo(
     () =>
-      typeof createdAt === "string"
-        ? new Date(createdAt).getFullYear()
-        : createdAt,
-    [createdAt]
+      typeof publishedAt === "string"
+        ? new Date(publishedAt).getFullYear()
+        : publishedAt,
+    [publishedAt]
   );
 
   // 설명이 넘치는지 감지
@@ -55,7 +55,7 @@ export default function SongOverview({
     <S.Wrapper>
       {/* 노래 정보 */}
       <S.SongInfo>
-        {coverUrl ? (
+        {coverUrl !== undefined ? (
           <S.Cover
             src={coverUrl ?? ""}
             crossOrigin="anonymous"
@@ -75,11 +75,11 @@ export default function SongOverview({
       </S.SongInfo>
 
       {/* 설명 */}
-      {description !== null && (
+      {summary !== null && (
         <S.OverviewWrapper $showAll={!isOverflowing || showAll}>
           <S.OverviewContent ref={overviewRef}>
-            {description ? (
-              <S.Overview>{description}</S.Overview>
+            {summary ? (
+              <S.Overview>{summary}</S.Overview>
             ) : (
               <>
                 <S.OverviewSkeleton />
@@ -92,7 +92,7 @@ export default function SongOverview({
       )}
 
       {/* 자세히 보기 */}
-      {description !== null && isOverflowing && (
+      {summary !== null && isOverflowing && (
         <S.ShowAllButton onClick={handleShowAll}>
           <S.ArrowDropDownIconWrapper>
             <MdArrowDropDown />

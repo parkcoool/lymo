@@ -4,12 +4,13 @@ export interface Song {
   artist: string;
   album: string | null;
   duration: number;
-  lyricsProvider: LyricsProvider | null;
-  lyricsId: string | null;
+  lyricsProvider: LyricsProvider;
+  lyrics: LyricsParagraph[];
   sourceProvider: SourceProvider;
   sourceId: string;
-  coverUrl: string;
-  createdAt: string;
+  coverUrl: string | null;
+  publishedAt: string | null;
+  summary: string | null;
 }
 
 export interface CompactSong {
@@ -34,7 +35,7 @@ export interface LyricsSentence {
 
 export interface LyricsParagraph {
   sentences: LyricsSentence[];
-  description: string | null;
+  summary: string | null;
 }
 
 export type LyricsProvider = "LRCLib";
@@ -55,7 +56,8 @@ export interface SongDetailDocument {
   id: string;
   sourceProvider: SourceProvider;
   sourceId: string;
-  overview: string;
+  summary: string;
+  lyricsProvider: LyricsProvider;
   lyrics: {
     summary: string | null;
     sentences: {
@@ -66,3 +68,10 @@ export interface SongDetailDocument {
     }[];
   }[];
 }
+
+export type PlayerState =
+  | "ready"
+  | "buffering"
+  | "fetching"
+  | "streaming"
+  | "idle";

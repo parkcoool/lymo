@@ -1,6 +1,7 @@
 import { MdPlayCircle } from "react-icons/md";
 import { useNavigate } from "react-router";
 
+import useFetchingSongStore from "~/contexts/useFetchingSongStore";
 import convertSecondsToString from "~/utils/convertSecondsToString";
 
 import IconButton from "../IconButton";
@@ -26,9 +27,17 @@ export default function DetailSong({
   ...props
 }: DetailSongProps) {
   const navigate = useNavigate();
+  const setFetchingSong = useFetchingSongStore(
+    (state) => state.setFetchingSong
+  );
 
   const handleClick = () => {
-    navigate(`/player/${id}`, { state: { title, artist, duration, coverUrl } });
+    setFetchingSong({
+      fetchType: "get",
+      id,
+      initialData: { id, title, artist, duration, coverUrl },
+    });
+    navigate(`/player`);
   };
 
   return (

@@ -3,7 +3,7 @@ import { z } from "genkit";
 
 import parseLyrics from "../utils/parseLyrics";
 import ai from "../core/genkit";
-import { LRCLibSong } from "../types/song";
+import type { LRCLibSong } from "../types/song";
 
 export const searchLRCLibInputSchema = z.object({
   title: z.string().describe("The title of the song"),

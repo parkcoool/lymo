@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router";
 
+import useFetchingSongStore from "~/contexts/useFetchingSongStore";
+
 import * as S from "./CompactSong.styles";
 
 interface CompactSongProps {
@@ -17,9 +19,17 @@ export default function CompactSong({
   ...props
 }: CompactSongProps) {
   const navigate = useNavigate();
+  const setFetchingSong = useFetchingSongStore(
+    (state) => state.setFetchingSong
+  );
 
   const handleClick = () => {
-    navigate(`/player/${id}`, { state: { title, coverUrl } });
+    setFetchingSong({
+      fetchType: "get",
+      id,
+      initialData: { id, title, coverUrl },
+    });
+    navigate(`/player`);
   };
 
   return (

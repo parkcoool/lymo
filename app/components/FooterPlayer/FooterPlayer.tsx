@@ -5,7 +5,7 @@ import IconButton from "../IconButton";
 import * as S from "./FooterPlayer.styles";
 
 interface FooterPlayerProps {
-  coverUrl?: string;
+  coverUrl?: string | null;
   title?: string;
   artist?: string;
   isPlaying: boolean;
@@ -22,7 +22,11 @@ export default function FooterPlayer({
   return (
     <S.Wrapper>
       <S.Left>
-        <S.Cover src={coverUrl} alt={title} />
+        {coverUrl ? (
+          <S.Cover src={coverUrl} alt={title} />
+        ) : (
+          <S.CoverSkeleton />
+        )}
         <S.Info>
           <S.Title>{title}</S.Title>
           <S.Artist>{artist}</S.Artist>

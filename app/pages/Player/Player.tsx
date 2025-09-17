@@ -1,6 +1,5 @@
 import { LayoutGroup } from "motion/react";
 import { useEffect, useMemo, useRef } from "react";
-import { useLocation } from "react-router";
 import { useTheme } from "styled-components";
 
 import FooterPlayer from "~/components/FooterPlayer";
@@ -9,40 +8,22 @@ import {
   LyricsSentence,
   LyricsSentenceSkeleton,
 } from "~/components/LyricsSentence";
-import SongOverview from "~/components/SongOverview";
-import usePlayerStore from "~/contexts/usePlayerStore";
+import SongOverview from "~/components/SongSummary";
+import usePlayingSongStore from "~/contexts/usePlayingSongStore";
 import useThemeStore from "~/contexts/useThemeStore";
 import useCoverColor from "~/hooks/useCoverColor";
-import usePlaySongEffect from "~/hooks/usePlaySongEffect";
 import darkenHexColor from "~/utils/darkenHexColor";
 
-import type { Route } from "./+types/Player";
 import * as S from "./Player.styles";
 
-interface BonusData {
-  title: string;
-  artist?: string;
-  duration?: number;
-  coverUrl: string;
-}
-
-export default function Player({ params }: Route.LoaderArgs) {
-  const songId = params.songId;
-
+export default function Player() {
   const { setDynamicBackground, resetDynamicBackground } = useThemeStore();
-  const { isPlaying, time, setTime, player } = usePlayerStore();
+  const { song, isPlaying, time, setTime, playerRef } = usePlayingSongStore();
   const theme = useTheme();
-
-  // state로 전달된 보너스 데이터
-  const location = useLocation();
-  const bonusData = location.state as BonusData | undefined;
-
-  // 노래 데이터 로드 및 플레이어 상태에 반영
-  const song = usePlaySongEffect(songId);
 
   // 커버 대표 색상
   const coverElementRef = useRef<HTMLImageElement>(null);
-  const coverColor = useCoverColor(coverElementRef, songId);
+  const coverColor = useCoverColor(coverElementRef, song?.coverUrl ?? null);
 
   // 커버 색상에 따라 배경색 변경
   useEffect(() => {
@@ -59,18 +40,18 @@ export default function Player({ params }: Route.LoaderArgs) {
 
   // 재생/일시정지 핸들러
   const handlePlayPause = () => {
-    if (!player.current) return;
+    if (!playerRef.current) return;
     if (isPlaying) {
-      player.current.pause();
+      playerRef.current.pause();
     } else {
-      player.current.play();
+      playerRef.current.play();
     }
   };
 
   // 문장 클릭 핸들러
   const handleSentenceClick = (start: number) => {
-    if (!player.current) return;
-    player.current.currentTime = start + 0.1;
+    if (!playerRef.current) return;
+    playerRef.current.currentTime = start + 0.1;
     setTime(start + 0.1);
   };
 
@@ -79,12 +60,12 @@ export default function Player({ params }: Route.LoaderArgs) {
       <LayoutGroup>
         <S.SongOverviewWrapper>
           <SongOverview
-            title={song?.title ?? bonusData?.title}
-            artist={song?.artist ?? bonusData?.artist}
+            title={song?.title}
+            artist={song?.artist}
             album={song?.album}
-            createdAt={song?.publishedAt}
-            coverUrl={song?.coverUrl ?? bonusData?.coverUrl}
-            description={song?.overview}
+            publishedAt={song?.publishedAt}
+            coverUrl={song?.coverUrl}
+            summary={song?.summary}
             coverElementRef={coverElementRef}
           />
         </S.SongOverviewWrapper>
@@ -127,9 +108,9 @@ export default function Player({ params }: Route.LoaderArgs) {
         }
       >
         <FooterPlayer
-          title={song?.title ?? bonusData?.title}
-          artist={song?.artist ?? bonusData?.artist}
-          coverUrl={song?.coverUrl ?? bonusData?.coverUrl}
+          title={song?.title}
+          artist={song?.artist}
+          coverUrl={song?.coverUrl}
           isPlaying={isPlaying}
           onPlayPause={handlePlayPause}
         />

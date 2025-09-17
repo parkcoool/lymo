@@ -3,7 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import searchSongs from "~/apis/searchSongs";
 import AddSongDialog from "~/components/AddSongDialog";
 import { DetailSong } from "~/components/Song";
-import usePlayerStore from "~/contexts/usePlayerStore";
+import usePlayingSongStore from "~/contexts/usePlayingSongStore";
 
 import * as S from "./SearchResultList.styles";
 
@@ -16,7 +16,7 @@ export default function SearchResultList({
   query,
   onOpenAddSongModal,
 }: SearchResultListProps) {
-  const { song } = usePlayerStore();
+  const { song } = usePlayingSongStore();
   const { data: searchResults } = useSuspenseQuery({
     queryKey: ["searchResults", query],
     queryFn: async () => searchSongs({ query }),

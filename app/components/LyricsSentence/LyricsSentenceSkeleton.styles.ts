@@ -2,11 +2,12 @@ import styled from "styled-components";
 
 import Skeleton from "~/components/Skeleton";
 
-export const Wrapper = styled.div`
+export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 0 10px;
+  box-sizing: border-box;
   width: 100%;
 `;
 
