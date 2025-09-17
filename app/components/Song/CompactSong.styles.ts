@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import Skeleton from "~/components/Skeleton";
+
 export const Wrapper = styled.button<{ $coverUrl: string }>`
   display: flex;
   width: 140px;
@@ -14,11 +16,30 @@ export const Wrapper = styled.button<{ $coverUrl: string }>`
   border: none;
   padding: 0;
   overflow: hidden;
+  position: relative;
+`;
+
+export const Cover = styled.img`
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  object-fit: cover;
+`;
+
+export const CoverSkeleton = styled(Skeleton)`
+  width: 100%;
+  height: 100%;
 `;
 
 export const TitleWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   padding: 10px;
+  box-sizing: border-box;
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-start;
@@ -26,7 +47,8 @@ export const TitleWrapper = styled.div`
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.7) 100%
+    rgba(0, 0, 0, 0) 60%,
+    rgba(0, 0, 0, 0.8) 100%
   );
 `;
 

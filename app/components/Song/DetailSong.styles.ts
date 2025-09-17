@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import IconWrapper from "~/components/IconWrapper";
+import Skeleton from "~/components/Skeleton";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -24,6 +25,12 @@ export const Cover = styled.img`
   flex-shrink: 0;
   border-radius: 8px;
   object-fit: cover;
+`;
+
+export const CoverSkeleton = styled(Skeleton)`
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
 `;
 
 export const Info = styled.div`

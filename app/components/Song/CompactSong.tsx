@@ -34,12 +34,13 @@ export default function CompactSong({
 
   return (
     <S.Wrapper
-      $coverUrl={coverUrl ?? ""}
+      $coverUrl={coverUrl}
       aria-label={`${title} 재생하기`}
       title={`${title} 재생하기`}
       onClick={handleClick}
       {...props}
     >
+      {coverUrl ? <S.Cover src={coverUrl} /> : <S.CoverSkeleton />}
       <S.TitleWrapper>
         <S.Title>{title}</S.Title>
       </S.TitleWrapper>

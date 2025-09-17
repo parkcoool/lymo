@@ -55,9 +55,9 @@ export default function SongSummary({
     <S.Wrapper>
       {/* 노래 정보 */}
       <S.SongInfo>
-        {coverUrl !== undefined ? (
+        {coverUrl ? (
           <S.Cover
-            src={coverUrl ?? ""}
+            src={coverUrl}
             crossOrigin="anonymous"
             ref={coverElementRef}
           />

@@ -43,7 +43,7 @@ export default function DetailSong({
   return (
     <S.Wrapper aria-label={title} title={title} {...props}>
       <S.Left>
-        <S.Cover src={coverUrl ?? ""} />
+        {coverUrl ? <S.Cover src={coverUrl} /> : <S.CoverSkeleton />}
         <S.Info>
           <S.Title>{title}</S.Title>
           <S.Description>{`${artist} ㆍ ${convertSecondsToString(duration)}`}</S.Description>
