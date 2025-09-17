@@ -3,6 +3,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 import addSong from "~/apis/addSong";
 import useFetchingSongStore from "~/contexts/useFetchingSongStore";
@@ -14,6 +15,7 @@ export default function useAddSongEffect(
   artist: string,
   initialData?: Partial<Song>
 ) {
+  const navigate = useNavigate();
   const { setSong, setPlayerState } = usePlayingSongStore();
   const setFetchingSong = useFetchingSongStore(
     (state) => state.setFetchingSong
@@ -43,6 +45,7 @@ export default function useAddSongEffect(
     if (song === undefined) return;
 
     setSong(song);
+    navigate(`/player`);
 
     if (!isFetched) {
       setPlayerState("fetching");

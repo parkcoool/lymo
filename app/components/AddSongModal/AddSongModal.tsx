@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { MdAdd, MdMusicNote, MdPerson } from "react-icons/md";
-import { useNavigate } from "react-router";
 
 import useFetchingSongStore from "~/contexts/useFetchingSongStore";
 
@@ -14,7 +13,6 @@ interface AddSongModalProps {
 }
 
 export default function AddSongModal({ isOpen, onClose }: AddSongModalProps) {
-  const navigate = useNavigate();
   const setFetchingSong = useFetchingSongStore(
     (state) => state.setFetchingSong
   );
@@ -29,7 +27,6 @@ export default function AddSongModal({ isOpen, onClose }: AddSongModalProps) {
       title,
       artist,
     });
-    navigate(`/player`);
   };
 
   return (
