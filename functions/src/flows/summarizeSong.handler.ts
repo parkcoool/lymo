@@ -7,7 +7,7 @@ const geminiApiKey = defineSecret("GEMINI_API_KEY");
 
 const summarizeSong = onCallGenkit(
   {
-    authPolicy: (auth) => auth?.token?.email_verified ?? false,
+    enforceAppCheck: true,
     secrets: [geminiApiKey],
     region: "asia-northeast3",
   },
