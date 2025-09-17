@@ -36,6 +36,9 @@ export default async function* addSong({ title, artist }: AddSongProps) {
 
   const { data, stream } = await addSongFlow.stream({ title, artist });
 
-  yield* stream;
+  for await (const chunk of stream) {
+    yield chunk;
+  }
+
   return await data;
 }
