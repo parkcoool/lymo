@@ -12,7 +12,7 @@ export default [
         index("./pages/Home/Home.tsx"),
         route("/search/:query", "./pages/Search/SearchResult.tsx"),
       ]),
-      route("/player/:songId", "./pages/Player/Player.tsx"),
+      route("/player/:songId?", "./pages/Player/Player.tsx"),
     ]),
     route("/search", "./pages/Search/Search.tsx"),
   ]),
