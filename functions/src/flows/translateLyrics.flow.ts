@@ -1,7 +1,8 @@
 import { z } from "genkit";
 import ai from "../core/genkit";
+import { LyricsAddSchema, TranslationAppendSchema } from "./addSong.schema";
 
-export const translateLyricsInputSchema = z.object({
+export const TranslateLyricsInputSchema = z.object({
   title: z.string().describe("The title of the song"),
   artist: z.string().describe("The artist of the song"),
   album: z.string().nullable().describe("The album of the song"),
@@ -16,32 +17,28 @@ export const translateLyricsInputSchema = z.object({
     .describe("The lyrics of the song"),
 });
 
-export const translateLyricsOutputSchema = z.array(
-  z.array(
+export const TranslateLyricsOutputSchema = z
+  .array(
     z.object({
       start: z.number().describe("The start time of the sentence in seconds"),
       end: z.number().describe("The end time of the sentence in seconds"),
-      text: z.string().describe("The original text of the sentence"),
-      translation: z
-        .string()
-        .nullable()
-        .describe("The translated text of thesentence"),
+      text: z.string().describe("The text of the sentence"),
+      translation: z.string().describe("The translated text of the sentence"),
     })
   )
-);
+  .describe("The lyrics of the song");
 
-export type ParsedParagraph = z.infer<
-  typeof translateLyricsOutputSchema
->[number];
-
-export type ParsedSentence = ParsedParagraph[number];
+const PARAGRAPH_SEPARATOR = "[PARAGRAPH_SEPARATOR]";
 
 export const translateLyricsFlow = ai.defineFlow(
   {
     name: "translateLyricsFlow",
-    inputSchema: translateLyricsInputSchema,
-    streamSchema: translateLyricsOutputSchema,
-    outputSchema: translateLyricsOutputSchema,
+    inputSchema: TranslateLyricsInputSchema,
+    streamSchema: z.discriminatedUnion("event", [
+      LyricsAddSchema,
+      TranslationAppendSchema,
+    ]),
+    outputSchema: TranslateLyricsOutputSchema,
   },
   async ({ title, artist, album, lyrics }, { sendChunk }) => {
     const { stream } = ai.generateStream({
@@ -49,7 +46,7 @@ export const translateLyricsFlow = ai.defineFlow(
       ### 역할 (Role)
       전문 가사 번역가
 
-      #### 가사 분석 지침 (Lyrics Analysis Guidelines)
+      ### 가사 분석 지침 (Lyrics Analysis Guidelines)
       - 송 폼 (verse, chorus, bridge 등)을 인식하고, 이 단위로 문단을 분할할 것
       - 제공된 문장 구분을 쪼개거나 병합하지 말 것
       - 한국어인 문장은 영어로, 영어인 문장은 한국어로 번역할 것
@@ -59,96 +56,86 @@ export const translateLyricsFlow = ai.defineFlow(
 
       ### 출력 형식 (Output Format)
       - **모든 문장은 항상 줄바꿈 문자로 구분할 것**
-      - 주어지는 가사 문장들은 문장 번호와 함께 제공되며, 번역 시 문장 번호를 대괄호 안에 포함할 것 (예: [3] 번역된 문장입니다.)
-      - 번역이 불필요한 경우 "null"을 출력할 것
-      - 분할한 문단 단위는 "[PARAGRAPH_SEPARATOR]"로 구분할 것.
+      - 번역이 불필요한 경우 빈 문자열을 출력할 것
+      - 분할한 문단 단위는 "${PARAGRAPH_SEPARATOR}"로 구분할 것.
 
       ### 출력 예시 (Output Example)
-      [0] This is the first sentence.
-      [1] null
-      [PARAGRAPH_SEPARATOR]
-      [2] This is the third sentence.
-      [3] This is the fourth sentence.
+      This is the first sentence of the first paragraph.
+      This is the second sentence of the first paragraph.
+      ${PARAGRAPH_SEPARATOR}
+      This is the first sentence of the second paragraph.
+
+      This is the third sentence of the second paragraph.
       `,
-      prompt: JSON.stringify({
-        title,
-        artist,
-        album,
-        lyrics: lyrics.map((sentence, index) => [index, sentence.text]),
-      }),
+      prompt: JSON.stringify({ title, artist, album, lyrics }),
       config: {
         temperature: 0.3,
       },
     });
-
-    // 전체 번역 결과를 저장할 배열
-    const result: ParsedParagraph[] = [];
-    // 스트리밍 텍스트 데이터를 임시로 저장할 버퍼
+    let paragraphIndex = 0;
+    let sentenceIndex = 0;
     let buffer = "";
+    const lyricsAddedFor = new Set();
 
-    // 스트림에서 청크를 순회하며 처리
     for await (const chunk of stream) {
-      buffer += chunk.text;
+      // 현재 버퍼에서 마지막 줄바꿈 이후의 내용(지금 작성 중인 줄)만 추출
+      const lastNewlineIndex = buffer.lastIndexOf("\n");
+      const currentLineBuffer =
+        lastNewlineIndex === -1
+          ? buffer
+          : buffer.substring(lastNewlineIndex + 1);
 
-      const parts = buffer.split("[PARAGRAPH_SEPARATOR]");
-      // 마지막 부분은 아직 완성되지 않은 문단일 수 있으므로 버퍼에 남겨둠
-      buffer = parts.pop() ?? "";
+      // 지금 작성 중인 줄의 내용과 새로 들어온 청크를 합쳐서 구분자인지 예측
+      const potentialContent = currentLineBuffer + chunk.text;
+      const isPotentiallySeparator = PARAGRAPH_SEPARATOR.startsWith(
+        potentialContent.trim()
+      );
 
-      // 완성된 문단들을 순회하며 처리
-      for (const part of parts) {
-        const sentences = part.split("\n");
-        const parsedSentences: ParsedSentence[] = [];
-
-        // 각 문장에 대해 원본 가사와 매칭하여 번역 결과 생성
-        for (const sentence of sentences) {
-          const trimmed = sentence.trim();
-          if (trimmed === "null") continue; // 번역이 불필요한 문장은 건너뜀
-
-          const match = trimmed.match(/^\[(\d+)\]\s*(.*)$/);
-          if (!match) continue; // 패턴이 일치하지 않는 문장은 건너뜀
-
-          const index = parseInt(match[1], 10);
-          if (isNaN(index) || index < 0 || index >= lyrics.length) continue; // 유효하지 않은 인덱스는 건너뜀
-
-          const original = lyrics[index];
-          parsedSentences.push({
-            start: original.start,
-            end: original.end,
-            text: original.text,
-            translation: match[2].trim(),
+      // 예측 결과가 구분자가 아닐 경우에만 가사 관련 이벤트를 발생
+      if (!isPotentiallySeparator) {
+        // 1. 새로운 문장 감지 시 "lyrics_add" 이벤트 호출
+        if (
+          !lyricsAddedFor.has(sentenceIndex) &&
+          sentenceIndex < lyrics.length
+        ) {
+          sendChunk({
+            event: "lyrics_add",
+            data: {
+              ...lyrics[sentenceIndex],
+              paragraphIndex,
+            },
           });
+          lyricsAddedFor.add(sentenceIndex);
         }
 
-        result.push(parsedSentences);
-        // 현재까지 처리된 결과를 청크로 전송
-        sendChunk(result);
+        // 2. 스트림 청크를 받을 때마다 "translation_append" 이벤트 호출
+        if (sentenceIndex < lyrics.length) {
+          sendChunk({
+            event: "translation_append",
+            data: {
+              paragraphIndex,
+              sentenceIndex,
+              text: chunk.text,
+            },
+          });
+        }
+      }
+
+      // 3. 다음 청크 처리를 위한 상태 업데이트 (기존과 동일)
+      buffer += chunk;
+      let newlineIndex;
+      while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+        const line = buffer.substring(0, newlineIndex).trim();
+        buffer = buffer.substring(newlineIndex + 1);
+
+        if (line === PARAGRAPH_SEPARATOR) {
+          paragraphIndex++;
+        } else if (line.length > 0) {
+          sentenceIndex++;
+        }
       }
     }
 
-    // 버퍼에 남아있는 마지막 문단 처리
-    if (buffer.trim() !== "") {
-      const sentences = buffer.split("\n");
-      const parsedSentences: ParsedSentence[] = [];
-
-      for (const sentence of sentences) {
-        const trimmed = sentence.trim();
-        if (trimmed === "null") continue; // 번역이 불필요한 문장은 건너뜀
-        const match = trimmed.match(/^\[(\d+)\]\s*(.*)$/);
-        if (!match) continue; // 패턴이 일치하지 않는 문장은 건너뜀
-        const index = parseInt(match[1], 10);
-        if (isNaN(index) || index < 0 || index >= lyrics.length) continue; // 유효하지 않은 인덱스는 건너뜀
-        const original = lyrics[index];
-        parsedSentences.push({
-          start: original.start,
-          end: original.end,
-          text: original.text,
-          translation: match[2].trim(),
-        });
-      }
-      result.push(parsedSentences);
-      sendChunk(result);
-    }
-
-    return result;
+    return [];
   }
 );

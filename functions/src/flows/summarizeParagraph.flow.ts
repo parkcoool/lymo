@@ -1,5 +1,6 @@
 import { z } from "genkit";
 import ai from "../core/genkit";
+import { ParagraphSummaryAppendSchema } from "./addSong.schema";
 
 export const summarizeParagraphInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -20,7 +21,7 @@ export const summarizeParagraphFlow = ai.defineFlow(
   {
     name: "summarizeParagraphFlow",
     inputSchema: summarizeParagraphInputSchema,
-    streamSchema: summarizeParagraphOutputSchema,
+    streamSchema: ParagraphSummaryAppendSchema,
     outputSchema: summarizeParagraphOutputSchema,
   },
   async ({ title, artist, album, lyrics }, { sendChunk }) => {
@@ -29,19 +30,22 @@ export const summarizeParagraphFlow = ai.defineFlow(
       ### 역할 (Role)
       전문 가사 분석가
 
-      #### 가사 분석 지침 (Lyrics Analysis Guidelines)
+      ### 가사 분석 지침 (Lyrics Analysis Guidelines)
       - 주어진 가사는 문단 별로 구분되어 있음
-      - 각 문단에 대해 요약문을 작성하되, 요약이 필요 없으면 "null"을 반환할 것
+      - 각 문단에 대해 분석문을 작성할 것
+      - 분석문은 해당 문단의 핵심 내용을 간결하게 요약할 것
+      - 분석문은 한 문단으로만 작성할 것
 
       ### 출력 형식 (Output Format)
-      - 모든 요약문은 항상 줄바꿈 문자 **한 개**로 구분할 것
       - 모든 요약문은 한국어로 작성할 것
+      - 각 문단에 해당하는 요약문을 줄바꿈으로 구분하여 출력할 것
+      - 분석이 필요하지 않은 문단은 빈 줄로 출력할 것
 
       ### 출력 예시 (Output Example)
-      첫 번째 문단의 요약문입니다.
-      두 번째 문단의 요약문입니다.
-      null
-      네 번째 문단의 요약문입니다.
+      1번 문단 분석문입니다.
+      2번 문단 분석문입니다.
+      
+      4번 문단 분석문입니다.
       `,
       prompt: JSON.stringify({
         title,
@@ -54,22 +58,30 @@ export const summarizeParagraphFlow = ai.defineFlow(
       },
     });
 
-    let result = "";
+    let index = 0;
     for await (const chunk of stream) {
-      result += chunk.text;
-      sendChunk(
-        result
-          .split("\n")
-          .map((line) => line.trim())
-          .map((line) => (line === "null" ? null : line))
-          .filter((line) => line !== "")
-      );
+      const summaries = chunk.text.split("\n").map((line) => line.trim());
+
+      for (
+        let paragraphIndex = index;
+        paragraphIndex < index + summaries.length;
+        paragraphIndex++
+      ) {
+        sendChunk({
+          event: "paragraph_summary_append",
+          data: {
+            paragraphIndex,
+            summary: summaries[paragraphIndex - index],
+          },
+        });
+      }
+
+      index += summaries.length - 1;
     }
 
-    return (await response).text
+    const result = (await response).text
       .split("\n")
-      .map((line) => line.trim())
-      .map((line) => (line === "null" ? null : line))
-      .filter((line) => line !== "");
+      .map((line) => line.trim() || null);
+    return result;
   }
 );

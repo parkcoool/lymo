@@ -1,5 +1,6 @@
 import { z } from "genkit";
 import ai from "../core/genkit";
+import { SummaryAppendSchema } from "./addSong.schema";
 
 export const summarizeSongInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -12,14 +13,13 @@ export const summarizeSongInputSchema = z.object({
 
 export const summarizeSongOutputSchema = z
   .string()
-  .nullable()
   .describe("The summary of the song");
 
 export const summarizeSongFlow = ai.defineFlow(
   {
     name: "summarizeSongFlow",
     inputSchema: summarizeSongInputSchema,
-    streamSchema: summarizeSongOutputSchema,
+    streamSchema: SummaryAppendSchema,
     outputSchema: summarizeSongOutputSchema,
   },
   async ({ title, artist, album, lyrics }, { sendChunk }) => {
@@ -37,7 +37,6 @@ export const summarizeSongFlow = ai.defineFlow(
       - 요약문은 2~3 문단으로 구성할 것
       - 문단은 줄바꿈 문자 2개로 구분할 것
       - 요약문은 한국어로 작성할 것
-      - 요약이 불가능한 경우, "null"을 반환할 것
       `,
       prompt: JSON.stringify({
         title,
@@ -51,11 +50,13 @@ export const summarizeSongFlow = ai.defineFlow(
     });
 
     for await (const chunk of stream) {
-      sendChunk(chunk.text);
+      sendChunk({
+        event: "summary_append",
+        data: { summary: chunk.text },
+      });
     }
 
-    const result = (await response).text.trim();
-    if (result === "" || result.toLowerCase() === "null") return null;
+    const result = (await response).text;
     return result;
   }
 );
