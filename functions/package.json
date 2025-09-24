@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "lymo-functions",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
