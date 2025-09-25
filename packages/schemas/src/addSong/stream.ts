@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "genkit";
 
 const MetadataUpdateSchema = z.object({
   event: z.literal("metadata_update"),
@@ -8,24 +8,21 @@ const MetadataUpdateSchema = z.object({
     album: z.string().nullable(),
     coverUrl: z.string(),
     publishedAt: z.string().nullable(),
-    sourceProvider: z.string(),
-    sourceId: z.string(),
     lyricsProvider: z.string(),
   }),
 });
 
-export const LyricsAddSchema = z.object({
-  event: z.literal("lyrics_add"),
+export const LyricsSetSchema = z.object({
+  event: z.literal("lyrics_set"),
   data: z.object({
     paragraphIndex: z.number(),
+    sentenceIndex: z.number(),
     text: z.string(),
-    start: z.number(),
-    end: z.number(),
   }),
 });
 
-export const TranslationAppendSchema = z.object({
-  event: z.literal("translation_append"),
+export const TranslationSetSchema = z.object({
+  event: z.literal("translation_set"),
   data: z.object({
     paragraphIndex: z.number(),
     sentenceIndex: z.number(),
@@ -48,27 +45,18 @@ export const ParagraphSummaryAppendSchema = z.object({
   }),
 });
 
-const StreamEndSchema = z.object({
+export const StreamEndSchema = z.object({
   event: z.literal("stream_end"),
   data: z.object({}),
-});
-
-export const AddSongInputSchema = z.object({
-  title: z.string().describe("The title of the song"),
-  artist: z.string().describe("The artist of the song"),
 });
 
 export const AddSongStreamSchema = z.discriminatedUnion("event", [
   MetadataUpdateSchema,
   SummaryAppendSchema,
-  LyricsAddSchema,
-  TranslationAppendSchema,
+  LyricsSetSchema,
+  TranslationSetSchema,
   ParagraphSummaryAppendSchema,
   StreamEndSchema,
 ]);
-
-export const AddSongOutputSchema = z
-  .string()
-  .describe("The ID of the added song");
 
 export type AddSongStream = z.infer<typeof AddSongStreamSchema>;

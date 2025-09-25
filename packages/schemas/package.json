@@ -1,0 +1,12 @@
+{
+  "name": "@lymo/schemas",
+  "version": "1.0.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./addSong": "./src/addSong/index.ts"
+  },
+  "dependencies": {
+    "genkit": "^1.19.3",
+    "zod": "^3.25.76"
+  }
+}

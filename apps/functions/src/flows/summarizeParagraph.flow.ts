@@ -1,6 +1,6 @@
 import { z } from "genkit";
 import ai from "../core/genkit";
-import { ParagraphSummaryAppendSchema } from "./addSong.schema";
+import { ParagraphSummaryAppendSchema } from "@lymo/schemas/addSong";
 
 export const summarizeParagraphInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -42,10 +42,7 @@ export const summarizeParagraphFlow = ai.defineFlow(
       - 분석이 필요하지 않은 문단은 빈 줄로 출력할 것
 
       ### 출력 예시 (Output Example)
-      1번 문단 분석문입니다.
-      2번 문단 분석문입니다.
-      
-      4번 문단 분석문입니다.
+      1번 문단 분석문입니다.\n2번 문단 분석문입니다.\n\n4번 문단 분석문입니다.
       `,
       prompt: JSON.stringify({
         title,
