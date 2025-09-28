@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "functions:start": "npm run genkit:start --workspace=@lymo/functions",
+    "functions:deploy": "firebase deploy --only functions"
+  }
 }

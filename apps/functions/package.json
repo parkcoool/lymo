@@ -16,7 +16,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@genkit-ai/google-genai": "^1.19.2",
-    "@lymo/schemas": "*",
+    "@lymo/schemas": "0.0.0",
     "axios": "^1.12.1",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
@@ -27,6 +27,7 @@
     "youtube-search-without-api-key": "^2.0.7"
   },
   "devDependencies": {
+    "@types/handlebars": "^4.0.40",
     "@types/spotify-web-api-node": "^5.0.11",
     "firebase-functions-test": "^3.1.0",
     "tsx": "^4.20.5",

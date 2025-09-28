@@ -1,4 +1,4 @@
-import { z } from "genkit";
+import { z } from "zod";
 
 const MetadataUpdateSchema = z.object({
   event: z.literal("metadata_update"),

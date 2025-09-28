@@ -1,12 +1,29 @@
 {
   "name": "@lymo/schemas",
-  "version": "1.0.0",
+  "version": "0.0.0",
+  "files": [
+    "./dist"
+  ],
   "exports": {
-    ".": "./src/index.ts",
-    "./addSong": "./src/addSong/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./addSong": {
+      "types": "./dist/addSong/index.d.ts",
+      "import": "./dist/addSong/index.mjs",
+      "require": "./dist/addSong/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup"
   },
   "dependencies": {
-    "genkit": "^1.19.3",
     "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
   }
 }

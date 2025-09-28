@@ -1,3 +1,3 @@
-import { z } from "genkit";
+import { z } from "zod";
 
 export const AddSongOutputSchema = z.string().nullable();
