@@ -2,10 +2,6 @@ import { colors } from "@/constants/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-  },
-
   section: {
     flexDirection: "column",
     paddingVertical: 8,
