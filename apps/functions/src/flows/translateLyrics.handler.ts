@@ -7,7 +7,6 @@ const geminiApiKey = defineSecret("GEMINI_API_KEY");
 
 const translateLyrics = onCallGenkit(
   {
-    enforceAppCheck: true,
     secrets: [geminiApiKey],
     region: "asia-northeast3",
   },

@@ -9,7 +9,6 @@ const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const addSong = onCallGenkit(
   {
     cors: true,
-    enforceAppCheck: true,
     timeoutSeconds: 300,
     secrets: [lastfmApiKey, geminiApiKey],
     region: "asia-northeast3",
