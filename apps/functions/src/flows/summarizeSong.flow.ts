@@ -1,6 +1,8 @@
 import { z } from "genkit";
 import ai from "../core/genkit";
-import { SummaryAppendSchema } from "@lymo/schemas/addSong";
+import { addSong } from "@lymo/schemas/functions";
+
+const { SummaryAppendSchema } = addSong;
 
 export const summarizeSongInputSchema = z.object({
   title: z.string().describe("The title of the song"),

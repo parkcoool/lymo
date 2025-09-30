@@ -1,10 +1,6 @@
 import admin, { firestore } from "firebase-admin";
 
-import {
-  AddSongInputSchema,
-  AddSongStreamSchema,
-  AddSongOutputSchema,
-} from "@lymo/schemas/addSong";
+import { addSong } from "@lymo/schemas/functions";
 
 import ai from "../core/genkit";
 import { searchLRCLib } from "../tools/searchLRCLib";
@@ -12,6 +8,9 @@ import { searchSpotify } from "../tools/searchSpotify";
 import { translateLyricsFlow } from "./translateLyrics.flow";
 import { summarizeSongFlow } from "./summarizeSong.flow";
 import { summarizeParagraphFlow } from "./summarizeParagraph.flow";
+
+const { AddSongInputSchema, AddSongStreamSchema, AddSongOutputSchema } =
+  addSong;
 
 /**
  * 음악 제목과 아티스트명을 입력받아 정확한 메타데이터와 가사를 포함한 음악 정보를 스트리밍하고 DB에 등록하는 플로우
