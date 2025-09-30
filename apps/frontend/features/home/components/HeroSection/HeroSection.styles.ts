@@ -9,7 +9,6 @@ export const styles = StyleSheet.create({
     gap: 48,
     padding: 24,
     minHeight: 480,
-    height: "80%",
   },
 
   searchBox: {

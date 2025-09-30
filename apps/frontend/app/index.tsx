@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 
 import HeroSection from "@/features/home/components/HeroSection";
 import PopularTracksSection from "@/features/home/components/PopularTracksSection";
@@ -8,6 +8,7 @@ export default function Home() {
     <ScrollView
       style={{
         flexDirection: "column",
+        height: "100%",
       }}
     >
       {/* 최상단 섹션 */}
