@@ -9,4 +9,6 @@ export const colors = {
   primaryBackground: "#4F332A",
   onPrimaryBackground: "#DCD6D4",
   onPrimaryBackgroundSubtle: "#B9ADAA",
+  white: "#FFFFFF",
+  black: "#000000",
 };
