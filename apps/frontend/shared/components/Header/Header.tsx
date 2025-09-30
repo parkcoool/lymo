@@ -6,7 +6,13 @@ import SearchBoxLink from "@/shared/components/SearchBoxLink";
 import { styles } from "./Header.styles";
 import { TouchableOpacity, View } from "react-native";
 
-export default function Header({ back, navigation }: NativeStackHeaderProps) {
+export default function Header({
+  back,
+  navigation,
+  route,
+}: NativeStackHeaderProps) {
+  const isSearchBoxVisible = route.path !== "/";
+
   return (
     <View style={styles.container}>
       {/* 상단 영역 */}
@@ -26,7 +32,7 @@ export default function Header({ back, navigation }: NativeStackHeaderProps) {
           )}
 
           {/* 검색 박스 */}
-          <SearchBoxLink style={styles.searchBox} />
+          {isSearchBoxVisible && <SearchBoxLink style={styles.searchBox} />}
         </View>
 
         <View style={styles.right}>

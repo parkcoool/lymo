@@ -1,11 +1,11 @@
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import HeroSection from "@/features/home/components/HeroSection";
 import PopularTracksSection from "@/features/home/components/PopularTracksSection";
 
 export default function Home() {
   return (
-    <View
+    <ScrollView
       style={{
         flexDirection: "column",
       }}
@@ -15,6 +15,6 @@ export default function Home() {
 
       {/* 인기 섹션 */}
       <PopularTracksSection />
-    </View>
+    </ScrollView>
   );
 }
