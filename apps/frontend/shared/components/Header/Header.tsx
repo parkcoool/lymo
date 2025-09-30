@@ -11,8 +11,6 @@ export default function Header({
   navigation,
   route,
 }: NativeStackHeaderProps) {
-  const isSearchBoxVisible = route.path !== "/";
-
   return (
     <View style={styles.container}>
       {/* 상단 영역 */}
@@ -32,7 +30,7 @@ export default function Header({
           )}
 
           {/* 검색 박스 */}
-          {isSearchBoxVisible && <SearchBoxLink style={styles.searchBox} />}
+          {back && <SearchBoxLink style={styles.searchBox} />}
         </View>
 
         <View style={styles.right}>
