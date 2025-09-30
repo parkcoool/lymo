@@ -1,15 +1,12 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import HeroSection from "@/features/home/components/HeroSection";
 
-export default function Index() {
+import { styles } from "./index.styles";
+
+export default function Home() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View style={styles.container}>
+      <HeroSection />
     </View>
   );
 }

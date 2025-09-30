@@ -6,8 +6,6 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
 
-  safeAreaView: {},
-
   header: {
     flexDirection: "row",
     alignItems: "stretch",
@@ -26,29 +24,8 @@ export const styles = StyleSheet.create({
     color: colors.onBackground,
   },
 
-  searchBoxWrapper: {
-    flex: 1,
-    height: "100%",
-  },
-
   searchBox: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexShrink: 0,
-    borderRadius: 32,
-    backgroundColor: colors.surface,
-  },
-
-  searchBoxText: {
-    color: colors.onSurfaceSubtle,
-    fontSize: 16,
-  },
-
-  searchBoxIcon: {
-    color: colors.onSurfaceSubtle,
+    flex: 1,
   },
 
   right: {

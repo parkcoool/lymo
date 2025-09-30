@@ -1,14 +1,17 @@
 import type { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import SearchBoxLink from "@/shared/components/SearchBoxLink";
 
 import { styles } from "./Header.styles";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 export default function Header({ back, navigation }: NativeStackHeaderProps) {
   return (
     <View style={styles.container}>
+      {/* 상단 영역 */}
       <SafeAreaView edges={["top"]} />
+
       <View style={styles.header}>
         <View style={styles.left}>
           {/* 뒤로 가기 버튼 */}
@@ -23,16 +26,7 @@ export default function Header({ back, navigation }: NativeStackHeaderProps) {
           )}
 
           {/* 검색 박스 */}
-          <Pressable style={styles.searchBoxWrapper}>
-            <View style={styles.searchBox}>
-              <Text style={styles.searchBoxText}>검색</Text>
-              <MaterialIcons
-                name="search"
-                size={24}
-                style={styles.searchBoxIcon}
-              />
-            </View>
-          </Pressable>
+          <SearchBoxLink style={styles.searchBox} />
         </View>
 
         <View style={styles.right}>
