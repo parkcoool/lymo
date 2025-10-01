@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "lymo-app",
-    "slug": "lymo-app",
+    "name": "Lymo",
+    "slug": "Lymo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

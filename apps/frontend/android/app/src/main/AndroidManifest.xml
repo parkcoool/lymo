@@ -11,6 +11,7 @@
       <data android:scheme="https"/>
     </intent>
   </queries>
+  <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
   <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="true" android:theme="@style/AppTheme" android:supportsRtl="true" android:enableOnBackInvokedCallback="false">
     <meta-data android:name="expo.modules.updates.ENABLED" android:value="false"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH" android:value="ALWAYS"/>
@@ -25,8 +26,16 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="lymoapp"/>
-        <data android:scheme="exp+lymo-app"/>
+        <data android:scheme="exp+lymoapp"/>
       </intent-filter>
     </activity>
+    <service android:name=".MediaNotificationListener"
+       android:label="@string/app_name"
+       android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+       android:exported="true">
+        <intent-filter>
+            <action android:name="android.service.notification.NotificationListenerService" />
+        </intent-filter>
+    </service>
   </application>
 </manifest>
