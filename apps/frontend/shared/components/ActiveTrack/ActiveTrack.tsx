@@ -2,13 +2,15 @@ import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 
-import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
+import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 
 import { styles } from "./ActiveTrack.styles";
 
 export default function ActiveTrack() {
   const windowWidth = Dimensions.get("window").width;
-  const { track, isSynced } = useActiveTrackStore();
+
+  const { data: track } = useDeviceMediaStore();
+  const isSynced = true; // TODO: 기기 연동 상태
 
   if (!track) return null;
 
@@ -29,7 +31,10 @@ export default function ActiveTrack() {
             {/* 곡 정보 */}
             <View style={styles.track}>
               {/* 커버 이미지 */}
-              <Image source={{ uri: track.coverUrl }} style={styles.cover} />
+              <Image
+                source={{ uri: "data:image/png;base64," + track.albumArt }}
+                style={styles.cover}
+              />
 
               {/* 메타데이터 */}
               <View style={styles.trackMetadata}>

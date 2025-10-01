@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
 
   wrapper: {
     backdropFilter: "blur(16px)",
-    borderRadius: 16,
+    borderRadius: 20,
     overflow: "hidden",
   },
 
@@ -41,19 +41,18 @@ export const styles = StyleSheet.create({
 
   syncText: {
     color: colors.onBackgroundSubtle,
-    fontWeight: 600,
   },
 
   track: {
     flexDirection: "row",
-    gap: 8,
+    gap: 12,
     alignItems: "center",
   },
 
   cover: {
     width: 48,
     height: 48,
-    borderRadius: 8,
+    borderRadius: 12,
     backgroundColor: colors.surface,
   },
 
@@ -70,7 +69,7 @@ export const styles = StyleSheet.create({
 
   artist: {
     color: colors.onBackgroundSubtle,
-    fontSize: 16,
+    fontSize: 14,
   },
 
   expandButton: {},

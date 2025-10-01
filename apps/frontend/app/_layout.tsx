@@ -7,10 +7,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { colors } from "@/constants/colors";
 import Header from "@/shared/components/Header";
 import ActiveTrack from "@/shared/components/ActiveTrack";
+import useDeviceMediaEffect from "@/shared/hooks/useDeviceMediaEffect";
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
+  useDeviceMediaEffect();
+
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
