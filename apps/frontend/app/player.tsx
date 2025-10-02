@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
 import Summary from "@/features/player/components/Summary";
 import getTrack from "@/features/track/apis/getTrack";
 import { DetailedTrackDocumentWithId } from "@/types/track";
+import Paragraph from "@/features/player/components/Paragraph";
+import Sentence from "@/features/player/components/Sentence";
 
 export default function Player() {
   const { track: activeTrack } = useActiveTrackStore();
@@ -34,6 +36,27 @@ export default function Player() {
         publishedAt={track?.publishedAt}
         summary={track?.summary}
       />
+
+      {/* 가사 */}
+      <View>
+        {track?.lyrics !== undefined &&
+          track.lyrics.map((paragraph, paragraphIndex) => (
+            <Paragraph
+              key={paragraphIndex}
+              summary={paragraph.summary}
+              active={false}
+            >
+              {paragraph.sentences.map((sentence, sentenceIndex) => (
+                <Sentence
+                  key={sentenceIndex}
+                  sentence={sentence.text}
+                  translation={sentence.translation}
+                  active={false}
+                />
+              ))}
+            </Paragraph>
+          ))}
+      </View>
     </ScrollView>
   );
 }
