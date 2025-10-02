@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
+import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
 import useCoverColor from "@/features/track/hooks/useCoverColor";
 
 import { styles } from "./ActiveTrack.styles";
@@ -11,13 +11,8 @@ import { styles } from "./ActiveTrack.styles";
 export default function ActiveTrack() {
   const windowWidth = Dimensions.get("window").width;
 
-  const { data: track } = useDeviceMediaStore();
-  const coverUrl = track?.albumArt
-    ? "data:image/png;base64," + track.albumArt
-    : null;
-
-  const coverColor = useCoverColor(coverUrl) ?? "#FFFFFF";
-  const isSynced = true; // TODO: 기기 연동 상태
+  const { track, isSynced } = useActiveTrackStore();
+  const coverColor = useCoverColor(track?.coverUrl ?? null) ?? "#FFFFFF";
 
   if (!track) return null;
 
@@ -46,7 +41,10 @@ export default function ActiveTrack() {
             {/* 곡 정보 */}
             <View style={styles.track}>
               {/* 커버 이미지 */}
-              <Image source={{ uri: coverUrl ?? "" }} style={styles.cover} />
+              <Image
+                source={{ uri: track?.coverUrl ?? "" }}
+                style={styles.cover}
+              />
 
               {/* 메타데이터 */}
               <View style={styles.trackMetadata}>

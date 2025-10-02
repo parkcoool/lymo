@@ -6,12 +6,12 @@ type TrackDetailDoc = tracks.TrackDetailDoc;
 type Track = TrackDoc & TrackDetailDoc;
 
 interface ActiveTrackState {
-  track: Track | null;
+  track: Partial<Track> | null;
   isSynced: boolean;
 }
 
 interface ActiveTrackActions {
-  setTrack: (track: Track | null) => void;
+  setTrack: (track: Partial<Track> | null) => void;
   setIsSynced: (isSynced: boolean) => void;
 }
 

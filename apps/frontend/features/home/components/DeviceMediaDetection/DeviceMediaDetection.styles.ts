@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  playButton: {
+  button: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     flexDirection: "row",
@@ -90,11 +90,11 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
   },
 
-  playIcon: {
+  buttonIcon: {
     color: colors.onSurface,
   },
 
-  playButtonText: {
+  buttonText: {
     color: colors.onSurface,
     fontSize: 14,
     fontWeight: 700,

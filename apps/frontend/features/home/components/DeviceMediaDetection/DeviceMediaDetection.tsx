@@ -5,14 +5,27 @@ import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 import useCoverColor from "@/features/track/hooks/useCoverColor";
 
 import { styles } from "./DeviceMediaDetection.styles";
+import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
 
 export default function DeviceMediaDetection() {
   const { data: track } = useDeviceMediaStore();
-  const coverUrl = track?.albumArt
-    ? "data:image/png;base64," + track.albumArt
-    : null;
+  const { isSynced, setIsSynced, setTrack } = useActiveTrackStore();
 
-  const coverColor = useCoverColor(coverUrl) ?? "#FFFFFF";
+  const coverColor = useCoverColor(track?.albumArt ?? null) ?? "#FFFFFF";
+
+  // 연동 버튼 핸들러
+  const handleConnect = () => {
+    if (!track) return;
+
+    setIsSynced(true);
+    setTrack({ ...track, coverUrl: track.albumArt ?? undefined });
+  };
+
+  // 연동 해제 버튼 핸들러
+  const handleDisconnect = () => {
+    setIsSynced(false);
+    setTrack(null);
+  };
 
   if (!track) {
     return null;
@@ -32,7 +45,7 @@ export default function DeviceMediaDetection() {
         {/* 곡 정보 */}
         <View style={styles.track}>
           {/* 커버 이미지 */}
-          <Image source={{ uri: coverUrl ?? "" }} style={styles.cover} />
+          <Image source={{ uri: track.albumArt ?? "" }} style={styles.cover} />
 
           {/* 메타데이터 */}
           <View style={styles.trackMetadata}>
@@ -47,21 +60,19 @@ export default function DeviceMediaDetection() {
 
         {/* 푸터 */}
         <View style={styles.footer}>
-          <View style={styles.description}>
-            <MaterialIcons name="cast" size={20} style={styles.castIcon} />
-            <Text style={styles.descriptionText}>
-              기기에서 재생 중인 곡을 감지했습니다.
-            </Text>
-          </View>
-
-          {/* 재생 버튼 */}
-          <TouchableOpacity style={styles.playButton}>
+          {/* 연동 및 연동 해제 버튼 */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={isSynced ? handleDisconnect : handleConnect}
+          >
             <MaterialIcons
-              name="play-circle"
+              name={isSynced ? "close" : "sync"}
               size={20}
-              style={styles.playIcon}
+              style={styles.buttonIcon}
             />
-            <Text style={styles.playButtonText}>음악 감상하기</Text>
+            <Text style={styles.buttonText}>
+              {isSynced ? "기기와 연동 해제하기" : "기기와 연동하기"}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
