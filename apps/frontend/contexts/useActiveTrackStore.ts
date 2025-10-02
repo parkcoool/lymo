@@ -1,17 +1,14 @@
 import { create } from "zustand";
-import { tracks } from "@lymo/schemas/database";
 
-type TrackDoc = tracks.TrackDoc;
-type TrackDetailDoc = tracks.TrackDetailDoc;
-type Track = TrackDoc & TrackDetailDoc;
+import type { DetailedTrackDocumentWithId } from "@/types/track";
 
 interface ActiveTrackState {
-  track: Partial<Track> | null;
+  track: Partial<DetailedTrackDocumentWithId> | null;
   isSynced: boolean;
 }
 
 interface ActiveTrackActions {
-  setTrack: (track: Partial<Track> | null) => void;
+  setTrack: (track: Partial<DetailedTrackDocumentWithId> | null) => void;
   setIsSynced: (isSynced: boolean) => void;
 }
 

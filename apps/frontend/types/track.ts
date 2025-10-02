@@ -4,3 +4,7 @@ import { WithId } from "@/types/shared";
 export type TrackDocument = tracks.TrackDoc;
 
 export type TrackDocumentWithId = WithId<TrackDocument>;
+
+export type DetailedTrackDocument = tracks.TrackDetailDoc & TrackDocument;
+
+export type DetailedTrackDocumentWithId = WithId<DetailedTrackDocument>;
