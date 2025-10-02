@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     padding: 12,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: `${colors.primaryBackground}B3`,
   },
 
   left: {
@@ -36,11 +36,11 @@ export const styles = StyleSheet.create({
   },
 
   syncIcon: {
-    color: colors.onBackgroundSubtle,
+    color: colors.onPrimaryBackground,
   },
 
   syncText: {
-    color: colors.onBackgroundSubtle,
+    color: colors.onPrimaryBackground,
   },
 
   track: {
@@ -62,19 +62,19 @@ export const styles = StyleSheet.create({
   },
 
   title: {
-    color: colors.onBackground,
+    color: colors.onPrimaryBackground,
     fontSize: 16,
     fontWeight: 700,
   },
 
   artist: {
-    color: colors.onBackgroundSubtle,
+    color: colors.onPrimaryBackgroundSubtle,
     fontSize: 14,
   },
 
   expandButton: {},
 
   expandIcon: {
-    color: colors.onBackground,
+    color: colors.onPrimaryBackground,
   },
 });

@@ -4,12 +4,15 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   wrapper: {
     alignSelf: "stretch",
+    position: "relative",
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+
+  overlay: {
     flexDirection: "column",
     alignItems: "flex-start",
-    position: "relative",
-    backgroundColor: colors.primaryBackground,
-    borderRadius: 16,
-    overflow: "hidden",
+    backgroundColor: `${colors.primaryBackground}B3`,
   },
 
   closeButton: {
@@ -26,6 +29,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     padding: 12,
+    paddingBottom: 0,
     alignItems: "center",
   },
 
@@ -55,7 +59,7 @@ export const styles = StyleSheet.create({
   footer: {
     padding: 12,
     flexDirection: "column",
-    gap: 8,
+    gap: 12,
     alignSelf: "stretch",
     alignItems: "flex-start",
     justifyContent: "center",
@@ -67,7 +71,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  castICon: {
+  castIcon: {
     color: colors.onPrimaryBackground,
   },
 
@@ -92,6 +96,7 @@ export const styles = StyleSheet.create({
 
   playButtonText: {
     color: colors.onSurface,
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: 700,
   },
 });

@@ -18,11 +18,14 @@ export default function useDeviceMediaEffect() {
 
     const subscription = eventEmitter.addListener(
       "onMediaDataChanged",
-      (data) =>
+      (data) => {
+        if (data == null) return;
+
         deviceMediaStore.setData({
           ...data,
           duration: Math.floor(data.duration / 1000),
-        })
+        });
+      }
     );
 
     return () => {

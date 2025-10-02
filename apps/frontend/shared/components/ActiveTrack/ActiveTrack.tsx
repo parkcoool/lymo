@@ -1,8 +1,10 @@
 import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
+import useCoverColor from "@/features/track/hooks/useCoverColor";
 
 import { styles } from "./ActiveTrack.styles";
 
@@ -10,13 +12,26 @@ export default function ActiveTrack() {
   const windowWidth = Dimensions.get("window").width;
 
   const { data: track } = useDeviceMediaStore();
+  const coverUrl = track?.albumArt
+    ? "data:image/png;base64," + track.albumArt
+    : null;
+
+  const coverColor = useCoverColor(coverUrl) ?? "#FFFFFF";
   const isSynced = true; // TODO: 기기 연동 상태
 
   if (!track) return null;
 
   return (
     <View style={styles.root}>
-      <View style={[styles.wrapper, { width: windowWidth - 24 }]}>
+      <LinearGradient
+        colors={[`${coverColor}99`, `${coverColor}B3`]}
+        style={[
+          styles.wrapper,
+          {
+            width: windowWidth - 24,
+          },
+        ]}
+      >
         <View style={styles.overlay}>
           {/* 왼쪽 */}
           <View style={styles.left}>
@@ -31,10 +46,7 @@ export default function ActiveTrack() {
             {/* 곡 정보 */}
             <View style={styles.track}>
               {/* 커버 이미지 */}
-              <Image
-                source={{ uri: "data:image/png;base64," + track.albumArt }}
-                style={styles.cover}
-              />
+              <Image source={{ uri: coverUrl ?? "" }} style={styles.cover} />
 
               {/* 메타데이터 */}
               <View style={styles.trackMetadata}>
@@ -57,7 +69,7 @@ export default function ActiveTrack() {
             />
           </TouchableOpacity>
         </View>
-      </View>
+      </LinearGradient>
 
       {/* 하단 영역 */}
       <SafeAreaView edges={["bottom"]} />
