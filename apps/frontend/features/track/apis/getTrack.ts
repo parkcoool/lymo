@@ -1,7 +1,7 @@
 import { doc, getDoc } from "firebase/firestore";
+import { Track, TrackDetail } from "@lymo/schemas/shared";
 
 import { db } from "@/core/firebase";
-import type { DetailedTrackDocumentWithId } from "@/types/track";
 
 interface GetTrackProps {
   trackId: string;
@@ -24,7 +24,7 @@ export default async function getTrack({ trackId }: GetTrackProps) {
     id: trackSnapshot.id,
     ...trackSnapshot.data(),
     ...detailSnapshot.data(),
-  } as DetailedTrackDocumentWithId;
+  } as Track & TrackDetail;
 
   return result;
 }

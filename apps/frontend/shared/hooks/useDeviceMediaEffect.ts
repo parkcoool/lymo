@@ -24,17 +24,13 @@ export default function useDeviceMediaEffect() {
       (data: MediaData | null) => {
         if (data == null) return;
 
-        // TODO: 이 로직을 패키지로 이동
-        const albumArt = "data:image/png;base64," + data.albumArt;
-
         deviceMediaStore.setData({
           ...data,
-          albumArt,
           duration: Math.floor(data.duration / 1000),
         });
 
         if (isSynced) {
-          setTrack({ ...data, coverUrl: albumArt });
+          setTrack(data);
         }
       }
     );

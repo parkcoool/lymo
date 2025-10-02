@@ -62,7 +62,7 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         }
 
         val albumArtBitmap = metadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART)
-        val albumArtBase64 = bitmapToBase64(albumArtBitmap)
+        val albumArtBase64 = "data:image/png;base64," + bitmapToBase64(albumArtBitmap)
 
         val mediaData = Arguments.createMap().apply {
             putString("title", metadata.getString(MediaMetadata.METADATA_KEY_TITLE))
@@ -70,8 +70,7 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
             putString("album", metadata.getString(MediaMetadata.METADATA_KEY_ALBUM))
             putDouble("duration", metadata.getLong(MediaMetadata.METADATA_KEY_DURATION).toDouble())
             putBoolean("isPlaying", state.state == PlaybackState.STATE_PLAYING)
-            putString("albumArt", albumArtBase64)
-            putDouble("position", state.position.toDouble())
+            putString("coverUrl", albumArtBase64)
         }
         sendEvent("onMediaDataChanged", mediaData)
     }

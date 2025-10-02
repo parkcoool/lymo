@@ -1,6 +1,10 @@
 import admin, { firestore } from "firebase-admin";
 
-import { addSong } from "@lymo/schemas/functions";
+import {
+  AddTrackFlowInputSchema,
+  AddTrackFlowStreamSchema,
+  AddTrackFlowOutputSchema,
+} from "@lymo/schemas/function";
 
 import ai from "../core/genkit";
 import { searchLRCLib } from "../tools/searchLRCLib";
@@ -9,18 +13,15 @@ import { translateLyricsFlow } from "./translateLyrics.flow";
 import { summarizeSongFlow } from "./summarizeSong.flow";
 import { summarizeParagraphFlow } from "./summarizeParagraph.flow";
 
-const { AddSongInputSchema, AddSongStreamSchema, AddSongOutputSchema } =
-  addSong;
-
 /**
  * 음악 제목과 아티스트명을 입력받아 정확한 메타데이터와 가사를 포함한 음악 정보를 스트리밍하고 DB에 등록하는 플로우
  */
-export const addSongFlow = ai.defineFlow(
+export const addTrackFlow = ai.defineFlow(
   {
-    name: "addSongFlow",
-    inputSchema: AddSongInputSchema,
-    streamSchema: AddSongStreamSchema,
-    outputSchema: AddSongOutputSchema,
+    name: "addTrackFlow",
+    inputSchema: AddTrackFlowInputSchema,
+    streamSchema: AddTrackFlowStreamSchema,
+    outputSchema: AddTrackFlowOutputSchema,
   },
   async (input, { sendChunk }) => {
     // Spotify에서 곡 검색

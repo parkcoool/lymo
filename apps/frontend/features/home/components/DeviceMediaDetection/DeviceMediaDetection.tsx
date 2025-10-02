@@ -1,24 +1,25 @@
 import { TouchableOpacity, View, Image, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
+import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
 import useCoverColor from "@/features/track/hooks/useCoverColor";
 
 import { styles } from "./DeviceMediaDetection.styles";
-import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
 
 export default function DeviceMediaDetection() {
   const { data: track } = useDeviceMediaStore();
   const { isSynced, setIsSynced, setTrack } = useActiveTrackStore();
 
-  const coverColor = useCoverColor(track?.albumArt ?? null) ?? "#FFFFFF";
+  const coverColor = useCoverColor(track?.coverUrl ?? null) ?? "#FFFFFF";
 
   // 연동 버튼 핸들러
   const handleConnect = () => {
     if (!track) return;
 
     setIsSynced(true);
-    setTrack({ ...track, coverUrl: track.albumArt ?? undefined });
+    setTrack({ ...track, coverUrl: track.coverUrl ?? undefined });
   };
 
   // 연동 해제 버튼 핸들러
@@ -45,7 +46,7 @@ export default function DeviceMediaDetection() {
         {/* 곡 정보 */}
         <View style={styles.track}>
           {/* 커버 이미지 */}
-          <Image source={{ uri: track.albumArt ?? "" }} style={styles.cover} />
+          <Image source={{ uri: track.coverUrl ?? "" }} style={styles.cover} />
 
           {/* 메타데이터 */}
           <View style={styles.trackMetadata}>

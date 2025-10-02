@@ -1,10 +1,9 @@
 import { z } from "genkit";
+import { ParagraphSummaryAppendEventSchema } from "@lymo/schemas/event";
+
 import ai from "../core/genkit";
-import { addSong } from "@lymo/schemas/functions";
 
-const { ParagraphSummaryAppendSchema } = addSong;
-
-export const summarizeParagraphInputSchema = z.object({
+export const SummarizeParagraphInputSchema = z.object({
   title: z.string().describe("The title of the song"),
   artist: z.string().describe("The artist of the song"),
   album: z.string().nullable().describe("The album of the song"),
@@ -17,14 +16,14 @@ export const summarizeParagraphInputSchema = z.object({
     .describe("The lyrics of the song, organized by paragraphs"),
 });
 
-export const summarizeParagraphOutputSchema = z.array(z.string().nullable());
+export const SummarizeParagraphOutputSchema = z.array(z.string().nullable());
 
 export const summarizeParagraphFlow = ai.defineFlow(
   {
     name: "summarizeParagraphFlow",
-    inputSchema: summarizeParagraphInputSchema,
-    streamSchema: ParagraphSummaryAppendSchema,
-    outputSchema: summarizeParagraphOutputSchema,
+    inputSchema: SummarizeParagraphInputSchema,
+    streamSchema: ParagraphSummaryAppendEventSchema,
+    outputSchema: SummarizeParagraphOutputSchema,
   },
   async ({ title, artist, album, lyrics }, { sendChunk }) => {
     const { stream, response } = ai.generateStream({

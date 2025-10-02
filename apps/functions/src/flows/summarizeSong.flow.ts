@@ -1,10 +1,9 @@
 import { z } from "genkit";
+import { SummaryAppendEventSchema } from "@lymo/schemas/event";
+
 import ai from "../core/genkit";
-import { addSong } from "@lymo/schemas/functions";
 
-const { SummaryAppendSchema } = addSong;
-
-export const summarizeSongInputSchema = z.object({
+export const SummarizeSongInputSchema = z.object({
   title: z.string().describe("The title of the song"),
   artist: z.string().describe("The artist of the song"),
   album: z.string().nullable().describe("The album of the song"),
@@ -13,16 +12,16 @@ export const summarizeSongInputSchema = z.object({
     .describe("The lyrics of the song"),
 });
 
-export const summarizeSongOutputSchema = z
+export const SummarizeSongOutputSchema = z
   .string()
   .describe("The summary of the song");
 
 export const summarizeSongFlow = ai.defineFlow(
   {
     name: "summarizeSongFlow",
-    inputSchema: summarizeSongInputSchema,
-    streamSchema: SummaryAppendSchema,
-    outputSchema: summarizeSongOutputSchema,
+    inputSchema: SummarizeSongInputSchema,
+    streamSchema: SummaryAppendEventSchema,
+    outputSchema: SummarizeSongOutputSchema,
   },
   async ({ title, artist, album, lyrics }, { sendChunk }) => {
     const { stream, response } = ai.generateStream({

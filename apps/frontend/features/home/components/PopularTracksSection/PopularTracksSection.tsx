@@ -1,10 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { View, ScrollView, Text } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Track } from "@lymo/schemas/shared";
 
 import getPopularTracks from "@/features/track/apis/getPopularTracks";
 import { CompactTrack } from "@/features/track/components/Track";
-import type { TrackDocumentWithId } from "@/types/track";
 
 import { styles } from "./PopularTracksSection.styles";
 import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
@@ -18,13 +18,14 @@ export default function PopularTracksSection() {
 
   const { setTrack, setIsSynced } = useActiveTrackStore();
 
-  const handlePlayTrack = (track: TrackDocumentWithId) => {
+  const handlePlayTrack = (track: Track) => {
     setTrack(track);
     setIsSynced(false);
   };
 
   return (
     <View style={styles.section}>
+      {/* 섹션 헤더 */}
       <View style={styles.sectionHeader}>
         <MaterialIcons
           name="trending-up"
@@ -33,6 +34,8 @@ export default function PopularTracksSection() {
         />
         <Text style={styles.sectionTitle}>인기</Text>
       </View>
+
+      {/* 곡 목록 */}
       <ScrollView contentContainerStyle={styles.sectionContent} horizontal>
         {popularTracks.map((track) => (
           <Link href="/player" key={track.id} asChild>

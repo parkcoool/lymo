@@ -1,11 +1,7 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: [
-    "src/database/index.ts",
-    "src/functions/index.ts",
-    "src/shared/index.ts",
-  ],
+  entry: ["src/**/*.ts"],
   format: ["cjs", "esm"],
   dts: true,
   splitting: false,

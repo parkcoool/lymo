@@ -35,8 +35,7 @@ export type MediaData = {
   album: string;
   duration: number;
   isPlaying: boolean;
-  albumArt: string | null; // Base64 문자열 또는 null
-  position: number;
+  coverUrl: string; // Base64 문자열
 };
 
 // 모듈이 발생시키는 이벤트 이름과 해당 이벤트의 콜백 함수 타입을 매핑합니다.

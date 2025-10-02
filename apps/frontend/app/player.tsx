@@ -1,24 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { ScrollView, View } from "react-native";
+import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
 import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
 import Summary from "@/features/player/components/Summary";
 import getTrack from "@/features/track/apis/getTrack";
-import { DetailedTrackDocumentWithId } from "@/types/track";
 import Paragraph from "@/features/player/components/Paragraph";
 import Sentence from "@/features/player/components/Sentence";
 
 export default function Player() {
   const { track: activeTrack } = useActiveTrackStore();
 
-  const { data: track } = useQuery<Partial<DetailedTrackDocumentWithId> | null>(
-    {
-      queryKey: ["track", activeTrack?.id],
-      enabled: activeTrack?.id !== undefined,
-      placeholderData: activeTrack,
-      queryFn: () => getTrack({ trackId: activeTrack!.id! }),
-    }
-  );
+  const { data: completeTrack } = useQuery<Track & TrackDetail>({
+    queryKey: ["track", activeTrack?.id],
+    enabled: activeTrack?.id !== undefined,
+    queryFn: () => getTrack({ trackId: activeTrack!.id! }),
+  });
 
   return (
     <ScrollView
@@ -28,19 +25,21 @@ export default function Player() {
       }}
     >
       {/* 곡 메타데이터 및 요약 */}
-      <Summary
-        coverUrl={track?.coverUrl}
-        title={track?.title}
-        artist={track?.artist}
-        album={track?.album}
-        publishedAt={track?.publishedAt}
-        summary={track?.summary}
-      />
+      {completeTrack && (
+        <Summary
+          coverUrl={completeTrack.coverUrl}
+          title={completeTrack.title}
+          artist={completeTrack.artist}
+          album={completeTrack.album}
+          publishedAt={completeTrack.publishedAt}
+          summary={completeTrack.summary}
+        />
+      )}
 
       {/* 가사 */}
       <View>
-        {track?.lyrics !== undefined &&
-          track.lyrics.map((paragraph, paragraphIndex) => (
+        {completeTrack &&
+          completeTrack.lyrics.map((paragraph, paragraphIndex) => (
             <Paragraph
               key={paragraphIndex}
               summary={paragraph.summary}

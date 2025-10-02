@@ -5,20 +5,10 @@
     "./dist"
   ],
   "exports": {
-    "./database": {
-      "types": "./dist/database/index.d.ts",
-      "import": "./dist/database/index.mjs",
-      "require": "./dist/database/index.js"
-    },
-    "./functions": {
-      "types": "./dist/functions/index.d.ts",
-      "import": "./dist/functions/index.mjs",
-      "require": "./dist/functions/index.js"
-    },
-    "./shared": {
-      "types": "./dist/shared/index.d.ts",
-      "import": "./dist/shared/index.mjs",
-      "require": "./dist/shared/index.js"
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.mjs",
+      "require": "./dist/*.cjs"
     }
   },
   "scripts": {

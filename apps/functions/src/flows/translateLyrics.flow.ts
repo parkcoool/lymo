@@ -1,8 +1,10 @@
 import { z } from "genkit";
-import ai from "../core/genkit";
-import { addSong } from "@lymo/schemas/functions";
+import {
+  LyricsSetEventSchema,
+  TranslationSetEventSchema,
+} from "@lymo/schemas/event";
 
-const { LyricsSetSchema, TranslationSetSchema } = addSong;
+import ai from "../core/genkit";
 
 export const TranslateLyricsInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -37,8 +39,8 @@ export const translateLyricsFlow = ai.defineFlow(
     name: "translateLyricsFlow",
     inputSchema: TranslateLyricsInputSchema,
     streamSchema: z.discriminatedUnion("event", [
-      TranslationSetSchema,
-      LyricsSetSchema,
+      LyricsSetEventSchema,
+      TranslationSetEventSchema,
     ]),
     outputSchema: TranslateLyricsOutputSchema,
   },
