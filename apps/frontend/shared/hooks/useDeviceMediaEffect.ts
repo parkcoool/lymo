@@ -42,7 +42,7 @@ export default function useDeviceMediaEffect() {
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [isSynced]);
 
   // 재생 상태에 따라 1초마다 재생 위치 갱신
   useEffect(() => {

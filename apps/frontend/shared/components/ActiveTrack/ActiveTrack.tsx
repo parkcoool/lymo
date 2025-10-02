@@ -1,6 +1,14 @@
+import { useRef, useEffect, useState } from "react";
 import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  Animated,
+  Dimensions,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
@@ -9,15 +17,31 @@ import useCoverColor from "@/features/track/hooks/useCoverColor";
 import { styles } from "./ActiveTrack.styles";
 
 export default function ActiveTrack() {
+  const animation = useRef(new Animated.Value(0)).current;
   const windowWidth = Dimensions.get("window").width;
 
   const { track, isSynced } = useActiveTrackStore();
-  const coverColor = useCoverColor(track?.coverUrl ?? null) ?? "#FFFFFF";
+  const [copiedTrack, setCopiedTrack] = useState(track);
+  const coverColor = useCoverColor(copiedTrack?.coverUrl ?? null) ?? "#FFFFFF";
 
-  if (!track) return null;
+  // track이 null이 아닐 때 copiedTrack을 업데이트
+  useEffect(() => {
+    if (track !== null) {
+      setCopiedTrack(track);
+    }
+  }, [track]);
+
+  useEffect(() => {
+    Animated.spring(animation, {
+      toValue: track === null ? 500 : 0,
+      useNativeDriver: true,
+    }).start();
+  }, [track, animation]);
 
   return (
-    <View style={styles.root}>
+    <Animated.View
+      style={[styles.root, { transform: [{ translateY: animation }] }]}
+    >
       <LinearGradient
         colors={[`${coverColor}99`, `${coverColor}B3`]}
         style={[
@@ -42,17 +66,17 @@ export default function ActiveTrack() {
             <View style={styles.track}>
               {/* 커버 이미지 */}
               <Image
-                source={{ uri: track?.coverUrl ?? "" }}
+                source={{ uri: copiedTrack?.coverUrl ?? "" }}
                 style={styles.cover}
               />
 
               {/* 메타데이터 */}
               <View style={styles.trackMetadata}>
                 <Text style={styles.title} numberOfLines={1}>
-                  {track.title}
+                  {copiedTrack?.title}
                 </Text>
                 <Text style={styles.artist} numberOfLines={1}>
-                  {track.artist}
+                  {copiedTrack?.artist}
                 </Text>
               </View>
             </View>
@@ -71,6 +95,6 @@ export default function ActiveTrack() {
 
       {/* 하단 영역 */}
       <SafeAreaView edges={["bottom"]} />
-    </View>
+    </Animated.View>
   );
 }
