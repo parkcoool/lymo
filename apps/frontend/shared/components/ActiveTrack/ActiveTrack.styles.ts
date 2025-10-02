@@ -25,7 +25,8 @@ export const styles = StyleSheet.create({
 
   left: {
     flexDirection: "column",
-    flexGrow: 1,
+    flexShrink: 1,
+    overflow: "hidden",
     gap: 12,
   },
 
@@ -47,6 +48,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     alignItems: "center",
+    width: "100%",
   },
 
   cover: {
@@ -58,21 +60,25 @@ export const styles = StyleSheet.create({
 
   trackMetadata: {
     flexDirection: "column",
-    flexGrow: 1,
+    width: "100%",
   },
 
   title: {
     color: colors.onPrimaryBackground,
     fontSize: 16,
     fontWeight: 700,
+    flex: 1,
   },
 
   artist: {
     color: colors.onPrimaryBackgroundSubtle,
     fontSize: 14,
+    flex: 1,
   },
 
-  expandButton: {},
+  expandButton: {
+    flex: 1,
+  },
 
   expandIcon: {
     color: colors.onPrimaryBackground,

@@ -31,6 +31,8 @@ export const styles = StyleSheet.create({
     padding: 12,
     paddingBottom: 0,
     alignItems: "center",
+    marginRight: 100,
+    overflow: "hidden",
   },
 
   cover: {
