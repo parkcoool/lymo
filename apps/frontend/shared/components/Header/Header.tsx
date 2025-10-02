@@ -6,11 +6,7 @@ import SearchBoxLink from "@/shared/components/SearchBoxLink";
 import { styles } from "./Header.styles";
 import { TouchableOpacity, View } from "react-native";
 
-export default function Header({
-  back,
-  navigation,
-  route,
-}: NativeStackHeaderProps) {
+export default function Header({ back, navigation }: NativeStackHeaderProps) {
   return (
     <View style={styles.container}>
       {/* 상단 영역 */}
@@ -30,7 +26,7 @@ export default function Header({
           )}
 
           {/* 검색 박스 */}
-          {back && <SearchBoxLink style={styles.searchBox} />}
+          {/* <SearchBoxLink style={styles.searchBox} /> */}
         </View>
 
         <View style={styles.right}>

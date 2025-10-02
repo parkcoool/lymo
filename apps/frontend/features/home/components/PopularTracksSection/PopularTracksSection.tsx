@@ -8,6 +8,7 @@ import type { TrackDocumentWithId } from "@/types/track";
 
 import { styles } from "./PopularTracksSection.styles";
 import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
+import { Link } from "expo-router";
 
 export default function PopularTracksSection() {
   const { data: popularTracks } = useSuspenseQuery({
@@ -34,12 +35,13 @@ export default function PopularTracksSection() {
       </View>
       <ScrollView contentContainerStyle={styles.sectionContent} horizontal>
         {popularTracks.map((track) => (
-          <CompactTrack
-            key={track.id}
-            title={track.title}
-            coverUrl={track.coverUrl}
-            onPress={() => handlePlayTrack(track)}
-          />
+          <Link href="/player" key={track.id} asChild>
+            <CompactTrack
+              title={track.title}
+              coverUrl={track.coverUrl}
+              onPress={() => handlePlayTrack(track)}
+            />
+          </Link>
         ))}
       </ScrollView>
     </View>

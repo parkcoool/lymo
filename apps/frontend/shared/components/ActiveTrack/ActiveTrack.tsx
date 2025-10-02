@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from "react";
+import { Link, usePathname } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -19,6 +20,7 @@ import { styles } from "./ActiveTrack.styles";
 export default function ActiveTrack() {
   const animation = useRef(new Animated.Value(0)).current;
   const windowWidth = Dimensions.get("window").width;
+  const pathname = usePathname();
 
   const { track, isSynced } = useActiveTrackStore();
   const [copiedTrack, setCopiedTrack] = useState(track);
@@ -31,70 +33,69 @@ export default function ActiveTrack() {
     }
   }, [track]);
 
+  const isVisible = track !== null && pathname !== "/player";
+
   useEffect(() => {
     Animated.spring(animation, {
-      toValue: track === null ? 500 : 0,
+      toValue: isVisible ? 0 : 300,
       useNativeDriver: true,
     }).start();
-  }, [track, animation]);
+  }, [isVisible, animation]);
 
   return (
     <Animated.View
       style={[styles.root, { transform: [{ translateY: animation }] }]}
     >
-      <LinearGradient
-        colors={[`${coverColor}99`, `${coverColor}B3`]}
-        style={[
-          styles.wrapper,
-          {
-            width: windowWidth - 24,
-          },
-        ]}
-      >
-        <View style={styles.overlay}>
-          {/* 왼쪽 */}
-          <View style={styles.left}>
-            {/* 연동 여부 표시 */}
-            {isSynced && (
-              <View style={styles.syncIndicator}>
-                <MaterialIcons name="cast" size={16} style={styles.syncIcon} />
-                <Text style={styles.syncText}>기기에서 재생 중인 곡</Text>
-              </View>
-            )}
+      <Link href="/player" asChild>
+        <TouchableOpacity>
+          <LinearGradient
+            colors={[`${coverColor}99`, `${coverColor}B3`]}
+            style={[
+              styles.wrapper,
+              {
+                width: windowWidth - 24,
+              },
+            ]}
+          >
+            <View style={styles.overlay}>
+              {/* 왼쪽 */}
+              {/* 연동 여부 표시 */}
+              {isSynced && (
+                <View style={styles.syncIndicator}>
+                  <MaterialIcons
+                    name="cast"
+                    size={16}
+                    style={styles.syncIcon}
+                  />
+                  <Text style={styles.syncText}>기기에서 재생 중인 곡</Text>
+                </View>
+              )}
 
-            {/* 곡 정보 */}
-            <View style={styles.track}>
-              {/* 커버 이미지 */}
-              <Image
-                source={{ uri: copiedTrack?.coverUrl ?? "" }}
-                style={styles.cover}
-              />
+              {/* 곡 정보 */}
+              <View style={styles.track}>
+                {/* 커버 이미지 */}
+                <Image
+                  source={{ uri: copiedTrack?.coverUrl ?? "" }}
+                  style={styles.cover}
+                />
 
-              {/* 메타데이터 */}
-              <View style={styles.trackMetadata}>
-                <Text style={styles.title} numberOfLines={1}>
-                  {copiedTrack?.title}
-                </Text>
-                <Text style={styles.artist} numberOfLines={1}>
-                  {copiedTrack?.artist}
-                </Text>
+                {/* 메타데이터 */}
+                <View style={styles.trackMetadata}>
+                  <Text style={styles.title} numberOfLines={1}>
+                    {copiedTrack?.title}
+                  </Text>
+                  <Text style={styles.artist} numberOfLines={1}>
+                    {copiedTrack?.artist}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
+          </LinearGradient>
 
-          {/* 확장 버튼 */}
-          <TouchableOpacity style={styles.expandButton}>
-            <MaterialIcons
-              name="keyboard-arrow-up"
-              size={32}
-              style={styles.expandIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
-
-      {/* 하단 영역 */}
-      <SafeAreaView edges={["bottom"]} />
+          {/* 하단 영역 */}
+          <SafeAreaView edges={["bottom"]} />
+        </TouchableOpacity>
+      </Link>
     </Animated.View>
   );
 }

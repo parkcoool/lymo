@@ -17,7 +17,13 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <View style={{ flex: 1, position: "relative" }}>
+        <View
+          style={{
+            flex: 1,
+            position: "relative",
+            backgroundColor: colors.background,
+          }}
+        >
           <Stack
             screenOptions={{
               header: (props) => <Header {...props} />,

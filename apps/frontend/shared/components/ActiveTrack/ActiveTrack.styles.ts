@@ -16,18 +16,10 @@ export const styles = StyleSheet.create({
   },
 
   overlay: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "column",
     gap: 12,
     padding: 12,
     backgroundColor: `${colors.primaryBackground}B3`,
-  },
-
-  left: {
-    flexDirection: "column",
-    flexShrink: 1,
-    overflow: "hidden",
-    gap: 12,
   },
 
   syncIndicator: {
@@ -74,13 +66,5 @@ export const styles = StyleSheet.create({
     color: colors.onPrimaryBackgroundSubtle,
     fontSize: 14,
     flex: 1,
-  },
-
-  expandButton: {
-    flex: 1,
-  },
-
-  expandIcon: {
-    color: colors.onPrimaryBackground,
   },
 });
