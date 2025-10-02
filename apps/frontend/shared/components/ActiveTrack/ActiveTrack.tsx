@@ -55,12 +55,12 @@ export default function ActiveTrack() {
           {/* 왼쪽 */}
           <View style={styles.left}>
             {/* 연동 여부 표시 */}
-            <View style={styles.syncIndicator}>
-              <MaterialIcons name="cast" size={16} style={styles.syncIcon} />
-              {isSynced && (
+            {isSynced && (
+              <View style={styles.syncIndicator}>
+                <MaterialIcons name="cast" size={16} style={styles.syncIcon} />
                 <Text style={styles.syncText}>기기에서 재생 중인 곡</Text>
-              )}
-            </View>
+              </View>
+            )}
 
             {/* 곡 정보 */}
             <View style={styles.track}>

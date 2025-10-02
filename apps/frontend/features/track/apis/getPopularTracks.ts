@@ -1,11 +1,7 @@
 import { collection, getDocs } from "firebase/firestore";
-import type { tracks } from "@lymo/schemas/database";
 
 import { db } from "@/core/firebase";
-import type { WithId } from "@/types/shared";
-
-type TrackDocument = tracks.TrackDoc;
-type TrackDocumentWithId = WithId<TrackDocument>;
+import type { TrackDocumentWithId } from "@/types/track";
 
 export default async function getPopularTracks() {
   // TODO: Replace with actual popular track collection

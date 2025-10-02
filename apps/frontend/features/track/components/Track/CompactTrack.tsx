@@ -5,11 +5,16 @@ import { LinearGradient } from "expo-linear-gradient";
 interface CompactTrackProps {
   coverUrl?: string;
   title: string;
+  onPress?: () => void;
 }
 
-export default function CompactTrack({ coverUrl, title }: CompactTrackProps) {
+export default function CompactTrack({
+  coverUrl,
+  title,
+  onPress,
+}: CompactTrackProps) {
   return (
-    <TouchableOpacity style={styles.wrapper}>
+    <TouchableOpacity style={styles.wrapper} onPress={onPress}>
       <Image source={{ uri: coverUrl }} style={styles.cover} />
       <LinearGradient
         colors={["transparent", "rgba(0, 0, 0, 0.8)"]}

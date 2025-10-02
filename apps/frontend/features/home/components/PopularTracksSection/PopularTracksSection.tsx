@@ -3,15 +3,24 @@ import { View, ScrollView, Text } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import getPopularTracks from "@/features/track/apis/getPopularTracks";
+import { CompactTrack } from "@/features/track/components/Track";
+import type { TrackDocumentWithId } from "@/types/track";
 
 import { styles } from "./PopularTracksSection.styles";
-import { CompactTrack } from "@/features/track/components/Track";
+import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
 
 export default function PopularTracksSection() {
   const { data: popularTracks } = useSuspenseQuery({
     queryKey: ["popular-tracks"],
     queryFn: async () => getPopularTracks(),
   });
+
+  const { setTrack, setIsSynced } = useActiveTrackStore();
+
+  const handlePlayTrack = (track: TrackDocumentWithId) => {
+    setTrack(track);
+    setIsSynced(false);
+  };
 
   return (
     <View style={styles.section}>
@@ -29,6 +38,7 @@ export default function PopularTracksSection() {
             key={track.id}
             title={track.title}
             coverUrl={track.coverUrl}
+            onPress={() => handlePlayTrack(track)}
           />
         ))}
       </ScrollView>
