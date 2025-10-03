@@ -1,15 +1,15 @@
 import { create } from "zustand";
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
-type DetailedTrack = Track & TrackDetail;
-
 interface ActiveTrackState {
-  track: Partial<DetailedTrack> | null;
+  track: Partial<Track & TrackDetail> | null;
   isSynced: boolean;
 }
 
 interface ActiveTrackActions {
-  setTrack: (track: Partial<DetailedTrack> | null) => void;
+  setTrack: React.Dispatch<
+    React.SetStateAction<Partial<Track & TrackDetail> | null>
+  >;
   setIsSynced: (isSynced: boolean) => void;
 }
 
@@ -19,6 +19,12 @@ export const useActiveTrackStore = create<ActiveTrackStore>((set) => ({
   track: null,
   isSynced: false,
 
-  setTrack: (track) => set({ track }),
+  setTrack: (track) => {
+    if (typeof track === "function") {
+      set((state) => ({ track: track(state.track) }));
+    } else {
+      set({ track });
+    }
+  },
   setIsSynced: (isSynced) => set({ isSynced }),
 }));

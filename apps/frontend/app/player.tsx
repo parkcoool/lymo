@@ -3,13 +3,18 @@ import { ScrollView, View } from "react-native";
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
 import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
-import Summary from "@/features/player/components/Summary";
+import {
+  Summary,
+  IncompleteSummary,
+} from "@/features/player/components/Summary";
 import getTrack from "@/features/track/apis/getTrack";
 import Paragraph from "@/features/player/components/Paragraph";
 import Sentence from "@/features/player/components/Sentence";
+import useAddActiveTrackEffect from "@/features/track/hooks/useAddTrackEffect";
 
 export default function Player() {
   const { track: activeTrack } = useActiveTrackStore();
+  useAddActiveTrackEffect({});
 
   const { data: completeTrack } = useQuery<Track & TrackDetail>({
     queryKey: ["track", activeTrack?.id],
@@ -25,7 +30,7 @@ export default function Player() {
       }}
     >
       {/* 곡 메타데이터 및 요약 */}
-      {completeTrack && (
+      {completeTrack ? (
         <Summary
           coverUrl={completeTrack.coverUrl}
           title={completeTrack.title}
@@ -33,6 +38,15 @@ export default function Player() {
           album={completeTrack.album}
           publishedAt={completeTrack.publishedAt}
           summary={completeTrack.summary}
+        />
+      ) : (
+        <IncompleteSummary
+          coverUrl={activeTrack?.coverUrl}
+          title={activeTrack?.title}
+          artist={activeTrack?.artist}
+          album={activeTrack?.album}
+          publishedAt={activeTrack?.publishedAt}
+          summary={activeTrack?.summary}
         />
       )}
 

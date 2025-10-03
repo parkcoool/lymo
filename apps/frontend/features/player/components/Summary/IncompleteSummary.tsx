@@ -2,15 +2,15 @@ import { View, Image, Text } from "react-native";
 import { styles } from "./Summary.styles";
 
 interface SummaryProps {
-  coverUrl: string;
-  title: string;
-  artist: string;
-  album: string | null;
-  publishedAt: string | null;
-  summary: string;
+  coverUrl?: string;
+  title?: string;
+  artist?: string;
+  album?: string | null;
+  publishedAt?: string | null;
+  summary?: string;
 }
 
-export default function Summary({
+export default function IncompleteSummary({
   coverUrl,
   title,
   artist,
@@ -26,7 +26,8 @@ export default function Summary({
       {/* 곡 정보 */}
       <View style={styles.track}>
         {/* 커버 이미지 */}
-        <Image source={{ uri: coverUrl }} style={styles.cover} />
+        {coverUrl && <Image source={{ uri: coverUrl }} style={styles.cover} />}
+        {!coverUrl && <View style={styles.cover} />}
 
         {/* 메타데이터 */}
         <View style={styles.trackMetadata}>

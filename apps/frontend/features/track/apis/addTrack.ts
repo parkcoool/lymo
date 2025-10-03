@@ -1,32 +1,29 @@
-import { httpsCallable } from "firebase/functions";
+import { fetch } from "expo/fetch";
+
 import type {
   AddTrackFlowInput,
   AddTrackFlowStream,
   AddTrackFlowOutput,
 } from "@lymo/schemas/function";
 
-import { functions } from "@/core/firebase";
-
 export default async function* addTrack({
   title,
   artist,
   duration,
 }: AddTrackFlowInput) {
-  const addSongFlow = httpsCallable<
-    AddTrackFlowInput,
-    AddTrackFlowOutput,
-    AddTrackFlowStream
-  >(functions, "addTrack");
-
-  const { data, stream } = await addSongFlow.stream({
-    title,
-    artist,
-    duration,
+  const resp = await fetch("", {
+    headers: { Accept: "text/event-stream" },
   });
+  const reader = resp.body?.getReader();
 
-  for await (const chunk of stream) {
-    yield chunk;
+  if (!reader) {
+    throw new Error("Failed to get reader from response body");
   }
 
-  return await data;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    yield value;
+  }
 }

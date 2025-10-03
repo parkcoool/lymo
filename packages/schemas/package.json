@@ -8,7 +8,7 @@
     "./*": {
       "types": "./dist/*.d.ts",
       "import": "./dist/*.mjs",
-      "require": "./dist/*.cjs"
+      "require": "./dist/*.js"
     }
   },
   "scripts": {
