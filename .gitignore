@@ -3,5 +3,6 @@
 
 .env
 firebase-debug.log
+firestore-debug.log
 
 dist
