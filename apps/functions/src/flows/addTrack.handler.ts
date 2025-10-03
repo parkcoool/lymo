@@ -6,7 +6,7 @@ import { addTrackFlow } from "./addTrack.flow";
 const lastfmApiKey = defineSecret("LASTFM_API_KEY");
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
 
-const addSong = onCallGenkit(
+const addTrack = onCallGenkit(
   {
     cors: true,
     timeoutSeconds: 300,
@@ -16,4 +16,4 @@ const addSong = onCallGenkit(
   addTrackFlow
 );
 
-export default addSong;
+export default addTrack;
