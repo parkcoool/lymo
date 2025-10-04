@@ -1,5 +1,6 @@
 import { defineSecret } from "firebase-functions/params";
 import { onInit } from "firebase-functions";
+import { log } from "firebase-functions/logger";
 
 import { initSpotify } from "./spotify";
 import { initAi } from "./genkit";
@@ -13,7 +14,7 @@ const initializeDev = async () => {
     spotifyClientSecret.value()
   );
 
-  console.log("Initialized development services");
+  log("Initialized development services");
 };
 
 const initializeProd = async () => {
@@ -23,10 +24,13 @@ const initializeProd = async () => {
     spotifyClientSecret.value()
   );
 
-  console.log("Initialized production services");
+  log("Initialized production services");
 };
 
-if (process.env.GENKIT_ENV?.trim() === "dev") {
+if (
+  process.env.FUNCTIONS_EMULATOR !== "false" &&
+  process.env.FUNCTIONS_EMULATOR
+) {
   initializeDev();
 } else {
   onInit(initializeProd);
