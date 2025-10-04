@@ -20,6 +20,8 @@ export default function NotificationAccessRequired() {
     };
 
     const intervalRef = setInterval(checkPermission, 5000);
+    checkPermission();
+
     return () => clearInterval(intervalRef);
   }, [isVisible]);
 

@@ -10,11 +10,11 @@ import {
 import getTrack from "@/features/track/apis/getTrack";
 import Paragraph from "@/features/player/components/Paragraph";
 import Sentence from "@/features/player/components/Sentence";
-import useAddActiveTrackEffect from "@/features/track/hooks/useAddTrackEffect";
+import useAddTrackFromDeviceMediaEffect from "@/features/track/hooks/useAddTrackFromDeviceMediaEffect";
 
 export default function Player() {
   const { track: activeTrack } = useActiveTrackStore();
-  useAddActiveTrackEffect({});
+  useAddTrackFromDeviceMediaEffect({});
 
   const { data: completeTrack } = useQuery<Track & TrackDetail>({
     queryKey: ["track", activeTrack?.id],

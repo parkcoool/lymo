@@ -1,27 +1,36 @@
 import { useEffect } from "react";
 
+import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
 import type { Lyrics } from "@lymo/schemas/shared";
 
 import addTrack from "../apis/addTrack";
+import { Alert } from "react-native";
 
 interface UseAddActiveTrackEffectProps {
   enabled?: boolean;
 }
 
-export default function useAddActiveTrackEffect({
+export default function useAddTrackFromDeviceMediaEffect({
   enabled = true,
 }: UseAddActiveTrackEffectProps) {
-  const { track, isSynced, setTrack } = useActiveTrackStore();
+  const { isSynced, setTrack } = useActiveTrackStore();
+  const { data: deviceMedia } = useDeviceMediaStore();
 
   useEffect(() => {
     if (!enabled || !isSynced) return;
-    if (!track || !track.title || !track.artist || !track.duration) return;
+    if (
+      !deviceMedia ||
+      !deviceMedia.title ||
+      !deviceMedia.artist ||
+      !deviceMedia.duration
+    )
+      return;
 
     const stream = addTrack({
-      title: track.title,
-      artist: track.artist,
-      duration: track.duration,
+      title: deviceMedia.title,
+      artist: deviceMedia.artist,
+      duration: deviceMedia.duration,
     });
 
     const processStream = async () => {
@@ -32,15 +41,19 @@ export default function useAddActiveTrackEffect({
 
       for await (const chunk of stream) {
         // 최종 결과 수신
-        if ("result" in chunk) {
-          if (!chunk.result) continue;
-          setTrack({
-            id: chunk.result,
-          });
+        if (chunk.type === "result") {
+          if (!chunk.data) {
+            // TODO: 인터페이스 개선
+            Alert.alert("곡 조회 실패", "곡을 조회하지 못했습니다.");
+          } else {
+            setTrack({
+              id: chunk.data,
+            });
+          }
           break;
         }
 
-        const { event, data } = chunk;
+        const { event, data } = chunk.data;
         switch (event) {
           // 곡 메타데이터 업데이트
           case "metadata_update": {
@@ -91,7 +104,7 @@ export default function useAddActiveTrackEffect({
             setTrack((prev) => {
               const newTrack = { ...prev };
               if (newTrack.summary === undefined) newTrack.summary = "";
-              newTrack.summary += data;
+              newTrack.summary += data.summary;
               return newTrack;
             });
             break;
@@ -119,7 +132,7 @@ export default function useAddActiveTrackEffect({
     };
 
     processStream();
-  }, [track, enabled, isSynced]);
+  }, [deviceMedia, isSynced, enabled]);
 }
 
 const getParagraphByIndex = (lyrics: Lyrics, paragraphIndex: number) => {
