@@ -3,6 +3,7 @@ import { ScrollView, View } from "react-native";
 import HeroSection from "@/features/home/components/HeroSection";
 import PopularTracksSection from "@/features/home/components/PopularTracksSection";
 import DeviceMediaDetection from "@/features/home/components/DeviceMediaDetection";
+import NotificationAccessRequired from "@/features/home/components/NotificationAccessRequired";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <View style={{ paddingBottom: 120 }}>
         {/* 알림 구역 */}
         <View style={{ paddingHorizontal: 12 }}>
+          <NotificationAccessRequired />
           <DeviceMediaDetection />
         </View>
 
