@@ -28,8 +28,8 @@ const initializeProd = async () => {
 };
 
 if (
-  process.env.FUNCTIONS_EMULATOR !== "false" &&
-  process.env.FUNCTIONS_EMULATOR
+  process.env.GENKIT_ENV === "dev" ||
+  process.env.FUNCTIONS_EMULATOR === "true"
 ) {
   initializeDev();
 } else {
