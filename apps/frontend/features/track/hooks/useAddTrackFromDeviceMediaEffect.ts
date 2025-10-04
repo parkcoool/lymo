@@ -1,11 +1,11 @@
 import { useEffect } from "react";
+import { Alert } from "react-native";
 
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
 import type { Lyrics } from "@lymo/schemas/shared";
 
 import addTrack from "../apis/addTrack";
-import { Alert } from "react-native";
 
 interface UseAddActiveTrackEffectProps {
   enabled?: boolean;
@@ -73,8 +73,8 @@ export default function useAddTrackFromDeviceMediaEffect({
                 data.sentenceIndex
               );
               sentence.text = data.text;
-              // sentence.start = data.start;
-              // sentence.end = data.end;
+              sentence.start = data.start;
+              sentence.end = data.end;
 
               return newTrack;
             });

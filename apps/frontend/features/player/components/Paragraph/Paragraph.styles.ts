@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     gap: 16,
     alignSelf: "stretch",
     borderRadius: 16,
+    overflow: "hidden",
   },
 
   summaryWrapper: {

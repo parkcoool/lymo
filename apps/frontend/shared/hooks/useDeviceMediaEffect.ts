@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { NativeEventEmitter, NativeModules } from "react-native";
 
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
@@ -9,12 +9,8 @@ const MediaModule = NativeModules.MediaModule as MediaModuleType;
 const eventEmitter = new NativeEventEmitter(MediaModule);
 
 export default function useDeviceMediaEffect() {
-  const intervalRef = useRef<number | null>(null);
-
   const deviceMediaStore = useDeviceMediaStore();
   const { isSynced, setTrack } = useActiveTrackStore();
-
-  const isPlaying = deviceMediaStore.data?.isPlaying ?? false;
 
   useEffect(() => {
     checkPermission();
@@ -40,23 +36,6 @@ export default function useDeviceMediaEffect() {
     };
   }, [isSynced]);
 
-  // 재생 상태에 따라 1초마다 재생 위치 갱신
-  useEffect(() => {
-    if (isPlaying) {
-      intervalRef.current = setInterval(async () => {
-        const position = Math.floor((await getPosition()) / 1000);
-        deviceMediaStore.setTimestamp(position);
-      }, 1000);
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [isPlaying]);
-
   const checkPermission = async () => {
     try {
       const isGranted = await MediaModule.checkNotificationListenerPermission();
@@ -66,14 +45,6 @@ export default function useDeviceMediaEffect() {
       }
     } catch (error) {
       console.error("Failed to check permission", error);
-    }
-  };
-
-  const getPosition = async (): Promise<number> => {
-    try {
-      return Math.floor((await MediaModule.getCurrentPosition()) / 1000);
-    } catch (error) {
-      return 0;
     }
   };
 }

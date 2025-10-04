@@ -25,6 +25,8 @@ export const LyricsSetEventSchema = z.object({
     paragraphIndex: z.number(),
     sentenceIndex: z.number(),
     text: z.string(),
+    start: z.number().nonnegative(),
+    end: z.number().nonnegative(),
   }),
 });
 export type LyricsSetEvent = z.infer<typeof LyricsSetEventSchema>;

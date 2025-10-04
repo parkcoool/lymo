@@ -101,6 +101,8 @@ export const translateLyricsFlow = ai.defineFlow(
               paragraphIndex: p,
               sentenceIndex: s,
               text: lyrics[i].text,
+              start: lyrics[i].start,
+              end: lyrics[i].end,
             },
           });
           sendChunk({

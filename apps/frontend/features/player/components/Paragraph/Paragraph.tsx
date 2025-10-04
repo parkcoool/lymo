@@ -13,11 +13,13 @@ export default function Paragraph({
   active,
   children,
 }: ParagraphProps) {
+  const parsedSummary = summary === "null" ? null : summary;
+
   return (
     <View style={[styles.wrapper, active && activeStyle]}>
-      {summary && (
+      {parsedSummary && (
         <View style={styles.summaryWrapper}>
-          <Text style={styles.summary}>{summary}</Text>
+          <Text style={styles.summary}>{parsedSummary}</Text>
         </View>
       )}
       <View style={styles.sentenceContainer}>{children}</View>
@@ -26,5 +28,5 @@ export default function Paragraph({
 }
 
 const activeStyle = {
-  backgroundColor: `${colors.surface}B3`,
+  backgroundColor: `${colors.surface}33`,
 };

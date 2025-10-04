@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ScrollView, View } from "react-native";
+import { NativeModules, ScrollView, View } from "react-native";
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
 import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
@@ -11,9 +12,12 @@ import getTrack from "@/features/track/apis/getTrack";
 import Paragraph from "@/features/player/components/Paragraph";
 import Sentence from "@/features/player/components/Sentence";
 import useAddTrackFromDeviceMediaEffect from "@/features/track/hooks/useAddTrackFromDeviceMediaEffect";
+import type { MediaModuleType } from "@/types/nativeModules";
+
+const MediaModule = NativeModules.MediaModule as MediaModuleType;
 
 export default function Player() {
-  const { track: activeTrack } = useActiveTrackStore();
+  const { track: activeTrack, isSynced } = useActiveTrackStore();
   useAddTrackFromDeviceMediaEffect({});
 
   const { data: completeTrack } = useQuery<Track & TrackDetail>({
@@ -21,6 +25,26 @@ export default function Player() {
     enabled: activeTrack?.id !== undefined,
     queryFn: () => getTrack({ trackId: activeTrack!.id! }),
   });
+
+  const [timestamp, setTimestamp] = useState(0);
+  const getTimestamp = async (): Promise<number> => {
+    try {
+      return Math.floor((await MediaModule.getCurrentPosition()) / 1000);
+    } catch (error) {
+      return 0;
+    }
+  };
+
+  // 기기와 연동되어 있으면 재생 위치 갱신
+  useEffect(() => {
+    if (!isSynced) return;
+    const interval = setInterval(async () => {
+      const pos = await getTimestamp();
+      setTimestamp(pos);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [isSynced]);
 
   return (
     <ScrollView
@@ -51,20 +75,30 @@ export default function Player() {
       )}
 
       {/* 가사 */}
-      <View>
+      <View
+        style={{
+          paddingHorizontal: 4,
+          paddingBottom: 32,
+        }}
+      >
         {completeTrack &&
           completeTrack.lyrics.map((paragraph, paragraphIndex) => (
             <Paragraph
               key={paragraphIndex}
               summary={paragraph.summary}
-              active={false}
+              active={
+                paragraph.sentences[0].start <= timestamp &&
+                timestamp < paragraph.sentences.at(-1)!.end
+              }
             >
               {paragraph.sentences.map((sentence, sentenceIndex) => (
                 <Sentence
                   key={sentenceIndex}
                   sentence={sentence.text}
                   translation={sentence.translation}
-                  active={false}
+                  active={
+                    sentence.start <= timestamp && timestamp < sentence.end
+                  }
                 />
               ))}
             </Paragraph>
