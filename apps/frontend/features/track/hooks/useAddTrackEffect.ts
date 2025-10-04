@@ -30,11 +30,21 @@ export default function useAddActiveTrackEffect({
         lyrics: [],
       });
 
-      for await (const event of stream) {
-        switch (event.event) {
+      for await (const chunk of stream) {
+        // 최종 결과 수신
+        if ("result" in chunk) {
+          if (!chunk.result) continue;
+          setTrack({
+            id: chunk.result,
+          });
+          break;
+        }
+
+        const { event, data } = chunk;
+        switch (event) {
           // 곡 메타데이터 업데이트
           case "metadata_update": {
-            setTrack(event.data);
+            setTrack(data);
             break;
           }
 
@@ -46,12 +56,12 @@ export default function useAddActiveTrackEffect({
 
               const sentence = getSentenceByIndices(
                 newTrack.lyrics,
-                event.data.paragraphIndex,
-                event.data.sentenceIndex
+                data.paragraphIndex,
+                data.sentenceIndex
               );
-              sentence.text = event.data.text;
-              // sentence.start = event.data.start;
-              // sentence.end = event.data.end;
+              sentence.text = data.text;
+              // sentence.start = data.start;
+              // sentence.end = data.end;
 
               return newTrack;
             });
@@ -66,10 +76,10 @@ export default function useAddActiveTrackEffect({
 
               const sentence = getSentenceByIndices(
                 newTrack.lyrics,
-                event.data.paragraphIndex,
-                event.data.sentenceIndex
+                data.paragraphIndex,
+                data.sentenceIndex
               );
-              sentence.translation = event.data.text;
+              sentence.translation = data.text;
 
               return newTrack;
             });
@@ -81,7 +91,7 @@ export default function useAddActiveTrackEffect({
             setTrack((prev) => {
               const newTrack = { ...prev };
               if (newTrack.summary === undefined) newTrack.summary = "";
-              newTrack.summary += event.data;
+              newTrack.summary += data;
               return newTrack;
             });
             break;
@@ -95,10 +105,10 @@ export default function useAddActiveTrackEffect({
 
               const paragraph = getParagraphByIndex(
                 newTrack.lyrics,
-                event.data.paragraphIndex
+                data.paragraphIndex
               );
               if (paragraph.summary === null) paragraph.summary = "";
-              paragraph.summary += event.data.summary;
+              paragraph.summary += data.summary;
 
               return newTrack;
             });
