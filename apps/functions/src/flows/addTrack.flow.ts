@@ -29,7 +29,7 @@ export const addTrackFlow = ai.defineFlow(
       title: input.title,
       artist: input.artist,
     });
-    if (spotifyResult === null) return null;
+    if (spotifyResult === null) return { notFound: true };
 
     // LRCIB에서 곡 검색
     const lrcLibResult = await searchLRCLib({
@@ -37,7 +37,7 @@ export const addTrackFlow = ai.defineFlow(
       artist: spotifyResult.artist,
       duration: input.duration,
     });
-    if (lrcLibResult === null) return null;
+    if (lrcLibResult === null) return { notFound: true };
 
     // 중복 등록 방지
     const songCollection = admin.firestore().collection("tracks");
@@ -45,13 +45,17 @@ export const addTrackFlow = ai.defineFlow(
       .where(firestore.FieldPath.documentId(), "==", spotifyResult.id)
       .get();
     if (matchingSongRef.size > 0) {
-      return matchingSongRef.docs[0].id;
+      return {
+        duplicate: true,
+        id: matchingSongRef.docs[0].id,
+      };
     }
 
     // 메타데이터 전송
     sendChunk({
       event: "metadata_update",
       data: {
+        id: spotifyResult.id,
         title: spotifyResult.title,
         artist: spotifyResult.artist,
         album: spotifyResult.album,
@@ -149,6 +153,11 @@ export const addTrackFlow = ai.defineFlow(
       }),
     ]);
 
-    return docRef.id;
+    sendChunk({ event: "complete", data: null });
+
+    return {
+      duplicate: false,
+      id: spotifyResult.id,
+    };
   }
 );

@@ -5,15 +5,10 @@ import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { colors } from "@/constants/colors";
-import Header from "@/shared/components/Header";
-import ActiveTrack from "@/shared/components/ActiveTrack";
-import useDeviceMediaEffect from "@/shared/hooks/useDeviceMediaEffect";
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
-  useDeviceMediaEffect();
-
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
@@ -26,16 +21,13 @@ export default function RootLayout() {
         >
           <Stack
             screenOptions={{
-              header: (props) => <Header {...props} />,
-              contentStyle: { backgroundColor: colors.background },
+              headerShown: false,
+              contentStyle: { backgroundColor: "transparent" },
             }}
           />
-
-          {/* 활성 트랙 플로팅 */}
-          <ActiveTrack />
         </View>
 
-        <StatusBar style="light" />
+        <StatusBar style="light" translucent backgroundColor="transparent" />
       </SafeAreaProvider>
     </QueryClientProvider>
   );

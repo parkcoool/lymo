@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   wrapper: {
-    padding: 16,
+    padding: 8,
     flexDirection: "column",
     gap: 16,
     alignSelf: "stretch",
@@ -25,5 +25,7 @@ export const styles = StyleSheet.create({
   sentenceContainer: {
     flexDirection: "column",
     gap: 16,
+    padding: 8,
+    paddingTop: 0,
   },
 });

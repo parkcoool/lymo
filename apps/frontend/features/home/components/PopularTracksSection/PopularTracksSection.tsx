@@ -1,14 +1,15 @@
+import { Link } from "expo-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { View, ScrollView, Text } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Track } from "@lymo/schemas/shared";
 
 import getPopularTracks from "@/features/track/apis/getPopularTracks";
 import { CompactTrack } from "@/features/track/components/Track";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
+import { useSyncStore } from "@/contexts/useSyncStore";
 
 import { styles } from "./PopularTracksSection.styles";
-import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
-import { Link } from "expo-router";
 
 export default function PopularTracksSection() {
   const { data: popularTracks } = useSuspenseQuery({
@@ -16,10 +17,18 @@ export default function PopularTracksSection() {
     queryFn: async () => getPopularTracks(),
   });
 
-  const { setTrack, setIsSynced } = useActiveTrackStore();
+  const { setTrackSource } = useTrackSourceStore();
+  const { setIsSynced } = useSyncStore();
 
   const handlePlayTrack = (track: Track) => {
-    setTrack(track);
+    setTrackSource({
+      from: "manual",
+      track: {
+        id: track.id,
+        title: track.title,
+        coverUrl: track.coverUrl,
+      },
+    });
     setIsSynced(false);
   };
 
@@ -36,17 +45,21 @@ export default function PopularTracksSection() {
       </View>
 
       {/* 곡 목록 */}
-      <ScrollView contentContainerStyle={styles.sectionContent} horizontal>
-        {popularTracks.map((track) => (
-          <Link href="/player" key={track.id} asChild>
+      <FlatList
+        contentContainerStyle={styles.sectionContent}
+        horizontal
+        data={popularTracks}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item: track }) => (
+          <Link href={`/player`} key={track.id} asChild>
             <CompactTrack
               title={track.title}
               coverUrl={track.coverUrl}
               onPress={() => handlePlayTrack(track)}
             />
           </Link>
-        ))}
-      </ScrollView>
+        )}
+      />
     </View>
   );
 }

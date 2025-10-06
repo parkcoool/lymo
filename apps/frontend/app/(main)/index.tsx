@@ -1,4 +1,5 @@
 import { ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import HeroSection from "@/features/home/components/HeroSection";
 import PopularTracksSection from "@/features/home/components/PopularTracksSection";
@@ -13,9 +14,12 @@ export default function Home() {
         flex: 1,
       }}
     >
-      <View style={{ paddingBottom: 120 }}>
+      <View>
+        {/* 상단 영역 */}
+        <SafeAreaView edges={["top"]} style={{ paddingTop: 60 }} />
+
         {/* 알림 구역 */}
-        <View style={{ paddingHorizontal: 12 }}>
+        <View style={{ padding: 12 }}>
           <NotificationAccessRequired />
           <DeviceMediaDetection />
         </View>

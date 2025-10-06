@@ -1,34 +1,36 @@
 import { TouchableOpacity, View, Image, Text } from "react-native";
+import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
-import { useActiveTrackStore } from "@/contexts/useActiveTrackStore";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
+import { useSyncStore } from "@/contexts/useSyncStore";
 import useCoverColor from "@/features/track/hooks/useCoverColor";
 
 import { styles } from "./DeviceMediaDetection.styles";
 
 export default function DeviceMediaDetection() {
-  const { data: track } = useDeviceMediaStore();
-  const { isSynced, setIsSynced, setTrack } = useActiveTrackStore();
+  const { setTrackSource } = useTrackSourceStore();
+  const { data: deviceMedia } = useDeviceMediaStore();
+  const { isSynced, setIsSynced } = useSyncStore();
 
-  const coverColor = useCoverColor(track?.coverUrl ?? null) ?? "#FFFFFF";
+  const coverColor = useCoverColor(deviceMedia?.coverUrl ?? null);
 
   // 연동 버튼 핸들러
   const handleConnect = () => {
-    if (!track) return;
-
+    if (!deviceMedia) return;
     setIsSynced(true);
-    setTrack({ ...track, coverUrl: track.coverUrl ?? undefined });
+    setTrackSource({ from: "device", track: deviceMedia });
+    router.push("/player");
   };
 
   // 연동 해제 버튼 핸들러
   const handleDisconnect = () => {
     setIsSynced(false);
-    setTrack(null);
   };
 
-  if (!track) {
+  if (!deviceMedia) {
     return null;
   }
 
@@ -37,24 +39,36 @@ export default function DeviceMediaDetection() {
       colors={[`${coverColor}99`, `${coverColor}B3`]}
       style={[styles.wrapper]}
     >
-      {/* 닫기 버튼 */}
-      <TouchableOpacity style={styles.closeButton}>
-        <MaterialIcons name="close" size={24} style={styles.closeIcon} />
-      </TouchableOpacity>
-
       <View style={styles.overlay}>
+        {/* 닫기 버튼 */}
+        <TouchableOpacity style={styles.closeButton}>
+          <MaterialIcons name="close" size={24} style={styles.closeIcon} />
+        </TouchableOpacity>
+
+        <View style={styles.header}>
+          <MaterialIcons
+            name="audiotrack"
+            size={16}
+            style={styles.headerIcon}
+          />
+          <Text style={styles.headerText}>기기에서 재생 중인 미디어</Text>
+        </View>
+
         {/* 곡 정보 */}
         <View style={styles.track}>
           {/* 커버 이미지 */}
-          <Image source={{ uri: track.coverUrl ?? "" }} style={styles.cover} />
+          <Image
+            source={{ uri: deviceMedia.coverUrl ?? "" }}
+            style={styles.cover}
+          />
 
           {/* 메타데이터 */}
           <View style={styles.trackMetadata}>
             <Text style={styles.title} numberOfLines={1}>
-              {track.title}
+              {deviceMedia.title}
             </Text>
             <Text style={styles.artist} numberOfLines={1}>
-              {track.artist}
+              {deviceMedia.artist}
             </Text>
           </View>
         </View>

@@ -15,21 +15,17 @@ export default function Sentence({
 }: SentenceProps) {
   return (
     <View style={styles.container}>
-      <Text style={[styles.sentence, active && activeTextStyle]}>
-        {sentence}
-      </Text>
-      <Text style={[styles.translation, active && activeTranslationStyle]}>
-        {translation}
-      </Text>
+      <Text style={[styles.sentence, active && activeStyle]}>{sentence}</Text>
+      {translation !== "null" && (
+        <Text style={[styles.translation, active && activeStyle]}>
+          {translation}
+        </Text>
+      )}
     </View>
   );
 }
 
-const activeTextStyle = {
+const activeStyle = {
   color: colors.onBackground,
-  fontSize: 22,
-};
-
-const activeTranslationStyle = {
-  color: colors.onBackground,
+  fontWeight: "700" as const,
 };

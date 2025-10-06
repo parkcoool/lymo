@@ -6,17 +6,20 @@ export default function useCoverColor(coverUrl: string | null) {
     queryKey: ["cover-color", coverUrl],
     queryFn: async () => {
       if (coverUrl == null) {
-        return null;
+        return "#000000";
       } else {
-        const colors = await getColors(coverUrl);
-        if (colors.platform === "ios") {
-          return colors.background;
+        const results = await getColors(coverUrl);
+
+        if (results.platform === "ios") {
+          return results.background;
         } else {
-          return colors.dominant;
+          return results.dominant;
         }
       }
     },
+    placeholderData: "#000000",
     enabled: coverUrl != null,
+    staleTime: Infinity,
   });
 
   return coverColor;

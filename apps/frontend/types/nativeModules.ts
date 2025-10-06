@@ -1,5 +1,3 @@
-import { EmitterSubscription, NativeEventEmitter } from "react-native";
-
 export interface MediaModuleType {
   /**
    * 알림 접근 권한이 있는지 확인합니다.
@@ -29,7 +27,7 @@ export interface MediaModuleType {
 }
 
 // 'onMediaDataChanged' 이벤트가 전달하는 데이터의 타입을 정의합니다.
-export type MediaData = {
+export type DeviceMedia = {
   title: string;
   artist: string;
   album: string;
@@ -40,5 +38,5 @@ export type MediaData = {
 
 // 모듈이 발생시키는 이벤트 이름과 해당 이벤트의 콜백 함수 타입을 매핑합니다.
 export type MediaModuleEvents = {
-  onMediaDataChanged: (data: MediaData | null) => void;
+  onMediaDataChanged: (deviceMedia: DeviceMedia | null) => void;
 };

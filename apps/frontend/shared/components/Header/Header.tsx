@@ -1,10 +1,9 @@
+import { TouchableOpacity, View } from "react-native";
 import type { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import SearchBoxLink from "@/shared/components/SearchBoxLink";
 
 import { styles } from "./Header.styles";
-import { TouchableOpacity, View } from "react-native";
 
 export default function Header({ back, navigation }: NativeStackHeaderProps) {
   return (

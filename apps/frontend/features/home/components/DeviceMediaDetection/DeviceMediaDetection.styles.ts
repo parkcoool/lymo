@@ -15,6 +15,22 @@ export const styles = StyleSheet.create({
     backgroundColor: `${colors.primaryBackground}B3`,
   },
 
+  header: {
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+    padding: 16,
+    paddingBottom: 0,
+  },
+
+  headerIcon: {
+    color: colors.onPrimaryBackground,
+  },
+
+  headerText: {
+    color: colors.onPrimaryBackground,
+  },
+
   closeButton: {
     position: "absolute",
     top: 16,

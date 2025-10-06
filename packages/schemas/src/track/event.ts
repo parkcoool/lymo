@@ -6,6 +6,7 @@ import { z } from "zod";
 export const MetadataUpdateEventSchema = z.object({
   event: z.literal("metadata_update"),
   data: z.object({
+    id: z.string(),
     title: z.string(),
     artist: z.string(),
     album: z.string().nullable(),
@@ -68,3 +69,11 @@ export const ParagraphSummaryAppendEventSchema = z.object({
 export type ParagraphSummaryAppendEvent = z.infer<
   typeof ParagraphSummaryAppendEventSchema
 >;
+
+/**
+ * 스트리밍 완료 이벤트
+ */
+export const CompleteEventSchema = z.object({
+  event: z.literal("complete"),
+  data: z.null(),
+});

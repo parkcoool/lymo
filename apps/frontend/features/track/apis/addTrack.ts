@@ -9,11 +9,14 @@ import type {
 type Chunk = { message: AddTrackFlowStream };
 type Result = { result: AddTrackFlowOutput };
 
-export default async function* addTrack({
-  title,
-  artist,
-  duration,
-}: AddTrackFlowInput) {
+export type AddTrackChunk =
+  | { type: "chunk"; data: AddTrackFlowStream }
+  | { type: "result"; data: AddTrackFlowOutput };
+
+export default async function* addTrack(
+  { title, artist, duration }: AddTrackFlowInput,
+  signal?: AbortSignal
+): AsyncGenerator<AddTrackChunk> {
   const resp = await fetch("https://addtrack-au5g5tbwtq-du.a.run.app", {
     headers: {
       Accept: "text/event-stream",
@@ -21,6 +24,7 @@ export default async function* addTrack({
     },
     method: "POST",
     body: JSON.stringify({ data: { title, artist, duration } }),
+    signal,
   });
   const reader = resp.body?.getReader();
   const decoder = new TextDecoder("utf-8");
@@ -42,13 +46,13 @@ export default async function* addTrack({
       if (!line.startsWith("data: ")) continue;
 
       const jsonString = line.replaceAll("data: ", "").trim();
-      console.log("new chunk:" + JSON.stringify(jsonString));
       const obj = JSON.parse(jsonString);
 
       if (isChunk(obj)) {
         yield { type: "chunk", data: obj.message } as const;
       } else if (isResult(obj)) {
         yield { type: "result", data: obj.result } as const;
+        return;
       } else {
         throw new Error("Invalid chunk format: " + jsonString);
       }
@@ -66,8 +70,5 @@ function isChunk(obj: any): obj is Chunk {
 }
 
 function isResult(obj: any): obj is Result {
-  return (
-    typeof obj === "object" &&
-    (typeof obj.result === "string" || obj.result === null)
-  );
+  return typeof obj === "object" && typeof obj.result === "object";
 }
