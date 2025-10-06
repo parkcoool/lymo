@@ -30,7 +30,7 @@ export interface MediaModuleType {
 export type DeviceMedia = {
   title: string;
   artist: string;
-  album: string;
+  album: string | null;
   duration: number;
   isPlaying: boolean;
   coverUrl: string; // Base64 문자열
