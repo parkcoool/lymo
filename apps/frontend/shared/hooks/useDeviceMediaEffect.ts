@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { NativeEventEmitter, NativeModules } from "react-native";
 
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
+import { useSyncStore } from "@/contexts/useSyncStore";
 import type { MediaModuleType, DeviceMedia } from "@/types/nativeModules";
 
 const MediaModule = NativeModules.MediaModule as MediaModuleType;
@@ -9,6 +11,8 @@ const eventEmitter = new NativeEventEmitter(MediaModule);
 
 export default function useDeviceMediaEffect() {
   const { setData: setDeviceMedia, setHasPermission } = useDeviceMediaStore();
+  const { setTrackSource } = useTrackSourceStore();
+  const { isSynced } = useSyncStore();
 
   useEffect(() => {
     checkPermission();
@@ -24,13 +28,16 @@ export default function useDeviceMediaEffect() {
         };
 
         setDeviceMedia(fixedDeviceMedia);
+
+        if (isSynced)
+          setTrackSource({ from: "device", track: fixedDeviceMedia });
       }
     );
 
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [isSynced]);
 
   const checkPermission = async () => {
     try {
