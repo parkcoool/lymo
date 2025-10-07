@@ -6,6 +6,7 @@ import {
   LyricsSetEventSchema,
   TranslationSetEventSchema,
   ParagraphSummaryAppendEventSchema,
+  CompleteEventSchema,
 } from "./event";
 
 /**
@@ -27,11 +28,16 @@ export const AddTrackFlowStreamSchema = z.discriminatedUnion("event", [
   LyricsSetEventSchema,
   TranslationSetEventSchema,
   ParagraphSummaryAppendEventSchema,
+  CompleteEventSchema,
 ]);
 export type AddTrackFlowStream = z.infer<typeof AddTrackFlowStreamSchema>;
 
 /**
  * addTrackFlow 출력
  */
-export const AddTrackFlowOutputSchema = z.string().nullable();
+export const AddTrackFlowOutputSchema = z.object({
+  id: z.string().min(1).optional(),
+  duplicate: z.boolean().optional(),
+  notFound: z.boolean().optional(),
+});
 export type AddTrackFlowOutput = z.infer<typeof AddTrackFlowOutputSchema>;
