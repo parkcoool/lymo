@@ -41,13 +41,16 @@ export const styles = StyleSheet.create({
     color: colors.onPrimaryBackground,
   },
 
+  trackWrapper: {
+    alignSelf: "stretch",
+  },
+
   track: {
     flexDirection: "row",
     gap: 12,
     padding: 12,
     paddingBottom: 0,
     alignItems: "center",
-    marginRight: 100,
     overflow: "hidden",
   },
 

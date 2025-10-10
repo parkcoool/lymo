@@ -1,5 +1,5 @@
 import { TouchableOpacity, View, Image, Text } from "react-native";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -55,23 +55,25 @@ export default function DeviceMediaDetection() {
         </View>
 
         {/* 곡 정보 */}
-        <View style={styles.track}>
-          {/* 커버 이미지 */}
-          <Image
-            source={{ uri: deviceMedia.coverUrl ?? "" }}
-            style={styles.cover}
-          />
+        <Link href={"/player"} disabled={!isSynced}>
+          <TouchableOpacity style={styles.track} disabled={!isSynced}>
+            {/* 커버 이미지 */}
+            <Image
+              source={{ uri: deviceMedia.coverUrl ?? "" }}
+              style={styles.cover}
+            />
 
-          {/* 메타데이터 */}
-          <View style={styles.trackMetadata}>
-            <Text style={styles.title} numberOfLines={1}>
-              {deviceMedia.title}
-            </Text>
-            <Text style={styles.artist} numberOfLines={1}>
-              {deviceMedia.artist}
-            </Text>
-          </View>
-        </View>
+            {/* 메타데이터 */}
+            <View style={styles.trackMetadata}>
+              <Text style={styles.title} numberOfLines={1}>
+                {deviceMedia.title}
+              </Text>
+              <Text style={styles.artist} numberOfLines={1}>
+                {deviceMedia.artist}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </Link>
 
         {/* 푸터 */}
         <View style={styles.footer}>
