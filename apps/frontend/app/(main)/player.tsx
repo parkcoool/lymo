@@ -1,15 +1,16 @@
 import { ScrollView, View, Text } from "react-native";
 
-import Summary from "@/features/player/components/Summary";
-import useCoverColor from "@/features/track/hooks/useCoverColor";
-import Lyrics from "@/features/player/components/Lyrics";
 import { colors } from "@/constants/colors";
-import useDisplayedTrack from "@/features/player/hooks/useDisplayedTrack";
 import { useSyncStore } from "@/contexts/useSyncStore";
+import useCoverColor from "@/features/track/hooks/useCoverColor";
+import Summary from "@/features/player/components/Summary";
+import Lyrics from "@/features/player/components/Lyrics";
+import useDisplayedTrack from "@/features/player/hooks/useDisplayedTrack";
 import ErrorIndicator from "@/features/player/components/ErrorIndicator";
+import LoadingIndicator from "@/features/player/components/LoadingIndicator";
 
 export default function Player() {
-  const { displayedTrack, error, isError } = useDisplayedTrack();
+  const { displayedTrack, isLoading, error, isError } = useDisplayedTrack();
   const { isSynced } = useSyncStore();
 
   // 커버 색상
@@ -46,6 +47,9 @@ export default function Player() {
                 coverColor={coverColor}
               />
             )}
+
+            {/* 로딩 */}
+            {isLoading && <LoadingIndicator />}
 
             {/* 가사 */}
             {displayedTrack?.lyrics && (
