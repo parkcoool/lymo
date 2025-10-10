@@ -54,12 +54,11 @@ export default function Player() {
 
             {/* 가사 */}
             {!isLoading &&
-            displayedTrack?.lyrics &&
-            displayedTrack.lyrics.length > 0 ? (
-              <Lyrics lyrics={displayedTrack.lyrics} isSynced={isSynced} />
-            ) : (
-              <LyricsGeneratingIndicator />
-            )}
+              (displayedTrack?.lyrics && displayedTrack.lyrics.length > 0 ? (
+                <Lyrics lyrics={displayedTrack.lyrics} isSynced={isSynced} />
+              ) : (
+                <LyricsGeneratingIndicator />
+              ))}
           </>
         )}
       </ScrollView>
