@@ -58,14 +58,21 @@ export default async function* addTrack(
       if (!line.startsWith("data: ")) continue;
 
       const jsonString = line.replaceAll("data: ", "").trim();
-      const obj = JSON.parse(jsonString);
+      let obj: any;
+
+      try {
+        obj = JSON.parse(jsonString);
+      } catch (e) {
+        console.error("Failed to parse JSON:", jsonString, e);
+        continue; // Skip this line and continue with the next
+      }
 
       if (isChunk(obj)) {
         processChunk(track, obj);
       } else if (isResult(obj)) {
         await processResult(track, obj);
       } else {
-        throw new Error("Invalid chunk format: " + jsonString);
+        console.error("Invalid chunk format: " + jsonString);
       }
 
       // TODO: 알고리즘 개선
