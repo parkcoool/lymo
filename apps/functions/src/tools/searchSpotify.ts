@@ -41,14 +41,18 @@ export const searchSpotify = ai.defineTool(
     const tracks = tracksResponse.body.tracks?.items;
     if (!tracks || tracks.length === 0) return null;
 
+    const mostPopularTrack = tracks.reduce((prev, current) =>
+      prev.popularity > current.popularity ? prev : current
+    );
+
     return {
-      id: tracks[0].id,
-      title: tracks[0].name,
-      artist: tracks[0].artists.map((a) => a.name),
-      album: tracks[0].album.name || null,
-      coverUrl: tracks[0].album.images[0]?.url || "",
-      publishedAt: tracks[0].album.release_date || null,
-      duration: Math.floor(tracks[0].duration_ms / 1000),
+      id: mostPopularTrack.id,
+      title: mostPopularTrack.name,
+      artist: mostPopularTrack.artists.map((a) => a.name),
+      album: mostPopularTrack.album.name || null,
+      coverUrl: mostPopularTrack.album.images[0]?.url || "",
+      publishedAt: mostPopularTrack.album.release_date || null,
+      duration: Math.floor(mostPopularTrack.duration_ms / 1000),
     };
   }
 );
