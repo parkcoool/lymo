@@ -30,6 +30,7 @@ export const addTrackFlow = ai.defineFlow(
     const spotifyResult = await searchSpotify({
       title: input.title,
       artist: input.artist,
+      duration: input.duration,
     });
     if (spotifyResult === null) return { notFound: true };
 
