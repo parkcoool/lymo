@@ -8,6 +8,7 @@ import Lyrics from "@/features/player/components/Lyrics";
 import useDisplayedTrack from "@/features/player/hooks/useDisplayedTrack";
 import ErrorIndicator from "@/features/player/components/ErrorIndicator";
 import LoadingIndicator from "@/features/player/components/LoadingIndicator";
+import LyricsGeneratingIndicator from "@/features/player/components/LyricsGeneratingIndicator";
 
 export default function Player() {
   const { displayedTrack, isLoading, error, isError } = useDisplayedTrack();
@@ -52,8 +53,12 @@ export default function Player() {
             {isLoading && <LoadingIndicator />}
 
             {/* 가사 */}
-            {displayedTrack?.lyrics && (
+            {!isLoading &&
+            displayedTrack?.lyrics &&
+            displayedTrack.lyrics.length > 0 ? (
               <Lyrics lyrics={displayedTrack.lyrics} isSynced={isSynced} />
+            ) : (
+              <LyricsGeneratingIndicator />
             )}
           </>
         )}
