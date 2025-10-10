@@ -18,14 +18,19 @@ export default function useDisplayedTrack() {
     else return undefined;
   }, [trackSource]);
 
-  const { data: trackResult } = useQuery<Track & TrackDetail>({
+  const {
+    data: trackResult,
+    isError: isManualError,
+    error: manualError,
+    isLoading: isManualLoading,
+  } = useQuery<Track & TrackDetail>({
     enabled: trackSource?.from === "manual",
     queryKey: ["track", trackId],
     staleTime: Infinity,
-    throwOnError: true,
+    retry: false,
 
     queryFn: () => {
-      if (!trackId) throw new Error("No track ID provided");
+      if (!trackId) throw new Error("곡 ID가 제공되지 않았습니다.");
       return getTrack({ trackId });
     },
   });
@@ -41,10 +46,15 @@ export default function useDisplayedTrack() {
     else return undefined;
   }, [trackSource]);
 
-  const { data: trackStreamResult } = useQuery({
+  const {
+    data: trackStreamResult,
+    isError: isDeviceError,
+    error: deviceError,
+    isLoading: isDeviceLoading,
+  } = useQuery({
     enabled: trackSource?.from === "device",
     queryKey: ["track-stream", trackStreamKey],
-    throwOnError: true,
+    retry: false,
 
     queryFn: streamedQuery<Track & TrackDetail, Track & TrackDetail>({
       initialValue: {
@@ -62,7 +72,7 @@ export default function useDisplayedTrack() {
       reducer: (_, chunk) => chunk,
       streamFn: (context) => {
         if (trackStreamKey) return addTrack(trackStreamKey, context.signal);
-        else throw new Error("No track info provided");
+        else throw new Error("곡 정보가 제공되지 않았습니다.");
       },
     }),
   });
@@ -70,11 +80,30 @@ export default function useDisplayedTrack() {
   // ========== track to be displayed ==========
   const displayedTrack: Partial<Track & TrackDetail> | undefined =
     useMemo(() => {
+      // trackSource.from 우선순위에 따라 트랙 반환
       if (trackSource?.from === "manual" && trackResult) return trackResult;
       else if (trackSource?.from === "device" && trackStreamResult)
         return trackStreamResult;
+
+      // placeholder 트랙 반환
       return trackSource?.track;
     }, [trackSource, trackResult, trackStreamResult]);
 
-  return displayedTrack;
+  const isLoading = useMemo(
+    () => isDeviceLoading || isManualLoading,
+    [isDeviceLoading, isManualLoading]
+  );
+
+  const isError = useMemo(
+    () => isDeviceError || isManualError,
+    [isDeviceError, isManualError]
+  );
+
+  const error = useMemo(() => {
+    if (isDeviceError) return deviceError;
+    else if (isManualError) return manualError;
+    else return undefined;
+  }, [isDeviceError, isManualError, deviceError, manualError]);
+
+  return { displayedTrack, isLoading, error, isError };
 }

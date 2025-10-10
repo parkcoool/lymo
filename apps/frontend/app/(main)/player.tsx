@@ -6,9 +6,10 @@ import Lyrics from "@/features/player/components/Lyrics";
 import { colors } from "@/constants/colors";
 import useDisplayedTrack from "@/features/player/hooks/useDisplayedTrack";
 import { useSyncStore } from "@/contexts/useSyncStore";
+import ErrorIndicator from "@/features/player/components/ErrorIndicator";
 
 export default function Player() {
-  const displayedTrack = useDisplayedTrack();
+  const { displayedTrack, error, isError } = useDisplayedTrack();
   const { isSynced } = useSyncStore();
 
   // 커버 색상
@@ -29,25 +30,29 @@ export default function Player() {
           paddingBottom: 12,
         }}
       >
-        <>
-          {/* 곡 메타데이터 및 설명 */}
-          {displayedTrack && (
-            <Summary
-              coverUrl={displayedTrack.coverUrl}
-              title={displayedTrack.title}
-              artist={displayedTrack.artist}
-              album={displayedTrack.album}
-              publishedAt={displayedTrack.publishedAt}
-              summary={displayedTrack.summary}
-              coverColor={coverColor}
-            />
-          )}
+        {isError && <ErrorIndicator message={error?.message} />}
 
-          {/* 가사 */}
-          {displayedTrack?.lyrics && (
-            <Lyrics lyrics={displayedTrack.lyrics} isSynced={isSynced} />
-          )}
-        </>
+        {!isError && (
+          <>
+            {/* 곡 메타데이터 및 설명 */}
+            {displayedTrack && (
+              <Summary
+                coverUrl={displayedTrack.coverUrl}
+                title={displayedTrack.title}
+                artist={displayedTrack.artist}
+                album={displayedTrack.album}
+                publishedAt={displayedTrack.publishedAt}
+                summary={displayedTrack.summary}
+                coverColor={coverColor}
+              />
+            )}
+
+            {/* 가사 */}
+            {displayedTrack?.lyrics && (
+              <Lyrics lyrics={displayedTrack.lyrics} isSynced={isSynced} />
+            )}
+          </>
+        )}
       </ScrollView>
     </View>
   );

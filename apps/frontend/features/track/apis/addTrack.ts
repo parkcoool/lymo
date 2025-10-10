@@ -143,7 +143,7 @@ async function processResult(track: Track & TrackDetail, result: Result) {
     const newTrack = await getTrack({ trackId: id });
     Object.assign(track, newTrack);
   } else if (notFound) {
-    track.id = "";
+    throw new Error("곡을 찾을 수 없습니다.");
   } else if (id) {
     track.id = id;
   }
