@@ -77,6 +77,7 @@ export const translateLyricsFlow = ai.defineFlow(
         ["This is the first sentence of the second paragraph.", null, "This is the third sentence of the second paragraph."]
       ]
       `,
+      model: "googleai/gemini-2.5-flash-lite-preview-09-2025",
       prompt: JSON.stringify({ title, artist, album, lyrics }),
       output: {
         schema: z.array(z.array(z.string().nullable())),
