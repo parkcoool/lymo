@@ -5,13 +5,13 @@ import parseLyrics from "../utils/parseLyrics";
 import ai from "../core/genkit";
 import type { LRCLibSong } from "../types/song";
 
-export const searchLRCLibInputSchema = z.object({
+export const SearchLRCLibInputSchema = z.object({
   title: z.string().describe("The title of the song"),
   artist: z.string().describe("The artist of the song"),
   duration: z.number().describe("The duration of the song in seconds"),
 });
 
-export const searchLRCLibOutputSchema = z
+export const SearchLRCLibOutputSchema = z
   .object({
     lyrics: z.array(
       z.object({
@@ -30,14 +30,14 @@ export const searchLRCLibOutputSchema = z
 type LRCLibSearchResponse = LRCLibSong[];
 
 export type LRCLibResult = NonNullable<
-  z.infer<typeof searchLRCLibOutputSchema>
+  z.infer<typeof SearchLRCLibOutputSchema>
 >;
 
 export const searchLRCLib = ai.defineTool(
   {
     name: "searchLRCLib",
-    inputSchema: searchLRCLibInputSchema,
-    outputSchema: searchLRCLibOutputSchema,
+    inputSchema: SearchLRCLibInputSchema,
+    outputSchema: SearchLRCLibOutputSchema,
     description:
       "Fetch the lyrics, title, artist and album of a song given its title, artist and duration in seconds from LRCLib",
   },

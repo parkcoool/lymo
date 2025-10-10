@@ -1,3 +1,4 @@
+import { z } from "genkit";
 import admin, { firestore } from "firebase-admin";
 
 import {
@@ -7,7 +8,8 @@ import {
 } from "@lymo/schemas/function";
 
 import ai from "../core/genkit";
-import { searchLRCLib } from "../tools/searchLRCLib";
+import getCombinations from "../utils/getCombinations";
+import { searchLRCLib, SearchLRCLibOutputSchema } from "../tools/searchLRCLib";
 import { searchSpotify } from "../tools/searchSpotify";
 import { translateLyricsFlow } from "./translateLyrics.flow";
 import { summarizeSongFlow } from "./summarizeSong.flow";
@@ -32,12 +34,24 @@ export const addTrackFlow = ai.defineFlow(
     if (spotifyResult === null) return { notFound: true };
 
     // LRCIB에서 곡 검색
-    const lrcLibResult = await searchLRCLib({
-      title: spotifyResult.title,
-      artist: spotifyResult.artist,
-      duration: input.duration,
-    });
-    if (lrcLibResult === null) return { notFound: true };
+    let lrcLibResult: z.infer<typeof SearchLRCLibOutputSchema> = null;
+    for (let r = 1; r <= spotifyResult.artist.length; r++) {
+      const artistStringCandidates = getCombinations(spotifyResult.artist, r);
+
+      for (const artistString of artistStringCandidates) {
+        const lrcLibResultCandidate = await searchLRCLib({
+          title: spotifyResult.title,
+          artist: artistString.join(" "),
+          duration: input.duration,
+        });
+
+        if (lrcLibResultCandidate) {
+          lrcLibResult = lrcLibResultCandidate;
+          break;
+        }
+      }
+    }
+    if (!lrcLibResult) return { notFound: true };
 
     // 중복 등록 방지
     const songCollection = admin.firestore().collection("tracks");
@@ -57,7 +71,7 @@ export const addTrackFlow = ai.defineFlow(
       data: {
         id: spotifyResult.id,
         title: spotifyResult.title,
-        artist: spotifyResult.artist,
+        artist: spotifyResult.artist.join(", "),
         album: spotifyResult.album,
         coverUrl: spotifyResult.coverUrl,
         publishedAt: spotifyResult.publishedAt,
@@ -69,7 +83,7 @@ export const addTrackFlow = ai.defineFlow(
     const { stream: summarizeSongStream, output: summarizeSongOutput } =
       summarizeSongFlow.stream({
         title: spotifyResult.title,
-        artist: spotifyResult.artist,
+        artist: spotifyResult.artist.join(", "),
         album: spotifyResult.album,
         lyrics: lrcLibResult.lyrics.map((sentence) => sentence.text),
       });
@@ -78,7 +92,7 @@ export const addTrackFlow = ai.defineFlow(
     const { stream: translateLyricsStream, output: translateLyricsOutput } =
       translateLyricsFlow.stream({
         title: spotifyResult.title,
-        artist: spotifyResult.artist,
+        artist: spotifyResult.artist.join(", "),
         album: spotifyResult.album,
         lyrics: lrcLibResult.lyrics,
       });
@@ -116,7 +130,7 @@ export const addTrackFlow = ai.defineFlow(
       output: summarizeParagraphOutput,
     } = summarizeParagraphFlow.stream({
       title: spotifyResult.title,
-      artist: spotifyResult.artist,
+      artist: spotifyResult.artist.join(", "),
       album: spotifyResult.album,
       lyrics: lyrics.map((paragraph) => paragraph.sentences.map((s) => s.text)),
     });
