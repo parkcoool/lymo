@@ -66,28 +66,26 @@ export const searchSpotify = ai.defineTool(
 );
 
 const SCORE_WEIGHTS = {
-  title: 0.5,
-  artist: 0.3,
-  duration: 0.2,
+  title: 0.3,
+  artist: 0.2,
+  duration: 0.5,
 };
 
 function getAccurationScore(
   track: SpotifyApi.TrackObjectFull,
   query: { title: string; artist: string; duration: number }
 ): number {
-  // 1. 제목 점수: 정규화된 유사도 점수를 계산합니다.
-  const titleScore = calculateSimilarity(
-    track.name.toLowerCase(),
-    query.title.toLowerCase()
-  );
+  // 1. 제목
+  const title = track.name.toLowerCase().replace(/\(.*?\)/g, "");
+  const titleScore = calculateSimilarity(title, query.title.toLowerCase());
 
-  // 2. 아티스트 점수: 여러 아티스트 중 가장 유사도가 높은 점수를 선택합니다.
+  // 2. 아티스트 점수
   const artistScores = track.artists.map((artist) =>
     calculateSimilarity(artist.name.toLowerCase(), query.artist.toLowerCase())
   );
   const artistScore = Math.max(...artistScores);
 
-  // 3. 재생 시간 점수: 기존 로직을 그대로 사용합니다.
+  // 3. 재생 시간 점수
   const durationScore = Math.max(
     0,
     1 - Math.abs(track.duration_ms / 1000 - query.duration) / query.duration
