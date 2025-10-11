@@ -1,10 +1,10 @@
 import { Stack } from "expo-router";
 
 import Header from "@/shared/components/Header";
-import useDeviceMediaEffect from "@/shared/hooks/useDeviceMediaEffect";
+import useSyncDeviceMedia from "@/shared/hooks/useSyncDeviceMedia";
 
 export default function MainLayout() {
-  useDeviceMediaEffect();
+  useSyncDeviceMedia();
 
   return (
     <Stack

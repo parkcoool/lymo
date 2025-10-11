@@ -9,7 +9,7 @@ import type { MediaModuleType, DeviceMedia } from "@/types/nativeModules";
 const MediaModule = NativeModules.MediaModule as MediaModuleType;
 const eventEmitter = new NativeEventEmitter(MediaModule);
 
-export default function useDeviceMediaEffect() {
+export default function useSyncDeviceMedia() {
   const { setData: setDeviceMedia, setHasPermission } = useDeviceMediaStore();
   const { setTrackSource } = useTrackSourceStore();
   const { isSynced } = useSyncStore();
