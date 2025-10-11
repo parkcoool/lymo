@@ -16,7 +16,6 @@ type DeviceMediaStore = DeviceMediaStates & DeviceMediaActions;
 export const useDeviceMediaStore = create<DeviceMediaStore>((set) => ({
   data: null,
   hasPermission: false,
-  isSynced: false,
 
   setData: (session) => set({ data: session }),
   setHasPermission: (hasPermission) => set({ hasPermission }),
