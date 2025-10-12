@@ -1,14 +1,12 @@
-import { collection, getDocs } from "firebase/firestore";
-import { Track } from "@lymo/schemas/shared";
+import firestore from "@react-native-firebase/firestore";
 
-import { db } from "@/core/firebase";
+import { Track } from "@lymo/schemas/shared";
 
 export default async function getPopularTracks() {
   // TODO: Replace with actual popular track collection
 
-  const trackCollection = collection(db, "tracks");
-  const trackDocs = await getDocs(trackCollection);
-
+  const trackCollection = firestore().collection("tracks");
+  const trackDocs = await trackCollection.get();
   const result: Track[] = [];
   trackDocs.forEach((doc) => {
     result.push({ id: doc.id, ...doc.data() } as Track);

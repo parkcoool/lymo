@@ -1,19 +1,21 @@
-import { doc, getDoc } from "firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 import { Track, TrackDetail } from "@lymo/schemas/shared";
-
-import { db } from "@/core/firebase";
 
 interface GetTrackProps {
   trackId: string;
 }
 
 export default async function getTrack({ trackId }: GetTrackProps) {
-  const trackDoc = doc(db, "tracks", trackId);
-  const detailDoc = doc(db, "tracks", trackId, "detail", "content");
+  const trackDoc = firestore().collection("tracks").doc(trackId);
+  const detailDoc = firestore()
+    .collection("tracks")
+    .doc(trackId)
+    .collection("detail")
+    .doc("content");
 
   const [trackSnapshot, detailSnapshot] = await Promise.all([
-    getDoc(trackDoc),
-    getDoc(detailDoc),
+    trackDoc.get(),
+    detailDoc.get(),
   ]);
 
   if (!trackSnapshot.exists() || !detailSnapshot.exists()) {

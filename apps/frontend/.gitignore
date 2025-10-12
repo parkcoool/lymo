@@ -25,3 +25,5 @@ yarn-error.*
 .env*.local
 
 *.tsbuildinfo
+
+google-services.json
