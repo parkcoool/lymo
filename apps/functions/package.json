@@ -26,6 +26,7 @@
     "firebase-functions": "^6.4.0",
     "genkit": "^1.19.2",
     "spotify-web-api-node": "^5.0.2",
+    "syllable": "^5.0.1",
     "youtube-search-without-api-key": "^2.0.7"
   },
   "devDependencies": {

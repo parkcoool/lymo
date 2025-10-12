@@ -9,7 +9,10 @@ interface Sentence {
  * @param lyricsString - 변환할 원본 가사 문자열
  * @returns 변환된 가사 배열
  */
-export default function parseLyrics(lyricsString: string): Sentence[] {
+export default function parseLyrics(
+  lyricsString: string,
+  duration: number
+): Sentence[] {
   // 1. 문자열을 줄바꿈(\n) 기준으로 나눕니다.
   const lines = lyricsString.split("\n");
 
@@ -48,9 +51,8 @@ export default function parseLyrics(lyricsString: string): Sentence[] {
     });
   });
 
-  // 마지막 문장의 end 시간을 큰 값으로
   if (parsedData.length > 0) {
-    parsedData[parsedData.length - 1].end = 1000000;
+    parsedData[parsedData.length - 1].end = duration;
   }
 
   const result: Sentence[] = parsedData.filter((item): item is Sentence => {

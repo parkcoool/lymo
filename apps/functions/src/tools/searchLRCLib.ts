@@ -71,7 +71,7 @@ export const searchLRCLib = ai.defineTool(
     }
 
     // 형식 변환
-    const lyrics = parseLyrics(song.syncedLyrics!);
+    const lyrics = parseLyrics(song.syncedLyrics!, duration);
 
     return {
       lyrics,
