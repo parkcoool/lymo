@@ -1,21 +1,17 @@
 import { Link } from "expo-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { View, Text, FlatList } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Track } from "@lymo/schemas/shared";
 
-import getPopularTracks from "@/features/track/apis/getPopularTracks";
 import { CompactTrack } from "@/features/track/components/Track";
+import usePopularTracksQuery from "@/features/track/hooks/usePopularTracksQuery";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
 
 import { styles } from "./PopularTracksSection.styles";
 
 export default function PopularTracksSection() {
-  const { data: popularTracks } = useSuspenseQuery({
-    queryKey: ["popular-tracks"],
-    queryFn: async () => getPopularTracks(),
-  });
+  const { data: popularTracks } = usePopularTracksQuery();
 
   const { setTrackSource } = useTrackSourceStore();
   const { setIsSynced } = useSyncStore();
