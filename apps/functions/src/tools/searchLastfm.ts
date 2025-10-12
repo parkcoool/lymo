@@ -6,12 +6,12 @@ import ai from "../core/genkit";
 
 const lastfmApiKey = defineSecret("LASTFM_API_KEY");
 
-export const searchLastfmInputSchema = z.object({
+export const SearchLastfmInputSchema = z.object({
   title: z.string().describe("The title of the song"),
   artist: z.string().describe("The artist of the song"),
 });
 
-export const searchLastfmOutputSchema = z
+export const SearchLastfmOutputSchema = z
   .object({
     title: z.string().describe("The title of the song"),
     artist: z.string().describe("The artist of the song"),
@@ -45,8 +45,8 @@ type LastfmSearchResponse = {
 export const searchLastfm = ai.defineTool(
   {
     name: "searchLastfm",
-    inputSchema: searchLastfmInputSchema,
-    outputSchema: searchLastfmOutputSchema,
+    inputSchema: SearchLastfmInputSchema,
+    outputSchema: SearchLastfmOutputSchema,
     description:
       "Fetch the official title, artist, album, cover URL, published date and summary of a song given its title and artist from Last.fm",
   },
