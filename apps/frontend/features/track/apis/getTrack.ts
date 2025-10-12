@@ -1,17 +1,16 @@
-import firestore from "@react-native-firebase/firestore";
 import { Track, TrackDetail } from "@lymo/schemas/shared";
+
+import firestore from "@/core/firestore";
 
 interface GetTrackProps {
   trackId: string;
 }
 
 export default async function getTrack({ trackId }: GetTrackProps) {
-  const trackDoc = firestore().collection("tracks").doc(trackId);
-  const detailDoc = firestore()
-    .collection("tracks")
-    .doc(trackId)
-    .collection("detail")
-    .doc("content");
+  const trackDoc = firestore
+    .collection<Omit<Track, "id">>("tracks")
+    .doc(trackId);
+  const detailDoc = trackDoc.collection("detail").doc("content");
 
   const [trackSnapshot, detailSnapshot] = await Promise.all([
     trackDoc.get(),
