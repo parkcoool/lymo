@@ -4,12 +4,19 @@ import type {
   AddTrackFlowStream,
   AddTrackFlowOutput,
 } from "@lymo/schemas/function";
-import type { Lyrics, Track, TrackDetail } from "@lymo/schemas/shared";
+import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
-import getTrack from "@/features/track/apis/getTrack";
+import isChunk from "@/features/track/helpers/isChunk";
+import isResult from "@/features/track/helpers/isResult";
+import processChunk from "@/features/track/helpers/processChunk";
+import processResult from "@/features/track/helpers/processResult";
 
-type Chunk = { message: AddTrackFlowStream };
-type Result = { result: AddTrackFlowOutput };
+export type Chunk = { message: AddTrackFlowStream };
+export type Result = { result: AddTrackFlowOutput };
+
+export interface ProcessChunkState {
+  isLyricsGrouped: boolean;
+}
 
 export default async function* addTrack(
   { title, artist, duration }: AddTrackFlowInput,
@@ -43,6 +50,11 @@ export default async function* addTrack(
     lyricsProvider: "",
     summary: "",
   };
+
+  const state: ProcessChunkState = {
+    isLyricsGrouped: false,
+  };
+
   console.log("[START]", { title, artist, duration });
 
   while (true) {
@@ -68,7 +80,7 @@ export default async function* addTrack(
       }
 
       if (isChunk(obj)) {
-        processChunk(track, obj);
+        processChunk(track, state, obj);
       } else if (isResult(obj)) {
         await processResult(track, obj);
       } else {
@@ -78,99 +90,5 @@ export default async function* addTrack(
       // TODO: 알고리즘 개선
       yield JSON.parse(JSON.stringify(track));
     }
-  }
-}
-
-function isChunk(obj: any): obj is Chunk {
-  return (
-    typeof obj === "object" &&
-    typeof obj.message === "object" &&
-    typeof obj.message.event === "string" &&
-    typeof obj.message.data === "object"
-  );
-}
-
-function isResult(obj: any): obj is Result {
-  return typeof obj === "object" && typeof obj.result === "object";
-}
-
-function processChunk(track: Track & TrackDetail, chunk: Chunk) {
-  const { event, data } = chunk.message;
-  console.log(`[${event}]`, data);
-
-  switch (event) {
-    case "metadata_update": {
-      Object.assign(track, data);
-      break;
-    }
-
-    case "lyrics_set": {
-      expandSentences(track.lyrics, data.paragraphIndex, data.sentenceIndex);
-      track.lyrics[data.paragraphIndex].sentences[data.sentenceIndex] = {
-        text: data.text,
-        start: data.start,
-        end: data.end,
-        translation: "",
-      };
-      break;
-    }
-
-    case "translation_set": {
-      expandSentences(track.lyrics, data.paragraphIndex, data.sentenceIndex);
-      track.lyrics[data.paragraphIndex].sentences[
-        data.sentenceIndex
-      ].translation = data.text;
-      break;
-    }
-
-    case "summary_append": {
-      track.summary += data.summary;
-      break;
-    }
-
-    case "paragraph_summary_append": {
-      expandParagraphs(track.lyrics, data.paragraphIndex);
-      const paragraph = track.lyrics[data.paragraphIndex];
-      if (paragraph.summary) paragraph.summary += data.summary;
-      else paragraph.summary = data.summary;
-      break;
-    }
-
-    case "complete": {
-      break;
-    }
-  }
-}
-
-async function processResult(track: Track & TrackDetail, result: Result) {
-  const { duplicate, notFound, id } = result.result;
-  console.log("[RESULT]", result.result);
-
-  if (duplicate && id) {
-    const newTrack = await getTrack({ trackId: id });
-    Object.assign(track, newTrack);
-  } else if (notFound) {
-    throw new Error("곡을 찾을 수 없습니다.");
-  } else if (id) {
-    track.id = id;
-  }
-}
-
-function expandParagraphs(lyrics: Lyrics, paragraphIndex: number) {
-  while (paragraphIndex >= lyrics.length) {
-    lyrics.push({ summary: null, sentences: [] });
-  }
-}
-
-function expandSentences(
-  lyrics: Lyrics,
-  paragraphIndex: number,
-  sentenceIndex: number
-) {
-  expandParagraphs(lyrics, paragraphIndex);
-
-  const paragraph = lyrics[paragraphIndex];
-  while (sentenceIndex >= paragraph.sentences.length) {
-    paragraph.sentences.push({ text: "", start: 0, end: 0, translation: "" });
   }
 }

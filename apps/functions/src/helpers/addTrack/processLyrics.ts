@@ -12,6 +12,7 @@ import { summarizeParagraphFlow } from "../../flows/summarizeParagraph.flow";
 import { groupLyrics } from "../../tools/groupLyrics";
 import type { LRCLIBResult } from "../../types/lrclib";
 import type { SpotifyResult } from "../../types/spotify";
+import findIndex from "../../utils/findIndex";
 
 export default async function processLyrics(
   sendChunk: StreamingCallback<
@@ -55,15 +56,15 @@ export default async function processLyrics(
         lyrics.push({
           sentences: lrclibResult.lyrics
             .slice(lastBreak + 1, breakIndex + 1)
-            .map((s) => ({ ...s, translation: "" })),
-          summary: "",
+            .map((s) => ({ ...s, translation: null })),
+          summary: null,
         });
         lastBreak = breakIndex;
       }
       lyrics.push({
         sentences: lrclibResult.lyrics
           .slice(lastBreak + 1)
-          .map((s) => ({ ...s, translation: "" })),
+          .map((s) => ({ ...s, translation: null })),
         summary: "",
       });
     })(),
@@ -71,15 +72,12 @@ export default async function processLyrics(
 
   // 가사 번역 반영
   const translations = await translateLyricsOutput;
-  let p = 0,
-    s = 0;
   for (let i = 0; i < translations.length; i++) {
-    if (s >= lyrics[p].sentences.length) {
-      p++;
-      s = 0;
-    }
+    const { outer: p, inner: s } = findIndex(
+      lyrics.map((paragraph) => paragraph.sentences),
+      i
+    )!;
     lyrics[p].sentences[s].translation = translations[i];
-    s++;
   }
 
   // 문단 별 해석 생성을 위해 `summarizeParagraphFlow` 플로우 실행

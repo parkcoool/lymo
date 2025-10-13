@@ -23,8 +23,6 @@ export const GroupLyricsOutputSchema = z.array(
   z.number().describe("An index where paragraphs should break")
 );
 
-// type Paragraph = z.infer<typeof GroupLyricsOutputSchema>[number];
-
 const SEMANTIC_WEIGHT = 0.7;
 const TIME_WEIGHT = 0.3;
 const WINDOW_SIZE = 3;
@@ -98,16 +96,6 @@ export const groupLyrics = ai.defineTool(
       .slice(0, breakCount)
       .map((item) => item.index)
       .sort((a, b) => a - b);
-
-    // const paragraphs: Paragraph[] = [];
-    // let lastBreak = -1;
-    // for (const breakIndex of breaks) {
-    //   paragraphs.push(lyrics.slice(lastBreak + 1, breakIndex + 1));
-    //   lastBreak = breakIndex;
-    // }
-    // paragraphs.push(lyrics.slice(lastBreak + 1));
-
-    // return paragraphs;
 
     return breaks;
   }
