@@ -20,17 +20,19 @@ export type MetadataUpdateEvent = z.infer<typeof MetadataUpdateEventSchema>;
 /**
  * 가사 문장 설정 이벤트
  */
-export const LyricsSetEventSchema = z.object({
-  event: z.literal("lyrics_set"),
-  data: z.object({
-    paragraphIndex: z.number(),
-    sentenceIndex: z.number(),
-    text: z.string(),
-    start: z.number().nonnegative(),
-    end: z.number().nonnegative(),
-  }),
+export const LyricsUpdateEventSchema = z.object({
+  event: z.literal("lyrics_update"),
+  data: z.array(
+    z
+      .object({
+        start: z.number().describe("The start time of the sentence in seconds"),
+        end: z.number().describe("The end time of the sentence in seconds"),
+        text: z.string().describe("The text of the sentence"),
+      })
+      .describe("A sentence in the lyrics")
+  ),
 });
-export type LyricsSetEvent = z.infer<typeof LyricsSetEventSchema>;
+export type LyricsUpdateEvent = z.infer<typeof LyricsUpdateEventSchema>;
 
 /**
  * 가사 문장 번역 설정 이벤트
@@ -38,12 +40,20 @@ export type LyricsSetEvent = z.infer<typeof LyricsSetEventSchema>;
 export const TranslationSetEventSchema = z.object({
   event: z.literal("translation_set"),
   data: z.object({
-    paragraphIndex: z.number(),
     sentenceIndex: z.number(),
     text: z.string(),
   }),
 });
 export type TranslationSetEvent = z.infer<typeof TranslationSetEventSchema>;
+
+/**
+ * 가사 문단 구분 이벤트
+ */
+export const LyricsGroupEventSchema = z.object({
+  event: z.literal("lyrics_group"),
+  data: z.array(z.number()),
+});
+export type LyricsGroupEvent = z.infer<typeof LyricsGroupEventSchema>;
 
 /**
  * 곡 요약 설정 이벤트

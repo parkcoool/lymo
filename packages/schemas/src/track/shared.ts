@@ -5,7 +5,7 @@ import { z } from "zod";
  */
 export const LyricsSentenceSchema = z.object({
   text: z.string().min(1),
-  translation: z.string().min(1),
+  translation: z.string().min(1).nullable(),
   start: z.number().nonnegative(),
   end: z.number().nonnegative(),
 });

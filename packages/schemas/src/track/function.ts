@@ -3,10 +3,11 @@ import { z } from "zod";
 import {
   MetadataUpdateEventSchema,
   SummaryAppendEventSchema,
-  LyricsSetEventSchema,
+  LyricsUpdateEventSchema,
   TranslationSetEventSchema,
   ParagraphSummaryAppendEventSchema,
   CompleteEventSchema,
+  LyricsGroupEventSchema,
 } from "./event";
 
 /**
@@ -25,8 +26,9 @@ export type AddTrackFlowInput = z.infer<typeof AddTrackFlowInputSchema>;
 export const AddTrackFlowStreamSchema = z.discriminatedUnion("event", [
   MetadataUpdateEventSchema,
   SummaryAppendEventSchema,
-  LyricsSetEventSchema,
+  LyricsUpdateEventSchema,
   TranslationSetEventSchema,
+  LyricsGroupEventSchema,
   ParagraphSummaryAppendEventSchema,
   CompleteEventSchema,
 ]);

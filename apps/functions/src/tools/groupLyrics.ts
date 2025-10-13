@@ -1,9 +1,11 @@
 import { z } from "genkit";
 
 import ai from "../core/genkit";
+
 import getSyllableCount from "../utils/getSyllableCount";
 import calculateCosineDistance from "../utils/calculateCosineDistance";
 import normalize from "../utils/normalize";
+import averageEmbeddings from "../utils/averageEmbeddings";
 
 export const GroupLyricsInputSchema = z.object({
   lyrics: z
@@ -18,18 +20,10 @@ export const GroupLyricsInputSchema = z.object({
 });
 
 export const GroupLyricsOutputSchema = z.array(
-  z
-    .array(
-      z.object({
-        start: z.number().describe("The start time of the sentence in seconds"),
-        end: z.number().describe("The end time of the sentence in seconds"),
-        text: z.string().describe("The translated text of the sentence"),
-      })
-    )
-    .describe("A paragraph of translated lyrics")
+  z.number().describe("An index where paragraphs should break")
 );
 
-type Paragraph = z.infer<typeof GroupLyricsOutputSchema>[number];
+// type Paragraph = z.infer<typeof GroupLyricsOutputSchema>[number];
 
 const SEMANTIC_WEIGHT = 0.7;
 const TIME_WEIGHT = 0.3;
@@ -43,10 +37,15 @@ export const groupLyrics = ai.defineTool(
     description: "Groups the translated lyrics into paragraphs.",
   },
   async ({ lyrics }) => {
-    if (lyrics.length <= 1) return [lyrics];
+    if (lyrics.length <= 1) return [];
 
     const texts = lyrics.map((line) => line.text);
-    const embeddings = await generateEmbeddings(texts);
+    const embeddings = (
+      await ai.embedMany({
+        embedder: "googleai/text-embedding-004",
+        content: texts,
+      })
+    ).map((e) => e.embedding);
 
     const timeScores: number[] = [];
     const semanticScores: number[] = [];
@@ -77,9 +76,6 @@ export const groupLyrics = ai.defineTool(
       }
     }
 
-    // ... (정규화, 최종 점수 계산, 최적 분리 지점 찾기 로직은 이전과 동일) ...
-    // 단, breakCount를 결정하는 로직은 이전의 동적 목표 설정 방식을 다시 가져옵니다.
-
     const normalizedTime = normalize(timeScores);
     const normalizedSemantic = normalize(semanticScores);
 
@@ -103,38 +99,16 @@ export const groupLyrics = ai.defineTool(
       .map((item) => item.index)
       .sort((a, b) => a - b);
 
-    const paragraphs: Paragraph[] = [];
-    let lastBreak = -1;
-    for (const breakIndex of breaks) {
-      paragraphs.push(lyrics.slice(lastBreak + 1, breakIndex + 1));
-      lastBreak = breakIndex;
-    }
-    paragraphs.push(lyrics.slice(lastBreak + 1));
+    // const paragraphs: Paragraph[] = [];
+    // let lastBreak = -1;
+    // for (const breakIndex of breaks) {
+    //   paragraphs.push(lyrics.slice(lastBreak + 1, breakIndex + 1));
+    //   lastBreak = breakIndex;
+    // }
+    // paragraphs.push(lyrics.slice(lastBreak + 1));
 
-    return paragraphs;
+    // return paragraphs;
+
+    return breaks;
   }
 );
-
-async function generateEmbeddings(strings: string[]) {
-  const embeddings = (
-    await ai.embedMany({
-      embedder: "googleai/text-embedding-004",
-      content: strings,
-    })
-  ).map((e) => e.embedding);
-
-  return embeddings;
-}
-
-function averageEmbeddings(embeddings: number[][]): number[] {
-  if (embeddings.length === 0) return [];
-  const vectorLength = embeddings[0].length;
-  const sumVector = new Array(vectorLength).fill(0);
-
-  for (const embedding of embeddings) {
-    for (let i = 0; i < vectorLength; i++) {
-      sumVector[i] += embedding[i];
-    }
-  }
-  return sumVector.map((val) => val / embeddings.length);
-}

@@ -1,6 +1,3 @@
-import { z } from "genkit";
-import admin, { firestore } from "firebase-admin";
-
 import {
   AddTrackFlowInputSchema,
   AddTrackFlowStreamSchema,
@@ -8,12 +5,14 @@ import {
 } from "@lymo/schemas/function";
 
 import ai from "../core/genkit";
-import getCombinations from "../utils/getCombinations";
-import { searchLRCLib, SearchLRCLibOutputSchema } from "../tools/searchLRCLib";
 import { searchSpotify } from "../tools/searchSpotify";
-import { translateLyricsFlow } from "./translateLyrics.flow";
-import { summarizeSongFlow } from "./summarizeSong.flow";
-import { summarizeParagraphFlow } from "./summarizeParagraph.flow";
+
+import getLyricsFromLRCLIB from "../helpers/addTrack/getLyricsFromLRCLIB";
+import checkDuplication from "../helpers/addTrack/checkDuplication";
+import sendInitialChunks from "../helpers/addTrack/sendInitialChunks";
+import processLyrics from "../helpers/addTrack/processLyrics";
+import summarizeSong from "../helpers/addTrack/summarizeSong";
+import saveTrackToFirestore from "../helpers/addTrack/saveTrackToFirestore";
 
 /**
  * 음악 제목과 아티스트명을 입력받아 정확한 메타데이터와 가사를 포함한 음악 정보를 스트리밍하고 DB에 등록하는 플로우
@@ -26,7 +25,7 @@ export const addTrackFlow = ai.defineFlow(
     outputSchema: AddTrackFlowOutputSchema,
   },
   async (input, { sendChunk }) => {
-    // Spotify에서 곡 검색
+    // 1. Spotify에서 곡 검색
     const spotifyResult = await searchSpotify({
       title: input.title,
       artist: input.artist,
@@ -34,142 +33,37 @@ export const addTrackFlow = ai.defineFlow(
     });
     if (spotifyResult === null) return { notFound: true };
 
-    // LRCIB에서 곡 검색
-    let lrcLibResult: z.infer<typeof SearchLRCLibOutputSchema> = null;
-    for (let r = 1; r <= spotifyResult.artist.length; r++) {
-      const artistStringCandidates = getCombinations(spotifyResult.artist, r);
+    // 2. LRCLIB에서 곡 검색
+    const lrclibResult = await getLyricsFromLRCLIB(
+      spotifyResult.title,
+      spotifyResult.artist,
+      spotifyResult.duration
+    );
+    if (!lrclibResult) return { notFound: true };
 
-      for (const artistString of artistStringCandidates) {
-        const lrcLibResultCandidate = await searchLRCLib({
-          title: spotifyResult.title,
-          artist: artistString.join(" "),
-          duration: input.duration,
-        });
+    // 3. 중복 확인
+    const duplicatedId = await checkDuplication(spotifyResult.id);
+    if (duplicatedId) return { duplicate: true, id: duplicatedId };
 
-        if (lrcLibResultCandidate) {
-          lrcLibResult = lrcLibResultCandidate;
-          break;
-        }
-      }
-    }
-    if (!lrcLibResult) return { notFound: true };
+    // 4. 메타데이터 및 가사 전송
+    sendInitialChunks(sendChunk, spotifyResult, lrclibResult);
 
-    // 중복 등록 방지
-    const songCollection = admin.firestore().collection("tracks");
-    const matchingSongRef = await songCollection
-      .where(firestore.FieldPath.documentId(), "==", spotifyResult.id)
-      .get();
-    if (matchingSongRef.size > 0) {
-      return {
-        duplicate: true,
-        id: matchingSongRef.docs[0].id,
-      };
-    }
+    // 5. 가사 그룹화, 번역, 문단 요약 및 곡 요약 병렬 처리
+    const [lyrics, summary] = await Promise.all([
+      // 가사 그룹화, 번역, 문단 요약
+      processLyrics(sendChunk, spotifyResult, lrclibResult),
 
-    // 메타데이터 전송
-    sendChunk({
-      event: "metadata_update",
-      data: {
-        id: spotifyResult.id,
-        title: spotifyResult.title,
-        artist: spotifyResult.artist.join(", "),
-        album: spotifyResult.album,
-        coverUrl: spotifyResult.coverUrl,
-        publishedAt: spotifyResult.publishedAt,
-        lyricsProvider: "LRCLIB",
-      },
-    });
-
-    // 곡 요약 생성을 위해 `summarizeSongFlow` 플로우 실행
-    const { stream: summarizeSongStream, output: summarizeSongOutput } =
-      summarizeSongFlow.stream({
-        title: spotifyResult.title,
-        artist: spotifyResult.artist.join(", "),
-        album: spotifyResult.album,
-        lyrics: lrcLibResult.lyrics.map((sentence) => sentence.text),
-      });
-
-    // 가사 번역을 위해 `translateLyricsFlow` 플로우 실행
-    const { stream: translateLyricsStream, output: translateLyricsOutput } =
-      translateLyricsFlow.stream({
-        title: spotifyResult.title,
-        artist: spotifyResult.artist.join(", "),
-        album: spotifyResult.album,
-        lyrics: lrcLibResult.lyrics,
-      });
-
-    // summarizeSongStream 및 translateLyricsStream 처리
-    await Promise.all([
-      (async () => {
-        for await (const chunk of summarizeSongStream) {
-          sendChunk(chunk);
-        }
-      })(),
-      (async () => {
-        for await (const chunk of translateLyricsStream) {
-          sendChunk(chunk);
-        }
-      })(),
+      // 곡 요약
+      summarizeSong(sendChunk, spotifyResult, lrclibResult),
     ]);
 
-    const lyrics: {
-      sentences: {
-        start: number;
-        end: number;
-        text: string;
-        translation: string;
-      }[];
-      summary: string;
-    }[] = (await translateLyricsOutput).map((paragraph) => ({
-      sentences: paragraph,
-      summary: "",
-    }));
+    // 6. Firestore에 음악 메타데이터 및 가사 등록
+    await saveTrackToFirestore(spotifyResult, summary, lyrics);
 
-    // 문단 별 해석 생성을 위해 `summarizeParagraphFlow` 플로우 실행
-    const {
-      stream: summarizeParagraphStream,
-      output: summarizeParagraphOutput,
-    } = summarizeParagraphFlow.stream({
-      title: spotifyResult.title,
-      artist: spotifyResult.artist.join(", "),
-      album: spotifyResult.album,
-      lyrics: lyrics.map((paragraph) => paragraph.sentences.map((s) => s.text)),
-    });
-
-    // summarizeParagraphStream 처리
-    for await (const chunk of summarizeParagraphStream) {
-      sendChunk(chunk);
-    }
-
-    // summarizeParagraphOutput 처리
-    (await summarizeParagraphOutput).forEach((summary, paragraphIndex) => {
-      lyrics[paragraphIndex].summary = summary ?? "";
-    });
-
-    // Firestore에 음악 메타데이터 및 가사 등록
-    const docRef = songCollection.doc(spotifyResult.id);
-    const detailCollectionRef = docRef.collection("detail");
-    const detailDocRef = detailCollectionRef.doc("content");
-
-    // db 등록
-    await Promise.all([
-      docRef.set({
-        title: spotifyResult.title,
-        artist: spotifyResult.artist,
-        album: spotifyResult.album,
-        coverUrl: spotifyResult.coverUrl,
-        duration: spotifyResult.duration,
-        publishedAt: spotifyResult.publishedAt,
-      }),
-      detailDocRef.set({
-        summary: await summarizeSongOutput,
-        lyrics,
-        lyricsProvider: "LRCLIB",
-      }),
-    ]);
-
+    // 7. 완료 전송
     sendChunk({ event: "complete", data: null });
 
+    // 8. 결과 반환
     return {
       duplicate: false,
       id: spotifyResult.id,

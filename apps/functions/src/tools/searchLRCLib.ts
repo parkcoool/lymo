@@ -3,7 +3,7 @@ import { z } from "genkit";
 
 import parseLyrics from "../utils/parseLyrics";
 import ai from "../core/genkit";
-import type { LRCLibSong } from "../types/song";
+import type { RawLRCLIBResult } from "../types/lrclib";
 
 export const SearchLRCLibInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -27,11 +27,7 @@ export const SearchLRCLibOutputSchema = z
   })
   .nullable();
 
-type LRCLibSearchResponse = LRCLibSong[];
-
-export type LRCLibResult = NonNullable<
-  z.infer<typeof SearchLRCLibOutputSchema>
->;
+type LRCLibSearchResponse = RawLRCLIBResult[];
 
 export const searchLRCLib = ai.defineTool(
   {
@@ -56,7 +52,7 @@ export const searchLRCLib = ai.defineTool(
     const songs = response.data;
 
     // 후보 검증
-    let song: LRCLibSong | null = null;
+    let song: RawLRCLIBResult | null = null;
     for (const candidate of songs) {
       if (Math.abs(candidate.duration - duration) > 2) continue;
       const { syncedLyrics: lyricsString } = candidate;

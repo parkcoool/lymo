@@ -1,8 +1,5 @@
 import { z } from "genkit";
-import {
-  LyricsSetEventSchema,
-  TranslationSetEventSchema,
-} from "@lymo/schemas/event";
+import { TranslationSetEventSchema } from "@lymo/schemas/event";
 
 import ai from "../core/genkit";
 
@@ -22,30 +19,18 @@ export const TranslateLyricsInputSchema = z.object({
 });
 
 export const TranslateLyricsOutputSchema = z.array(
-  z
-    .array(
-      z.object({
-        start: z.number().describe("The start time of the sentence in seconds"),
-        end: z.number().describe("The end time of the sentence in seconds"),
-        text: z.string().describe("The translated text of the sentence"),
-        translation: z.string().describe("The translated text of the sentence"),
-      })
-    )
-    .describe("A paragraph of translated lyrics")
+  z.string().nullable().describe("The translated text of the sentence")
 );
 
 export const translateLyricsFlow = ai.defineFlow(
   {
     name: "translateLyricsFlow",
     inputSchema: TranslateLyricsInputSchema,
-    streamSchema: z.discriminatedUnion("event", [
-      LyricsSetEventSchema,
-      TranslationSetEventSchema,
-    ]),
+    streamSchema: TranslationSetEventSchema,
     outputSchema: TranslateLyricsOutputSchema,
   },
   async ({ title, artist, album, lyrics }, { sendChunk }) => {
-    const { stream } = ai.generateStream({
+    const { stream, response } = ai.generateStream({
       system: `
       ### 정체성 (Identity)
       당신은 언어와 음악에 대한 깊은 이해를 바탕으로, 원곡의 감성과 시적 아름다움을 새로운 언어로 재창조하는 전문 가사 번역가입니다. 당신의 목표는 단순한 정보 전달이 아닌, 노래가 가진 고유한 분위기와 감동을 청자에게 그대로 전달하는 것입니다.
@@ -58,82 +43,46 @@ export const translateLyricsFlow = ai.defineFlow(
 
       ### 작업 절차 (Workflow)
       - 메타데이터 분석: 제공된 메타데이터를 통해 노래의 전체적인 맥락을 파악합니다.
-      - 가사 전체 구조 분석: 가사를 Verse, Chorus, Bridge, Outro 등 구조적 단위로 나누어 의미의 흐름을 이해합니다.
-      - 문맥 기반 번역: 위에서 파악한 내용을 바탕으로, 각 문장을 번역합니다. 이때 핵심 원칙을 반드시 준수합니다.
+      - 문맥 기반 번역: 핵심 원칙을 준수하며 각 문장을 번역합니다.
       - 결과물 형식화: 번역된 결과를 출력 형식에 맞춰 정리합니다.
 
       ### 제약 조건 (Constraints)
-      - 입력된 가사의 문장 구분(줄 바꿈)을 임의로 합치거나 나누지 마세요.
-      - 한국어 가사는 영어로, 영어 가사는 한국어로 번역하세요.
+      - 입력된 가사의 문장 구분을 임의로 합치거나 나누지 마세요.
       - 번역이 불가능하거나 무의미한 부분(예: 단순 추임새)은 null로 처리하세요.
-
-      ### 출력 형식 (Output Format)
-      - 번역된 가사를 문단 단위의 2차원 배열(array)로 출력합니다.
-      - 각 문단은 문장 단위의 배열로 구성됩니다.
-
-      ### 출력 예시 (Output Example)
-      [
-        ["This is the first sentence of the first paragraph.", "This is the second sentence of the first paragraph."],
-        ["This is the first sentence of the second paragraph.", null, "This is the third sentence of the second paragraph."]
-      ]
       `,
       model: "googleai/gemini-2.5-flash-lite-preview-09-2025",
       prompt: JSON.stringify({ title, artist, album, lyrics }),
       output: {
-        schema: z.array(z.array(z.string().nullable())),
+        schema: TranslateLyricsOutputSchema,
       },
       config: {
         temperature: 0.3,
       },
     });
 
-    const result: z.infer<typeof TranslateLyricsOutputSchema> = [[]];
-    let p = 0,
-      s = 0,
+    let s = 0,
       i = 0;
     for await (const chunk of stream) {
-      const paragraphs = chunk.output;
-      if (paragraphs === null) continue;
-      for (; p < paragraphs.length; p++, s = 0, i++) {
-        if (result.length <= p) result.push([]);
+      const translations = chunk.output;
+      if (translations === null) continue;
+      for (; s < translations.length; s++, i = 0) {
+        const translation = translations[s];
+        if (translation === null) continue;
+        sendChunk({
+          event: "translation_set",
+          data: {
+            sentenceIndex: s,
+            text: translation.slice(i, translation.length),
+          },
+        });
+        i = translation.length;
 
-        const sentences = paragraphs[p];
-        for (; s < sentences.length; s++, i++) {
-          const sentence = sentences[s];
-          if (result[p].length <= s)
-            result[p].push({ ...lyrics[i], translation: sentence ?? "" });
-          else result[p][s] = { ...lyrics[i], translation: sentence ?? "" };
-
-          sendChunk({
-            event: "lyrics_set",
-            data: {
-              paragraphIndex: p,
-              sentenceIndex: s,
-              text: lyrics[i].text,
-              start: lyrics[i].start,
-              end: lyrics[i].end,
-            },
-          });
-          sendChunk({
-            event: "translation_set",
-            data: {
-              paragraphIndex: p,
-              sentenceIndex: s,
-              text: sentence ?? "",
-            },
-          });
-
-          if (sentences.length - 1 === s) {
-            break;
-          }
-        }
-
-        if (paragraphs.length - 1 === p) {
-          break;
-        }
+        if (s === translations.length - 1) break;
       }
     }
 
+    const result = (await response).output;
+    if (result === null) return [];
     return result;
   }
 );
