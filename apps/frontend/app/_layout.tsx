@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { colors } from "@/constants/colors";
 import { DeviceMediaProvider } from "@/contexts/useDeviceMediaStore";
-import { SearchHistoryProvider } from "@/contexts/useSearchHistoryStore";
 import { SyncProvider } from "@/contexts/useSyncStore";
 import { TrackSourceProvider } from "@/contexts/useTrackSourceStore";
 
@@ -17,26 +16,24 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <DeviceMediaProvider>
-          <SearchHistoryProvider>
-            <SyncProvider>
-              <TrackSourceProvider>
-                <View
-                  style={{
-                    flex: 1,
-                    position: "relative",
-                    backgroundColor: colors.background,
+          <SyncProvider>
+            <TrackSourceProvider>
+              <View
+                style={{
+                  flex: 1,
+                  position: "relative",
+                  backgroundColor: colors.background,
+                }}
+              >
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: { backgroundColor: "transparent" },
                   }}
-                >
-                  <Stack
-                    screenOptions={{
-                      headerShown: false,
-                      contentStyle: { backgroundColor: "transparent" },
-                    }}
-                  />
-                </View>
-              </TrackSourceProvider>
-            </SyncProvider>
-          </SearchHistoryProvider>
+                />
+              </View>
+            </TrackSourceProvider>
+          </SyncProvider>
         </DeviceMediaProvider>
 
         <StatusBar style="light" translucent backgroundColor="transparent" />
