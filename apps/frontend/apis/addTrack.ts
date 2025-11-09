@@ -31,12 +31,18 @@ export default async function* addTrack(
     body: JSON.stringify({ data: { title, artist, duration } }),
     signal,
   });
+
+  if (!resp.ok) {
+    throw new Error(`Failed to fetch track: ${resp.status} ${resp.statusText}`);
+  }
+
   const reader = resp.body?.getReader();
-  const decoder = new TextDecoder("utf-8");
 
   if (!reader) {
     throw new Error("Failed to get reader from response body");
   }
+
+  const decoder = new TextDecoder("utf-8");
 
   const track: Track & TrackDetail = {
     id: "",
@@ -75,8 +81,11 @@ export default async function* addTrack(
       try {
         obj = JSON.parse(jsonString);
       } catch (e) {
-        console.error("Failed to parse JSON:", jsonString, e);
-        continue; // Skip this line and continue with the next
+        console.error("[PARSE_ERROR]", {
+          error: e instanceof Error ? e.message : String(e),
+          jsonString,
+        });
+        continue;
       }
 
       if (isChunk(obj)) {
@@ -84,11 +93,11 @@ export default async function* addTrack(
       } else if (isResult(obj)) {
         await processResult(track, obj);
       } else {
-        console.error("Invalid chunk format: " + jsonString);
+        console.error("[INVALID_FORMAT]", { jsonString, obj });
       }
 
-      // TODO: 알고리즘 개선
-      yield JSON.parse(JSON.stringify(track));
+      // Deep clone을 통해 불변성 보장
+      yield structuredClone(track);
     }
   }
 }
