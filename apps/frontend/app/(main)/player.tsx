@@ -13,8 +13,8 @@ export default function Player() {
 
   return (
     <View style={{ flex: 1 }}>
-      <ErrorBoundary fallbackRender={ErrorIndicator}>
-        <Suspense fallback={<LoadingIndicator />}>
+      <ErrorBoundary FallbackComponent={ErrorIndicator}>
+        <Suspense fallback={<LoadingIndicator {...trackSource?.track} />}>
           {trackSource?.from === "manual" && <ManualTrackPlayer />}
           {trackSource?.from === "device" && <DeviceTrackPlayer />}
         </Suspense>

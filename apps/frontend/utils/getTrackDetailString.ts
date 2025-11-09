@@ -1,7 +1,7 @@
 interface GetTrackDetailStringProps {
-  artist: string;
-  album: string | null;
-  publishedAt: string | null;
+  artist?: string;
+  album?: string | null;
+  publishedAt?: string | null;
 }
 
 /**

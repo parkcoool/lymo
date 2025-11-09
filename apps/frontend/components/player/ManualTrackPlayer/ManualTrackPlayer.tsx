@@ -6,8 +6,10 @@ import useCoverColorQuery from "@/hooks/useCoverColorQuery";
 import useManualTrackQuery from "@/hooks/useManualTrackQuery";
 
 export default function ManualTrackPlayer() {
-  const { data: track } = useManualTrackQuery();
+  const { data: track, error } = useManualTrackQuery();
   const { data: coverColor } = useCoverColorQuery(track.coverUrl);
+
+  if (error) throw error;
 
   return (
     <View
@@ -32,7 +34,6 @@ export default function ManualTrackPlayer() {
           album={track.album}
           publishedAt={track.publishedAt}
           summary={track.summary}
-          coverColor={coverColor}
         />
 
         {/* 가사 */}

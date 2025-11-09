@@ -22,19 +22,13 @@ export default function useManualTrackQuery() {
   }, [trackSource]);
 
   // 쿼리 반환
-  const query = useSuspenseQuery<Track & TrackDetail>({
+  return useSuspenseQuery<Track & TrackDetail>({
     queryKey: ["track", "manual", trackId],
     staleTime: Infinity,
 
-    queryFn: () => {
+    queryFn: async () => {
       if (!trackId) throw new Error("곡 ID가 제공되지 않았습니다.");
-      return getTrack({ trackId });
+      return await getTrack({ trackId });
     },
   });
-
-  if (query.isError) {
-    throw query.error;
-  }
-
-  return query;
 }

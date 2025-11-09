@@ -30,7 +30,7 @@ export default function useDeviceTrackQuery() {
   }, [trackSource]);
 
   // 쿼리 반환
-  const query = useSuspenseQuery({
+  return useSuspenseQuery({
     queryKey: ["track", "stream", trackStreamKey],
 
     queryFn: streamedQuery<Track & TrackDetail, Track & TrackDetail>({
@@ -47,16 +47,21 @@ export default function useDeviceTrackQuery() {
         summary: "",
       },
       reducer: (_, chunk) => chunk,
-      streamFn: () => {
-        if (trackStreamKey) return addTrack(trackStreamKey);
-        else throw new Error("곡 정보가 제공되지 않았습니다.");
+      streamFn: async function* () {
+        if (!trackStreamKey) throw new Error("곡 정보가 제공되지 않았습니다.");
+
+        const generator = addTrack({
+          title: trackStreamKey.title,
+          artist: trackStreamKey.artist,
+          duration: trackStreamKey.duration,
+        });
+
+        for await (const track of generator) {
+          yield track;
+        }
       },
     }),
+
+    staleTime: Infinity,
   });
-
-  if (query.isError) {
-    throw query.error;
-  }
-
-  return query;
 }

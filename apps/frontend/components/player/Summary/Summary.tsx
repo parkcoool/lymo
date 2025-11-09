@@ -9,6 +9,7 @@ import {
   type TextLayoutEvent,
 } from "react-native";
 
+import useCoverColorQuery from "@/hooks/useCoverColorQuery";
 import useWindowSize from "@/hooks/useWindowSize";
 import getTrackDetailString from "@/utils/getTrackDetailString";
 
@@ -21,7 +22,6 @@ interface SummaryProps {
   album: string | null;
   publishedAt: string | null;
   summary: string;
-  coverColor: string;
 }
 
 export default function Summary({
@@ -31,9 +31,9 @@ export default function Summary({
   album,
   publishedAt,
   summary,
-  coverColor,
 }: SummaryProps) {
   const { width: windowWidth } = useWindowSize();
+  const { data: coverColor } = useCoverColorQuery(coverUrl);
   const [summaryLine, setSummaryLine] = useState(0);
   const [expanded, setExpanded] = useState(false);
 

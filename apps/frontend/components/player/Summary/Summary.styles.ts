@@ -53,6 +53,13 @@ export const styles = StyleSheet.create({
     lineHeight: 24,
   },
 
+  summarySkeleton: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    paddingHorizontal: 16,
+  },
+
   summaryButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,

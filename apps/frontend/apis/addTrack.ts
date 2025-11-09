@@ -85,7 +85,7 @@ export default async function* addTrack({
           error: e instanceof Error ? e.message : String(e),
           jsonString,
         });
-        continue;
+        throw new Error("서버에서 파싱할 수 없는 데이터를 받았습니다.");
       }
 
       if (isChunk(obj)) {
@@ -94,6 +94,7 @@ export default async function* addTrack({
         await processResult(track, obj);
       } else {
         console.error("[INVALID_FORMAT]", { jsonString, obj });
+        throw new Error("서버에서 잘못된 형식의 데이터를 받았습니다.");
       }
 
       // Deep clone을 통해 불변성 보장

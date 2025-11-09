@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,9 +21,7 @@ export default function Home() {
         {/* 알림 구역 */}
         <View style={{ padding: 12 }}>
           <NotificationAccessRequired />
-          <Suspense fallback={null}>
-            <DeviceMediaDetection />
-          </Suspense>
+          <DeviceMediaDetection />
         </View>
 
         {/* 최상단 섹션 */}

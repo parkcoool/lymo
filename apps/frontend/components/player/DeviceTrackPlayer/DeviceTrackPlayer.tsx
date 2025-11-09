@@ -6,8 +6,10 @@ import useCoverColorQuery from "@/hooks/useCoverColorQuery";
 import useDeviceTrackQuery from "@/hooks/useDeviceTrackQuery";
 
 export default function DeviceTrackPlayer() {
-  const { data: track } = useDeviceTrackQuery();
+  const { data: track, error } = useDeviceTrackQuery();
   const { data: coverColor } = useCoverColorQuery(track.coverUrl);
+
+  if (error) throw error;
 
   return (
     <View
@@ -32,7 +34,6 @@ export default function DeviceTrackPlayer() {
           album={track.album}
           publishedAt={track.publishedAt}
           summary={track.summary}
-          coverColor={coverColor}
         />
 
         {/* 가사 */}
