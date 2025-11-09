@@ -1,4 +1,5 @@
-import { create } from "zustand";
+import React, { useState, ReactNode } from "react";
+import { buildContext } from "react-simplikit";
 import type { Track } from "@lymo/schemas/shared";
 
 import type { DeviceMedia } from "@/types/nativeModules";
@@ -16,18 +17,33 @@ type TrackSource =
       track: Pick<Track, "id" | "title" | "coverUrl">;
     };
 
-interface TrackSourceStates {
+interface TrackSourceContextStates {
   trackSource?: TrackSource;
 }
 
-interface TracSourceActions {
+interface TrackSourceContextActions {
   setTrackSource: (track?: TrackSource) => void;
 }
 
-type TrackSourceStore = TrackSourceStates & TracSourceActions;
+type TrackSourceContextValues = TrackSourceContextStates &
+  TrackSourceContextActions;
 
-export const useTrackSourceStore = create<TrackSourceStore>((set) => ({
-  trackSource: undefined,
+const [TrackSourceContextProvider, useTrackSourceStore] =
+  buildContext<TrackSourceContextValues>("TrackSourceContext", {
+    trackSource: undefined,
+    setTrackSource: () => {},
+  });
 
-  setTrackSource: (trackSource) => set({ trackSource }),
-}));
+export function TrackSourceProvider({ children }: { children: ReactNode }) {
+  const [trackSource, setTrackSource] = useState<TrackSource | undefined>(
+    undefined
+  );
+
+  return React.createElement(TrackSourceContextProvider, {
+    trackSource,
+    setTrackSource,
+    children,
+  });
+}
+
+export { useTrackSourceStore };

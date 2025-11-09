@@ -1,22 +1,39 @@
-import { create } from "zustand";
+import React, { useState, ReactNode } from "react";
+import { buildContext } from "react-simplikit";
 import type { DeviceMedia } from "@/types/nativeModules";
 
-interface DeviceMediaStates {
+interface DeviceMediaContextStates {
   data: DeviceMedia | null;
   hasPermission: boolean;
 }
 
-interface DeviceMediaActions {
+interface DeviceMediaContextActions {
   setData: (mediaData: DeviceMedia | null) => void;
   setHasPermission: (hasPermission: boolean) => void;
 }
 
-type DeviceMediaStore = DeviceMediaStates & DeviceMediaActions;
+type DeviceMediaContextValues = DeviceMediaContextStates &
+  DeviceMediaContextActions;
 
-export const useDeviceMediaStore = create<DeviceMediaStore>((set) => ({
-  data: null,
-  hasPermission: false,
+const [DeviceMediaContextProvider, useDeviceMediaStore] =
+  buildContext<DeviceMediaContextValues>("DeviceMediaContext", {
+    data: null,
+    hasPermission: false,
+    setData: () => {},
+    setHasPermission: () => {},
+  });
 
-  setData: (session) => set({ data: session }),
-  setHasPermission: (hasPermission) => set({ hasPermission }),
-}));
+export function DeviceMediaProvider({ children }: { children: ReactNode }) {
+  const [data, setData] = useState<DeviceMedia | null>(null);
+  const [hasPermission, setHasPermission] = useState(false);
+
+  return React.createElement(DeviceMediaContextProvider, {
+    data,
+    hasPermission,
+    setData,
+    setHasPermission,
+    children,
+  });
+}
+
+export { useDeviceMediaStore };

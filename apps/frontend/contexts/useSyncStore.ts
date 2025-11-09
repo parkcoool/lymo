@@ -1,17 +1,32 @@
-import { create } from "zustand";
+import React, { useState, ReactNode } from "react";
+import { buildContext } from "react-simplikit";
 
-interface SyncStates {
+interface SyncContextStates {
   isSynced: boolean;
 }
 
-interface SyncActions {
+interface SyncContextActions {
   setIsSynced: (isSynced: boolean) => void;
 }
 
-type SyncStore = SyncStates & SyncActions;
+type SyncContextValues = SyncContextStates & SyncContextActions;
 
-export const useSyncStore = create<SyncStore>((set) => ({
-  isSynced: false,
+const [SyncContextProvider, useSyncStore] = buildContext<SyncContextValues>(
+  "SyncContext",
+  {
+    isSynced: false,
+    setIsSynced: () => {},
+  }
+);
 
-  setIsSynced: (isSynced) => set({ isSynced }),
-}));
+export function SyncProvider({ children }: { children: ReactNode }) {
+  const [isSynced, setIsSynced] = useState(false);
+
+  return React.createElement(SyncContextProvider, {
+    isSynced,
+    setIsSynced,
+    children,
+  });
+}
+
+export { useSyncStore };

@@ -1,44 +1,55 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import React, { useState, ReactNode } from "react";
+import { buildContext } from "react-simplikit";
 
-interface SearchHistoryStates {
+interface SearchHistoryContextStates {
   histories: string[];
 }
 
-interface SearchHistoryActions {
+interface SearchHistoryContextActions {
   deleteHistory: (history: string) => void;
   deleteAllHistories: () => void;
   addHistory: (history: string) => void;
 }
 
-type SearchHistoryStore = SearchHistoryStates & SearchHistoryActions;
+type SearchHistoryContextValues = SearchHistoryContextStates &
+  SearchHistoryContextActions;
 
-export const useSearchHistoryStore = create(
-  persist<SearchHistoryStore>(
-    (set) => ({
-      histories: [],
+const [SearchHistoryContextProvider, useSearchHistoryStore] =
+  buildContext<SearchHistoryContextValues>("SearchHistoryContext", {
+    histories: [],
+    deleteHistory: () => {},
+    deleteAllHistories: () => {},
+    addHistory: () => {},
+  });
 
-      deleteHistory: (history) =>
-        set((state) => ({
-          histories: state.histories.filter((h) => h !== history),
-        })),
+export function SearchHistoryProvider({ children }: { children: ReactNode }) {
+  const [histories, setHistories] = useState<string[]>([]);
 
-      deleteAllHistories: () => set({ histories: [] }),
+  const deleteHistory = (history: string) => {
+    setHistories((prev) => prev.filter((h) => h !== history));
+  };
 
-      addHistory: (history) =>
-        set((state) => {
-          const newHistories = [
-            history,
-            ...state.histories.filter((h) => h !== history),
-          ];
-          if (newHistories.length > 10) {
-            newHistories.pop();
-          }
-          return { histories: newHistories };
-        }),
-    }),
-    {
-      name: "search-history",
-    }
-  )
-);
+  const deleteAllHistories = () => {
+    setHistories([]);
+  };
+
+  const addHistory = (history: string) => {
+    setHistories((prev) => {
+      const newHistories = [history, ...prev.filter((h) => h !== history)];
+      if (newHistories.length > 10) {
+        newHistories.pop();
+      }
+      return newHistories;
+    });
+  };
+
+  return React.createElement(SearchHistoryContextProvider, {
+    histories,
+    deleteHistory,
+    deleteAllHistories,
+    addHistory,
+    children,
+  });
+}
+
+export { useSearchHistoryStore };
