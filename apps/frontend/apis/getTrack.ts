@@ -1,31 +1,59 @@
 import { Track, TrackDetail } from "@lymo/schemas/shared";
+import {
+  collection,
+  doc,
+  type FirebaseFirestoreTypes,
+} from "@react-native-firebase/firestore";
 
-import firestore from "@/core/firestore";
+import db from "@/core/firestore";
 
 interface GetTrackProps {
   trackId: string;
 }
 
 export default async function getTrack({ trackId }: GetTrackProps) {
-  const trackDoc = firestore
-    .collection<Omit<Track, "id">>("tracks")
-    .doc(trackId);
-  const detailDoc = trackDoc.collection("detail").doc("content");
+  // 곡 문서 가져오기
+  const tracksCollection = collection(
+    db,
+    "tracks"
+  ) as FirebaseFirestoreTypes.CollectionReference<Omit<Track, "id">>;
+  const trackDoc = doc(
+    tracksCollection,
+    trackId
+  ) as FirebaseFirestoreTypes.DocumentReference<Omit<Track, "id">>;
 
-  const [trackSnapshot, detailSnapshot] = await Promise.all([
+  // 곡 상세 정보 문서 가져오기
+  const trackDetailCollection = trackDoc.collection(
+    "detail"
+  ) as FirebaseFirestoreTypes.CollectionReference<TrackDetail>;
+  const trackDetailDoc = doc(
+    trackDetailCollection,
+    "content"
+  ) as FirebaseFirestoreTypes.DocumentReference<TrackDetail>;
+
+  // 문서 로드
+  const [trackSnapshot, trackDetailSnapshot] = await Promise.all([
     trackDoc.get(),
-    detailDoc.get(),
+    trackDetailDoc.get(),
   ]);
 
-  if (!trackSnapshot.exists() || !detailSnapshot.exists()) {
+  const track = trackSnapshot.data();
+  const trackDetail = trackDetailSnapshot.data();
+
+  if (
+    !trackSnapshot.exists() ||
+    !trackDetailSnapshot.exists() ||
+    !track ||
+    !trackDetail
+  ) {
     throw new Error("Track not found");
   }
 
-  const result = {
+  const result: Track & TrackDetail = {
     id: trackSnapshot.id,
-    ...trackSnapshot.data(),
-    ...detailSnapshot.data(),
-  } as Track & TrackDetail;
+    ...track,
+    ...trackDetail,
+  };
 
   return result;
 }
