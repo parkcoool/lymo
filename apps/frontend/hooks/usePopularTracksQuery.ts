@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import getPopularTracks from "@/features/track/apis/getPopularTracks";
+import getPopularTracks from "@/apis/getPopularTracks";
 
 export default function usePopularTracksQuery() {
   const query = useSuspenseQuery({

@@ -1,5 +1,5 @@
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
-import type { Chunk, ProcessChunkState } from "@/features/track/apis/addTrack";
+import type { Chunk, ProcessChunkState } from "@/apis/addTrack";
 import findIndex from "@/utils/findIndex";
 
 export default function processChunk(

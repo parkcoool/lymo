@@ -6,10 +6,10 @@ import type {
 } from "@lymo/schemas/function";
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
-import isChunk from "@/features/track/helpers/isChunk";
-import isResult from "@/features/track/helpers/isResult";
-import processChunk from "@/features/track/helpers/processChunk";
-import processResult from "@/features/track/helpers/processResult";
+import isChunk from "@/helpers/isChunk";
+import isResult from "@/helpers/isResult";
+import processChunk from "@/helpers/processChunk";
+import processResult from "@/helpers/processResult";
 
 export type Chunk = { message: AddTrackFlowStream };
 export type Result = { result: AddTrackFlowOutput };

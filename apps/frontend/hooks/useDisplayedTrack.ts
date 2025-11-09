@@ -6,8 +6,8 @@ import {
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
-import getTrack from "@/features/track/apis/getTrack";
-import addTrack from "@/features/track/apis/addTrack";
+import getTrack from "@/apis/getTrack";
+import addTrack from "@/apis/addTrack";
 
 export default function useDisplayedTrack() {
   const { trackSource } = useTrackSourceStore();

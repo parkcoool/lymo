@@ -1,7 +1,7 @@
 import { View, Dimensions } from "react-native";
 
-import Brand from "@/features/home/components/Brand";
-import SearchBoxLink from "@/shared/components/SearchBoxLink";
+import Brand from "@/components/home/Brand";
+import SearchBoxLink from "@/components/home/SearchBoxLink";
 
 import { styles } from "./HeroSection.styles";
 

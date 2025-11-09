@@ -6,7 +6,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
-import useCoverColor from "@/features/track/hooks/useCoverColor";
+import useCoverColor from "@/hooks/useCoverColor";
 
 import { styles } from "./DeviceMediaDetection.styles";
 

@@ -1,7 +1,7 @@
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
-import getTrack from "@/features/track/apis/getTrack";
-import type { Result } from "@/features/track/apis/addTrack";
+import getTrack from "@/apis/getTrack";
+import type { Result } from "@/apis/addTrack";
 
 export default async function processResult(
   track: Track & TrackDetail,

@@ -3,8 +3,8 @@ import { View, Text, FlatList } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Track } from "@lymo/schemas/shared";
 
-import { CompactTrack } from "@/features/track/components/Track";
-import usePopularTracksQuery from "@/features/track/hooks/usePopularTracksQuery";
+import { CompactTrack } from "@/components/home/Track";
+import usePopularTracksQuery from "@/hooks/usePopularTracksQuery";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
 

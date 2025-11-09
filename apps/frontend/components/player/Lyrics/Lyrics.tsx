@@ -1,9 +1,9 @@
 import { View } from "react-native";
 import { Lyrics as LyricsType, LyricsSentence } from "@lymo/schemas/shared";
 
-import Paragraph from "@/features/player/components/Paragraph";
-import Sentence from "@/features/player/components/Sentence";
-import useTimestamp from "@/features/player/hooks/useTimestamp";
+import Paragraph from "@/components/player/Paragraph";
+import Sentence from "@/components/player/Sentence";
+import useTimestamp from "@/hooks/useTimestamp";
 
 import { styles } from "./Lyrics.styles";
 

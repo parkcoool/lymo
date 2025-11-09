@@ -1,10 +1,10 @@
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import HeroSection from "@/features/home/components/HeroSection";
-import PopularTracksSection from "@/features/home/components/PopularTracksSection";
-import DeviceMediaDetection from "@/features/home/components/DeviceMediaDetection";
-import NotificationAccessRequired from "@/features/home/components/NotificationAccessRequired";
+import HeroSection from "@/components/home/HeroSection";
+import PopularTracksSection from "@/components/home/PopularTracksSection";
+import DeviceMediaDetection from "@/components/home/DeviceMediaDetection";
+import NotificationAccessRequired from "@/components/player/NotificationAccessRequired";
 
 export default function Home() {
   return (

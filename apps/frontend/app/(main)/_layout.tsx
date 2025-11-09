@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 
-import Header from "@/shared/components/Header";
-import useSyncDeviceMedia from "@/shared/hooks/useSyncDeviceMedia";
+import Header from "@/components/shared/Header";
+import useSyncDeviceMedia from "@/hooks/useSyncDeviceMedia";
 
 export default function MainLayout() {
   useSyncDeviceMedia();

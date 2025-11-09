@@ -1,4 +1,4 @@
-import { Chunk } from "@/features/track/apis/addTrack";
+import { Chunk } from "@/apis/addTrack";
 
 export default function isChunk(obj: any): obj is Chunk {
   return (

@@ -2,13 +2,13 @@ import { ScrollView, View, Text } from "react-native";
 
 import { colors } from "@/constants/colors";
 import { useSyncStore } from "@/contexts/useSyncStore";
-import useCoverColor from "@/features/track/hooks/useCoverColor";
-import Summary from "@/features/player/components/Summary";
-import Lyrics from "@/features/player/components/Lyrics";
-import useDisplayedTrack from "@/features/player/hooks/useDisplayedTrack";
-import ErrorIndicator from "@/features/player/components/ErrorIndicator";
-import LoadingIndicator from "@/features/player/components/LoadingIndicator";
-import LyricsGeneratingIndicator from "@/features/player/components/LyricsGeneratingIndicator";
+import useCoverColor from "@/hooks/useCoverColor";
+import Summary from "@/components/player/Summary";
+import Lyrics from "@/components/player/Lyrics";
+import useDisplayedTrack from "@/hooks/useDisplayedTrack";
+import ErrorIndicator from "@/components/player/ErrorIndicator";
+import LoadingIndicator from "@/components/player/LoadingIndicator";
+import LyricsGeneratingIndicator from "@/components/player/LyricsGeneratingIndicator";
 
 export default function Player() {
   const { displayedTrack, isLoading, error, isError } = useDisplayedTrack();
