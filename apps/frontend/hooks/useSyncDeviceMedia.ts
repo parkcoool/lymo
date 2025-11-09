@@ -4,9 +4,9 @@ import { NativeEventEmitter, NativeModules } from "react-native";
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
-import type { MediaModuleType, DeviceMedia } from "@/types/nativeModules";
+import { MediaModule } from "@/core/mediaModule";
+import type { DeviceMedia } from "@/types/mediaModule";
 
-const MediaModule = NativeModules.MediaModule as MediaModuleType;
 const eventEmitter = new NativeEventEmitter(MediaModule);
 
 export default function useSyncDeviceMedia() {

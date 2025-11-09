@@ -1,4 +1,4 @@
-export interface MediaModuleType {
+export interface MediaModule {
   /**
    * 알림 접근 권한이 있는지 확인합니다.
    * @returns {Promise<boolean>} 권한이 있으면 true를 반환하는 Promise
@@ -34,9 +34,4 @@ export type DeviceMedia = {
   duration: number;
   isPlaying: boolean;
   coverUrl: string; // Base64 문자열
-};
-
-// 모듈이 발생시키는 이벤트 이름과 해당 이벤트의 콜백 함수 타입을 매핑합니다.
-export type MediaModuleEvents = {
-  onMediaDataChanged: (deviceMedia: DeviceMedia | null) => void;
 };

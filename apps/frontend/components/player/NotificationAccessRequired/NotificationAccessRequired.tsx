@@ -2,11 +2,8 @@ import { useEffect, useState } from "react";
 import { TouchableOpacity, View, Text, NativeModules } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-import { MediaModuleType } from "@/types/nativeModules";
-
 import { styles } from "./NotificationAccessRequired.styles";
-
-const MediaModule = NativeModules.MediaModule as MediaModuleType;
+import { MediaModule } from "@/core/mediaModule";
 
 export default function NotificationAccessRequired() {
   const [isVisible, setIsVisible] = useState(true);

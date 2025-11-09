@@ -1,10 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { NativeModules } from "react-native";
 
-import type { MediaModuleType } from "@/types/nativeModules";
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
-
-const MediaModule = NativeModules.MediaModule as MediaModuleType;
+import { MediaModule } from "@/core/mediaModule";
 
 export default function useTimestamp(enabled: boolean) {
   const { deviceMedia } = useDeviceMediaStore();
