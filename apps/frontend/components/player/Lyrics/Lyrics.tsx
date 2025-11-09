@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import Paragraph from "@/components/player/Paragraph";
 import Sentence from "@/components/player/Sentence";
-import useTimestamp from "@/hooks/useTimestamp";
+import useDeviceMediaTimestamp from "@/hooks/useDeviceMediaTimestamp";
 
 import { styles } from "./Lyrics.styles";
 
@@ -13,7 +13,7 @@ interface LyricsProps {
 }
 
 export default function Lyrics({ lyrics, isSynced = false }: LyricsProps) {
-  const timestamp = useTimestamp(isSynced);
+  const timestamp = useDeviceMediaTimestamp();
 
   return (
     <View style={styles.container}>

@@ -8,6 +8,13 @@ import { useMemo } from "react";
 import addTrack from "@/apis/addTrack";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
+/**
+ * @description 기기에서 재생 중인 미디어로 곡 정보를 가져오는 suspenseQuery 훅입니다.
+ *
+ * `trackSourceStore`의 곡 정보로 곡을 조회합니다.
+ *
+ * @returns suspenseQuery 결과
+ */
 export default function useDeviceTrackQuery() {
   const { trackSource } = useTrackSourceStore();
 

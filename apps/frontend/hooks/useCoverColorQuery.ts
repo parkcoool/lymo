@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { getColors } from "react-native-image-colors";
 
 /**
- * @description 앨범 커버 이미지의 주요 색상을 가져오는 훅입니다.
+ * @description 앨범 커버 이미지의 주요 색상을 가져오는 suspenseQuery 훅입니다.
  * @param coverUrl 앨범 커버 이미지 URL
  * @returns 앨범 커버 이미지의 주요 색상 문자열 (예: "#RRGGBB")
  */

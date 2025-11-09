@@ -9,8 +9,8 @@ import {
   type TextLayoutEvent,
 } from "react-native";
 
-import useTrackDetailString from "@/hooks/useTrackDetailString";
 import useWindowSize from "@/hooks/useWindowSize";
+import getTrackDetailString from "@/utils/getTrackDetailString";
 
 import { styles } from "./Summary.styles";
 
@@ -34,9 +34,10 @@ export default function Summary({
   coverColor,
 }: SummaryProps) {
   const { width: windowWidth } = useWindowSize();
-  const detailString = useTrackDetailString({ artist, album, publishedAt });
   const [summaryLine, setSummaryLine] = useState(0);
   const [expanded, setExpanded] = useState(false);
+
+  const detailString = getTrackDetailString({ artist, album, publishedAt });
 
   const handleSummaryTextLayout = (e: TextLayoutEvent) => {
     setSummaryLine(e.nativeEvent.lines.length);

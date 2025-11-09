@@ -21,6 +21,11 @@ const checkPermission = async (setHasPermission: (value: boolean) => void) => {
   }
 };
 
+/**
+ * @description
+ * 기기에서 재생되는 미디어를 `deviceMediaStore`에 등록하는 훅입니다.
+ * `isSynced`이면 이를 `trackSourceStore`에도 등록합니다.
+ */
 export default function useSyncDeviceMedia() {
   const { setData: setDeviceMedia, setHasPermission } = useDeviceMediaStore();
   const { setTrackSource } = useTrackSourceStore();

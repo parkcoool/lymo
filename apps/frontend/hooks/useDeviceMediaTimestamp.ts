@@ -3,7 +3,15 @@ import { useState, useEffect, useRef } from "react";
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 import { MediaModule } from "@/core/mediaModule";
 
-export default function useTimestamp(enabled: boolean) {
+/**
+ * @description
+ * 기기에서 재생되는 미디어의 현재 시각을 가져오는 훅입니다.
+ *
+ * 반환되는 `timestamp` 상태값은 업데이트되는 빈도가 매우 짧으므로 사용 시 잦은 리렌러딩을 유발할 수 있음에 유의하세요.
+ *
+ * @returns 기기에서 재생되는 미디어의 현재 시각
+ */
+export default function useDeviceMediaTimestamp() {
   const { deviceMedia } = useDeviceMediaStore();
   const [timestamp, setTimestamp] = useState(0);
 
@@ -12,13 +20,12 @@ export default function useTimestamp(enabled: boolean) {
     syncTime: Date.now(), // 마지막 위치를 받은 로컬 시간
     isPlaying: false, // 현재 재생 상태
   });
-
   const animationFrameId = useRef<number>(0);
+
+  const isPlaying = deviceMedia?.isPlaying ?? false;
 
   // 보정 로직
   useEffect(() => {
-    if (!enabled) return;
-
     const syncWithNative = async () => {
       try {
         const position = await MediaModule.getCurrentPosition();
@@ -26,11 +33,11 @@ export default function useTimestamp(enabled: boolean) {
         syncData.current = {
           position: position,
           syncTime: Date.now(),
-          isPlaying: deviceMedia?.isPlaying ?? false,
+          isPlaying: isPlaying ?? false,
         };
 
         // 초기 로드 시 보정된 값으로 state를 업데이트
-        if (!deviceMedia?.isPlaying) {
+        if (!isPlaying) {
           setTimestamp(position);
         }
       } catch {
@@ -42,11 +49,9 @@ export default function useTimestamp(enabled: boolean) {
     const interval = setInterval(syncWithNative, 1000);
 
     return () => clearInterval(interval);
-  }, [enabled, deviceMedia?.isPlaying]);
+  }, [isPlaying]);
 
   useEffect(() => {
-    if (!enabled) return;
-
     const animate = () => {
       // isPlaying 상태일 때만 타임스탬프를 보간
       if (syncData.current.isPlaying) {
@@ -67,7 +72,7 @@ export default function useTimestamp(enabled: boolean) {
         cancelAnimationFrame(animationFrameId.current);
       }
     };
-  }, [enabled]);
+  }, []);
 
   return timestamp;
 }
