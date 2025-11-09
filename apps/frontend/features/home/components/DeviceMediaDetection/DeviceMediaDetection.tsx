@@ -12,7 +12,7 @@ import { styles } from "./DeviceMediaDetection.styles";
 
 export default function DeviceMediaDetection() {
   const { setTrackSource } = useTrackSourceStore();
-  const { data: deviceMedia } = useDeviceMediaStore();
+  const { deviceMedia } = useDeviceMediaStore();
   const { isSynced, setIsSynced } = useSyncStore();
 
   const coverColor = useCoverColor(deviceMedia?.coverUrl ?? null);

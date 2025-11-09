@@ -7,7 +7,7 @@ import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 const MediaModule = NativeModules.MediaModule as MediaModuleType;
 
 export default function useTimestamp(enabled: boolean) {
-  const { data: deviceMedia } = useDeviceMediaStore();
+  const { deviceMedia } = useDeviceMediaStore();
   const [timestamp, setTimestamp] = useState(0);
 
   const syncData = useRef({
