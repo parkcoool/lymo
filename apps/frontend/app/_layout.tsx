@@ -1,8 +1,8 @@
-import { View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { colors } from "@/constants/colors";
 import { DeviceMediaProvider } from "@/contexts/useDeviceMediaStore";

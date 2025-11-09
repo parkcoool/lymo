@@ -1,5 +1,5 @@
-import { Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Text, View } from "react-native";
 
 import { styles } from "./ErrorIndicator.styles";
 

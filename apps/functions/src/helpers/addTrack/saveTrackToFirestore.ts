@@ -1,6 +1,6 @@
+import { Lyrics } from "@lymo/schemas/shared";
 import admin from "firebase-admin";
 
-import { Lyrics } from "@lymo/schemas/shared";
 import { SpotifyResult } from "../../types/spotify";
 
 export default async function saveTrackToFirestore(

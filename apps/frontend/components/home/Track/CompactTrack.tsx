@@ -1,6 +1,7 @@
-import { styles } from "./CompactTrack.styles";
-import { Image, Text, TouchableOpacity, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Image, Text, TouchableOpacity } from "react-native";
+
+import { styles } from "./CompactTrack.styles";
 
 interface CompactTrackProps {
   coverUrl?: string;

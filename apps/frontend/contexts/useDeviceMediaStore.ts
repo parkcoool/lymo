@@ -1,5 +1,6 @@
 import { createElement, useState, ReactNode } from "react";
 import { buildContext } from "react-simplikit";
+
 import type { DeviceMedia } from "@/types/mediaModule";
 
 interface DeviceMediaContextStates {
@@ -43,6 +44,8 @@ function DeviceMediaProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<DeviceMedia | null>(null);
   const [hasPermission, setHasPermission] = useState(false);
 
+  // react-simplikit의 buildContext에서 생성된 Provider는 children을 props로 받도록 설계됨
+  // eslint-disable-next-line react/no-children-prop
   return createElement(DeviceMediaContextProvider, {
     deviceMedia: data,
     hasPermission,

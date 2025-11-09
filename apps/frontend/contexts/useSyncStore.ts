@@ -29,6 +29,8 @@ const [SyncContextProvider, _useSyncStore] = buildContext<SyncContextValues>(
 function SyncProvider({ children }: { children: ReactNode }) {
   const [isSynced, setIsSynced] = useState(false);
 
+  // react-simplikit의 buildContext에서 생성된 Provider는 children을 props로 받도록 설계됨
+  // eslint-disable-next-line react/no-children-prop
   return createElement(SyncContextProvider, {
     isSynced,
     setIsSynced,

@@ -1,6 +1,8 @@
 import { View, Text } from "react-native";
-import { styles } from "./Sentence.styles";
+
 import { colors } from "@/constants/colors";
+
+import { styles } from "./Sentence.styles";
 
 interface SentenceProps {
   sentence: string;

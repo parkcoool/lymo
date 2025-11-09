@@ -1,9 +1,9 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-
-import { styles } from "./SearchBoxLink.styles";
 import { Pressable, Text, View } from "react-native";
 
-interface SearchBoxLinkProps extends React.ComponentProps<typeof Pressable> {}
+import { styles } from "./SearchBoxLink.styles";
+
+type SearchBoxLinkProps = React.ComponentProps<typeof Pressable>;
 
 export default function SearchBoxLink(props: SearchBoxLinkProps) {
   return (

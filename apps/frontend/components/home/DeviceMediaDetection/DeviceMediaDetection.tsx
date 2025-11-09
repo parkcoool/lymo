@@ -1,11 +1,11 @@
-import { TouchableOpacity, View, Image, Text } from "react-native";
-import { Link, router } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { LinearGradient } from "expo-linear-gradient";
+import { Link, router } from "expo-router";
+import { TouchableOpacity, View, Image, Text } from "react-native";
 
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
-import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import useCoverColorQuery from "@/hooks/useCoverColorQuery";
 
 import { styles } from "./DeviceMediaDetection.styles";

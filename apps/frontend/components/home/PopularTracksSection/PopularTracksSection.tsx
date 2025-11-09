@@ -1,12 +1,12 @@
-import { Link } from "expo-router";
-import { View, Text, FlatList } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Track } from "@lymo/schemas/shared";
+import { Link } from "expo-router";
+import { View, Text, FlatList } from "react-native";
 
 import { CompactTrack } from "@/components/home/Track";
-import usePopularTracksQuery from "@/hooks/usePopularTracksQuery";
-import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
+import usePopularTracksQuery from "@/hooks/usePopularTracksQuery";
 
 import { styles } from "./PopularTracksSection.styles";
 

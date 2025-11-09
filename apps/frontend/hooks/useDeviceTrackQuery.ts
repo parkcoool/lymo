@@ -1,11 +1,12 @@
-import addTrack from "@/apis/addTrack";
-import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 import {
   useSuspenseQuery,
   experimental_streamedQuery as streamedQuery,
 } from "@tanstack/react-query";
 import { useMemo } from "react";
+
+import addTrack from "@/apis/addTrack";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 export default function useDeviceTrackQuery() {
   const { trackSource } = useTrackSourceStore();

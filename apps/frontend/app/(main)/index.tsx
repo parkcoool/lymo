@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import DeviceMediaDetection from "@/components/home/DeviceMediaDetection";
 import HeroSection from "@/components/home/HeroSection";
 import PopularTracksSection from "@/components/home/PopularTracksSection";
-import DeviceMediaDetection from "@/components/home/DeviceMediaDetection";
 import NotificationAccessRequired from "@/components/player/NotificationAccessRequired";
 
 export default function Home() {

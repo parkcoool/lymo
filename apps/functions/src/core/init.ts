@@ -1,9 +1,9 @@
-import { defineSecret } from "firebase-functions/params";
 import { onInit } from "firebase-functions";
 import { log } from "firebase-functions/logger";
+import { defineSecret } from "firebase-functions/params";
 
-import { initSpotify } from "./spotify";
 import { initAi } from "./genkit";
+import { initSpotify } from "./spotify";
 
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
 const spotifyClientSecret = defineSecret("SPOTIFY_CLIENT_SECRET");

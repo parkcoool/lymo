@@ -1,11 +1,11 @@
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { View } from "react-native";
 
-import ManualTrackPlayer from "@/components/player/ManualTrackPlayer/ManualTrackPlayer";
-import { ErrorBoundary } from "react-error-boundary";
-import ErrorIndicator from "@/components/player/ErrorIndicator";
-import { Suspense } from "react";
-import LoadingIndicator from "@/components/player/LoadingIndicator";
 import DeviceTrackPlayer from "@/components/player/DeviceTrackPlayer/DeviceTrackPlayer";
+import ErrorIndicator from "@/components/player/ErrorIndicator";
+import LoadingIndicator from "@/components/player/LoadingIndicator";
+import ManualTrackPlayer from "@/components/player/ManualTrackPlayer/ManualTrackPlayer";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 export default function Player() {

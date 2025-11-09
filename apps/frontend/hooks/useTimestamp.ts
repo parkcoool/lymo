@@ -33,7 +33,7 @@ export default function useTimestamp(enabled: boolean) {
         if (!deviceMedia?.isPlaying) {
           setTimestamp(position);
         }
-      } catch (error) {
+      } catch {
         syncData.current.isPlaying = false;
       }
     };

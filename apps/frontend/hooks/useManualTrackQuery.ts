@@ -1,8 +1,9 @@
-import getTrack from "@/apis/getTrack";
-import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+
+import getTrack from "@/apis/getTrack";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 export default function useManualTrackQuery() {
   const { trackSource } = useTrackSourceStore();

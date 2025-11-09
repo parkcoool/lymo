@@ -1,6 +1,7 @@
 {
   "name": "lymo",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -11,6 +12,17 @@
     "schemas:build": "npm run build --workspace=@lymo/schemas",
     "functions:start": "npm run genkit:start --workspace=@lymo/functions",
     "functions:deploy": "npm run build && firebase deploy --only functions",
-    "frontend:start": "npm run start --workspace=@lymo/frontend"
+    "frontend:start": "npm run start --workspace=@lymo/frontend",
+    "lint": "eslint --fix"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@typescript-eslint/parser": "^8.46.3",
+    "eslint": "^9.25.0",
+    "eslint-config-expo": "~10.0.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "typescript-eslint": "^8.44.1"
   }
 }

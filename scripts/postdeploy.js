@@ -1,7 +1,7 @@
 // 🔽 모듈 import 방식을 ESM으로 변경
+import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
-import { execSync } from "child_process";
 import { fileURLToPath } from "url";
 
 // 🔽 ESM에서 __dirname을 사용하기 위한 코드

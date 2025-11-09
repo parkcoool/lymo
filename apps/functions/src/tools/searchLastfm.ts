@@ -1,5 +1,5 @@
-import { defineSecret } from "firebase-functions/params";
 import axios from "axios";
+import { defineSecret } from "firebase-functions/params";
 import { z } from "genkit";
 
 import ai from "../core/genkit";

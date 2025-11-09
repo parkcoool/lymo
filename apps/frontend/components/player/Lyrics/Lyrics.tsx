@@ -1,5 +1,5 @@
-import { View } from "react-native";
 import { Lyrics as LyricsType, LyricsSentence } from "@lymo/schemas/shared";
+import { View } from "react-native";
 
 import Paragraph from "@/components/player/Paragraph";
 import Sentence from "@/components/player/Sentence";

@@ -1,10 +1,10 @@
-import { fetch } from "expo/fetch";
 import type {
   AddTrackFlowInput,
   AddTrackFlowStream,
   AddTrackFlowOutput,
 } from "@lymo/schemas/function";
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
+import { fetch } from "expo/fetch";
 
 import isChunk from "@/helpers/isChunk";
 import isResult from "@/helpers/isResult";
@@ -70,7 +70,7 @@ export default async function* addTrack(
       if (!line.startsWith("data: ")) continue;
 
       const jsonString = line.replaceAll("data: ", "").trim();
-      let obj: any;
+      let obj: unknown;
 
       try {
         obj = JSON.parse(jsonString);

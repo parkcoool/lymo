@@ -1,5 +1,5 @@
-import { z } from "genkit";
 import { ParagraphSummaryAppendEventSchema } from "@lymo/schemas/event";
+import { z } from "genkit";
 
 import ai from "../core/genkit";
 

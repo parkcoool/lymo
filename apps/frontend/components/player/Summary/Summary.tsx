@@ -1,3 +1,5 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import {
   View,
@@ -6,12 +8,11 @@ import {
   TouchableOpacity,
   type TextLayoutEvent,
 } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { LinearGradient } from "expo-linear-gradient";
+
+import useTrackDetailString from "@/hooks/useTrackDetailString";
+import useWindowSize from "@/hooks/useWindowSize";
 
 import { styles } from "./Summary.styles";
-import useWindowSize from "@/hooks/useWindowSize";
-import useTrackDetailString from "@/hooks/useTrackDetailString";
 
 interface SummaryProps {
   coverUrl: string;

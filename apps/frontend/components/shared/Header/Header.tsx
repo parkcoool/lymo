@@ -1,7 +1,7 @@
-import { TouchableOpacity, View } from "react-native";
-import type { NativeStackHeaderProps } from "@react-navigation/native-stack";
-import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import type { NativeStackHeaderProps } from "@react-navigation/native-stack";
+import { TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { styles } from "./Header.styles";
 

@@ -1,9 +1,9 @@
 import axios from "axios";
 import { z } from "genkit";
 
-import parseLyrics from "../utils/parseLyrics";
 import ai from "../core/genkit";
 import type { RawLRCLIBResult } from "../types/lrclib";
+import parseLyrics from "../utils/parseLyrics";
 
 export const SearchLRCLibInputSchema = z.object({
   title: z.string().describe("The title of the song"),

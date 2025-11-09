@@ -1,6 +1,8 @@
 import { View, Text } from "react-native";
-import { styles } from "./Paragraph.styles";
+
 import { colors } from "@/constants/colors";
+
+import { styles } from "./Paragraph.styles";
 
 interface ParagraphProps {
   summary: string | null;

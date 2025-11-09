@@ -1,11 +1,10 @@
 import { z } from "genkit";
 
 import ai from "../core/genkit";
-
-import getSyllableCount from "../utils/getSyllableCount";
-import calculateCosineDistance from "../utils/calculateCosineDistance";
-import normalize from "../utils/normalize";
 import averageEmbeddings from "../utils/averageEmbeddings";
+import calculateCosineDistance from "../utils/calculateCosineDistance";
+import getSyllableCount from "../utils/getSyllableCount";
+import normalize from "../utils/normalize";
 
 export const GroupLyricsInputSchema = z.object({
   lyrics: z

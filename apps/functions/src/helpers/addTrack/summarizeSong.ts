@@ -1,6 +1,6 @@
+import { SummaryAppendEvent } from "@lymo/schemas/event";
 import { StreamingCallback } from "genkit";
 
-import { SummaryAppendEvent } from "@lymo/schemas/event";
 
 import { summarizeSongFlow } from "../../flows/summarizeSong.flow";
 import type { LRCLIBResult } from "../../types/lrclib";

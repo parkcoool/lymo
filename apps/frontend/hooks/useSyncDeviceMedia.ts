@@ -1,13 +1,25 @@
 import { useEffect } from "react";
-import { NativeEventEmitter, NativeModules } from "react-native";
+import { NativeEventEmitter } from "react-native";
 
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
-import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import { MediaModule } from "@/core/mediaModule";
 import type { DeviceMedia } from "@/types/mediaModule";
 
 const eventEmitter = new NativeEventEmitter(MediaModule);
+
+const checkPermission = async (setHasPermission: (value: boolean) => void) => {
+  try {
+    const isGranted = await MediaModule.checkNotificationListenerPermission();
+    setHasPermission(isGranted);
+    if (isGranted) {
+      MediaModule.startObserver();
+    }
+  } catch (error) {
+    console.error("Failed to check permission", error);
+  }
+};
 
 export default function useSyncDeviceMedia() {
   const { setData: setDeviceMedia, setHasPermission } = useDeviceMediaStore();
@@ -15,7 +27,7 @@ export default function useSyncDeviceMedia() {
   const { isSynced } = useSyncStore();
 
   useEffect(() => {
-    checkPermission();
+    checkPermission(setHasPermission);
 
     const subscription = eventEmitter.addListener(
       "onMediaDataChanged",
@@ -37,17 +49,7 @@ export default function useSyncDeviceMedia() {
     return () => {
       subscription.remove();
     };
+    // setHasPermission, setDeviceMedia와 setTrackSource는 안정적임.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSynced]);
-
-  const checkPermission = async () => {
-    try {
-      const isGranted = await MediaModule.checkNotificationListenerPermission();
-      setHasPermission(isGranted);
-      if (isGranted) {
-        MediaModule.startObserver();
-      }
-    } catch (error) {
-      console.error("Failed to check permission", error);
-    }
-  };
 }

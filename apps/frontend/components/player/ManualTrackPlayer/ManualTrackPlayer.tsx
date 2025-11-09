@@ -1,8 +1,8 @@
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View } from "react-native";
 
-import useCoverColorQuery from "@/hooks/useCoverColorQuery";
-import Summary from "@/components/player/Summary";
 import Lyrics from "@/components/player/Lyrics";
+import Summary from "@/components/player/Summary";
+import useCoverColorQuery from "@/hooks/useCoverColorQuery";
 import useManualTrackQuery from "@/hooks/useManualTrackQuery";
 
 export default function ManualTrackPlayer() {
