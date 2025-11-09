@@ -30,8 +30,8 @@ export default function useDeviceTrackQuery() {
   }, [trackSource]);
 
   // 쿼리 반환
-  return useSuspenseQuery({
-    queryKey: ["track-stream", trackStreamKey],
+  const query = useSuspenseQuery({
+    queryKey: ["track", "stream", trackStreamKey],
 
     queryFn: streamedQuery<Track & TrackDetail, Track & TrackDetail>({
       initialValue: {
@@ -47,10 +47,16 @@ export default function useDeviceTrackQuery() {
         summary: "",
       },
       reducer: (_, chunk) => chunk,
-      streamFn: (context) => {
-        if (trackStreamKey) return addTrack(trackStreamKey, context.signal);
+      streamFn: () => {
+        if (trackStreamKey) return addTrack(trackStreamKey);
         else throw new Error("곡 정보가 제공되지 않았습니다.");
       },
     }),
   });
+
+  if (query.isError) {
+    throw query.error;
+  }
+
+  return query;
 }

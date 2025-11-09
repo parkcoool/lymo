@@ -2,10 +2,10 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { View } from "react-native";
 
-import DeviceTrackPlayer from "@/components/player/DeviceTrackPlayer/DeviceTrackPlayer";
+import DeviceTrackPlayer from "@/components/player/DeviceTrackPlayer";
 import ErrorIndicator from "@/components/player/ErrorIndicator";
 import LoadingIndicator from "@/components/player/LoadingIndicator";
-import ManualTrackPlayer from "@/components/player/ManualTrackPlayer/ManualTrackPlayer";
+import ManualTrackPlayer from "@/components/player/ManualTrackPlayer";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 export default function Player() {
@@ -13,7 +13,7 @@ export default function Player() {
 
   return (
     <View style={{ flex: 1 }}>
-      <ErrorBoundary fallback={<ErrorIndicator />}>
+      <ErrorBoundary fallbackRender={ErrorIndicator}>
         <Suspense fallback={<LoadingIndicator />}>
           {trackSource?.from === "manual" && <ManualTrackPlayer />}
           {trackSource?.from === "device" && <DeviceTrackPlayer />}

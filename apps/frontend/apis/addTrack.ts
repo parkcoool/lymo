@@ -18,10 +18,11 @@ export interface ProcessChunkState {
   isLyricsGrouped: boolean;
 }
 
-export default async function* addTrack(
-  { title, artist, duration }: AddTrackFlowInput,
-  signal?: AbortSignal
-): AsyncGenerator<Track & TrackDetail> {
+export default async function* addTrack({
+  title,
+  artist,
+  duration,
+}: AddTrackFlowInput): AsyncGenerator<Track & TrackDetail> {
   const resp = await fetch("https://addtrack-au5g5tbwtq-du.a.run.app", {
     headers: {
       Accept: "text/event-stream",
@@ -29,7 +30,6 @@ export default async function* addTrack(
     },
     method: "POST",
     body: JSON.stringify({ data: { title, artist, duration } }),
-    signal,
   });
 
   if (!resp.ok) {

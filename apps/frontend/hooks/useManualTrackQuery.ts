@@ -22,7 +22,7 @@ export default function useManualTrackQuery() {
   }, [trackSource]);
 
   // 쿼리 반환
-  return useSuspenseQuery<Track & TrackDetail>({
+  const query = useSuspenseQuery<Track & TrackDetail>({
     queryKey: ["track", "manual", trackId],
     staleTime: Infinity,
 
@@ -31,4 +31,10 @@ export default function useManualTrackQuery() {
       return getTrack({ trackId });
     },
   });
+
+  if (query.isError) {
+    throw query.error;
+  }
+
+  return query;
 }

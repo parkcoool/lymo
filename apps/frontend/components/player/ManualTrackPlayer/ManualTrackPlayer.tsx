@@ -36,7 +36,7 @@ export default function ManualTrackPlayer() {
         />
 
         {/* 가사 */}
-        <Lyrics lyrics={track.lyrics} isSynced />
+        <Lyrics lyrics={track.lyrics} />
       </ScrollView>
     </View>
   );

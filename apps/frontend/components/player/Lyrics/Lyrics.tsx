@@ -3,17 +3,18 @@ import { View } from "react-native";
 
 import Paragraph from "@/components/player/Paragraph";
 import Sentence from "@/components/player/Sentence";
+import { useSyncStore } from "@/contexts/useSyncStore";
 import useDeviceMediaTimestamp from "@/hooks/useDeviceMediaTimestamp";
 
 import { styles } from "./Lyrics.styles";
 
 interface LyricsProps {
   lyrics: LyricsType;
-  isSynced?: boolean;
 }
 
-export default function Lyrics({ lyrics, isSynced = false }: LyricsProps) {
+export default function Lyrics({ lyrics }: LyricsProps) {
   const timestamp = useDeviceMediaTimestamp();
+  const { isSynced } = useSyncStore();
 
   return (
     <View style={styles.container}>
