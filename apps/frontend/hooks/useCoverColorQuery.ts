@@ -1,8 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { getColors } from "react-native-image-colors";
 
-export default function useCoverColor(coverUrl: string | null) {
-  const { data: coverColor } = useQuery({
+/**
+ * @description 앨범 커버 이미지의 주요 색상을 가져오는 훅입니다.
+ * @param coverUrl 앨범 커버 이미지 URL
+ * @returns 앨범 커버 이미지의 주요 색상 문자열 (예: "#RRGGBB")
+ */
+export default function useCoverColorQuery(coverUrl: string | null) {
+  return useSuspenseQuery({
     queryKey: ["cover-color", coverUrl],
     queryFn: async () => {
       if (coverUrl == null) {
@@ -17,10 +22,6 @@ export default function useCoverColor(coverUrl: string | null) {
         }
       }
     },
-    placeholderData: "#000000",
-    enabled: coverUrl != null,
     staleTime: Infinity,
   });
-
-  return coverColor;
 }

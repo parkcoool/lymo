@@ -6,7 +6,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
-import useCoverColor from "@/hooks/useCoverColor";
+import useCoverColorQuery from "@/hooks/useCoverColorQuery";
 
 import { styles } from "./DeviceMediaDetection.styles";
 
@@ -15,7 +15,9 @@ export default function DeviceMediaDetection() {
   const { deviceMedia } = useDeviceMediaStore();
   const { isSynced, setIsSynced } = useSyncStore();
 
-  const coverColor = useCoverColor(deviceMedia?.coverUrl ?? null);
+  const { data: coverColor } = useCoverColorQuery(
+    deviceMedia?.coverUrl ?? null
+  );
 
   // 연동 버튼 핸들러
   const handleConnect = () => {

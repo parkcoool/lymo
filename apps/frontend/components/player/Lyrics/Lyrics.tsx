@@ -9,10 +9,10 @@ import { styles } from "./Lyrics.styles";
 
 interface LyricsProps {
   lyrics: LyricsType;
-  isSynced: boolean;
+  isSynced?: boolean;
 }
 
-export default function Lyrics({ lyrics, isSynced }: LyricsProps) {
+export default function Lyrics({ lyrics, isSynced = false }: LyricsProps) {
   const timestamp = useTimestamp(isSynced);
 
   return (

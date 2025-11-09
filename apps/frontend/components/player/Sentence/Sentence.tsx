@@ -4,7 +4,7 @@ import { colors } from "@/constants/colors";
 
 interface SentenceProps {
   sentence: string;
-  translation: string;
+  translation: string | null;
   active: boolean;
 }
 
@@ -16,7 +16,7 @@ export default function Sentence({
   return (
     <View style={styles.container}>
       <Text style={[styles.sentence, active && activeStyle]}>{sentence}</Text>
-      {translation !== "null" && (
+      {translation && (
         <Text style={[styles.translation, active && activeStyle]}>
           {translation}
         </Text>

@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   View,
   Image,
   Text,
-  Dimensions,
   TouchableOpacity,
   type TextLayoutEvent,
 } from "react-native";
@@ -11,15 +10,17 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { styles } from "./Summary.styles";
+import useWindowSize from "@/hooks/useWindowSize";
+import useTrackDetailString from "@/hooks/useTrackDetailString";
 
 interface SummaryProps {
-  coverUrl?: string;
-  title?: string;
-  artist?: string;
-  album?: string | null;
-  publishedAt?: string | null;
-  summary?: string;
-  coverColor?: string;
+  coverUrl: string;
+  title: string;
+  artist: string;
+  album: string | null;
+  publishedAt: string | null;
+  summary: string;
+  coverColor: string;
 }
 
 export default function Summary({
@@ -31,10 +32,8 @@ export default function Summary({
   summary,
   coverColor,
 }: SummaryProps) {
-  const widowWidth = Dimensions.get("window").width;
-  const year = publishedAt ? new Date(publishedAt).getFullYear() : null;
-  const detailString = [artist, album, year].filter(Boolean).join(" • ");
-
+  const { width: windowWidth } = useWindowSize();
+  const detailString = useTrackDetailString({ artist, album, publishedAt });
   const [summaryLine, setSummaryLine] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
@@ -49,7 +48,10 @@ export default function Summary({
   return (
     <View style={styles.wrapper}>
       <View
-        style={[styles.coverWrapper, { width: widowWidth, height: widowWidth }]}
+        style={[
+          styles.coverWrapper,
+          { width: windowWidth, height: windowWidth },
+        ]}
       >
         {/* 커버 이미지 */}
         <Image source={{ uri: coverUrl }} style={styles.cover} />

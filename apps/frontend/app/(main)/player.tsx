@@ -1,77 +1,24 @@
-import { ScrollView, View, Text } from "react-native";
+import { View } from "react-native";
 
-import { colors } from "@/constants/colors";
-import { useSyncStore } from "@/contexts/useSyncStore";
-import useCoverColor from "@/hooks/useCoverColor";
-import Summary from "@/components/player/Summary";
-import Lyrics from "@/components/player/Lyrics";
-import useDisplayedTrack from "@/hooks/useDisplayedTrack";
+import ManualTrackPlayer from "@/components/player/ManualTrackPlayer/ManualTrackPlayer";
+import { ErrorBoundary } from "react-error-boundary";
 import ErrorIndicator from "@/components/player/ErrorIndicator";
+import { Suspense } from "react";
 import LoadingIndicator from "@/components/player/LoadingIndicator";
-import LyricsGeneratingIndicator from "@/components/player/LyricsGeneratingIndicator";
+import DeviceTrackPlayer from "@/components/player/DeviceTrackPlayer/DeviceTrackPlayer";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 export default function Player() {
-  const { displayedTrack, isLoading, error, isError } = useDisplayedTrack();
-  const { isSynced } = useSyncStore();
-
-  // 커버 색상
-  const coverColor = useCoverColor(displayedTrack?.coverUrl ?? null);
+  const { trackSource } = useTrackSourceStore();
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: coverColor ?? "#000000",
-      }}
-    >
-      <ScrollView
-        style={{
-          flexDirection: "column",
-          flex: 1,
-          backgroundColor: "#000000AA",
-          paddingBottom: 12,
-        }}
-      >
-        {isError && <ErrorIndicator message={error?.message} />}
-
-        {!isError && (
-          <>
-            {/* 곡 메타데이터 및 설명 */}
-            {displayedTrack && (
-              <Summary
-                coverUrl={displayedTrack.coverUrl}
-                title={displayedTrack.title}
-                artist={displayedTrack.artist}
-                album={displayedTrack.album}
-                publishedAt={displayedTrack.publishedAt}
-                summary={displayedTrack.summary}
-                coverColor={coverColor}
-              />
-            )}
-
-            {/* 로딩 */}
-            {isLoading && <LoadingIndicator />}
-
-            {/* 가사 */}
-            {!isLoading &&
-              (displayedTrack?.lyrics && displayedTrack.lyrics.length > 0 ? (
-                <Lyrics lyrics={displayedTrack.lyrics} isSynced={isSynced} />
-              ) : (
-                <LyricsGeneratingIndicator />
-              ))}
-          </>
-        )}
-      </ScrollView>
+    <View style={{ flex: 1 }}>
+      <ErrorBoundary fallback={<ErrorIndicator />}>
+        <Suspense fallback={<LoadingIndicator />}>
+          {trackSource?.from === "manual" && <ManualTrackPlayer />}
+          {trackSource?.from === "device" && <DeviceTrackPlayer />}
+        </Suspense>
+      </ErrorBoundary>
     </View>
   );
 }
-
-<View
-  style={{
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  }}
->
-  <Text style={{ color: colors.onBackground }}>곡을 검색할 수 없습니다.</Text>
-</View>;
