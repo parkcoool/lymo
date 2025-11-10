@@ -11,14 +11,16 @@ import { styles } from "./SettingBottomSheet.styles";
 interface WrapperProps {
   ref?: React.Ref<BottomSheetModal>;
   children?: React.ReactNode;
+  onDismiss?: () => void;
 }
 
-export default function Wrapper({ ref, children }: WrapperProps) {
+export default function Wrapper({ ref, children, onDismiss }: WrapperProps) {
   const { bottom } = useSafeAreaInsets();
 
   return (
     <BottomSheetModal
       ref={ref}
+      onDismiss={onDismiss}
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}

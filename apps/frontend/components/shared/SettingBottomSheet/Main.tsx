@@ -1,0 +1,74 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Text, TouchableOpacity, View } from "react-native";
+
+import type { SettingViews } from "./SettingBottomSheet";
+import { styles } from "./SettingBottomSheet.styles";
+
+interface MainProps {
+  setView: (view: SettingViews) => void;
+}
+
+export default function Main({ setView }: MainProps) {
+  return (
+    <View style={styles.actionContainer}>
+      {/* 가사 싱크 */}
+      <TouchableOpacity
+        style={styles.actionButton}
+        onPress={() => setView("sync")}
+      >
+        <View style={styles.actionButtonLeft}>
+          <MaterialIcons
+            name="sync"
+            size={24}
+            style={styles.actionButtonIcon}
+          />
+          <Text style={styles.actionButtonText}>가사 싱크</Text>
+        </View>
+        <View style={styles.actionButtonRight}>
+          <Text style={styles.actionButtonContent}>0.5초 느리게</Text>
+          <MaterialIcons
+            name="chevron-right"
+            size={24}
+            style={styles.actionButtonIcon}
+          />
+        </View>
+      </TouchableOpacity>
+
+      {/* 번역 언어 */}
+      <TouchableOpacity
+        style={styles.actionButton}
+        onPress={() => setView("translate")}
+      >
+        <View style={styles.actionButtonLeft}>
+          <MaterialIcons
+            name="translate"
+            size={24}
+            style={styles.actionButtonIcon}
+          />
+          <Text style={styles.actionButtonText}>번역 언어</Text>
+        </View>
+        <View style={styles.actionButtonRight}>
+          <Text style={styles.actionButtonContent}>한국어</Text>
+          <MaterialIcons
+            name="chevron-right"
+            size={24}
+            style={styles.actionButtonIcon}
+          />
+        </View>
+      </TouchableOpacity>
+
+      {/* 요약 보이기 */}
+      <View style={styles.actionButton}>
+        <View style={styles.actionButtonLeft}>
+          <MaterialIcons
+            name="summarize"
+            size={24}
+            style={styles.actionButtonIcon}
+          />
+          <Text style={styles.actionButtonText}>요약 보이기</Text>
+        </View>
+        <View style={styles.actionButtonRight}>{/* TODO: 토글 */}</View>
+      </View>
+    </View>
+  );
+}
