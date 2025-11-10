@@ -2,6 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import { useSettingStore } from "@/contexts/useSettingStore";
+import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 import type { SettingViews } from "./SettingBottomSheet";
 import { getSyncText, getTranslateText } from "./SettingBottomSheet.helpers";
@@ -12,11 +13,17 @@ interface MainProps {
 }
 
 export default function Main({ setView }: MainProps) {
+  const { trackSource } = useTrackSourceStore();
   const { setting } = useSettingStore();
+
+  const trackId =
+    trackSource && "id" in trackSource?.track
+      ? trackSource.track.id
+      : undefined;
 
   return (
     <View style={styles.actionContainer}>
-      {/* 가사 싱크 */}
+      {/* 전체 가사 싱크 */}
       <TouchableOpacity
         style={styles.actionButton}
         onPress={() => setView("sync")}
@@ -27,11 +34,11 @@ export default function Main({ setView }: MainProps) {
             size={24}
             style={styles.actionButtonIcon}
           />
-          <Text style={styles.actionButtonText}>가사 싱크</Text>
+          <Text style={styles.actionButtonText}>전체 가사 싱크</Text>
         </View>
         <View style={styles.actionButtonRight}>
           <Text style={styles.actionButtonContent}>
-            {getSyncText(setting.syncDelay)}
+            {getSyncText(setting.globalSyncDelay)}
           </Text>
           <MaterialIcons
             name="chevron-right"
@@ -40,6 +47,33 @@ export default function Main({ setView }: MainProps) {
           />
         </View>
       </TouchableOpacity>
+
+      {/* 곡 별 가사 싱크 */}
+      {trackId && (
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => setView("sync")}
+        >
+          <View style={styles.actionButtonLeft}>
+            <MaterialIcons
+              name="sync"
+              size={24}
+              style={styles.actionButtonIcon}
+            />
+            <Text style={styles.actionButtonText}>곡 별 가사 싱크</Text>
+          </View>
+          <View style={styles.actionButtonRight}>
+            <Text style={styles.actionButtonContent}>
+              {getSyncText(setting.trackSyncDelay.get(trackId) ?? 0)}
+            </Text>
+            <MaterialIcons
+              name="chevron-right"
+              size={24}
+              style={styles.actionButtonIcon}
+            />
+          </View>
+        </TouchableOpacity>
+      )}
 
       {/* 번역 언어 */}
       <TouchableOpacity

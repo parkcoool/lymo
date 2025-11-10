@@ -1,8 +1,13 @@
 export interface Setting {
   /**
-   * 가사 싱크 지연 시간 (ms)
+   * 곡 별 가사 싱크 지연 시간 (ms)
    */
-  syncDelay: number;
+  trackSyncDelay: Map<string, number>;
+
+  /**
+   * 전체 가사 싱크 지연 시간 (ms)
+   */
+  globalSyncDelay: number;
 
   /**
    * 번역 대상 언어
