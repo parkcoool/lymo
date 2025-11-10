@@ -57,7 +57,7 @@ export default function DeviceMediaDetection() {
         </View>
 
         {/* 곡 정보 */}
-        <Link href={"/player"} disabled={!isSynced}>
+        <Link href={"/player"} disabled={!isSynced} asChild>
           <TouchableOpacity style={styles.track} disabled={!isSynced}>
             {/* 커버 이미지 */}
             <Image
