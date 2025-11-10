@@ -13,6 +13,7 @@ export default function Home() {
         flexDirection: "column",
         flex: 1,
       }}
+      stickyHeaderIndices={[0]}
     >
       <View>
         {/* 상단 영역 */}
@@ -23,13 +24,13 @@ export default function Home() {
           <NotificationAccessRequired />
           <DeviceMediaDetection />
         </View>
-
-        {/* 최상단 섹션 */}
-        <HeroSection />
-
-        {/* 인기 섹션 */}
-        <PopularTracksSection />
       </View>
+
+      {/* 최상단 섹션 */}
+      <HeroSection />
+
+      {/* 인기 섹션 */}
+      <PopularTracksSection />
     </ScrollView>
   );
 }
