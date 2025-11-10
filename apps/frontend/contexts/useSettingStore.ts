@@ -21,7 +21,7 @@ interface SettingContextActions {
    * @description 설정을 업데이트합니다.
    * @param setting 업데이트할 설정
    */
-  updateSetting: (setting: Setting) => void;
+  updateSetting: React.Dispatch<React.SetStateAction<Setting>>;
 }
 
 type SettingContextValues = SettingContextStates & SettingContextActions;
@@ -94,7 +94,9 @@ function SettingProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  const handleUpdateSetting = (newSetting: Setting) => {
+  const handleUpdateSetting = (
+    newSetting: Setting | ((prev: Setting) => Setting)
+  ) => {
     setSetting(newSetting);
     AsyncStorage.setItem("setting", JSON.stringify(newSetting));
   };
