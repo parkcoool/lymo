@@ -1,7 +1,10 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Text, TouchableOpacity, View } from "react-native";
 
+import { useSettingStore } from "@/contexts/useSettingStore";
+
 import type { SettingViews } from "./SettingBottomSheet";
+import { getSyncText, getTranslateText } from "./SettingBottomSheet.helpers";
 import { styles } from "./SettingBottomSheet.styles";
 
 interface MainProps {
@@ -9,6 +12,8 @@ interface MainProps {
 }
 
 export default function Main({ setView }: MainProps) {
+  const { setting } = useSettingStore();
+
   return (
     <View style={styles.actionContainer}>
       {/* 가사 싱크 */}
@@ -25,7 +30,9 @@ export default function Main({ setView }: MainProps) {
           <Text style={styles.actionButtonText}>가사 싱크</Text>
         </View>
         <View style={styles.actionButtonRight}>
-          <Text style={styles.actionButtonContent}>0.5초 느리게</Text>
+          <Text style={styles.actionButtonContent}>
+            {getSyncText(setting.syncDelay)}
+          </Text>
           <MaterialIcons
             name="chevron-right"
             size={24}
@@ -48,7 +55,9 @@ export default function Main({ setView }: MainProps) {
           <Text style={styles.actionButtonText}>번역 언어</Text>
         </View>
         <View style={styles.actionButtonRight}>
-          <Text style={styles.actionButtonContent}>한국어</Text>
+          <Text style={styles.actionButtonContent}>
+            {getTranslateText(setting.translateTargetLanguage)}
+          </Text>
           <MaterialIcons
             name="chevron-right"
             size={24}
