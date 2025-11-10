@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -20,20 +21,22 @@ export default function RootLayout() {
           <SyncProvider>
             <TrackSourceProvider>
               <GestureHandlerRootView>
-                <View
-                  style={{
-                    flex: 1,
-                    position: "relative",
-                    backgroundColor: colors.background,
-                  }}
-                >
-                  <Stack
-                    screenOptions={{
-                      headerShown: false,
-                      contentStyle: { backgroundColor: "transparent" },
+                <BottomSheetModalProvider>
+                  <View
+                    style={{
+                      flex: 1,
+                      position: "relative",
+                      backgroundColor: colors.background,
                     }}
-                  />
-                </View>
+                  >
+                    <Stack
+                      screenOptions={{
+                        headerShown: false,
+                        contentStyle: { backgroundColor: "transparent" },
+                      }}
+                    />
+                  </View>
+                </BottomSheetModalProvider>
               </GestureHandlerRootView>
             </TrackSourceProvider>
           </SyncProvider>
