@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { colors } from "@/constants/colors";
@@ -18,20 +19,22 @@ export default function RootLayout() {
         <DeviceMediaProvider>
           <SyncProvider>
             <TrackSourceProvider>
-              <View
-                style={{
-                  flex: 1,
-                  position: "relative",
-                  backgroundColor: colors.background,
-                }}
-              >
-                <Stack
-                  screenOptions={{
-                    headerShown: false,
-                    contentStyle: { backgroundColor: "transparent" },
+              <GestureHandlerRootView>
+                <View
+                  style={{
+                    flex: 1,
+                    position: "relative",
+                    backgroundColor: colors.background,
                   }}
-                />
-              </View>
+                >
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
+                      contentStyle: { backgroundColor: "transparent" },
+                    }}
+                  />
+                </View>
+              </GestureHandlerRootView>
             </TrackSourceProvider>
           </SyncProvider>
         </DeviceMediaProvider>
