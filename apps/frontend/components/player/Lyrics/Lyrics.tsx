@@ -23,9 +23,7 @@ export default function Lyrics({ lyrics }: LyricsProps) {
           key={paragraphIndex}
           summary={paragraph.summary}
           active={
-            isSynced && timestamp !== undefined
-              ? isActiveParagraph(paragraph.sentences, timestamp)
-              : false
+            isSynced ? isActiveParagraph(paragraph.sentences, timestamp) : false
           }
         >
           {paragraph.sentences.map((sentence, sentenceIndex) => (
@@ -33,11 +31,7 @@ export default function Lyrics({ lyrics }: LyricsProps) {
               key={sentenceIndex}
               sentence={sentence.text}
               translation={sentence.translation}
-              active={
-                isSynced && timestamp !== undefined
-                  ? isActiveSentence(sentence, timestamp)
-                  : false
-              }
+              active={isSynced ? isActiveSentence(sentence, timestamp) : false}
             />
           ))}
         </Paragraph>
@@ -46,14 +40,9 @@ export default function Lyrics({ lyrics }: LyricsProps) {
   );
 }
 
-const isActiveParagraph = (paragraph: LyricsSentence[], timestamp: number) => {
-  return paragraph[0].start <= timestamp && timestamp < paragraph.at(-1)!.end;
-};
+const isActiveParagraph = (paragraph: LyricsSentence[], timestamp: number) =>
+  paragraph[0].start <= timestamp &&
+  timestamp < paragraph[paragraph.length - 1].end;
 
-const isActiveSentence = (
-  sentence: LyricsSentence,
-  timestamp: number | null
-) => {
-  if (timestamp === null) return false;
-  return sentence.start <= timestamp && timestamp < sentence.end;
-};
+const isActiveSentence = (sentence: LyricsSentence, timestamp: number) =>
+  sentence.start <= timestamp && timestamp < sentence.end;
