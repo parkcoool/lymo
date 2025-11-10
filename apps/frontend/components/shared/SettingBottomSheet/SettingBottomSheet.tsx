@@ -1,38 +1,22 @@
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import React from "react";
-import { Text } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useState } from "react";
 
-import { styles } from "./SettingBottomSheet.styles";
+import Wrapper from "./Wrapper";
 
+type SettingViews = "main" | "sync" | "translate";
 interface SettingBottomSheetProps {
   ref?: React.Ref<BottomSheetModal>;
 }
 
 export default function SettingBottomSheet({ ref }: SettingBottomSheetProps) {
-  const { bottom } = useSafeAreaInsets();
+  const [view, setView] = useState<SettingViews>("main");
 
-  return (
-    <BottomSheetModal
-      ref={ref}
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop
-          {...props}
-          pressBehavior="close"
-          appearsOnIndex={0}
-        />
-      )}
-      style={styles.modal}
-      bottomInset={bottom + 4}
-      detached
-    >
-      <BottomSheetView style={{ padding: 16 }}>
-        <Text>Awesome 🎉</Text>
-      </BottomSheetView>
-    </BottomSheetModal>
-  );
+  const renderContent = () => {
+    switch (view) {
+      default:
+        return null;
+    }
+  };
+
+  return <Wrapper ref={ref}>{renderContent()}</Wrapper>;
 }
