@@ -8,6 +8,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { colors } from "@/constants/colors";
 import { DeviceMediaProvider } from "@/contexts/useDeviceMediaStore";
+import { SettingProvider } from "@/contexts/useSettingStore";
 import { SyncProvider } from "@/contexts/useSyncStore";
 import { TrackSourceProvider } from "@/contexts/useTrackSourceStore";
 
@@ -17,30 +18,32 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <DeviceMediaProvider>
-          <SyncProvider>
-            <TrackSourceProvider>
-              <GestureHandlerRootView>
-                <BottomSheetModalProvider>
-                  <View
-                    style={{
-                      flex: 1,
-                      position: "relative",
-                      backgroundColor: colors.background,
-                    }}
-                  >
-                    <Stack
-                      screenOptions={{
-                        headerShown: false,
-                        contentStyle: { backgroundColor: "transparent" },
+        <SettingProvider>
+          <DeviceMediaProvider>
+            <SyncProvider>
+              <TrackSourceProvider>
+                <GestureHandlerRootView>
+                  <BottomSheetModalProvider>
+                    <View
+                      style={{
+                        flex: 1,
+                        position: "relative",
+                        backgroundColor: colors.background,
                       }}
-                    />
-                  </View>
-                </BottomSheetModalProvider>
-              </GestureHandlerRootView>
-            </TrackSourceProvider>
-          </SyncProvider>
-        </DeviceMediaProvider>
+                    >
+                      <Stack
+                        screenOptions={{
+                          headerShown: false,
+                          contentStyle: { backgroundColor: "transparent" },
+                        }}
+                      />
+                    </View>
+                  </BottomSheetModalProvider>
+                </GestureHandlerRootView>
+              </TrackSourceProvider>
+            </SyncProvider>
+          </DeviceMediaProvider>
+        </SettingProvider>
 
         <StatusBar style="light" translucent backgroundColor="transparent" />
       </SafeAreaProvider>

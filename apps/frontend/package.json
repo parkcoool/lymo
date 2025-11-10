@@ -16,6 +16,7 @@
     "@expo/vector-icons": "^15.0.2",
     "@gorhom/bottom-sheet": "^5.2.6",
     "@lymo/schemas": "0.0.0",
+    "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-firebase/app": "^23.4.0",
     "@react-native-firebase/firestore": "^23.4.0",
     "@react-navigation/bottom-tabs": "^7.4.0",
