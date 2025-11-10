@@ -1,4 +1,5 @@
 import type MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Fragment } from "react";
 import { View } from "react-native";
 
 import { useSettingStore } from "@/contexts/useSettingStore";
@@ -78,10 +79,10 @@ export default function Main({ setView }: MainProps) {
   return (
     <View style={styles.actionContainer}>
       {settingItems.map((item, index) => (
-        <>
+        <Fragment key={item.label}>
           {item.type === "button" && <SettingButton key={index} {...item} />}
           {item.type === "toggle" && <SettingToggle key={index} {...item} />}
-        </>
+        </Fragment>
       ))}
     </View>
   );
