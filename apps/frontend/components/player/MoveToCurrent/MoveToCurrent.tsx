@@ -1,5 +1,6 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { View, TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Text } from "react-native";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 
 import useWindowSize from "@/hooks/useWindowSize";
 
@@ -9,6 +10,9 @@ interface MoveToCurrentProps {
   activeSentenceY: number;
   onPress: () => void;
 }
+
+const slideInDown = SlideInDown.springify();
+const slideOutDown = SlideOutDown.springify();
 
 export default function MoveToCurrent({
   activeSentenceY,
@@ -22,7 +26,11 @@ export default function MoveToCurrent({
   if (scrollDirection === null) return;
 
   return (
-    <View style={styles.wrapper}>
+    <Animated.View
+      entering={slideInDown}
+      exiting={slideOutDown}
+      style={styles.wrapper}
+    >
       <TouchableOpacity style={styles.button} onPress={onPress}>
         <MaterialIcons
           style={styles.icon}
@@ -31,6 +39,6 @@ export default function MoveToCurrent({
         />
         <Text style={styles.text}>현재 가사로 이동</Text>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 }

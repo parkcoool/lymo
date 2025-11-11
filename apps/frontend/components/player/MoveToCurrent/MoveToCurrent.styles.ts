@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    paddingVertical: 12,
+    height: 48,
     paddingHorizontal: 24,
     flexDirection: "row",
     gap: 8,
