@@ -1,14 +1,15 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Slider from "@react-native-community/slider";
 import { useEffect, useRef } from "react";
-import { Text, TouchableOpacity, View, Vibration } from "react-native";
+import { Vibration, View } from "react-native";
 
-import { colors } from "@/constants/colors";
 import { useSettingStore } from "@/contexts/useSettingStore";
 import useTrackKey from "@/hooks/useTrackKey";
 
-import { getSyncText } from "./SettingBottomSheet.helpers";
-import { styles } from "./SettingBottomSheet.styles";
+import { styles } from "../SettingBottomSheet.styles";
+
+import { calculateNewValue } from "./Sync.helpers";
+import SyncController from "./SyncController";
+import SyncIndicator from "./SyncIndicator";
+import SyncResetButton from "./SyncResetButton";
 
 export default function Sync() {
   const { setting, updateSetting } = useSettingStore();
@@ -81,66 +82,25 @@ export default function Sync() {
   const handlePlusPress = createPressHandler(1);
   const handleMinusLongPressIn = createLongPressInHandler(-1);
   const handlePlusLongPressIn = createLongPressInHandler(1);
+  const handleReset = () => handleValueChange(0);
 
   return (
     <View style={styles.content}>
-      {/* 설명 텍스트 */}
-      <Text style={styles.syncIndicatorText}>
-        {value === 0 ? "가사를 원래대로 하이라이트" : `가사를 ${getSyncText(value)} 하이라이트`}
-      </Text>
+      <SyncIndicator value={value} />
 
       <View style={styles.bottom}>
-        {/* 조작부 */}
-        <View style={styles.controller} collapsable={false}>
-          {/* 감소 버튼 */}
-          <TouchableOpacity
-            style={styles.arrowButton}
-            onPress={handleMinusPress}
-            onLongPress={handleMinusLongPressIn}
-            onPressOut={handleLongPressOut}
-          >
-            <MaterialIcons name="remove" size={18} style={styles.arrowIcon} />
-          </TouchableOpacity>
+        <SyncController
+          value={value}
+          onValueChange={handleValueChange}
+          onMinusPress={handleMinusPress}
+          onMinusLongPress={handleMinusLongPressIn}
+          onPlusPress={handlePlusPress}
+          onPlusLongPress={handlePlusLongPressIn}
+          onPressOut={handleLongPressOut}
+        />
 
-          {/* 슬라이더 */}
-          <Slider
-            minimumValue={-10000}
-            maximumValue={10000}
-            step={100}
-            value={value}
-            onValueChange={handleValueChange}
-            style={styles.slider}
-            thumbTintColor={colors.surface}
-            minimumTrackTintColor={colors.surface}
-          />
-
-          {/* 증가 버튼 */}
-          <TouchableOpacity
-            style={styles.arrowButton}
-            onPress={handlePlusPress}
-            onLongPress={handlePlusLongPressIn}
-            onPressOut={handleLongPressOut}
-          >
-            <MaterialIcons name="add" size={18} style={styles.arrowIcon} />
-          </TouchableOpacity>
-        </View>
-
-        {/* 초기화 버튼 */}
-        <View style={styles.resetButtonWrapper}>
-          <TouchableOpacity style={styles.resetButton} onPress={() => handleValueChange(0)}>
-            <Text style={styles.resetButtonText}>원래대로</Text>
-          </TouchableOpacity>
-        </View>
+        <SyncResetButton onPress={handleReset} />
       </View>
     </View>
   );
 }
-
-// 값 계산 헬퍼
-const calculateNewValue = (value: number, direction: -1 | 1) => {
-  if (direction === -1) {
-    return Math.max(value - 100, -10000);
-  } else {
-    return Math.min(value + 100, 10000);
-  }
-};
