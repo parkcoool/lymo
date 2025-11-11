@@ -44,7 +44,7 @@ export default function TrackPlayer({ track, coverColor }: TrackPlayerProps) {
         return;
 
       isAutoScrollingRef.current = true;
-      console.log("auto scrolling started");
+      // console.log("auto scrolling started");
       scrollViewRef.current?.scrollTo({ y, x: 0, animated: true });
     },
     [isAutoScrollingRef]
@@ -60,21 +60,21 @@ export default function TrackPlayer({ track, coverColor }: TrackPlayerProps) {
     if (isAutoScrollingRef.current || !isTrackingMode) return;
 
     setIsTrackingMode(false);
-    console.log("tracking mode deactivated");
+    // console.log("tracking mode deactivated");
   };
 
   // 스크롤 종료 이벤트 핸들러
   const handleScrollEnd = () => {
     if (!isAutoScrollingRef.current) return;
     isAutoScrollingRef.current = false;
-    console.log("auto scrolling ended");
+    // console.log("auto scrolling ended");
   };
 
   // 현재 가사로 이동 이벤트 핸들러
   const handleMoveToCurrent = () => {
     scrollTo(scrollYRef.current + currentY - 200);
     setIsTrackingMode(true);
-    console.log("tracking mode activated");
+    // console.log("tracking mode activated");
   };
 
   // tracking 모드일 때 현재 활성화된 문장으로 자동 스크롤
