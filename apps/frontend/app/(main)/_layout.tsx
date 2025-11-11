@@ -8,8 +8,8 @@ import useSyncDeviceMedia from "@/hooks/useSyncDeviceMedia";
 
 export default function MainLayout() {
   useSyncDeviceMedia();
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const handleSettingsOpen = () => bottomSheetRef.current?.present();
 
   return (

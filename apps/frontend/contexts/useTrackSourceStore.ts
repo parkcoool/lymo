@@ -4,7 +4,7 @@ import { buildContext } from "react-simplikit";
 
 import type { DeviceMedia } from "@/types/mediaModule";
 
-type TrackSource =
+export type TrackSource =
   | {
       from: "device";
       track: Pick<

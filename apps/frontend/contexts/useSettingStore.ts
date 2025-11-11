@@ -29,8 +29,7 @@ type SettingContextValues = SettingContextStates & SettingContextActions;
 const [SettingContextProvider, _useSettingStore] =
   buildContext<SettingContextValues>("SettingContext", {
     setting: {
-      trackSyncDelay: new Map(),
-      globalSyncDelay: 0,
+      delayMap: new Map(),
       translateTargetLanguage: "ko",
       showParagraphSummary: true,
     },
@@ -61,8 +60,7 @@ function isSetting(obj: unknown): obj is Setting {
 
 function SettingProvider({ children }: { children: ReactNode }) {
   const [setting, setSetting] = useState<Setting>({
-    trackSyncDelay: new Map(),
-    globalSyncDelay: 0,
+    delayMap: new Map(),
     translateTargetLanguage: "ko",
     showParagraphSummary: true,
   });
