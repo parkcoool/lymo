@@ -1,15 +1,10 @@
-import { usePathname } from "expo-router";
 import { View } from "react-native";
 
 import { useSettingStore } from "@/contexts/useSettingStore";
-import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 import type { SettingViews } from "./SettingBottomSheet";
-import {
-  getSyncText,
-  getTrackKey,
-  getLanguageString,
-} from "./SettingBottomSheet.helpers";
+import { getSyncText, getLanguageString } from "./SettingBottomSheet.helpers";
+import { useTrackKey } from "./SettingBottomSheet.hooks";
 import { styles } from "./SettingBottomSheet.styles";
 import SettingButton from "./SettingButton";
 import SettingToggle from "./SettingToggle";
@@ -19,21 +14,13 @@ interface MainProps {
 }
 
 export default function Main({ setView }: MainProps) {
-  const pathname = usePathname();
-
-  const { trackSource } = useTrackSourceStore();
+  const trackKey = useTrackKey();
   const { setting, updateSetting } = useSettingStore();
-
-  // 현재 플레이어 화면인지 여부
-  const isPlayerScreen = pathname.startsWith("/player");
-
-  // `trackSyncDelay` map의 키로 사용할 트랙 키
-  const trackKey = trackSource ? getTrackKey(trackSource) : null;
 
   return (
     <View style={styles.content}>
       {/* 곡 별 가사 싱크 */}
-      {isPlayerScreen && trackKey && (
+      {trackKey && (
         <SettingButton
           icon="sync"
           label="곡 별 가사 싱크"

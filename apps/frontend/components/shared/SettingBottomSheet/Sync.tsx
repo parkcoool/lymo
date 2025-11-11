@@ -3,52 +3,71 @@ import Slider from "@react-native-community/slider";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import { colors } from "@/constants/colors";
+import { useSettingStore } from "@/contexts/useSettingStore";
 
+import { useTrackKey } from "./SettingBottomSheet.hooks";
 import { styles } from "./SettingBottomSheet.styles";
 
-interface MainProps {
-  value: number;
-  onChange: (value: number) => void;
-}
+export default function Sync() {
+  const { setting, updateSetting } = useSettingStore();
+  const trackKey = useTrackKey();
 
-export default function Sync({ value, onChange }: MainProps) {
-  const handleChange = (value: number) => {
-    // 0.5 단위로 반올림
-    const rounded = Math.round(value * 2) / 2;
-    onChange(rounded);
+  // 트랙 키가 없으면 아무것도 렌더링하지 않음
+  if (!trackKey) return null;
+
+  // 현재 설정된 값
+  const value = setting.delayMap.get(trackKey) ?? 0;
+
+  // 값 변경 핸들러
+  const handleValueChange = (value: number) => {
+    // 500 단위로 반올림
+    const rounded = Math.round(value / 500) * 500;
+    console.log(rounded);
+    updateSetting((prev) => {
+      const newDelayMap = new Map(prev.delayMap);
+      if (trackKey) newDelayMap.set(trackKey, rounded);
+
+      return { ...prev, delayMap: newDelayMap };
+    });
   };
 
   const handleMinusPress = () => {
-    handleChange(Math.max(value - 0.5, -10));
+    handleValueChange(Math.max(value - 500, -10000));
   };
 
   const handlePlusPress = () => {
-    handleChange(Math.min(value + 0.5, 10));
+    handleValueChange(Math.min(value + 500, 10000));
   };
 
   return (
     <View style={styles.content}>
+      {/* 설명 텍스트 */}
       <Text style={styles.syncIndicatorText}>
         {value === 0
           ? "가사를 원래대로 하이라이트"
-          : `가사를 ${Math.abs(value)}초 ${
-              value > 0 ? "느리게" : "빠르게"
-            } 하이라이트`}
+          : `가사를 ${Math.abs(value / 1000)}초 ${value > 0 ? "느리게" : "빠르게"} 하이라이트`}
       </Text>
+
+      {/* 슬라이더 wrapper */}
       <View style={styles.sliderWrapper}>
+        {/* 감소 버튼 */}
         <TouchableOpacity style={styles.arrowButton} onPress={handleMinusPress}>
           <MaterialIcons name="remove" size={18} style={styles.arrowIcon} />
         </TouchableOpacity>
+
+        {/* 슬라이더 */}
         <Slider
-          minimumValue={-10}
-          maximumValue={10}
-          step={0.5}
+          minimumValue={-10000}
+          maximumValue={10000}
+          step={100}
           value={value}
-          onValueChange={handleChange}
+          onValueChange={handleValueChange}
           style={styles.slider}
           thumbTintColor={colors.surface}
           minimumTrackTintColor={colors.surface}
         />
+
+        {/* 증가 버튼 */}
         <TouchableOpacity style={styles.arrowButton} onPress={handlePlusPress}>
           <MaterialIcons name="add" size={18} style={styles.arrowIcon} />
         </TouchableOpacity>
