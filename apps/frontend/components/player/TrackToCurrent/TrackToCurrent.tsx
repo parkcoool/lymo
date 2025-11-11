@@ -25,7 +25,7 @@ export default function TrackToCurrent({
       style={styles.wrapper}
     >
       <TouchableOpacity style={styles.button} onPress={onPress}>
-        <MaterialIcons style={styles.icon} size={20} name="pin-drop" />
+        <MaterialIcons style={styles.icon} size={20} name="push-pin" />
       </TouchableOpacity>
     </Animated.View>
   );
