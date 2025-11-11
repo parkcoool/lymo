@@ -1,7 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Slider from "@react-native-community/slider";
 import { useEffect, useRef } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, Vibration } from "react-native";
 
 import { colors } from "@/constants/colors";
 import { useSettingStore } from "@/contexts/useSettingStore";
@@ -39,6 +39,8 @@ export default function Sync() {
       const newDelayMap = new Map(prev.delayMap);
       if (trackKey) newDelayMap.set(trackKey, rounded);
 
+      // 값이 변경될 때마다 진동
+      Vibration.vibrate(2);
       return { ...prev, delayMap: newDelayMap };
     });
   };
@@ -59,6 +61,9 @@ export default function Sync() {
         const rounded = Math.round(newValue / 100) * 100;
         const newDelayMap = new Map(prev.delayMap);
         if (trackKey) newDelayMap.set(trackKey, rounded);
+
+        // 값이 변경될 때마다 진동
+        Vibration.vibrate(2);
         return { ...prev, delayMap: newDelayMap };
       });
     }, 100);
