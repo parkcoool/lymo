@@ -30,8 +30,8 @@ export default function Wrapper({ ref, children, onDismiss }: WrapperProps) {
       style={styles.modal}
       bottomInset={bottom + 4}
       detached
-      activeOffsetY={[0, 10]}
-      failOffsetX={[-10, 10]}
+      activeOffsetY={[-20, 20]}
+      failOffsetX={[-20, 20]}
     >
       <BottomSheetView style={styles.modalContent}>{children}</BottomSheetView>
     </BottomSheetModal>

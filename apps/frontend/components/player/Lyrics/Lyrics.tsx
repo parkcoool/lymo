@@ -23,7 +23,7 @@ export default function Lyrics({ lyrics, activeSentenceRef }: LyricsProps) {
   const { isSynced } = useSyncStore();
 
   // 설정에 의해 조정된 타임스탬프
-  const adjustedTimestamp = timestamp - (trackKey ? setting.delayMap.get(trackKey) ?? 0 : 0) / 1000;
+  const adjustedTimestamp = timestamp + (trackKey ? setting.delayMap.get(trackKey) ?? 0 : 0) / 1000;
 
   return (
     <View style={styles.container}>
