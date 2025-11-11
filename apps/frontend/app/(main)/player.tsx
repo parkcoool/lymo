@@ -4,10 +4,12 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { View } from "react-native";
 
-import DeviceTrackPlayer from "@/components/player/DeviceTrackPlayer";
 import ErrorIndicator from "@/components/player/ErrorIndicator";
 import LoadingIndicator from "@/components/player/LoadingIndicator";
-import ManualTrackPlayer from "@/components/player/ManualTrackPlayer";
+import {
+  DeviceTrackPlayer,
+  ManualTrackPlayer,
+} from "@/components/player/TrackPlayer";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 export default function Player() {
