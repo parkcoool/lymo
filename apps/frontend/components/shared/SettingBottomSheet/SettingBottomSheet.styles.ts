@@ -78,6 +78,11 @@ export const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
+  bottom: {
+    display: "flex",
+    gap: 12,
+  },
+
   controller: {
     padding: 8,
     display: "flex",
@@ -103,5 +108,24 @@ export const styles = StyleSheet.create({
 
   slider: {
     flex: 1,
+  },
+
+  resetButtonWrapper: {
+    padding: 8,
+  },
+
+  resetButton: {
+    backgroundColor: colors.surface,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  resetButtonText: {
+    color: colors.onSurface,
+    fontSize: 16,
   },
 });
