@@ -6,6 +6,7 @@ import { colors } from "@/constants/colors";
 import { useSettingStore } from "@/contexts/useSettingStore";
 import useTrackKey from "@/hooks/useTrackKey";
 
+import { getSyncText } from "./SettingBottomSheet.helpers";
 import { styles } from "./SettingBottomSheet.styles";
 
 export default function Sync() {
@@ -42,9 +43,7 @@ export default function Sync() {
     <View style={styles.content}>
       {/* 설명 텍스트 */}
       <Text style={styles.syncIndicatorText}>
-        {value === 0
-          ? "가사를 원래대로 하이라이트"
-          : `가사를 ${Math.abs(value / 1000)}초 ${value > 0 ? "느리게" : "빠르게"} 하이라이트`}
+        {value === 0 ? "가사를 원래대로 하이라이트" : `가사를 ${getSyncText(value)} 하이라이트`}
       </Text>
 
       {/* 슬라이더 wrapper */}
