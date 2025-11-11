@@ -1,4 +1,5 @@
 import { Lyrics as LyricsType, LyricsSentence } from "@lymo/schemas/shared";
+import { Ref } from "react";
 import { View } from "react-native";
 
 import Paragraph from "@/components/player/Paragraph";
@@ -10,9 +11,10 @@ import { styles } from "./Lyrics.styles";
 
 interface LyricsProps {
   lyrics: LyricsType;
+  activeSentenceRef: Ref<View>;
 }
 
-export default function Lyrics({ lyrics }: LyricsProps) {
+export default function Lyrics({ lyrics, activeSentenceRef }: LyricsProps) {
   const timestamp = useDeviceMediaTimestamp();
   const { isSynced } = useSyncStore();
 
@@ -22,18 +24,22 @@ export default function Lyrics({ lyrics }: LyricsProps) {
         <Paragraph
           key={paragraphIndex}
           summary={paragraph.summary}
-          active={
-            isSynced ? isActiveParagraph(paragraph.sentences, timestamp) : false
-          }
+          active={isSynced && isActiveParagraph(paragraph.sentences, timestamp)}
         >
-          {paragraph.sentences.map((sentence, sentenceIndex) => (
-            <Sentence
-              key={sentenceIndex}
-              sentence={sentence.text}
-              translation={sentence.translation}
-              active={isSynced ? isActiveSentence(sentence, timestamp) : false}
-            />
-          ))}
+          {paragraph.sentences.map((sentence, sentenceIndex) => {
+            const isActive = isSynced && isActiveSentence(sentence, timestamp);
+            const sentenceKey = `${paragraphIndex}-${sentenceIndex}`;
+
+            return (
+              <Sentence
+                key={sentenceKey}
+                sentence={sentence.text}
+                translation={sentence.translation}
+                active={isActive}
+                ref={isActive ? activeSentenceRef : undefined}
+              />
+            );
+          })}
         </Paragraph>
       ))}
     </View>
