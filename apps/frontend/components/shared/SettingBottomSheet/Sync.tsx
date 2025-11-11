@@ -22,7 +22,6 @@ export default function Sync() {
   const handleValueChange = (value: number) => {
     // 500 단위로 반올림
     const rounded = Math.round(value / 500) * 500;
-    console.log(rounded);
     updateSetting((prev) => {
       const newDelayMap = new Map(prev.delayMap);
       if (trackKey) newDelayMap.set(trackKey, rounded);
