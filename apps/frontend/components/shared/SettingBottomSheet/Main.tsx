@@ -1,10 +1,10 @@
 import { View } from "react-native";
 
 import { useSettingStore } from "@/contexts/useSettingStore";
+import useTrackKey from "@/hooks/useTrackKey";
 
 import type { SettingViews } from "./SettingBottomSheet";
 import { getSyncText, getLanguageString } from "./SettingBottomSheet.helpers";
-import { useTrackKey } from "./SettingBottomSheet.hooks";
 import { styles } from "./SettingBottomSheet.styles";
 import SettingButton from "./SettingButton";
 import SettingToggle from "./SettingToggle";

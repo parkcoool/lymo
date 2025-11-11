@@ -4,8 +4,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 import { colors } from "@/constants/colors";
 import { useSettingStore } from "@/contexts/useSettingStore";
+import useTrackKey from "@/hooks/useTrackKey";
 
-import { useTrackKey } from "./SettingBottomSheet.hooks";
 import { styles } from "./SettingBottomSheet.styles";
 
 export default function Sync() {
