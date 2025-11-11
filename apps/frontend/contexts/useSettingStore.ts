@@ -92,11 +92,19 @@ function SettingProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  const handleUpdateSetting = (
+  const handleUpdateSetting = async (
     newSetting: Setting | ((prev: Setting) => Setting)
   ) => {
-    setSetting(newSetting);
-    AsyncStorage.setItem("setting", JSON.stringify(newSetting));
+    if (typeof newSetting === "function") {
+      setSetting((prev) => {
+        const updated = newSetting(prev);
+        AsyncStorage.setItem("setting", JSON.stringify(updated));
+        return updated;
+      });
+    } else {
+      setSetting(newSetting);
+      AsyncStorage.setItem("setting", JSON.stringify(newSetting));
+    }
   };
 
   // react-simplikit의 buildContext에서 생성된 Provider는 children을 props로 받도록 설계됨

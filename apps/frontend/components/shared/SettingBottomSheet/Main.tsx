@@ -31,7 +31,7 @@ export default function Main({ setView }: MainProps) {
   const trackKey = trackSource ? getTrackKey(trackSource) : null;
 
   return (
-    <View style={styles.actionContainer}>
+    <View style={styles.content}>
       {/* 곡 별 가사 싱크 */}
       {isPlayerScreen && trackKey && (
         <SettingButton
