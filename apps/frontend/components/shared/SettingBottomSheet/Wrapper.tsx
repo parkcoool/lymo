@@ -1,8 +1,4 @@
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -34,6 +30,8 @@ export default function Wrapper({ ref, children, onDismiss }: WrapperProps) {
       style={styles.modal}
       bottomInset={bottom + 4}
       detached
+      activeOffsetY={[0, 10]}
+      failOffsetX={[-10, 10]}
     >
       <BottomSheetView style={styles.modalContent}>{children}</BottomSheetView>
     </BottomSheetModal>

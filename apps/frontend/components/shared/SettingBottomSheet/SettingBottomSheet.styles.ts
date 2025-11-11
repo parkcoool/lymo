@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
-  sliderWrapper: {
+  controller: {
     padding: 8,
     display: "flex",
     flexDirection: "row",

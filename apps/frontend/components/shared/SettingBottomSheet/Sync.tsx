@@ -21,8 +21,8 @@ export default function Sync() {
 
   // 값 변경 핸들러
   const handleValueChange = (value: number) => {
-    // 500 단위로 반올림
-    const rounded = Math.round(value / 500) * 500;
+    // 100 단위로 반올림
+    const rounded = Math.round(value / 100) * 100;
     updateSetting((prev) => {
       const newDelayMap = new Map(prev.delayMap);
       if (trackKey) newDelayMap.set(trackKey, rounded);
@@ -32,11 +32,11 @@ export default function Sync() {
   };
 
   const handleMinusPress = () => {
-    handleValueChange(Math.max(value - 500, -10000));
+    handleValueChange(Math.max(value - 100, -10000));
   };
 
   const handlePlusPress = () => {
-    handleValueChange(Math.min(value + 500, 10000));
+    handleValueChange(Math.min(value + 100, 10000));
   };
 
   return (
@@ -47,23 +47,25 @@ export default function Sync() {
       </Text>
 
       {/* 슬라이더 wrapper */}
-      <View style={styles.sliderWrapper}>
+      <View style={styles.controller} collapsable={false}>
         {/* 감소 버튼 */}
         <TouchableOpacity style={styles.arrowButton} onPress={handleMinusPress}>
           <MaterialIcons name="remove" size={18} style={styles.arrowIcon} />
         </TouchableOpacity>
 
-        {/* 슬라이더 */}
-        <Slider
-          minimumValue={-10000}
-          maximumValue={10000}
-          step={100}
-          value={value}
-          onValueChange={handleValueChange}
-          style={styles.slider}
-          thumbTintColor={colors.surface}
-          minimumTrackTintColor={colors.surface}
-        />
+        <View collapsable={false} style={styles.slider}>
+          {/* 슬라이더 */}
+          <Slider
+            minimumValue={-10000}
+            maximumValue={10000}
+            step={100}
+            value={value}
+            onValueChange={handleValueChange}
+            style={styles.slider}
+            thumbTintColor={colors.surface}
+            minimumTrackTintColor={colors.surface}
+          />
+        </View>
 
         {/* 증가 버튼 */}
         <TouchableOpacity style={styles.arrowButton} onPress={handlePlusPress}>
