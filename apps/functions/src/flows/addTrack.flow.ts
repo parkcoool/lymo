@@ -10,7 +10,7 @@ import { HttpsError } from "firebase-functions/https";
 
 import ai from "@/core/genkit";
 import getLyricsFromLRCLIB from "@/helpers/addTrack/getLyricsFromLRCLIB";
-import getLyricsFromDB from "@/helpers/generateDetail/getLyricsFromDB";
+import getLyricsFromDB from "@/helpers/shared/getLyricsFromDB";
 import getTrackFromDB from "@/helpers/shared/getTrackFromDB";
 import { searchSpotify } from "@/tools/searchSpotify";
 

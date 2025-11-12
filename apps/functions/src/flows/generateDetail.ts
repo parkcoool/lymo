@@ -13,9 +13,9 @@ import { logger } from "firebase-functions";
 import { HttpsError } from "firebase-functions/https";
 
 import ai from "@/core/genkit";
-import getLyricsFromDB from "@/helpers/generateDetail/getLyricsFromDB";
 import getTrackDetailFromDB from "@/helpers/generateDetail/getTrackDetailFromDB";
 import getProviderIdFromLLMModel from "@/helpers/shared/getAIModelName";
+import getLyricsFromDB from "@/helpers/shared/getLyricsFromDB";
 import getTrackFromDB from "@/helpers/shared/getTrackFromDB";
 import { groupLyrics } from "@/tools/groupLyrics";
 
