@@ -12,6 +12,7 @@ export const TrackDocSchema = z.object({
   duration: z.number(),
   publishedAt: z.string().nullable(),
   title: z.string(),
+  createdAt: z.date(),
 });
 export type TrackDoc = z.infer<typeof TrackDocSchema>;
 
