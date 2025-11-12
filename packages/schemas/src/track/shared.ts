@@ -33,9 +33,9 @@ export const TrackSchema = z.object({
   id: z.string().min(1),
   album: z.string().min(1).nullable(),
   artist: z.string().min(1),
-  coverUrl: z.string().url(),
+  coverUrl: z.string(),
   duration: z.number().positive(),
-  publishedAt: z.string().date().nullable(),
+  publishedAt: z.string().nullable(),
   title: z.string().min(1),
 });
 export type Track = z.infer<typeof TrackSchema>;

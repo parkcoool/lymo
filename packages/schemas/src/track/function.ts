@@ -14,8 +14,8 @@ import {
  * addTrackFlow 입력
  */
 export const AddTrackFlowInputSchema = z.object({
-  title: z.string().min(1),
-  artist: z.string().min(1),
+  title: z.string(),
+  artist: z.string(),
   duration: z.number().positive(),
 });
 export type AddTrackFlowInput = z.infer<typeof AddTrackFlowInputSchema>;
