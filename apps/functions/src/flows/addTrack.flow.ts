@@ -9,9 +9,9 @@ import { logger } from "firebase-functions";
 import { HttpsError } from "firebase-functions/https";
 
 import ai from "@/core/genkit";
-import getLyricsFromDB from "@/helpers/addTrack/getLyricsFromDB";
 import getLyricsFromLRCLIB from "@/helpers/addTrack/getLyricsFromLRCLIB";
-import getTrackFromDB from "@/helpers/addTrack/getTrackFromDB";
+import getLyricsFromDB from "@/helpers/generateDetail/getLyricsFromDB";
+import getTrackFromDB from "@/helpers/shared/getTrackFromDB";
 import { searchSpotify } from "@/tools/searchSpotify";
 
 /**
@@ -27,11 +27,11 @@ export const addTrackFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      // 0. title과 arist가 둘 다 빈 문자열인 경우
+      // 1) title과 arist가 둘 다 빈 문자열인 경우
       if (input.title.trim() === "" && input.artist.trim() === "")
         return { notFound: true as const };
 
-      // 1. Spotify에서 곡 검색
+      // 2) Spotify에서 곡 검색
       const spotifyResult = await searchSpotify({
         title: input.title,
         artist: input.artist,
@@ -40,12 +40,12 @@ export const addTrackFlow = ai.defineFlow(
       if (spotifyResult === null) return { notFound: true as const };
       const trackId = spotifyResult.id;
 
-      // 2. 중복 확인
+      // 3) 중복 확인
       const existingTrack = await getTrackFromDB(trackId);
       if (existingTrack) {
         const existingLyrics = await getLyricsFromDB(trackId);
 
-        // 2-1) 기존에 가사 상세 정보가 모두 있는 경우 바로 반환
+        // 3-1) 기존에 가사 상세 정보가 모두 있는 경우 바로 반환
         if (existingLyrics) {
           return {
             id: trackId,
@@ -56,7 +56,7 @@ export const addTrackFlow = ai.defineFlow(
         }
       }
 
-      // 3. LRCLIB에서 곡 검색
+      // 4) LRCLIB에서 곡 검색
       const lrclibResult = await getLyricsFromLRCLIB(
         spotifyResult.title,
         spotifyResult.artist,
@@ -65,7 +65,7 @@ export const addTrackFlow = ai.defineFlow(
       if (!lrclibResult) return { notFound: true as const };
       const lyricsProvider: LyricsProvider = "lrclib";
 
-      // 4. 트랙 및 가사 정보를 DB에 저장
+      // 5) 트랙 및 가사 정보를 DB에 저장
       const trackDocRef = admin
         .firestore()
         .collection("tracks")
@@ -90,7 +90,7 @@ export const addTrackFlow = ai.defineFlow(
         });
       });
 
-      // 5. 트랙 및 가사 정보 반환
+      // 6) 트랙 및 가사 정보 반환
       return { id: trackId, track, lyrics: lrclibResult.lyrics, notFound: false as const };
     } catch (error) {
       if (error instanceof Error) {

@@ -32,7 +32,7 @@ export const translateLyricsFlow = ai.defineFlow(
     streamSchema: TranslationSetEventSchema,
     outputSchema: TranslateLyricsOutputSchema,
   },
-  async ({ title, artist, album, lyrics }, { sendChunk }) => {
+  async ({ title, artist, album, lyrics, language }, { sendChunk }) => {
     let retry = 0;
     let result: (string | null)[] | null = null;
 
@@ -61,7 +61,7 @@ export const translateLyricsFlow = ai.defineFlow(
           Output: ["안녕, 세상!", "아름다운 날이야.", null]
       `,
         model: "googleai/gemini-2.5-flash-lite",
-        prompt: JSON.stringify({ title, artist, album, lyrics }),
+        prompt: JSON.stringify({ title, artist, album, lyrics, targetLanguage: language }),
         output: {
           schema: TranslateLyricsOutputSchema,
         },

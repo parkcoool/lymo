@@ -1,4 +1,5 @@
 import { ParagraphSummaryAppendEventSchema } from "@lymo/schemas/event";
+import { LanguageSchema } from "@lymo/schemas/shared";
 import { logger } from "firebase-functions";
 import { z } from "genkit";
 
@@ -13,6 +14,7 @@ export const SummarizeParagraphInputSchema = z.object({
       z.array(z.string().describe("A sentence in the lyrics")).describe("A paragraph in the lyrics")
     )
     .describe("The lyrics of the song, organized by paragraphs"),
+  language: LanguageSchema.describe("The target language of the summaries"),
 });
 
 export const SummarizeParagraphOutputSchema = z.array(z.string().nullable());
@@ -24,35 +26,36 @@ export const summarizeParagraphFlow = ai.defineFlow(
     streamSchema: ParagraphSummaryAppendEventSchema,
     outputSchema: SummarizeParagraphOutputSchema,
   },
-  async ({ title, artist, album, lyrics }, { sendChunk }) => {
+  async ({ title, artist, album, lyrics, language }, { sendChunk }) => {
     let retry = 0;
     let result: (string | null)[] | null = null;
 
     while (retry < 3) {
       const { stream, response } = ai.generateStream({
         system: `
-      ### 역할 (Role)
-      전문 가사 분석가
+          ### Role
+          Expert Lyric Analyst
 
-      ### 가사 분석 지침 (Lyrics Analysis Guidelines)
-      - 주어진 가사는 문단 별로 구분되어 있음
-      - 각 문단에 대해 분석문을 작성할 것
-      - 분석문은 해당 문단의 핵심 내용을 간결하게 요약할 것
-      - 분석문은 한 문단으로만 작성할 것
+          ### Lyrics Analysis Guidelines
+          - The given lyrics are separated by paragraphs.
+          - Write an analysis for each paragraph.
+          - The analysis must concisely summarize the core content of the respective paragraph.
+          - The analysis must be written as a single paragraph.
 
-      ### 출력 형식 (Output Format)
-      - 모든 요약문은 한국어로 작성할 것
-      - 각 문단에 해당하는 요약문을 배열에 담아 출력할 것
-      - 분석이 필요하지 않은 문단은 null로 처리할 것
+          ### Output Format
+          - All summaries must be written in the given target language.
+          - Output an array containing the summaries corresponding to each paragraph.
+          - Treat paragraphs that do not require analysis as null.
 
-      ### 출력 예시 (Output Example)
-      ["첫 번째 문단의 요약문", "두 번째 문단의 요약문", null, "네 번째 문단의 요약문"]
+          ### Output Example
+          ["Summary of the first paragraph", "Summary of the second paragraph", null, "Summary of the fourth paragraph"]
       `,
         prompt: JSON.stringify({
           title,
           artist,
           album,
           lyrics,
+          targetLanguage: language,
         }),
         output: {
           schema: z.array(z.string().nullable()),

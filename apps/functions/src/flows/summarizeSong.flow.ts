@@ -37,14 +37,14 @@ export const summarizeSongFlow = ai.defineFlow(
         ### Constraints
         - The summary must consist of 2 to 3 paragraphs.
         - Paragraphs must be separated by two newline characters.
-        - The summary must be written in the given language.
+        - The summary must be written in the given target language.
       `,
       prompt: JSON.stringify({
         title,
         artist,
         album,
         lyrics,
-        language,
+        targetLanguage: language,
       }),
       config: {
         temperature: 0.3,

@@ -1,6 +1,14 @@
 import { z } from "zod";
 
 import { LyricsDocSchema, TrackDocSchema } from "./doc";
+import {
+  CompleteEventSchema,
+  LyricsGroupEventSchema,
+  ParagraphSummaryAppendEventSchema,
+  SummaryAppendEventSchema,
+  TranslationSetEventSchema,
+} from "./event";
+import { LanguageSchema, LLMModelSchema, LyricsProviderSchema } from "./shared";
 
 /**
  * addTrackFlow 입력
@@ -31,3 +39,41 @@ export const AddTrackFlowOutputSchema = z.union([
   }),
 ]);
 export type AddTrackFlowOutput = z.infer<typeof AddTrackFlowOutputSchema>;
+
+/**
+ * generateDetailFlow 입력
+ */
+export const GenerateDetailFlowInputSchema = z.object({
+  id: z.string(),
+  language: LanguageSchema,
+  model: LLMModelSchema.optional(),
+  lyricsProvider: LyricsProviderSchema.optional(),
+});
+export type GenerateDetailFlowInput = z.infer<typeof GenerateDetailFlowInputSchema>;
+
+/**
+ * generateDetailFlow 스트림
+ */
+export const GenerateDetailFlowStreamSchema = z.discriminatedUnion("event", [
+  TranslationSetEventSchema,
+  LyricsGroupEventSchema,
+  SummaryAppendEventSchema,
+  ParagraphSummaryAppendEventSchema,
+  CompleteEventSchema,
+]);
+export type GenerateDetailFlowStream = z.infer<typeof GenerateDetailFlowStreamSchema>;
+
+/**
+ * generateDetailFlow 출력
+ */
+export const GenerateDetailFlowOutputSchema = z.union([
+  z.object({
+    providerId: z.string(),
+    success: z.literal(true),
+  }),
+
+  z.object({
+    providerId: z.undefined(),
+    success: z.literal(false),
+  }),
+]);

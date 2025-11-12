@@ -36,17 +36,11 @@ export type LyricsDoc = z.infer<typeof LyricsDocSchema>;
  *
  * 문서 경로: `tracks/{trackId}/details/{providerId}/contents/{language}`
  */
-export const TrackDetailDocSchema = z.union([
-  z.object({
-    summary: z.string(),
-    lyricsSplitIndices: z.array(z.number()),
-    lyricsProvider: z.string(),
-    translations: z.array(z.string().nullable()),
-    paragraphSummaries: z.array(z.string().nullable()),
-  }),
-
-  z.object({
-    isPending: z.literal(true),
-  }),
-]);
+export const TrackDetailDocSchema = z.object({
+  summary: z.string(),
+  lyricsSplitIndices: z.array(z.number()),
+  lyricsProvider: z.string(),
+  translations: z.array(z.string().nullable()),
+  paragraphSummaries: z.array(z.string().nullable()),
+});
 export type TrackDetailDoc = z.infer<typeof TrackDetailDocSchema>;
