@@ -16,7 +16,7 @@ export default async function getTrackDetailFromDB({
     .firestore()
     .collection("tracks")
     .doc(trackId)
-    .collection("detail")
+    .collection("details")
     .doc(providerId)
     .collection("contents")
     .doc(language) as DocumentReference<TrackDetailDoc>;

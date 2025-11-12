@@ -49,7 +49,6 @@ export const translateLyricsFlow = ai.defineFlow(
           ### Constraints
           - Do not arbitrarily combine or separate the sentence divisions of the input lyrics.
           - Treat parts that are untranslatable or meaningless (e.g., simple ad-libs/exclamations) as null.
-          - If the language of the source lyrics is the same as the target translation language, treat the line as null.
 
           ### Output Format
           - The translated sentences must match the order of the sentences in the input lyrics.
@@ -61,7 +60,13 @@ export const translateLyricsFlow = ai.defineFlow(
           Output: ["안녕, 세상!", "아름다운 날이야.", null]
       `,
         model: "googleai/gemini-2.5-flash-lite",
-        prompt: JSON.stringify({ title, artist, album, lyrics, targetLanguage: language }),
+        prompt: JSON.stringify({
+          title,
+          artist,
+          album,
+          lyrics,
+          targetLanguage: language,
+        }),
         output: {
           schema: TranslateLyricsOutputSchema,
         },

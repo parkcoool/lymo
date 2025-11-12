@@ -26,7 +26,7 @@ import { translateLyricsFlow } from "./translateLyrics.flow";
 /**
  * @description 트랙 상세 정보를 생성하는 플로우
  */
-export const generateDetail = ai.defineFlow(
+export const generateDetailFlow = ai.defineFlow(
   {
     name: "generateDetailFlow",
     inputSchema: GenerateDetailFlowInputSchema,
