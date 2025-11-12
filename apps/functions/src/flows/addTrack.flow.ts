@@ -24,6 +24,11 @@ export const addTrackFlow = ai.defineFlow(
     outputSchema: AddTrackFlowOutputSchema,
   },
   async (input, { sendChunk }) => {
+    // 0. title과 arist가 둘 다 빈 문자열인 경우
+    if (input.title.trim() === "" && input.artist.trim() === "") {
+      return { notFound: true };
+    }
+
     // 1. Spotify에서 곡 검색
     const spotifyResult = await searchSpotify({
       title: input.title,
