@@ -3,7 +3,7 @@ import type {
   ParagraphSummaryAppendEvent,
   TranslationSetEvent,
 } from "@lymo/schemas/event";
-import type { Lyrics } from "@lymo/schemas/shared";
+import type { Language, Lyrics } from "@lymo/schemas/shared";
 import type { StreamingCallback } from "genkit";
 
 import { summarizeParagraphFlow } from "@/flows/summarizeParagraph.flow";
@@ -18,7 +18,8 @@ export default async function processLyrics(
     TranslationSetEvent | LyricsGroupEvent | ParagraphSummaryAppendEvent
   >,
   spotifyResult: SpotifyResult,
-  lrclibResult: LRCLIBResult
+  lrclibResult: LRCLIBResult,
+  language: Language
 ) {
   // 가사 번역을 위해 `translateLyricsFlow` 플로우 실행
   const { stream: translateLyricsStream, output: translateLyricsOutput } =
@@ -27,6 +28,7 @@ export default async function processLyrics(
       artist: spotifyResult.artist.join(", "),
       album: spotifyResult.album,
       lyrics: lrclibResult.lyrics,
+      language,
     });
 
   // 문단 구분을 위해 `groupLyrics` 툴 실행

@@ -9,9 +9,11 @@ import { logger } from "firebase-functions";
 import { HttpsError } from "firebase-functions/https";
 
 import ai from "@/core/genkit";
-import checkDuplication from "@/helpers/addTrack/checkDuplication";
+import checkTrackDetailExists from "@/helpers/addTrack/checkTrackDetailExists";
+import checkTrackExists from "@/helpers/addTrack/checkTrackExists";
 import getLyricsFromLRCLIB from "@/helpers/addTrack/getLyricsFromLRCLIB";
 import processLyrics from "@/helpers/addTrack/processLyrics";
+import saveTrackDetailToFirestore from "@/helpers/addTrack/saveTrackDetailToFirestore";
 import saveTrackToFirestore from "@/helpers/addTrack/saveTrackToFirestore";
 import sendInitialChunks from "@/helpers/addTrack/sendInitialChunks";
 import summarizeSong from "@/helpers/addTrack/summarizeSong";
@@ -41,8 +43,16 @@ export const addTrackFlow = ai.defineFlow(
         duration: input.duration,
       });
       if (spotifyResult === null) return { notFound: true };
+      const trackId = spotifyResult.id;
 
-      // 2. LRCLIB에서 곡 검색
+      // 2. 중복 확인
+      const [trackExists, trackDetailExists] = await Promise.all([
+        checkTrackExists(trackId),
+        checkTrackDetailExists(trackId, input.language),
+      ]);
+      if (trackExists && trackDetailExists) return { duplicate: true, id: trackId };
+
+      // 3. LRCLIB에서 곡 검색
       const lrclibResult = await getLyricsFromLRCLIB(
         spotifyResult.title,
         spotifyResult.artist,
@@ -50,24 +60,23 @@ export const addTrackFlow = ai.defineFlow(
       );
       if (!lrclibResult) return { notFound: true };
 
-      // 3. 중복 확인
-      const duplicatedId = await checkDuplication(spotifyResult.id);
-      if (duplicatedId) return { duplicate: true, id: duplicatedId };
-
       // 4. 메타데이터 및 가사 전송
       sendInitialChunks(sendChunk, spotifyResult, lrclibResult);
 
       // 5. 가사 그룹화, 번역, 문단 요약 및 곡 요약 병렬 처리
       const [lyrics, summary] = await Promise.all([
         // 가사 그룹화, 번역, 문단 요약
-        processLyrics(sendChunk, spotifyResult, lrclibResult),
+        processLyrics(sendChunk, spotifyResult, lrclibResult, input.language),
 
         // 곡 요약
-        summarizeSong(sendChunk, spotifyResult, lrclibResult),
+        summarizeSong(sendChunk, spotifyResult, lrclibResult, input.language),
       ]);
 
-      // 6. Firestore에 음악 메타데이터 및 가사 등록
-      await saveTrackToFirestore(spotifyResult, summary, lyrics);
+      // 6. Firestore에 음악 정보 저장
+      await Promise.all([
+        saveTrackToFirestore(trackId, spotifyResult),
+        saveTrackDetailToFirestore(trackId, { lyrics, summary, language: input.language }),
+      ]);
 
       // 7. 완료 전송
       sendChunk({ event: "complete", data: null });

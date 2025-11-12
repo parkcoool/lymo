@@ -1,4 +1,5 @@
 import { TranslationSetEventSchema } from "@lymo/schemas/event";
+import { LanguageSchema } from "@lymo/schemas/shared";
 import { logger } from "firebase-functions";
 import { z } from "genkit";
 
@@ -17,6 +18,7 @@ export const TranslateLyricsInputSchema = z.object({
       })
     )
     .describe("The lyrics of the song"),
+  language: LanguageSchema.describe("The target language for translation"),
 });
 
 export const TranslateLyricsOutputSchema = z.array(
@@ -37,24 +39,26 @@ export const translateLyricsFlow = ai.defineFlow(
     while (retry < 3) {
       const { stream, response } = ai.generateStream({
         system: `
-      ### 정체성 (Identity)
-      당신은 음악의 가사를 번역하는 전문가입니다.
+          ### Identity
+          You are an expert in translating song lyrics.
 
-      ### 핵심 원칙 (Core Principles)
-      - 의역 우선, 직역 지양: 이것이 가장 중요한 원칙입니다. 단어 대 단어의 기계적인 번역을 절대적으로 피해야 합니다.
-      - 문화적 초월: 관용구, 속어, 문화적 배경이 짙은 표현은 이해하고 공감할 수 있는 자연스러운 표현으로 재창조해야 합니다.
+          ### Core Principles
+          - Prioritize adaptation, avoid literal translation: This is the most crucial principle. You must strictly avoid mechanical word-for-word translation.
+          - Cultural Transcendence: Idioms, slang, and expressions with strong cultural backgrounds must be re-created into natural expressions that can be understood and resonated with.
 
-      ### 제약 조건 (Constraints)
-      - 입력된 가사의 문장 구분을 임의로 합치거나 나누지 마세요.
-      - 번역이 불가능하거나 무의미한 부분(예: 단순 추임새)은 null로 처리하세요.
+          ### Constraints
+          - Do not arbitrarily combine or separate the sentence divisions of the input lyrics.
+          - Treat parts that are untranslatable or meaningless (e.g., simple ad-libs/exclamations) as null.
+          - If the language of the source lyrics is the same as the target translation language, treat the line as null.
 
-      ### 출력 형식 (Output Format)
-      - 번역된 문장은 입력된 가사의 문장 순서와 일치해야 합니다.
-      - 번역한 문장만 포함된 1차원 배열을 반환하세요.
+          ### Output Format
+          - The translated sentences must match the order of the sentences in the input lyrics.
+          - Return a one-dimensional array containing only the translated sentences.
 
-      ### 출력 예시 (Output Example)
-      입력: ["Hello, world!", "It's a beautiful day."]
-      출력: ["안녕, 세상!", "아름다운 날이야."]
+          ### Output Example
+          Target Language: Korean
+          Input: ["Hello, world!", "It's a beautiful day.", "안녕하세요!"]
+          Output: ["안녕, 세상!", "아름다운 날이야.", null]
       `,
         model: "googleai/gemini-2.5-flash-lite",
         prompt: JSON.stringify({ title, artist, album, lyrics }),

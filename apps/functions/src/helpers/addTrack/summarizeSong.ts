@@ -1,4 +1,5 @@
 import { SummaryAppendEvent } from "@lymo/schemas/event";
+import { Language } from "@lymo/schemas/shared";
 import { StreamingCallback } from "genkit";
 
 import { summarizeSongFlow } from "@/flows/summarizeSong.flow";
@@ -8,13 +9,15 @@ import type { SpotifyResult } from "@/types/spotify";
 export default async function summarizeSong(
   sendChunk: StreamingCallback<SummaryAppendEvent>,
   spotifyResult: SpotifyResult,
-  lrclibResult: LRCLIBResult
+  lrclibResult: LRCLIBResult,
+  language: Language
 ) {
   const { stream: summarizeSongStream, output: summarizeSongOutput } = summarizeSongFlow.stream({
     title: spotifyResult.title,
     artist: spotifyResult.artist.join(", "),
     album: spotifyResult.album,
     lyrics: lrclibResult.lyrics.map((line) => line.text),
+    language,
   });
 
   // summarizeSongStream 처리

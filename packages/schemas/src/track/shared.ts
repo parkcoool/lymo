@@ -49,3 +49,9 @@ export const TrackDetailSchema = z.object({
   summary: z.string(),
 });
 export type TrackDetail = z.infer<typeof TrackDetailSchema>;
+
+/**
+ * 언어
+ */
+export const LanguageSchema = z.enum(["en", "ko"]);
+export type Language = z.infer<typeof LanguageSchema>;
