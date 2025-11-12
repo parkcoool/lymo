@@ -1,8 +1,12 @@
+import { randomUUID } from "crypto";
+
 import {
   AddTrackFlowInputSchema,
   AddTrackFlowStreamSchema,
   AddTrackFlowOutputSchema,
 } from "@lymo/schemas/function";
+import { logger } from "firebase-functions";
+import { HttpsError } from "firebase-functions/https";
 
 import ai from "@/core/genkit";
 import checkDuplication from "@/helpers/addTrack/checkDuplication";
@@ -24,53 +28,63 @@ export const addTrackFlow = ai.defineFlow(
     outputSchema: AddTrackFlowOutputSchema,
   },
   async (input, { sendChunk }) => {
-    // 0. title과 arist가 둘 다 빈 문자열인 경우
-    if (input.title.trim() === "" && input.artist.trim() === "") {
+    try {
+      // 0. title과 arist가 둘 다 빈 문자열인 경우
+      if (input.title.trim() === "" && input.artist.trim() === "") {
+        return { notFound: true };
+      }
+
+      // 1. Spotify에서 곡 검색
+      const spotifyResult = await searchSpotify({
+        title: input.title,
+        artist: input.artist,
+        duration: input.duration,
+      });
+      if (spotifyResult === null) return { notFound: true };
+
+      // 2. LRCLIB에서 곡 검색
+      const lrclibResult = await getLyricsFromLRCLIB(
+        spotifyResult.title,
+        spotifyResult.artist,
+        spotifyResult.duration
+      );
+      if (!lrclibResult) return { notFound: true };
+
+      // 3. 중복 확인
+      const duplicatedId = await checkDuplication(spotifyResult.id);
+      if (duplicatedId) return { duplicate: true, id: duplicatedId };
+
+      // 4. 메타데이터 및 가사 전송
+      sendInitialChunks(sendChunk, spotifyResult, lrclibResult);
+
+      // 5. 가사 그룹화, 번역, 문단 요약 및 곡 요약 병렬 처리
+      const [lyrics, summary] = await Promise.all([
+        // 가사 그룹화, 번역, 문단 요약
+        processLyrics(sendChunk, spotifyResult, lrclibResult),
+
+        // 곡 요약
+        summarizeSong(sendChunk, spotifyResult, lrclibResult),
+      ]);
+
+      // 6. Firestore에 음악 메타데이터 및 가사 등록
+      await saveTrackToFirestore(spotifyResult, summary, lyrics);
+
+      // 7. 완료 전송
+      sendChunk({ event: "complete", data: null });
+
+      // 8. 결과 반환
+      return {
+        duplicate: false,
+        id: spotifyResult.id,
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        const errorId = randomUUID();
+        logger.error("addTrackFlow error occurred.", { ...error, errorId });
+        throw new HttpsError("internal", "서버에서 오류가 발생했습니다.", { errorId });
+      }
+
       return { notFound: true };
     }
-
-    // 1. Spotify에서 곡 검색
-    const spotifyResult = await searchSpotify({
-      title: input.title,
-      artist: input.artist,
-      duration: input.duration,
-    });
-    if (spotifyResult === null) return { notFound: true };
-
-    // 2. LRCLIB에서 곡 검색
-    const lrclibResult = await getLyricsFromLRCLIB(
-      spotifyResult.title,
-      spotifyResult.artist,
-      spotifyResult.duration
-    );
-    if (!lrclibResult) return { notFound: true };
-
-    // 3. 중복 확인
-    const duplicatedId = await checkDuplication(spotifyResult.id);
-    if (duplicatedId) return { duplicate: true, id: duplicatedId };
-
-    // 4. 메타데이터 및 가사 전송
-    sendInitialChunks(sendChunk, spotifyResult, lrclibResult);
-
-    // 5. 가사 그룹화, 번역, 문단 요약 및 곡 요약 병렬 처리
-    const [lyrics, summary] = await Promise.all([
-      // 가사 그룹화, 번역, 문단 요약
-      processLyrics(sendChunk, spotifyResult, lrclibResult),
-
-      // 곡 요약
-      summarizeSong(sendChunk, spotifyResult, lrclibResult),
-    ]);
-
-    // 6. Firestore에 음악 메타데이터 및 가사 등록
-    await saveTrackToFirestore(spotifyResult, summary, lyrics);
-
-    // 7. 완료 전송
-    sendChunk({ event: "complete", data: null });
-
-    // 8. 결과 반환
-    return {
-      duplicate: false,
-      id: spotifyResult.id,
-    };
   }
 );
