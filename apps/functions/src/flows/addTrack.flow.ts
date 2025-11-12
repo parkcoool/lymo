@@ -82,6 +82,7 @@ export const addTrackFlow = ai.defineFlow(
         publishedAt: spotifyResult.publishedAt,
         title: spotifyResult.title,
         createdAt: new Date(),
+        providers: [],
       };
 
       await admin.firestore().runTransaction(async (transaction) => {

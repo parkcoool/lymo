@@ -6,13 +6,13 @@ import getTrack from "@/apis/getTrack";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 /**
- * @description 사용자가 직접 선택한 곡의 곡 정보를 가져오는 suspenseQuery 훅입니다.
+ * @description 사용자가 직접 선택한 곡의 곡 상세 정보를 가져오는 suspenseQuery 훅입니다.
  *
  * `trackSource`의 곡 ID로 곡을 조회합니다.
  *
  * @returns suspenseQuery 결과
  */
-export default function useManualTrackQuery() {
+export default function useManualTrackDetailQuery() {
   const { trackSource } = useTrackSourceStore();
 
   // trackSource에서 곡 ID 가져오기

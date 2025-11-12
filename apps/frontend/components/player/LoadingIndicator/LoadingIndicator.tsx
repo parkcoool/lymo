@@ -8,7 +8,7 @@ import { styles } from "./LoadingIndicator.styles";
 
 interface LoadingIndicatorProps {
   title?: string;
-  artist?: string;
+  artist?: string[];
   album?: string | null;
   coverUrl?: string;
 }
@@ -37,12 +37,7 @@ export default function LoadingIndicator({
         }}
       >
         {/* 곡 메타데이터 및 설명 */}
-        <SummarySkeleton
-          title={title}
-          artist={artist}
-          album={album}
-          coverUrl={coverUrl}
-        />
+        <SummarySkeleton title={title} artist={artist} album={album} coverUrl={coverUrl} />
 
         {/* 가사 */}
         <View style={styles.lyricsSkeletonContainer}>

@@ -122,12 +122,22 @@ export const generateDetailFlow = ai.defineFlow(
         .doc(providerId)
         .collection("contents")
         .doc(input.language) as DocumentReference<TrackDetailDoc>;
-      await trackDetailDocRef.set({
-        summary,
-        lyricsSplitIndices: breaks,
-        lyricsProvider: rawLyrics.provider,
-        translations,
-        paragraphSummaries,
+      const trackDocRef = admin.firestore().collection("tracks").doc(input.id);
+
+      admin.firestore().runTransaction(async (transaction) => {
+        // 8-1) 트랙 상세 정보 저장
+        transaction.set(trackDetailDocRef, {
+          summary,
+          lyricsSplitIndices: breaks,
+          lyricsProvider: rawLyrics.provider,
+          translations,
+          paragraphSummaries,
+        });
+
+        // 8-2) 제공자 추가
+        transaction.update(trackDocRef, {
+          providers: admin.firestore.FieldValue.arrayUnion(providerId),
+        });
       });
 
       // 9) 최종 결과 반환
