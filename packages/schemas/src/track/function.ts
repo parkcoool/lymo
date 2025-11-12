@@ -1,15 +1,6 @@
 import { z } from "zod";
 
-import {
-  MetadataUpdateEventSchema,
-  SummaryAppendEventSchema,
-  LyricsUpdateEventSchema,
-  TranslationSetEventSchema,
-  ParagraphSummaryAppendEventSchema,
-  CompleteEventSchema,
-  LyricsGroupEventSchema,
-} from "./event";
-import { LanguageSchema } from "./shared";
+import { LyricsDocSchema, TrackDocSchema } from "./doc";
 
 /**
  * addTrackFlow 입력
@@ -18,30 +9,25 @@ export const AddTrackFlowInputSchema = z.object({
   title: z.string(),
   artist: z.string(),
   duration: z.number().positive(),
-  language: LanguageSchema,
 });
 export type AddTrackFlowInput = z.infer<typeof AddTrackFlowInputSchema>;
 
 /**
- * addTrackFlow 스트림
- */
-export const AddTrackFlowStreamSchema = z.discriminatedUnion("event", [
-  MetadataUpdateEventSchema,
-  SummaryAppendEventSchema,
-  LyricsUpdateEventSchema,
-  TranslationSetEventSchema,
-  LyricsGroupEventSchema,
-  ParagraphSummaryAppendEventSchema,
-  CompleteEventSchema,
-]);
-export type AddTrackFlowStream = z.infer<typeof AddTrackFlowStreamSchema>;
-
-/**
  * addTrackFlow 출력
  */
-export const AddTrackFlowOutputSchema = z.object({
-  id: z.string().min(1).optional(),
-  duplicate: z.boolean().optional(),
-  notFound: z.boolean().optional(),
-});
+export const AddTrackFlowOutputSchema = z.union([
+  z.object({
+    id: z.string(),
+    track: TrackDocSchema,
+    lyrics: LyricsDocSchema.shape.lyrics,
+    notFound: z.literal(false),
+  }),
+
+  z.object({
+    id: z.undefined(),
+    track: z.undefined(),
+    lyrics: z.undefined(),
+    notFound: z.literal(true),
+  }),
+]);
 export type AddTrackFlowOutput = z.infer<typeof AddTrackFlowOutputSchema>;

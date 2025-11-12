@@ -1,40 +1,33 @@
 import { randomUUID } from "crypto";
 
-import {
-  AddTrackFlowInputSchema,
-  AddTrackFlowStreamSchema,
-  AddTrackFlowOutputSchema,
-} from "@lymo/schemas/function";
+import { LyricsDoc, TrackDoc } from "@lymo/schemas/doc";
+import { AddTrackFlowInputSchema, AddTrackFlowOutputSchema } from "@lymo/schemas/function";
+import { LyricsProvider } from "@lymo/schemas/shared";
+import admin from "firebase-admin";
+import { DocumentReference } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { HttpsError } from "firebase-functions/https";
 
 import ai from "@/core/genkit";
-import checkTrackDetailExists from "@/helpers/addTrack/checkTrackDetailExists";
-import checkTrackExists from "@/helpers/addTrack/checkTrackExists";
+import getLyricsFromDB from "@/helpers/addTrack/getLyricsFromDB";
 import getLyricsFromLRCLIB from "@/helpers/addTrack/getLyricsFromLRCLIB";
-import processLyrics from "@/helpers/addTrack/processLyrics";
-import saveTrackDetailToFirestore from "@/helpers/addTrack/saveTrackDetailToFirestore";
-import saveTrackToFirestore from "@/helpers/addTrack/saveTrackToFirestore";
-import sendInitialChunks from "@/helpers/addTrack/sendInitialChunks";
-import summarizeSong from "@/helpers/addTrack/summarizeSong";
+import getTrackFromDB from "@/helpers/addTrack/getTrackFromDB";
 import { searchSpotify } from "@/tools/searchSpotify";
 
 /**
- * 음악 제목과 아티스트명을 입력받아 정확한 메타데이터와 가사를 포함한 음악 정보를 스트리밍하고 DB에 등록하는 플로우
+ * 음악 제목과 아티스트명을 입력받아 메타데이터와 가사 원문을 가져오고 DB에 저장하는 플로우
  */
 export const addTrackFlow = ai.defineFlow(
   {
     name: "addTrackFlow",
     inputSchema: AddTrackFlowInputSchema,
-    streamSchema: AddTrackFlowStreamSchema,
     outputSchema: AddTrackFlowOutputSchema,
   },
-  async (input, { sendChunk }) => {
+  async (input) => {
     try {
       // 0. title과 arist가 둘 다 빈 문자열인 경우
-      if (input.title.trim() === "" && input.artist.trim() === "") {
-        return { notFound: true };
-      }
+      if (input.title.trim() === "" && input.artist.trim() === "")
+        return { notFound: true as const };
 
       // 1. Spotify에서 곡 검색
       const spotifyResult = await searchSpotify({
@@ -42,15 +35,24 @@ export const addTrackFlow = ai.defineFlow(
         artist: input.artist,
         duration: input.duration,
       });
-      if (spotifyResult === null) return { notFound: true };
+      if (spotifyResult === null) return { notFound: true as const };
       const trackId = spotifyResult.id;
 
       // 2. 중복 확인
-      const [trackExists, trackDetailExists] = await Promise.all([
-        checkTrackExists(trackId),
-        checkTrackDetailExists(trackId, input.language),
-      ]);
-      if (trackExists && trackDetailExists) return { duplicate: true, id: trackId };
+      const existingTrack = await getTrackFromDB(trackId);
+      if (existingTrack) {
+        const existingLyrics = await getLyricsFromDB(trackId);
+
+        // 2-1) 기존에 가사 상세 정보가 모두 있는 경우 바로 반환
+        if (existingLyrics) {
+          return {
+            id: trackId,
+            track: existingTrack,
+            lyrics: existingLyrics.lyrics,
+            notFound: false as const,
+          };
+        }
+      }
 
       // 3. LRCLIB에서 곡 검색
       const lrclibResult = await getLyricsFromLRCLIB(
@@ -58,34 +60,36 @@ export const addTrackFlow = ai.defineFlow(
         spotifyResult.artist,
         spotifyResult.duration
       );
-      if (!lrclibResult) return { notFound: true };
+      if (!lrclibResult) return { notFound: true as const };
+      const lyricsProvider: LyricsProvider = "lrclib";
 
-      // 4. 메타데이터 및 가사 전송
-      sendInitialChunks(sendChunk, spotifyResult, lrclibResult);
+      // 4. 트랙 및 가사 정보를 DB에 저장
+      const trackDocRef = admin
+        .firestore()
+        .collection("tracks")
+        .doc(trackId) as DocumentReference<TrackDoc>;
+      const lyricsDocRef = trackDocRef
+        .collection("lyrics")
+        .doc(lyricsProvider) as DocumentReference<LyricsDoc>;
 
-      // 5. 가사 그룹화, 번역, 문단 요약 및 곡 요약 병렬 처리
-      const [lyrics, summary] = await Promise.all([
-        // 가사 그룹화, 번역, 문단 요약
-        processLyrics(sendChunk, spotifyResult, lrclibResult, input.language),
-
-        // 곡 요약
-        summarizeSong(sendChunk, spotifyResult, lrclibResult, input.language),
-      ]);
-
-      // 6. Firestore에 음악 정보 저장
-      await Promise.all([
-        saveTrackToFirestore(trackId, spotifyResult),
-        saveTrackDetailToFirestore(trackId, { lyrics, summary, language: input.language }),
-      ]);
-
-      // 7. 완료 전송
-      sendChunk({ event: "complete", data: null });
-
-      // 8. 결과 반환
-      return {
-        duplicate: false,
-        id: spotifyResult.id,
+      const track: TrackDoc = {
+        album: spotifyResult.album,
+        artist: spotifyResult.artist,
+        coverUrl: spotifyResult.coverUrl,
+        duration: spotifyResult.duration,
+        publishedAt: spotifyResult.publishedAt,
+        title: spotifyResult.title,
       };
+
+      await Promise.all([
+        trackDocRef.set(track),
+        lyricsDocRef.set({
+          lyrics: lrclibResult.lyrics,
+        }),
+      ]);
+
+      // 5. 트랙 및 가사 정보 반환
+      return { id: trackId, track, lyrics: lrclibResult.lyrics, notFound: false as const };
     } catch (error) {
       if (error instanceof Error) {
         const errorId = randomUUID();
@@ -93,7 +97,7 @@ export const addTrackFlow = ai.defineFlow(
         throw new HttpsError("internal", "서버에서 오류가 발생했습니다.", { errorId });
       }
 
-      return { notFound: true };
+      return { notFound: true as const };
     }
   }
 );

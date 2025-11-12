@@ -7,7 +7,7 @@ import { z } from "zod";
  */
 export const TrackDocSchema = z.object({
   album: z.string().nullable(),
-  artist: z.string(),
+  artist: z.array(z.string()),
   coverUrl: z.string(),
   duration: z.number(),
   publishedAt: z.string().nullable(),
@@ -20,7 +20,7 @@ export type TrackDoc = z.infer<typeof TrackDocSchema>;
  *
  * 문서 경로: `tracks/{trackId}/lyrics/{lyricsProvider}`
  */
-export const TrackLyricsDocSchema = z.object({
+export const LyricsDocSchema = z.object({
   lyrics: z.array(
     z.object({
       text: z.string(),
@@ -29,6 +29,7 @@ export const TrackLyricsDocSchema = z.object({
     })
   ),
 });
+export type LyricsDoc = z.infer<typeof LyricsDocSchema>;
 
 /**
  * Track 상세 문서
@@ -42,3 +43,4 @@ export const TrackDetailDocSchema = z.object({
   translations: z.array(z.string().nullable()),
   paragraphSummaries: z.array(z.string().nullable()),
 });
+export type TrackDetailDoc = z.infer<typeof TrackDetailDocSchema>;
