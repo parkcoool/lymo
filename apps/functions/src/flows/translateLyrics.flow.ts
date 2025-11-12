@@ -1,4 +1,5 @@
 import { TranslationSetEventSchema } from "@lymo/schemas/event";
+import { logger } from "firebase-functions";
 import { z } from "genkit";
 
 import ai from "@/core/genkit";
@@ -30,8 +31,12 @@ export const translateLyricsFlow = ai.defineFlow(
     outputSchema: TranslateLyricsOutputSchema,
   },
   async ({ title, artist, album, lyrics }, { sendChunk }) => {
-    const { stream, response } = ai.generateStream({
-      system: `
+    let retry = 0;
+    let result: (string | null)[] | null = null;
+
+    while (retry < 3) {
+      const { stream, response } = ai.generateStream({
+        system: `
       ### 정체성 (Identity)
       당신은 음악의 가사를 번역하는 전문가입니다.
 
@@ -51,41 +56,53 @@ export const translateLyricsFlow = ai.defineFlow(
       입력: ["Hello, world!", "It's a beautiful day."]
       출력: ["안녕, 세상!", "아름다운 날이야."]
       `,
-      model: "googleai/gemini-2.5-flash-lite",
-      prompt: JSON.stringify({ title, artist, album, lyrics }),
-      output: {
-        schema: TranslateLyricsOutputSchema,
-      },
-      config: {
-        temperature: 0.3,
-      },
-    });
+        model: "googleai/gemini-2.5-flash-lite",
+        prompt: JSON.stringify({ title, artist, album, lyrics }),
+        output: {
+          schema: TranslateLyricsOutputSchema,
+        },
+        config: {
+          temperature: 0.3,
+        },
+      });
 
-    let s = 0,
-      i = 0;
-    for await (const chunk of stream) {
-      const translations =
-        chunk.output?.map((item) => (item?.trim() === "null" ? null : item)) ?? null;
-      if (translations === null) continue;
-      for (; s < translations.length; s++, i = 0) {
-        const translation = translations[s];
-        if (translation === null) continue;
-        sendChunk({
-          event: "translation_set",
-          data: {
-            sentenceIndex: s,
-            text: translation.slice(i, translation.length),
-          },
-        });
-        i = translation.length;
+      let s = 0,
+        i = 0;
+      for await (const chunk of stream) {
+        const translations =
+          chunk.output?.map((item) => (item?.trim() === "null" ? null : item)) ?? null;
+        if (translations === null) continue;
+        for (; s < translations.length; s++, i = 0) {
+          const translation = translations[s];
+          if (translation === null) continue;
+          sendChunk({
+            event: "translation_set",
+            data: {
+              sentenceIndex: s,
+              text: translation.slice(i, translation.length),
+            },
+          });
+          i = translation.length;
 
-        if (s === translations.length - 1) break;
+          if (s === translations.length - 1) break;
+        }
       }
+
+      result =
+        (await response).output?.map((item) => (item?.trim() === "null" ? null : item)) ?? null;
+
+      // 번역 문장 개수가 입력된 문장 개수와 일치하는지 확인
+      if (result !== null && result.length === lyrics.length) return result;
+      else retry++;
     }
 
-    const result =
-      (await response).output?.map((item) => (item?.trim() === "null" ? null : item)) ?? null;
-    if (result === null) return [];
-    return result;
+    // 3회 재시도 후에도 실패한 경우 마지막 결과 반환
+    logger.warn(`translateLyricsFlow: translation count mismatch after retries.`, {
+      expected: lyrics.length,
+      actual: result?.length ?? 0,
+      retries: retry,
+      track: { title, artist, album },
+    });
+    return result ?? [];
   }
 );

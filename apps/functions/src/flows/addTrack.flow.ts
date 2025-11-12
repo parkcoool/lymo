@@ -80,7 +80,7 @@ export const addTrackFlow = ai.defineFlow(
     } catch (error) {
       if (error instanceof Error) {
         const errorId = randomUUID();
-        logger.error("addTrackFlow error occurred.", { ...error, errorId });
+        logger.error("addTrackFlow: error occurred.", { ...error, errorId });
         throw new HttpsError("internal", "서버에서 오류가 발생했습니다.", { errorId });
       }
 
