@@ -55,3 +55,9 @@ export type TrackDetail = z.infer<typeof TrackDetailSchema>;
  */
 export const LanguageSchema = z.enum(["en", "ko"]);
 export type Language = z.infer<typeof LanguageSchema>;
+
+/**
+ * 가사 제공자
+ */
+export const LyricsProviderSchema = z.enum(["lrclib", "none"]);
+export type LyricsProvider = z.infer<typeof LyricsProviderSchema>;
