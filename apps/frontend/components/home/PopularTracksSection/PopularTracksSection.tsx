@@ -32,11 +32,7 @@ export default function PopularTracksSection() {
     <View style={styles.section}>
       {/* 섹션 헤더 */}
       <View style={styles.sectionHeader}>
-        <MaterialIcons
-          name="trending-up"
-          size={24}
-          style={styles.sectionIcon}
-        />
+        <MaterialIcons name="trending-up" size={24} style={styles.sectionIcon} />
         <Text style={styles.sectionTitle}>인기</Text>
       </View>
 

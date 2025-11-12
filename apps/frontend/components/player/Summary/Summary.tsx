@@ -1,13 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
-import {
-  View,
-  Image,
-  Text,
-  TouchableOpacity,
-  type TextLayoutEvent,
-} from "react-native";
+import { View, Image, Text, TouchableOpacity, type TextLayoutEvent } from "react-native";
 
 import useCoverColorQuery from "@/hooks/useCoverColorQuery";
 import useWindowSize from "@/hooks/useWindowSize";
@@ -18,7 +12,7 @@ import { styles } from "./Summary.styles";
 interface SummaryProps {
   coverUrl: string;
   title: string;
-  artist: string;
+  artist: string[];
   album: string | null;
   publishedAt: string | null;
   summary: string;
@@ -49,12 +43,7 @@ export default function Summary({
 
   return (
     <View style={styles.wrapper}>
-      <View
-        style={[
-          styles.coverWrapper,
-          { width: windowWidth, height: windowWidth },
-        ]}
-      >
+      <View style={[styles.coverWrapper, { width: windowWidth, height: windowWidth }]}>
         {/* 커버 이미지 */}
         <Image source={{ uri: coverUrl }} style={styles.cover} />
 
@@ -63,10 +52,7 @@ export default function Summary({
           style={styles.coverGradient}
           colors={["transparent", coverColor ?? "#000000"]}
         />
-        <LinearGradient
-          style={styles.coverGradient}
-          colors={["transparent", "#000000AA"]}
-        />
+        <LinearGradient style={styles.coverGradient} colors={["transparent", "#000000AA"]} />
 
         {/* 곡 정보 */}
         <View style={styles.trackMetadata}>
@@ -89,11 +75,7 @@ export default function Summary({
       {/* 요약이 8줄 이상일 때만 자세히 보기 버튼 노출 */}
       {summaryLine > 8 && !expanded && (
         <TouchableOpacity style={styles.summaryButton} onPress={handleExpand}>
-          <MaterialIcons
-            name={"expand-more"}
-            size={20}
-            style={styles.summaryButtonContent}
-          />
+          <MaterialIcons name={"expand-more"} size={20} style={styles.summaryButtonContent} />
           <Text style={styles.summaryButtonContent}>자세히 보기</Text>
         </TouchableOpacity>
       )}

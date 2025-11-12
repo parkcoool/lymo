@@ -37,7 +37,7 @@ export default function useDeviceTrackQuery() {
       initialValue: {
         id: "",
         title: "",
-        artist: "",
+        artist: [],
         album: null,
         coverUrl: "",
         publishedAt: null,

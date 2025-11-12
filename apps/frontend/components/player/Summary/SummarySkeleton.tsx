@@ -11,7 +11,7 @@ import { styles } from "./Summary.styles";
 interface SummaryProps {
   coverUrl: string;
   title: string;
-  artist: string;
+  artist: string[];
   album: string | null;
   publishedAt: string | null;
   summary: string;
@@ -30,12 +30,7 @@ export default function SummarySkeleton({
 
   return (
     <View style={styles.wrapper}>
-      <View
-        style={[
-          styles.coverWrapper,
-          { width: windowWidth, height: windowWidth },
-        ]}
-      >
+      <View style={[styles.coverWrapper, { width: windowWidth, height: windowWidth }]}>
         {/* 커버 이미지 */}
         <Image source={{ uri: coverUrl }} style={styles.cover} />
 
@@ -44,10 +39,7 @@ export default function SummarySkeleton({
           style={styles.coverGradient}
           colors={["transparent", coverColor ?? "#000000"]}
         />
-        <LinearGradient
-          style={styles.coverGradient}
-          colors={["transparent", "#000000AA"]}
-        />
+        <LinearGradient style={styles.coverGradient} colors={["transparent", "#000000AA"]} />
 
         {/* 곡 정보 */}
         <View style={styles.trackMetadata}>

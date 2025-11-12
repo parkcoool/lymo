@@ -32,7 +32,7 @@ export type Lyrics = z.infer<typeof LyricsSchema>;
 export const TrackSchema = z.object({
   id: z.string().min(1),
   album: z.string().min(1).nullable(),
-  artist: z.string().min(1),
+  artist: z.array(z.string()),
   coverUrl: z.string(),
   duration: z.number().positive(),
   publishedAt: z.string().nullable(),
