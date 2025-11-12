@@ -64,7 +64,8 @@ export const translateLyricsFlow = ai.defineFlow(
     let s = 0,
       i = 0;
     for await (const chunk of stream) {
-      const translations = chunk.output;
+      const translations =
+        chunk.output?.map((item) => (item?.trim() === "null" ? null : item)) ?? null;
       if (translations === null) continue;
       for (; s < translations.length; s++, i = 0) {
         const translation = translations[s];
@@ -82,7 +83,8 @@ export const translateLyricsFlow = ai.defineFlow(
       }
     }
 
-    const result = (await response).output;
+    const result =
+      (await response).output?.map((item) => (item?.trim() === "null" ? null : item)) ?? null;
     if (result === null) return [];
     return result;
   }
