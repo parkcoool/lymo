@@ -1,4 +1,3 @@
-
 import type {
   LyricsGroupEvent,
   ParagraphSummaryAppendEvent,
@@ -7,12 +6,12 @@ import type {
 import type { Lyrics } from "@lymo/schemas/shared";
 import type { StreamingCallback } from "genkit";
 
-import { summarizeParagraphFlow } from "../../flows/summarizeParagraph.flow";
-import { translateLyricsFlow } from "../../flows/translateLyrics.flow";
-import { groupLyrics } from "../../tools/groupLyrics";
-import type { LRCLIBResult } from "../../types/lrclib";
-import type { SpotifyResult } from "../../types/spotify";
-import findIndex from "../../utils/findIndex";
+import { summarizeParagraphFlow } from "@/flows/summarizeParagraph.flow";
+import { translateLyricsFlow } from "@/flows/translateLyrics.flow";
+import { groupLyrics } from "@/tools/groupLyrics";
+import type { LRCLIBResult } from "@/types/lrclib";
+import type { SpotifyResult } from "@/types/spotify";
+import findIndex from "@/utils/findIndex";
 
 export default async function processLyrics(
   sendChunk: StreamingCallback<

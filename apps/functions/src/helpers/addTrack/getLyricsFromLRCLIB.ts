@@ -1,6 +1,6 @@
-import { searchLRCLib } from "../../tools/searchLRCLib";
-import { LRCLIBResult } from "../../types/lrclib";
-import getCombinations from "../../utils/getCombinations";
+import { searchLRCLib } from "@/tools/searchLRCLib";
+import { LRCLIBResult } from "@/types/lrclib";
+import getCombinations from "@/utils/getCombinations";
 
 export default async function getLyricsFromLRCLIB(
   title: string,

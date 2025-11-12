@@ -2,7 +2,7 @@ import axios from "axios";
 import { defineSecret } from "firebase-functions/params";
 import { z } from "genkit";
 
-import ai from "../core/genkit";
+import ai from "@/core/genkit";
 
 const lastfmApiKey = defineSecret("LASTFM_API_KEY");
 
@@ -17,10 +17,7 @@ export const SearchLastfmOutputSchema = z
     artist: z.string().describe("The artist of the song"),
     album: z.string().nullable().describe("The album of the song"),
     coverUrl: z.string().describe("The cover URL of the song"),
-    publishedAt: z
-      .string()
-      .describe("The published date of the song")
-      .nullable(),
+    publishedAt: z.string().describe("The published date of the song").nullable(),
     summary: z.string().describe("The summary of the song").nullable(),
   })
   .nullable();
@@ -63,17 +60,14 @@ export const searchLastfm = ai.defineTool(
       }
     );
 
-    if (response.status !== 200)
-      throw new Error("Failed to fetch lyrics from Last.fm");
+    if (response.status !== 200) throw new Error("Failed to fetch lyrics from Last.fm");
 
     const track = response.data.track;
     if (!track) {
       return null;
     }
 
-    const coverUrl =
-      track.album?.image.find((img) => img.size === "extralarge")?.["#text"] ??
-      "";
+    const coverUrl = track.album?.image.find((img) => img.size === "extralarge")?.["#text"] ?? "";
     const publishedAt = track.wiki?.published || null;
     let summary = track.wiki?.content || null;
     if (summary) {

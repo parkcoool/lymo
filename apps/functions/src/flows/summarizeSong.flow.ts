@@ -1,7 +1,7 @@
 import { SummaryAppendEventSchema } from "@lymo/schemas/event";
 import { z } from "genkit";
 
-import ai from "../core/genkit";
+import ai from "@/core/genkit";
 
 export const SummarizeSongInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -12,9 +12,7 @@ export const SummarizeSongInputSchema = z.object({
     .describe("The lyrics of the song"),
 });
 
-export const SummarizeSongOutputSchema = z
-  .string()
-  .describe("The summary of the song");
+export const SummarizeSongOutputSchema = z.string().describe("The summary of the song");
 
 export const summarizeSongFlow = ai.defineFlow(
   {

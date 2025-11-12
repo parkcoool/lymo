@@ -1,8 +1,8 @@
 import { z } from "genkit";
 
-import ai from "../core/genkit";
-import spotify from "../core/spotify";
-import calculateSimilarity from "../utils/calculateSimilarity";
+import ai from "@/core/genkit";
+import spotify from "@/core/spotify";
+import calculateSimilarity from "@/utils/calculateSimilarity";
 
 export const SearchSpotifyInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -17,10 +17,7 @@ export const SearchSpotifyOutputSchema = z
     artist: z.array(z.string()).describe("The artists of the song"),
     album: z.string().nullable().describe("The album of the song"),
     coverUrl: z.string().describe("The cover URL of the song"),
-    publishedAt: z
-      .string()
-      .describe("The published date of the song")
-      .nullable(),
+    publishedAt: z.string().describe("The published date of the song").nullable(),
     duration: z.number().describe("The duration of the song in seconds"),
   })
   .nullable();

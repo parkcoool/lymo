@@ -1,7 +1,7 @@
 import { ParagraphSummaryAppendEventSchema } from "@lymo/schemas/event";
 import { z } from "genkit";
 
-import ai from "../core/genkit";
+import ai from "@/core/genkit";
 
 export const SummarizeParagraphInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -9,9 +9,7 @@ export const SummarizeParagraphInputSchema = z.object({
   album: z.string().nullable().describe("The album of the song"),
   lyrics: z
     .array(
-      z
-        .array(z.string().describe("A sentence in the lyrics"))
-        .describe("A paragraph in the lyrics")
+      z.array(z.string().describe("A sentence in the lyrics")).describe("A paragraph in the lyrics")
     )
     .describe("The lyrics of the song, organized by paragraphs"),
 });

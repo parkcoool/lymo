@@ -4,14 +4,14 @@ import {
   AddTrackFlowOutputSchema,
 } from "@lymo/schemas/function";
 
-import ai from "../core/genkit";
-import checkDuplication from "../helpers/addTrack/checkDuplication";
-import getLyricsFromLRCLIB from "../helpers/addTrack/getLyricsFromLRCLIB";
-import processLyrics from "../helpers/addTrack/processLyrics";
-import saveTrackToFirestore from "../helpers/addTrack/saveTrackToFirestore";
-import sendInitialChunks from "../helpers/addTrack/sendInitialChunks";
-import summarizeSong from "../helpers/addTrack/summarizeSong";
-import { searchSpotify } from "../tools/searchSpotify";
+import ai from "@/core/genkit";
+import checkDuplication from "@/helpers/addTrack/checkDuplication";
+import getLyricsFromLRCLIB from "@/helpers/addTrack/getLyricsFromLRCLIB";
+import processLyrics from "@/helpers/addTrack/processLyrics";
+import saveTrackToFirestore from "@/helpers/addTrack/saveTrackToFirestore";
+import sendInitialChunks from "@/helpers/addTrack/sendInitialChunks";
+import summarizeSong from "@/helpers/addTrack/summarizeSong";
+import { searchSpotify } from "@/tools/searchSpotify";
 
 /**
  * 음악 제목과 아티스트명을 입력받아 정확한 메타데이터와 가사를 포함한 음악 정보를 스트리밍하고 DB에 등록하는 플로우

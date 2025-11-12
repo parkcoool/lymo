@@ -8,14 +8,7 @@ import expoConfig from "eslint-config-expo/flat.js";
 export default defineConfig([
   // 빌드 결과물, 모듈 디렉토리 및 설정 파일 무시
   {
-    ignores: [
-      "**/build",
-      "**/dist",
-      "**/lib",
-      "**/node_modules",
-      "**/.expo",
-      "eslint.config.js",
-    ],
+    ignores: ["**/build", "**/dist", "**/lib", "**/node_modules", "**/.expo", "eslint.config.js"],
   },
 
   tseslint.configs.recommended,
@@ -26,24 +19,14 @@ export default defineConfig([
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     rules: {
       "@typescript-eslint/no-empty-object-type": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        { argsIgnorePattern: "^_" },
-      ],
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
       "import/no-named-as-default": 0,
 
       // import 정렬 설정
       "import/order": [
         "error",
         {
-          groups: [
-            "builtin",
-            "external",
-            "internal",
-            "parent",
-            "sibling",
-            "index",
-          ],
+          groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
           pathGroups: [
             {
               pattern: "react",
@@ -116,6 +99,29 @@ export default defineConfig([
     },
     rules: {
       "react/react-in-jsx-scope": "off",
+    },
+  },
+
+  // functions 전용 설정
+  {
+    files: ["apps/functions/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    languageOptions: {
+      parserOptions: {
+        project: "apps/functions/tsconfig.json",
+        tsconfigRootDir: path.resolve(),
+      },
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: "apps/functions/tsconfig.json",
+          alwaysTryTypes: true,
+        },
+        node: {
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+          paths: ["apps/functions"],
+        },
+      },
     },
   },
 ]);

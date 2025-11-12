@@ -1,7 +1,7 @@
 import { TranslationSetEventSchema } from "@lymo/schemas/event";
 import { z } from "genkit";
 
-import ai from "../core/genkit";
+import ai from "@/core/genkit";
 
 export const TranslateLyricsInputSchema = z.object({
   title: z.string().describe("The title of the song"),

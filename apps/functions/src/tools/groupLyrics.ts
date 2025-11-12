@@ -1,10 +1,10 @@
 import { z } from "genkit";
 
-import ai from "../core/genkit";
-import averageEmbeddings from "../utils/averageEmbeddings";
-import calculateCosineDistance from "../utils/calculateCosineDistance";
-import getSyllableCount from "../utils/getSyllableCount";
-import normalize from "../utils/normalize";
+import ai from "@/core/genkit";
+import averageEmbeddings from "@/utils/averageEmbeddings";
+import calculateCosineDistance from "@/utils/calculateCosineDistance";
+import getSyllableCount from "@/utils/getSyllableCount";
+import normalize from "@/utils/normalize";
 
 export const GroupLyricsInputSchema = z.object({
   lyrics: z
@@ -65,9 +65,7 @@ export const groupLyrics = ai.defineTool(
       const avgNextEmbedding = averageEmbeddings(nextWindowEmbeddings);
 
       if (avgPrevEmbedding.length > 0 && avgNextEmbedding.length > 0) {
-        semanticScores.push(
-          calculateCosineDistance(avgPrevEmbedding, avgNextEmbedding)
-        );
+        semanticScores.push(calculateCosineDistance(avgPrevEmbedding, avgNextEmbedding));
       } else {
         semanticScores.push(0); // 비교할 데이터가 없으면 0점
       }
@@ -84,8 +82,7 @@ export const groupLyrics = ai.defineTool(
     const TARGET_LINES_PER_PARA_LOW = 4;
     const TARGET_LINES_PER_PARA_HIGH = 7;
     const targetParagraphCount = Math.round(
-      lyrics.length /
-        ((TARGET_LINES_PER_PARA_LOW + TARGET_LINES_PER_PARA_HIGH) / 2)
+      lyrics.length / ((TARGET_LINES_PER_PARA_LOW + TARGET_LINES_PER_PARA_HIGH) / 2)
     );
     const breakCount = Math.max(0, targetParagraphCount - 1);
 

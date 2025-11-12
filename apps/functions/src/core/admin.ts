@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import { setGlobalOptions } from "firebase-functions";
 
-import firebaseAccountCredentials from "../serviceAccountKey.json";
+import firebaseAccountCredentials from "@/serviceAccountKey.json";
 
 const serviceAccount = firebaseAccountCredentials as admin.ServiceAccount;
 

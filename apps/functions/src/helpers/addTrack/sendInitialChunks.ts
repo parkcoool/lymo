@@ -1,9 +1,8 @@
 import { MetadataUpdateEvent, LyricsUpdateEvent } from "@lymo/schemas/event";
 import { StreamingCallback } from "genkit";
 
-
-import { LRCLIBResult } from "../../types/lrclib";
-import { SpotifyResult } from "../../types/spotify";
+import { LRCLIBResult } from "@/types/lrclib";
+import { SpotifyResult } from "@/types/spotify";
 
 export default function sendInitialChunks(
   sendChunk: StreamingCallback<MetadataUpdateEvent | LyricsUpdateEvent>,

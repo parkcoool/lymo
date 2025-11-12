@@ -1,9 +1,9 @@
 import axios from "axios";
 import { z } from "genkit";
 
-import ai from "../core/genkit";
-import type { RawLRCLIBResult } from "../types/lrclib";
-import parseLyrics from "../utils/parseLyrics";
+import ai from "@/core/genkit";
+import type { RawLRCLIBResult } from "@/types/lrclib";
+import parseLyrics from "@/utils/parseLyrics";
 
 export const SearchLRCLibInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -38,15 +38,11 @@ export const searchLRCLib = ai.defineTool(
       "Fetch the lyrics, title, artist and album of a song given its title, artist and duration in seconds from LRCLib",
   },
   async ({ title, artist, duration }) => {
-    const response = await axios.get<LRCLibSearchResponse>(
-      "https://lrclib.net/api/search",
-      {
-        params: { track_name: title, artist_name: artist },
-      }
-    );
+    const response = await axios.get<LRCLibSearchResponse>("https://lrclib.net/api/search", {
+      params: { track_name: title, artist_name: artist },
+    });
 
-    if (response.status !== 200)
-      throw new Error("Failed to fetch lyrics from LRCLib");
+    if (response.status !== 200) throw new Error("Failed to fetch lyrics from LRCLib");
 
     // 가사 후보들
     const songs = response.data;
