@@ -4,10 +4,11 @@ import { useSettingStore } from "@/contexts/useSettingStore";
 import useTrackKey from "@/hooks/useTrackKey";
 
 import type { SettingViews } from "./SettingBottomSheet";
-import { getSyncText, getLanguageString } from "./SettingBottomSheet.helpers";
 import { styles } from "./SettingBottomSheet.styles";
 import SettingButton from "./SettingButton";
 import SettingToggle from "./SettingToggle";
+import { getSyncText } from "./Sync/Sync.helpers";
+import { getLanguageName } from "./Translate/Translate.helpers";
 
 interface MainProps {
   setView: (view: SettingViews) => void;
@@ -33,7 +34,7 @@ export default function Main({ setView }: MainProps) {
       <SettingButton
         icon="translate"
         label="번역 대상 언어"
-        content={getLanguageString(setting.defaultLanguage)}
+        content={getLanguageName(setting.defaultLanguage)}
         onPress={() => setView("translate")}
       />
 
