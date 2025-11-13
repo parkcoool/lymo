@@ -1,8 +1,7 @@
 {
   "name": "@lymo/functions",
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc --watch",
+    "build": "tsc && tsc-alias",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
@@ -33,6 +32,7 @@
     "@types/handlebars": "^4.0.40",
     "@types/spotify-web-api-node": "^5.0.11",
     "firebase-functions-test": "^3.1.0",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
