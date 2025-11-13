@@ -37,7 +37,7 @@ export const TrackSchema = z.object({
   duration: z.number().positive(),
   publishedAt: z.string().nullable(),
   title: z.string().min(1),
-  createdAt: z.date(),
+  createdAt: z.string(),
   providers: z.array(z.string()),
 });
 export type Track = z.infer<typeof TrackSchema>;

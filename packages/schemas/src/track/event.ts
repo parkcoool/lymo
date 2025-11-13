@@ -62,8 +62,8 @@ export type ParagraphSummaryAppendEvent = z.infer<typeof ParagraphSummaryAppendE
 export const ProviderSetEventSchema = z.object({
   event: z.literal("provider_set"),
   data: z.object({
-    createdAt: z.date(),
-    updatedAt: z.date(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
     providerName: z.string(),
     providerId: z.string(),
   }),

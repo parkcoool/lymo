@@ -14,7 +14,7 @@ export const TrackDocSchema = z.object({
   duration: z.number(),
   publishedAt: z.string().nullable(),
   title: z.string(),
-  createdAt: z.date(),
+  createdAt: z.string(),
   lyricsProviders: z.array(LyricsProviderSchema),
 });
 export type TrackDoc = z.infer<typeof TrackDocSchema>;
@@ -41,8 +41,8 @@ export type LyricsDoc = z.infer<typeof LyricsDocSchema>;
  * 문서 경로: `tracks/{trackId}/providers/{providerId}`
  */
 export const ProviderDocSchema = z.object({
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
   providerName: z.string(),
 });
 export type ProviderDoc = z.infer<typeof ProviderDocSchema>;

@@ -82,7 +82,7 @@ export const addTrackFlow = ai.defineFlow(
         duration: spotifyResult.duration,
         publishedAt: spotifyResult.publishedAt,
         title: spotifyResult.title,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
         lyricsProviders: [lyricsProvider],
       };
 

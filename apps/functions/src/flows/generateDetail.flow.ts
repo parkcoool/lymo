@@ -130,7 +130,7 @@ export const generateDetailFlow = ai.defineFlow(
         .collection("details")
         .doc(input.language) as DocumentReference<TrackDetailDoc>;
 
-      const date = new Date();
+      const date = new Date().toISOString();
 
       admin.firestore().runTransaction(async (transaction) => {
         // 8-1) 제공자 문서 생성
