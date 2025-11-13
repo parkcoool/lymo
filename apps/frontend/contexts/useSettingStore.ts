@@ -31,10 +31,9 @@ const [SettingContextProvider, _useSettingStore] = buildContext<SettingContextVa
   {
     setting: {
       delayMap: new Map(),
-      translateTargetLanguage: "ko",
+      defaultLanguage: "ko",
       showParagraphSummary: true,
       defaultLLMModel: "googleai/gemini-2.5-flash-lite",
-      defaultLanguage: "ko",
     },
     isLoading: true,
     updateSetting: () => {},
@@ -62,10 +61,9 @@ function isSetting(obj: unknown): obj is Setting {
 function SettingProvider({ children }: { children: ReactNode }) {
   const [setting, setSetting] = useState<Setting>({
     delayMap: new Map(),
-    translateTargetLanguage: "ko",
+    defaultLanguage: "ko",
     showParagraphSummary: true,
     defaultLLMModel: "googleai/gemini-2.5-flash-lite",
-    defaultLanguage: "ko",
   });
   const [isLoading, setIsLoading] = useState(true);
 

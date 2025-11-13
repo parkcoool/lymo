@@ -50,6 +50,7 @@ export type AddTrackFlowOutput = z.infer<typeof AddTrackFlowOutputSchema>;
 export const GenerateDetailFlowInputSchema = z.object({
   id: z.string(),
   language: LanguageSchema,
+  lyricsProvider: LyricsProviderSchema.optional(),
   model: LLMModelSchema.optional(),
 });
 export type GenerateDetailFlowInput = z.infer<typeof GenerateDetailFlowInputSchema>;

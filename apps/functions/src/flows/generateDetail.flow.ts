@@ -49,7 +49,7 @@ export const generateDetailFlow = ai.defineFlow(
       // 2) 곡 및 가사 문서 확인
       const track = await getTrackFromDB(input.id);
       if (!track) return { success: false as const, exists: false as const };
-      const rawLyrics = await getLyricsFromDB(input.id);
+      const rawLyrics = await getLyricsFromDB(input.id, input.lyricsProvider);
       if (!rawLyrics) return { success: false as const, exists: false as const };
 
       sendChunk({

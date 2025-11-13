@@ -33,7 +33,7 @@ export default function Main({ setView }: MainProps) {
       <SettingButton
         icon="translate"
         label="번역 대상 언어"
-        content={getLanguageString(setting.translateTargetLanguage)}
+        content={getLanguageString(setting.defaultLanguage)}
         onPress={() => setView("translate")}
       />
 

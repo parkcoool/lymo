@@ -9,7 +9,7 @@ export interface Setting {
   /**
    * 번역 대상 언어
    */
-  translateTargetLanguage: Language;
+  defaultLanguage: Language;
 
   /**
    * 문단 요약 표시 여부
@@ -20,9 +20,4 @@ export interface Setting {
    * 기본 LLM 모델
    */
   defaultLLMModel: LLMModel;
-
-  /**
-   * 기본 번역 대상 언어
-   */
-  defaultLanguage: Language;
 }
