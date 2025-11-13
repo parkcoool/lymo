@@ -2,7 +2,7 @@ import { ScrollView, View } from "react-native";
 
 import { SummarySkeleton } from "@/components/player/Summary";
 import Skeleton from "@/components/shared/Skeleton";
-import useCoverColorQuery from "@/hooks/useCoverColorQuery";
+import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 
 import { styles } from "./LoadingIndicator.styles";
 

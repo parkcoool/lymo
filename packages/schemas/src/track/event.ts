@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+import { LyricsProviderSchema } from "./shared";
+
+/**
+ * 가사 제공자 설정 이벤트
+ */
+export const LyricsProviderSetEventSchema = z.object({
+  event: z.literal("lyrics_provider_set"),
+  data: z.object({
+    lyricsProvider: LyricsProviderSchema,
+  }),
+});
+
 /**
  * 가사 문장 번역 설정 이벤트
  */
@@ -43,6 +55,19 @@ export const ParagraphSummaryAppendEventSchema = z.object({
   }),
 });
 export type ParagraphSummaryAppendEvent = z.infer<typeof ParagraphSummaryAppendEventSchema>;
+
+/**
+ * 제공자 설정 이벤트
+ */
+export const ProviderSetEventSchema = z.object({
+  event: z.literal("provider_set"),
+  data: z.object({
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    providerName: z.string(),
+    providerId: z.string(),
+  }),
+});
 
 /**
  * 스트리밍 완료 이벤트

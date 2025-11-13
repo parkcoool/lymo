@@ -6,7 +6,7 @@ import { View, Text, FlatList } from "react-native";
 import { CompactTrack } from "@/components/home/Track";
 import { useSyncStore } from "@/contexts/useSyncStore";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
-import usePopularTracksQuery from "@/hooks/usePopularTracksQuery";
+import usePopularTracksQuery from "@/hooks/queries/usePopularTracksQuery";
 
 import { styles } from "./PopularTracksSection.styles";
 

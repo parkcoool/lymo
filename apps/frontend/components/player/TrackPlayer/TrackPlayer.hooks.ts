@@ -1,9 +1,10 @@
+import { TrackDoc } from "@lymo/schemas/doc";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView } from "react-native";
 
 interface UseTrackingParams {
   currentY: number;
-  trackId: string;
+  track: TrackDoc;
 }
 
 interface UseTrackingReturn {
@@ -17,7 +18,7 @@ interface UseTrackingReturn {
   handleMoveToCurrent: () => void;
 }
 
-export function useTracking({ currentY, trackId }: UseTrackingParams): UseTrackingReturn {
+export function useTracking({ currentY, track }: UseTrackingParams): UseTrackingReturn {
   // 트래킹 모드 활성화 여부
   const [isTrackingMode, setIsTrackingMode] = useState(true);
 
@@ -83,7 +84,7 @@ export function useTracking({ currentY, trackId }: UseTrackingParams): UseTracki
   // 곡이 바뀌면 최상단으로 이동
   useEffect(() => {
     scrollTo(0);
-  }, [trackId, scrollTo]);
+  }, [track, scrollTo]);
 
   return {
     isTrackingMode,

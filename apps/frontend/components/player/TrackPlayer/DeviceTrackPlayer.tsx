@@ -1,7 +1,7 @@
-import useCoverColorQuery from "@/hooks/useCoverColorQuery";
-import useDeviceTrackQuery from "@/hooks/useDeviceTrackQuery";
+import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
+import useDeviceTrackQuery from "@/hooks/queries/useDeviceTrackQuery";
 
-import TrackPlayer from "./TrackPlayer";
+import PlayerContent from "./PlayerContent";
 
 export default function DeviceTrackPlayer() {
   const { data: track, error } = useDeviceTrackQuery();
@@ -9,5 +9,5 @@ export default function DeviceTrackPlayer() {
 
   if (error) throw error;
 
-  return <TrackPlayer track={track} coverColor={coverColor} />;
+  return <PlayerContent track={track} coverColor={coverColor} />;
 }

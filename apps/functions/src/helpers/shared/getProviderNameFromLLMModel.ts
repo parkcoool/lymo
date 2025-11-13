@@ -1,10 +1,10 @@
 import { LLMModel } from "@lymo/schemas/shared";
 
-export default function getProviderIdFromLLMModel(model: LLMModel) {
+export default function getProviderNameFromLLMModel(model: LLMModel) {
   switch (model) {
     case "googleai/gemini-2.5-flash":
-      return "ai-gemini-2.5-flash";
+      return "Gemini 2.5 Flash";
     case "googleai/gemini-2.5-flash-lite":
-      return "ai-gemini-2.5-flash-lite";
+      return "Gemini 2.5 Flash Lite";
   }
 }

@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { View, Image, Text, TouchableOpacity, type TextLayoutEvent } from "react-native";
 
-import useCoverColorQuery from "@/hooks/useCoverColorQuery";
+import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useWindowSize from "@/hooks/useWindowSize";
 import getTrackDetailString from "@/utils/getTrackDetailString";
 

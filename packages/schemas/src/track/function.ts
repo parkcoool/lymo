@@ -4,7 +4,9 @@ import { LyricsDocSchema, TrackDocSchema } from "./doc";
 import {
   CompleteEventSchema,
   LyricsGroupEventSchema,
+  LyricsProviderSetEventSchema,
   ParagraphSummaryAppendEventSchema,
+  ProviderSetEventSchema,
   SummaryAppendEventSchema,
   TranslationSetEventSchema,
 } from "./event";
@@ -28,6 +30,7 @@ export const AddTrackFlowOutputSchema = z.union([
     id: z.string(),
     track: TrackDocSchema,
     lyrics: LyricsDocSchema.shape.lyrics,
+    lyricsProvider: LyricsProviderSchema,
     notFound: z.literal(false),
   }),
 
@@ -35,6 +38,7 @@ export const AddTrackFlowOutputSchema = z.union([
     id: z.undefined(),
     track: z.undefined(),
     lyrics: z.undefined(),
+    lyricsProvider: z.undefined(),
     notFound: z.literal(true),
   }),
 ]);
@@ -47,7 +51,6 @@ export const GenerateDetailFlowInputSchema = z.object({
   id: z.string(),
   language: LanguageSchema,
   model: LLMModelSchema.optional(),
-  lyricsProvider: LyricsProviderSchema.optional(),
 });
 export type GenerateDetailFlowInput = z.infer<typeof GenerateDetailFlowInputSchema>;
 
@@ -55,10 +58,12 @@ export type GenerateDetailFlowInput = z.infer<typeof GenerateDetailFlowInputSche
  * generateDetailFlow 스트림
  */
 export const GenerateDetailFlowStreamSchema = z.discriminatedUnion("event", [
+  LyricsProviderSetEventSchema,
   TranslationSetEventSchema,
   LyricsGroupEventSchema,
   SummaryAppendEventSchema,
   ParagraphSummaryAppendEventSchema,
+  ProviderSetEventSchema,
   CompleteEventSchema,
 ]);
 export type GenerateDetailFlowStream = z.infer<typeof GenerateDetailFlowStreamSchema>;
@@ -70,10 +75,19 @@ export const GenerateDetailFlowOutputSchema = z.union([
   z.object({
     providerId: z.string(),
     success: z.literal(true),
+    exists: z.literal(true),
+  }),
+
+  z.object({
+    providerId: z.undefined(),
+    success: z.literal(true),
+    exists: z.literal(false),
   }),
 
   z.object({
     providerId: z.undefined(),
     success: z.literal(false),
+    exists: z.literal(false),
   }),
 ]);
+export type GenerateDetailFlowOutput = z.infer<typeof GenerateDetailFlowOutputSchema>;

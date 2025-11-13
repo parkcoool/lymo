@@ -1,9 +1,9 @@
-import { AddTrackFlowInput, AddTrackFlowOutput } from "@lymo/schemas/function";
+import type { AddTrackFlowInput, AddTrackFlowOutput } from "@lymo/schemas/function";
 import { runFlow } from "genkit/beta/client";
 
 const addTrack = (input: AddTrackFlowInput) =>
   runFlow<AddTrackFlowOutput>({
-    url: "",
+    url: "/addTrack",
     input,
   });
 

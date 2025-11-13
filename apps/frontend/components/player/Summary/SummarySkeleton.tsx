@@ -2,7 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { View, Image, Text } from "react-native";
 
 import Skeleton from "@/components/shared/Skeleton";
-import useCoverColorQuery from "@/hooks/useCoverColorQuery";
+import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useWindowSize from "@/hooks/useWindowSize";
 import getTrackDetailString from "@/utils/getTrackDetailString";
 

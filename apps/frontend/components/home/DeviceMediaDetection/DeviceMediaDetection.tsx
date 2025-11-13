@@ -6,7 +6,7 @@ import { TouchableOpacity, View, Image, Text } from "react-native";
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
-import useCoverColorQuery from "@/hooks/useCoverColorQuery";
+import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 
 import { styles } from "./DeviceMediaDetection.styles";
 
@@ -15,9 +15,7 @@ export default function DeviceMediaDetection() {
   const { deviceMedia } = useDeviceMediaStore();
   const { isSynced, setIsSynced } = useSyncStore();
 
-  const { data: coverColor } = useCoverColorQuery(
-    deviceMedia?.coverUrl ?? null
-  );
+  const { data: coverColor } = useCoverColorQuery(deviceMedia?.coverUrl ?? null);
 
   // 연동 버튼 핸들러
   const handleConnect = () => {
@@ -37,10 +35,7 @@ export default function DeviceMediaDetection() {
   }
 
   return (
-    <LinearGradient
-      colors={[`${coverColor}99`, `${coverColor}B3`]}
-      style={[styles.wrapper]}
-    >
+    <LinearGradient colors={[`${coverColor}99`, `${coverColor}B3`]} style={[styles.wrapper]}>
       <View style={styles.overlay}>
         {/* 닫기 버튼 */}
         <TouchableOpacity style={styles.closeButton}>
@@ -48,11 +43,7 @@ export default function DeviceMediaDetection() {
         </TouchableOpacity>
 
         <View style={styles.header}>
-          <MaterialIcons
-            name="audiotrack"
-            size={16}
-            style={styles.headerIcon}
-          />
+          <MaterialIcons name="audiotrack" size={16} style={styles.headerIcon} />
           <Text style={styles.headerText}>기기에서 재생 중인 미디어</Text>
         </View>
 
@@ -60,10 +51,7 @@ export default function DeviceMediaDetection() {
         <Link href={"/player"} disabled={!isSynced} asChild>
           <TouchableOpacity style={styles.track} disabled={!isSynced}>
             {/* 커버 이미지 */}
-            <Image
-              source={{ uri: deviceMedia.coverUrl ?? "" }}
-              style={styles.cover}
-            />
+            <Image source={{ uri: deviceMedia.coverUrl ?? "" }} style={styles.cover} />
 
             {/* 메타데이터 */}
             <View style={styles.trackMetadata}>
@@ -84,11 +72,7 @@ export default function DeviceMediaDetection() {
             style={styles.button}
             onPress={isSynced ? handleDisconnect : handleConnect}
           >
-            <MaterialIcons
-              name={isSynced ? "close" : "sync"}
-              size={20}
-              style={styles.buttonIcon}
-            />
+            <MaterialIcons name={isSynced ? "close" : "sync"} size={20} style={styles.buttonIcon} />
             <Text style={styles.buttonText}>
               {isSynced ? "기기와 연동 해제하기" : "기기와 연동하기"}
             </Text>

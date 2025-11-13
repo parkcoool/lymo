@@ -1,13 +1,14 @@
-import type { LyricsDoc, TrackDetailDoc, TrackDoc } from "@lymo/schemas/doc";
-import { useRef } from "react";
+import type { LyricsDoc, ProviderDoc, TrackDetailDoc, TrackDoc } from "@lymo/schemas/doc";
+import { useMemo, useRef } from "react";
 import { ScrollView, View } from "react-native";
 
 import Lyrics from "@/components/player/Lyrics";
 import MoveToCurrent from "@/components/player/MoveToCurrent";
 import Summary from "@/components/player/Summary";
 import TrackToCurrent from "@/components/player/TrackToCurrent";
+import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
-import useCoverColorQuery from "@/hooks/useCoverColorQuery";
+import processLyrics from "@/utils/processLyrics";
 
 import { useTracking } from "./TrackPlayer.hooks";
 import { styles } from "./TrackPlayer.styles";
@@ -15,10 +16,11 @@ import { styles } from "./TrackPlayer.styles";
 interface TrackPlayerProps {
   track: TrackDoc;
   lyrics: LyricsDoc;
-  trackDetail?: TrackDetailDoc;
+  provider: ProviderDoc;
+  trackDetail: TrackDetailDoc;
 }
 
-export default function TrackPlayer({ track, lyrics, trackDetail }: TrackPlayerProps) {
+export default function PlayerContent({ track, lyrics, provider, trackDetail }: TrackPlayerProps) {
   const { data: coverColor } = useCoverColorQuery(track.coverUrl);
 
   // 현재 활성화된 문장 View
@@ -36,8 +38,20 @@ export default function TrackPlayer({ track, lyrics, trackDetail }: TrackPlayerP
     handleMoveToCurrent,
   } = useTracking({
     currentY,
-    trackId: track.id,
+    track,
   });
+
+  // 처리된 가사 데이터
+  const processedLyrics = useMemo(
+    () =>
+      processLyrics({
+        rawLyrics: lyrics.lyrics,
+        lyricsSplitIndices: trackDetail.lyricsSplitIndices,
+        translations: trackDetail.translations,
+        paragraphSummaries: trackDetail.paragraphSummaries,
+      }),
+    [lyrics, trackDetail]
+  );
 
   return (
     <View style={[styles.wrapper, { backgroundColor: coverColor }]}>
@@ -54,11 +68,11 @@ export default function TrackPlayer({ track, lyrics, trackDetail }: TrackPlayerP
           artist={track.artist}
           album={track.album}
           publishedAt={track.publishedAt}
-          summary={track.summary}
+          summary={trackDetail?.summary}
         />
 
         {/* 가사 */}
-        <Lyrics activeSentenceRef={currentRef} lyrics={track.lyrics} />
+        <Lyrics activeSentenceRef={currentRef} lyrics={processedLyrics} />
       </ScrollView>
 
       {/* 현재 가사로 이동 */}

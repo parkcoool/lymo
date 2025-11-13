@@ -1,4 +1,4 @@
-import { LLMModel } from "@lymo/schemas/shared";
+import { Language, LLMModel } from "@lymo/schemas/shared";
 
 export interface Setting {
   /**
@@ -20,6 +20,9 @@ export interface Setting {
    * 기본 LLM 모델
    */
   defaultLLMModel: LLMModel;
-}
 
-export type Language = "en" | "ko";
+  /**
+   * 기본 번역 대상 언어
+   */
+  defaultLanguage: Language;
+}

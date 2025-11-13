@@ -4,7 +4,7 @@ import addTrack from "@/apis/addTrack";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 /**
- * @description 기기에서 재생 중인 미디어로 곡 정보와 가사 원문을 가져오는 suspenseQuery 훅입니다.
+ * @description 기기에서 재생 중인 미디어로 곡 정보를 가져오는 suspenseQuery 훅입니다.
  *
  * `trackSourceStore`의 곡 정보로 곡을 조회합니다.
  *
@@ -30,8 +30,12 @@ export default function useAddTrackQuery() {
     queryFn: async () => {
       if (!trackKey) throw new Error("곡 정보가 없습니다.");
       const result = await addTrack(trackKey);
+
       if (result.notFound) throw new Error("곡을 찾을 수 없습니다.");
-      return result;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, track, notFound } = result;
+      return { id, ...track };
     },
 
     staleTime: Infinity,

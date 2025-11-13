@@ -34,6 +34,7 @@ const [SettingContextProvider, _useSettingStore] = buildContext<SettingContextVa
       translateTargetLanguage: "ko",
       showParagraphSummary: true,
       defaultLLMModel: "googleai/gemini-2.5-flash-lite",
+      defaultLanguage: "ko",
     },
     isLoading: true,
     updateSetting: () => {},
@@ -64,6 +65,7 @@ function SettingProvider({ children }: { children: ReactNode }) {
     translateTargetLanguage: "ko",
     showParagraphSummary: true,
     defaultLLMModel: "googleai/gemini-2.5-flash-lite",
+    defaultLanguage: "ko",
   });
   const [isLoading, setIsLoading] = useState(true);
 

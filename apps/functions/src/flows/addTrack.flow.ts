@@ -51,6 +51,7 @@ export const addTrackFlow = ai.defineFlow(
             id: trackId,
             track: existingTrack,
             lyrics: existingLyrics.lyrics,
+            lyricsProvider: existingLyrics.provider,
             notFound: false as const,
           };
         }
@@ -82,7 +83,7 @@ export const addTrackFlow = ai.defineFlow(
         publishedAt: spotifyResult.publishedAt,
         title: spotifyResult.title,
         createdAt: new Date(),
-        providers: [],
+        lyricsProviders: [lyricsProvider],
       };
 
       await admin.firestore().runTransaction(async (transaction) => {
@@ -93,7 +94,13 @@ export const addTrackFlow = ai.defineFlow(
       });
 
       // 6) 트랙 및 가사 정보 반환
-      return { id: trackId, track, lyrics: lrclibResult.lyrics, notFound: false as const };
+      return {
+        id: trackId,
+        track,
+        lyrics: lrclibResult.lyrics,
+        lyricsProvider,
+        notFound: false as const,
+      };
     } catch (error) {
       if (error instanceof Error) {
         const errorId = randomUUID();

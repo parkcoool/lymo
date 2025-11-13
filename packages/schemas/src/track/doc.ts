@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { LyricsProviderSchema } from "./shared";
+
 /**
  * Track 문서
  *
@@ -13,7 +15,7 @@ export const TrackDocSchema = z.object({
   publishedAt: z.string().nullable(),
   title: z.string(),
   createdAt: z.date(),
-  providers: z.array(z.string()),
+  lyricsProviders: z.array(LyricsProviderSchema),
 });
 export type TrackDoc = z.infer<typeof TrackDocSchema>;
 
@@ -34,9 +36,21 @@ export const LyricsDocSchema = z.object({
 export type LyricsDoc = z.infer<typeof LyricsDocSchema>;
 
 /**
+ * 제공자 문서
+ *
+ * 문서 경로: `tracks/{trackId}/providers/{providerId}`
+ */
+export const ProviderDocSchema = z.object({
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  providerName: z.string(),
+});
+export type ProviderDoc = z.infer<typeof ProviderDocSchema>;
+
+/**
  * Track 상세 문서
  *
- * 문서 경로: `tracks/{trackId}/details/{providerId}/contents/{language}`
+ * 문서 경로: `tracks/{trackId}/providers/{providerId}/details/{language}`
  */
 export const TrackDetailDocSchema = z.object({
   summary: z.string(),

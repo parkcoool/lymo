@@ -1,13 +1,17 @@
-import useCoverColorQuery from "@/hooks/useCoverColorQuery";
-import useManualTrackQuery from "@/hooks/useManualTrackQuery";
+import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
+import useProvidersQuery from "@/hooks/queries/useProviderQuery";
+import useTrackQuery from "@/hooks/queries/useTrackQuery";
 
-import TrackPlayer from "./TrackPlayer";
+import PlayerContent from "./PlayerContent";
 
 export default function ManualTrackPlayer() {
-  const { data: track, error } = useManualTrackQuery();
+  const { data: track, error: trackError } = useTrackQuery();
+  const { data: providers, error: providersError } = useProvidersQuery();
   const { data: coverColor } = useCoverColorQuery(track.coverUrl);
 
-  if (error) throw error;
+  if (trackError) throw trackError;
+  if (providersError) throw providersError;
 
-  return <TrackPlayer track={track} coverColor={coverColor} />;
+  if (providers.length === 0) return <StreamingTrackPlayer />;
+  else return <PlayerContent />;
 }

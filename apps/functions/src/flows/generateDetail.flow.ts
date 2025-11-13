@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 
-import { TrackDetailDoc } from "@lymo/schemas/doc";
+import { ProviderDoc, TrackDetailDoc } from "@lymo/schemas/doc";
 import {
   GenerateDetailFlowInputSchema,
   GenerateDetailFlowOutputSchema,
@@ -15,7 +15,7 @@ import { HttpsError } from "firebase-functions/https";
 import ai from "@/core/genkit";
 import getTrackDetailFromDB from "@/helpers/generateDetail/getTrackDetailFromDB";
 import getLyricsFromDB from "@/helpers/shared/getLyricsFromDB";
-import getProviderIdFromLLMModel from "@/helpers/shared/getProviderIdFromLLMModel";
+import getProviderNameFromLLMModel from "@/helpers/shared/getProviderNameFromLLMModel";
 import getTrackFromDB from "@/helpers/shared/getTrackFromDB";
 import { groupLyrics } from "@/tools/groupLyrics";
 
@@ -37,19 +37,25 @@ export const generateDetailFlow = ai.defineFlow(
     try {
       // 1) 중복 확인
       const llmModel: LLMModel = input.model ?? "googleai/gemini-2.5-flash-lite";
-      const providerId = getProviderIdFromLLMModel(llmModel);
+      const providerName = getProviderNameFromLLMModel(llmModel);
       const existingDetailDoc = await getTrackDetailFromDB({
         trackId: input.id,
         language: input.language,
-        providerId,
+        providerId: llmModel,
       });
-      if (existingDetailDoc) return { success: true as const, providerId };
+      if (existingDetailDoc)
+        return { success: true as const, exists: true as const, providerId: llmModel };
 
       // 2) 곡 및 가사 문서 확인
       const track = await getTrackFromDB(input.id);
-      if (!track) return { success: false as const };
-      const rawLyrics = await getLyricsFromDB(input.id, input.lyricsProvider);
-      if (!rawLyrics) return { success: false as const };
+      if (!track) return { success: false as const, exists: false as const };
+      const rawLyrics = await getLyricsFromDB(input.id);
+      if (!rawLyrics) return { success: false as const, exists: false as const };
+
+      sendChunk({
+        event: "lyrics_provider_set",
+        data: { lyricsProvider: rawLyrics.provider },
+      });
 
       // 3) 문단 나누기
       const breaks = await groupLyrics({ lyrics: rawLyrics.lyrics });
@@ -114,18 +120,27 @@ export const generateDetailFlow = ai.defineFlow(
       ]);
 
       // 8) 최종 결과 DB에 저장하기
-      const trackDetailDocRef = admin
+      const providerDocRef = admin
         .firestore()
         .collection("tracks")
         .doc(input.id)
+        .collection("providers")
+        .doc(llmModel) as DocumentReference<ProviderDoc>;
+      const trackDetailDocRef = providerDocRef
         .collection("details")
-        .doc(providerId)
-        .collection("contents")
         .doc(input.language) as DocumentReference<TrackDetailDoc>;
-      const trackDocRef = admin.firestore().collection("tracks").doc(input.id);
+
+      const date = new Date();
 
       admin.firestore().runTransaction(async (transaction) => {
-        // 8-1) 트랙 상세 정보 저장
+        // 8-1) 제공자 문서 생성
+        transaction.set(providerDocRef, {
+          createdAt: date,
+          updatedAt: date,
+          providerName,
+        });
+
+        // 8-2) 트랙 상세 정보 저장
         transaction.set(trackDetailDocRef, {
           summary,
           lyricsSplitIndices: breaks,
@@ -133,15 +148,17 @@ export const generateDetailFlow = ai.defineFlow(
           translations,
           paragraphSummaries,
         });
-
-        // 8-2) 제공자 추가
-        transaction.update(trackDocRef, {
-          providers: admin.firestore.FieldValue.arrayUnion(providerId),
-        });
       });
 
+      sendChunk({
+        event: "provider_set",
+        data: { createdAt: date, updatedAt: date, providerName, providerId: llmModel },
+      });
+
+      sendChunk({ event: "complete", data: null });
+
       // 9) 최종 결과 반환
-      return { success: true as const, providerId };
+      return { success: true as const, exists: false as const };
     } catch (error) {
       if (error instanceof Error) {
         const errorId = randomUUID();
@@ -149,7 +166,7 @@ export const generateDetailFlow = ai.defineFlow(
         throw new HttpsError("internal", "서버에서 오류가 발생했습니다.", { errorId });
       }
 
-      return { success: false as const };
+      return { success: false as const, exists: false as const };
     }
   }
 );
