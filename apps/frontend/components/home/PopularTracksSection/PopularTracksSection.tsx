@@ -1,5 +1,4 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Track } from "@lymo/schemas/shared";
 import { Link } from "expo-router";
 import { View, Text, FlatList } from "react-native";
 
@@ -16,14 +15,10 @@ export default function PopularTracksSection() {
   const { setTrackSource } = useTrackSourceStore();
   const { setIsSynced } = useSyncStore();
 
-  const handlePlayTrack = (track: Track) => {
+  const handlePlayTrack = (track: { id: string; title: string; coverUrl: string }) => {
     setTrackSource({
       from: "manual",
-      track: {
-        id: track.id,
-        title: track.title,
-        coverUrl: track.coverUrl,
-      },
+      track: track,
     });
     setIsSynced(false);
   };
@@ -47,7 +42,9 @@ export default function PopularTracksSection() {
             <CompactTrack
               title={track.title}
               coverUrl={track.coverUrl}
-              onPress={() => handlePlayTrack(track)}
+              onPress={() =>
+                handlePlayTrack({ id: track.id, title: track.title, coverUrl: track.coverUrl })
+              }
             />
           </Link>
         )}
