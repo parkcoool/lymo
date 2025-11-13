@@ -1,7 +1,8 @@
 import { Text } from "react-native";
 
 import { getSyncText } from "../SettingBottomSheet.helpers";
-import { styles } from "../SettingBottomSheet.styles";
+
+import { styles } from "./Sync.styles";
 
 interface SyncIndicatorProps {
   value: number;

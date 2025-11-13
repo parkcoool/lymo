@@ -4,9 +4,8 @@ import { Vibration, View } from "react-native";
 import { useSettingStore } from "@/contexts/useSettingStore";
 import useTrackKey from "@/hooks/useTrackKey";
 
-import { styles } from "../SettingBottomSheet.styles";
-
 import { calculateNewValue } from "./Sync.helpers";
+import { styles } from "./Sync.styles";
 import SyncController from "./SyncController";
 import SyncIndicator from "./SyncIndicator";
 import SyncResetButton from "./SyncResetButton";

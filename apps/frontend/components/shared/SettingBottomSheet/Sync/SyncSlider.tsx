@@ -2,7 +2,7 @@ import Slider from "@react-native-community/slider";
 
 import { colors } from "@/constants/colors";
 
-import { styles } from "../SettingBottomSheet.styles";
+import { styles } from "./Sync.styles";
 
 interface SyncSliderProps {
   value: number;

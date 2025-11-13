@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 
-import { styles } from "../SettingBottomSheet.styles";
+import { styles } from "./Sync.styles";
 
 interface SyncResetButtonProps {
   onPress: () => void;

@@ -1,8 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { TouchableOpacity, View } from "react-native";
 
-import { styles } from "../SettingBottomSheet.styles";
-
+import { styles } from "./Sync.styles";
 import SyncSlider from "./SyncSlider";
 
 interface SyncControllerProps {
