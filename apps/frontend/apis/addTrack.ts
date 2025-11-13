@@ -3,7 +3,7 @@ import { runFlow } from "genkit/beta/client";
 
 const addTrack = (input: AddTrackFlowInput) =>
   runFlow<AddTrackFlowOutput>({
-    url: "/addTrack",
+    url: "https://addtrack-au5g5tbwtq-du.a.run.app",
     input,
   });
 

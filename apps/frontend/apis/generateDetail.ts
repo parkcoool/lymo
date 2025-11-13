@@ -7,7 +7,7 @@ import { streamFlow } from "genkit/beta/client";
 
 const generateDetail = (input: GenerateDetailFlowInput) =>
   streamFlow<GenerateDetailFlowOutput, GenerateDetailFlowStream>({
-    url: "/generateDetail",
+    url: "https://generatedetail-au5g5tbwtq-du.a.run.app",
     input,
   });
 
