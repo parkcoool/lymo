@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import Main from "./Main";
 import Sync from "./Sync";
+import Translate from "./Translate";
 import Wrapper from "./Wrapper";
 
 export type SettingViews = "main" | "sync" | "translate";
@@ -25,6 +26,8 @@ export default function SettingBottomSheet({ ref }: SettingBottomSheetProps) {
         return <Main setView={setView} />;
       case "sync":
         return <Sync />;
+      case "translate":
+        return <Translate />;
       default:
         return null;
     }
