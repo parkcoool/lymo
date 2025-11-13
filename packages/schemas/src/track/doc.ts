@@ -55,7 +55,7 @@ export type ProviderDoc = z.infer<typeof ProviderDocSchema>;
 export const TrackDetailDocSchema = z.object({
   summary: z.string(),
   lyricsSplitIndices: z.array(z.number()),
-  lyricsProvider: z.string(),
+  lyricsProvider: LyricsProviderSchema,
   translations: z.array(z.string().nullable()),
   paragraphSummaries: z.array(z.string().nullable()),
 });

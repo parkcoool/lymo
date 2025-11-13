@@ -1,4 +1,5 @@
 import type { LyricsDoc, ProviderDoc, TrackDetailDoc, TrackDoc } from "@lymo/schemas/doc";
+import { LyricsProvider } from "@lymo/schemas/shared";
 import { useMemo, useRef } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -10,14 +11,14 @@ import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
 import processLyrics from "@/utils/processLyrics";
 
-import { useTracking } from "./TrackPlayer.hooks";
-import { styles } from "./TrackPlayer.styles";
+import { useTracking } from "./Player.hooks";
+import { styles } from "./Player.styles";
 
 interface TrackPlayerProps {
   track: TrackDoc;
-  lyrics: LyricsDoc;
-  provider: ProviderDoc;
-  trackDetail: TrackDetailDoc;
+  lyrics: LyricsDoc["lyrics"];
+  provider?: ProviderDoc;
+  trackDetail: Omit<TrackDetailDoc, "lyricsProvider"> & { lyricsProvider?: LyricsProvider };
 }
 
 export default function PlayerContent({ track, lyrics, provider, trackDetail }: TrackPlayerProps) {
@@ -45,7 +46,7 @@ export default function PlayerContent({ track, lyrics, provider, trackDetail }: 
   const processedLyrics = useMemo(
     () =>
       processLyrics({
-        rawLyrics: lyrics.lyrics,
+        rawLyrics: lyrics,
         lyricsSplitIndices: trackDetail.lyricsSplitIndices,
         translations: trackDetail.translations,
         paragraphSummaries: trackDetail.paragraphSummaries,
