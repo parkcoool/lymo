@@ -1,12 +1,9 @@
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
-import type { Result } from "@/apis/addTrack";
+import type { Result } from "@/apis/generateDetail";
 import getTrack from "@/apis/getTrack";
 
-export default async function processResult(
-  track: Track & TrackDetail,
-  result: Result
-) {
+export default async function processResult(track: Track & TrackDetail, result: Result) {
   const { duplicate, notFound, id } = result.result;
   console.log("[RESULT]", result.result);
 

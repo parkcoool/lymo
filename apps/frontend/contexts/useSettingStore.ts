@@ -26,16 +26,19 @@ interface SettingContextActions {
 
 type SettingContextValues = SettingContextStates & SettingContextActions;
 
-const [SettingContextProvider, _useSettingStore] =
-  buildContext<SettingContextValues>("SettingContext", {
+const [SettingContextProvider, _useSettingStore] = buildContext<SettingContextValues>(
+  "SettingContext",
+  {
     setting: {
       delayMap: new Map(),
       translateTargetLanguage: "ko",
       showParagraphSummary: true,
+      defaultLLMModel: "googleai/gemini-2.5-flash-lite",
     },
     isLoading: true,
     updateSetting: () => {},
-  });
+  }
+);
 
 function isSetting(obj: unknown): obj is Setting {
   if (typeof obj !== "object" || obj === null) return false;
@@ -47,10 +50,7 @@ function isSetting(obj: unknown): obj is Setting {
   };
 
   for (const [key, type] of Object.entries(typeMap)) {
-    if (
-      !(key in obj) ||
-      typeof (obj as Record<string, unknown>)[key] !== type
-    ) {
+    if (!(key in obj) || typeof (obj as Record<string, unknown>)[key] !== type) {
       return false;
     }
   }
@@ -63,6 +63,7 @@ function SettingProvider({ children }: { children: ReactNode }) {
     delayMap: new Map(),
     translateTargetLanguage: "ko",
     showParagraphSummary: true,
+    defaultLLMModel: "googleai/gemini-2.5-flash-lite",
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -92,9 +93,7 @@ function SettingProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  const handleUpdateSetting = async (
-    newSetting: Setting | ((prev: Setting) => Setting)
-  ) => {
+  const handleUpdateSetting = async (newSetting: Setting | ((prev: Setting) => Setting)) => {
     if (typeof newSetting === "function") {
       setSetting((prev) => {
         const updated = newSetting(prev);

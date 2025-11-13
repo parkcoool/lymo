@@ -8,7 +8,7 @@ import { styles } from "./LoadingIndicator.styles";
 
 interface LoadingIndicatorProps {
   title?: string;
-  artist?: string[];
+  artist?: string;
   album?: string | null;
   coverUrl?: string;
 }

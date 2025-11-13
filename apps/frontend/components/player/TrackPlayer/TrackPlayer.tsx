@@ -1,4 +1,4 @@
-import type { Track, TrackDetail } from "@lymo/schemas/shared";
+import type { LyricsDoc, TrackDetailDoc, TrackDoc } from "@lymo/schemas/doc";
 import { useRef } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -7,16 +7,20 @@ import MoveToCurrent from "@/components/player/MoveToCurrent";
 import Summary from "@/components/player/Summary";
 import TrackToCurrent from "@/components/player/TrackToCurrent";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
+import useCoverColorQuery from "@/hooks/useCoverColorQuery";
 
 import { useTracking } from "./TrackPlayer.hooks";
 import { styles } from "./TrackPlayer.styles";
 
 interface TrackPlayerProps {
-  track: Track & TrackDetail;
-  coverColor: string;
+  track: TrackDoc;
+  lyrics: LyricsDoc;
+  trackDetail?: TrackDetailDoc;
 }
 
-export default function TrackPlayer({ track, coverColor }: TrackPlayerProps) {
+export default function TrackPlayer({ track, lyrics, trackDetail }: TrackPlayerProps) {
+  const { data: coverColor } = useCoverColorQuery(track.coverUrl);
+
   // 현재 활성화된 문장 View
   const currentRef = useRef<View>(null);
 

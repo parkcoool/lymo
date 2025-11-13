@@ -1,6 +1,6 @@
 import type { Track, TrackDetail } from "@lymo/schemas/shared";
 
-import type { Chunk, ProcessChunkState } from "@/apis/addTrack";
+import type { Chunk, ProcessChunkState } from "@/apis/generateDetail";
 import findIndex from "@/utils/findIndex";
 
 export default function processChunk(
@@ -33,8 +33,7 @@ export default function processChunk(
         data.sentenceIndex
       );
 
-      if (index === null)
-        throw new Error("Failed to find sentence index for translation");
+      if (index === null) throw new Error("Failed to find sentence index for translation");
 
       const { outer: p, inner: s } = index;
 

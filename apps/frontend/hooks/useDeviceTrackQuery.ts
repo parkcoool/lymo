@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-import addTrack from "@/apis/addTrack";
+import addTrack from "@/apis/generateDetail";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 /**

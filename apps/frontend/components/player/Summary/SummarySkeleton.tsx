@@ -8,10 +8,10 @@ import getTrackDetailString from "@/utils/getTrackDetailString";
 
 import { styles } from "./Summary.styles";
 
-interface SummaryProps {
+interface SummarySkeletonProps {
   coverUrl: string;
   title: string;
-  artist: string[];
+  artist: string;
   album: string | null;
   publishedAt: string | null;
   summary: string;
@@ -23,10 +23,10 @@ export default function SummarySkeleton({
   artist,
   album,
   publishedAt,
-}: Partial<SummaryProps>) {
+}: Partial<SummarySkeletonProps>) {
   const { width: windowWidth } = useWindowSize();
   const { data: coverColor } = useCoverColorQuery(coverUrl);
-  const detailString = getTrackDetailString({ artist, album, publishedAt });
+  const detailString = getTrackDetailString({ artist: artist ? [artist] : [], album, publishedAt });
 
   return (
     <View style={styles.wrapper}>

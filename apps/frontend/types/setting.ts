@@ -1,3 +1,5 @@
+import { LLMModel } from "@lymo/schemas/shared";
+
 export interface Setting {
   /**
    * 곡 별 가사 싱크 지연 시간 (ms)
@@ -13,6 +15,11 @@ export interface Setting {
    * 문단 요약 표시 여부
    */
   showParagraphSummary: boolean;
+
+  /**
+   * 기본 LLM 모델
+   */
+  defaultLLMModel: LLMModel;
 }
 
 export type Language = "en" | "ko";
