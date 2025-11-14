@@ -54,7 +54,9 @@ export default function Lyrics({ lyrics, activeSentenceRef }: LyricsProps) {
 }
 
 const isActiveParagraph = (paragraph: LyricsSentence[], timestamp: number) =>
-  paragraph[0].start <= timestamp && timestamp < paragraph[paragraph.length - 1].end;
+  paragraph.length > 0 &&
+  paragraph[0].start <= timestamp &&
+  timestamp < paragraph[paragraph.length - 1].end;
 
 const isActiveSentence = (sentence: LyricsSentence, timestamp: number) =>
   sentence.start <= timestamp && timestamp < sentence.end;

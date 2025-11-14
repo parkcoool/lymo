@@ -4,12 +4,13 @@ import { LyricsProvider } from "@lymo/schemas/shared";
 import useLyricsQuery from "@/hooks/queries/useLyricsQuery";
 
 import PlayerContent from "./PlayerContent";
+import StreamingQuery from "./StreamingQuery";
 
 interface LyricsQueryProps {
   track: TrackDoc;
   trackId: string;
-  provider: ProviderDoc;
-  trackDetail: TrackDetailDoc;
+  provider?: ProviderDoc;
+  trackDetail?: TrackDetailDoc;
   lyricsProvider: LyricsProvider;
 }
 
@@ -20,12 +21,21 @@ export default function LyricsQuery({
   trackDetail,
   lyricsProvider,
 }: LyricsQueryProps) {
-  // TODO: 두 suspense query를 별도 컴포넌트로 분리
-  const { data: lyrics, error: lyricsError } = useLyricsQuery({ trackId, lyricsProvider });
+  const { data: lyrics, error } = useLyricsQuery({ trackId, lyricsProvider });
 
-  if (lyricsError) throw lyricsError;
+  if (error) throw error;
 
-  return (
-    <PlayerContent track={track} lyrics={lyrics} provider={provider} trackDetail={trackDetail} />
-  );
+  if (trackDetail && provider)
+    return (
+      <PlayerContent track={track} lyrics={lyrics} provider={provider} trackDetail={trackDetail} />
+    );
+  else
+    return (
+      <StreamingQuery
+        track={track}
+        trackId={trackId}
+        lyrics={lyrics}
+        lyricsProvider={lyricsProvider}
+      />
+    );
 }
