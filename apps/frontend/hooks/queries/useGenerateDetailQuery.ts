@@ -94,16 +94,20 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
         return result;
       },
 
-      initialValue: {
-        exists: false,
-        trackDetail: {
-          summary: "",
-          lyricsSplitIndices: [],
-          translations: [],
-          paragraphSummaries: [],
-        },
-        lyrics: [],
-      } as GenerateDetailResult,
+      initialValue,
     }),
+
+    initialData: initialValue,
   });
 }
+
+const initialValue: GenerateDetailResult = {
+  exists: false,
+  trackDetail: {
+    summary: "",
+    lyricsSplitIndices: [],
+    translations: [],
+    paragraphSummaries: [],
+  },
+  lyrics: [],
+};

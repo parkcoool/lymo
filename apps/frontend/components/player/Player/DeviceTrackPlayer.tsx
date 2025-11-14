@@ -11,7 +11,7 @@ interface DeviceTrackPlayerProps {
 }
 
 export default function DeviceTrackPlayer({ title, artist, duration }: DeviceTrackPlayerProps) {
-  // TODO: 두 suspense query를 별도 컴포넌트로 분리
+  // TODO: 두 query를 별도 컴포넌트로 분리
   const { data: addTrackResult, error: addTrackError } = useAddTrackQuery({
     title,
     artist,
