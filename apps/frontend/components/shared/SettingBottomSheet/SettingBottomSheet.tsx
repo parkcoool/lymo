@@ -2,11 +2,12 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useState } from "react";
 
 import Main from "./Main";
+import Model from "./Model";
 import Sync from "./Sync";
 import Translate from "./Translate";
 import Wrapper from "./Wrapper";
 
-export type SettingViews = "main" | "sync" | "translate";
+export type SettingViews = "main" | "sync" | "translate" | "model";
 
 interface SettingBottomSheetProps {
   ref?: React.Ref<BottomSheetModal>;
@@ -28,6 +29,8 @@ export default function SettingBottomSheet({ ref }: SettingBottomSheetProps) {
         return <Sync />;
       case "translate":
         return <Translate />;
+      case "model":
+        return <Model />;
       default:
         return null;
     }
