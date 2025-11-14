@@ -46,8 +46,7 @@ export default function useSyncDeviceMedia() {
 
         setDeviceMedia(fixedDeviceMedia);
 
-        if (isSynced)
-          setTrackSource({ from: "device", track: fixedDeviceMedia });
+        if (isSynced) setTrackSource({ from: "device", track: fixedDeviceMedia });
       }
     );
 

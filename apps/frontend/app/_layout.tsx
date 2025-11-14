@@ -6,6 +6,7 @@ import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import SyncDeviceMediaProvider from "@/components/shared/SyncDeviceMediaProvider";
 import { colors } from "@/constants/colors";
 import { DeviceMediaProvider } from "@/contexts/useDeviceMediaStore";
 import { SettingProvider } from "@/contexts/useSettingStore";
@@ -24,20 +25,22 @@ export default function RootLayout() {
               <TrackSourceProvider>
                 <GestureHandlerRootView>
                   <BottomSheetModalProvider>
-                    <View
-                      style={{
-                        flex: 1,
-                        position: "relative",
-                        backgroundColor: colors.background,
-                      }}
-                    >
-                      <Stack
-                        screenOptions={{
-                          headerShown: false,
-                          contentStyle: { backgroundColor: "transparent" },
+                    <SyncDeviceMediaProvider>
+                      <View
+                        style={{
+                          flex: 1,
+                          position: "relative",
+                          backgroundColor: colors.background,
                         }}
-                      />
-                    </View>
+                      >
+                        <Stack
+                          screenOptions={{
+                            headerShown: false,
+                            contentStyle: { backgroundColor: "transparent" },
+                          }}
+                        />
+                      </View>
+                    </SyncDeviceMediaProvider>
                   </BottomSheetModalProvider>
                 </GestureHandlerRootView>
               </TrackSourceProvider>
