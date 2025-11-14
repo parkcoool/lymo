@@ -20,6 +20,7 @@ export default function useLyricsQuery(props: UseLyricsQueryProps) {
     queryKey: ["lyrics", key],
 
     queryFn: async () => {
+      console.log("useLyricsQuery called");
       if (!key.trackId) throw new Error("곡 ID가 제공되지 않았습니다.");
       const lyricsDoc = await getLyrics(key);
       return lyricsDoc.lyrics;

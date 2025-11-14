@@ -15,6 +15,7 @@ export default function useTrackQuery({ trackId }: UseTrackQuery) {
   return useSuspenseQuery({
     queryKey: ["track", trackId],
     queryFn: async () => {
+      console.log("useTrackQuery called");
       const trackDoc = await getTrack({ trackId });
       return trackDoc;
     },

@@ -35,12 +35,14 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
     lyricsProvider,
     model: setting.defaultLLMModel,
   };
+  console.log(key);
 
   return useSuspenseQuery({
     queryKey: ["track-stream", key],
 
     queryFn: streamedQuery({
       streamFn: async function* () {
+        console.log("useGenerateDetailQuery called");
         const flow = generateDetail(key);
 
         for await (const chunk of flow.stream) {

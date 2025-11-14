@@ -18,6 +18,7 @@ export default function useTrackDetailQuery(props: UseTrackDetailQueryProps) {
   return useSuspenseQuery({
     queryKey: ["detail", props],
     queryFn: async () => {
+      console.log("useTrackDetailQuery called");
       const trackDetailDoc = await getTrackDetail(props);
       return trackDetailDoc;
     },

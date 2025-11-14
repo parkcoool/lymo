@@ -1,8 +1,6 @@
 import useAddTrackQuery from "@/hooks/queries/useAddTrackQuery";
-import useGenerateDetailQuery from "@/hooks/queries/useGenerateDetailQuery";
 
-import PlayerContent from "./PlayerContent";
-import ProvidersQuery from "./ProvidersQuery";
+import StreamingQuery from "./StreamingQuery";
 
 interface DeviceTrackPlayerProps {
   title: string;
@@ -17,30 +15,15 @@ export default function DeviceTrackPlayer({ title, artist, duration }: DeviceTra
     artist,
     duration,
   });
-  const { data: generateDetailResult, error: generateDetailError } = useGenerateDetailQuery(
-    addTrackResult.id,
-    addTrackResult.lyricsProvider
-  );
 
   if (addTrackError) throw addTrackError;
-  if (generateDetailError) throw generateDetailError;
 
-  if (generateDetailResult.exists)
-    return (
-      <ProvidersQuery
-        track={addTrackResult.track}
-        trackId={addTrackResult.id}
-        lyricsProvider={addTrackResult.lyricsProvider}
-        providerId={generateDetailResult.providerId}
-      />
-    );
-  else
-    return (
-      <PlayerContent
-        track={addTrackResult.track}
-        lyrics={addTrackResult.lyrics}
-        provider={generateDetailResult.provider}
-        trackDetail={generateDetailResult.trackDetail}
-      />
-    );
+  return (
+    <StreamingQuery
+      track={addTrackResult.track}
+      trackId={addTrackResult.id}
+      lyricsProvider={addTrackResult.lyricsProvider}
+      lyrics={addTrackResult.lyrics}
+    />
+  );
 }

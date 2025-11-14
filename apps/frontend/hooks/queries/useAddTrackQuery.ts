@@ -20,6 +20,7 @@ export default function useAddTrackQuery(props: UseAddTrackProps) {
     queryKey: ["track", "stream", key],
 
     queryFn: async () => {
+      console.log("useAddTrackQuery called");
       const result = await addTrack(key);
       if (result.notFound) throw new Error("곡을 찾을 수 없습니다.");
       const { notFound, ...data } = result;

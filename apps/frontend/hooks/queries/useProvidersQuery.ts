@@ -15,6 +15,7 @@ export default function useProvidersQuery({ trackId }: UseProvidersQueryProps) {
   return useSuspenseQuery({
     queryKey: ["providers", trackId],
     queryFn: async () => {
+      console.log("useProvidersQuery called");
       const providers = await getProviders({ trackId });
       return providers;
     },
