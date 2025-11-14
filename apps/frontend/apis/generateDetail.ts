@@ -3,7 +3,8 @@ import type {
   GenerateDetailFlowStream,
   GenerateDetailFlowOutput,
 } from "@lymo/schemas/function";
-import { streamFlow } from "genkit/beta/client";
+
+import { streamFlow } from "@/utils/streamFlow";
 
 const generateDetail = (input: GenerateDetailFlowInput) =>
   streamFlow<GenerateDetailFlowOutput, GenerateDetailFlowStream>({
