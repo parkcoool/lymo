@@ -38,14 +38,20 @@ export const generateDetailFlow = ai.defineFlow(
       language: input.language,
       providerId: llmModel,
     });
-    if (existingDetailDoc)
+    if (existingDetailDoc) {
+      sendChunk({ event: "complete", data: null });
       return { success: true as const, exists: true as const, providerId: llmModel };
+    }
 
     // 2) 곡 및 가사 문서 확인
-    const track = await getTrackFromDB(input.id);
-    if (!track) return { success: false as const, exists: false as const };
-    const rawLyrics = await getLyricsFromDB(input.id, input.lyricsProvider);
-    if (!rawLyrics) return { success: false as const, exists: false as const };
+    const [track, rawLyrics] = [
+      await getTrackFromDB(input.id),
+      await getLyricsFromDB(input.id, input.lyricsProvider),
+    ];
+    if (!track || !rawLyrics) {
+      sendChunk({ event: "complete", data: null });
+      return { success: false as const, exists: false as const };
+    }
 
     sendChunk({
       event: "lyrics_provider_set",
