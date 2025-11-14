@@ -27,15 +27,7 @@ export const styles = StyleSheet.create({
   },
 
   sectionContent: {
-    padding: 12,
-    flexDirection: "row",
-  },
-
-  sectionContentContainer: {
-    alignSelf: "flex-start",
-  },
-
-  sectionContentWrapper: {
-    gap: 8,
+    padding: 20,
+    gap: 12,
   },
 });
