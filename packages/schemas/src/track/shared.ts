@@ -67,8 +67,5 @@ export type LyricsProvider = z.infer<typeof LyricsProviderSchema>;
 /**
  * AI 모델
  */
-export const LLMModelSchema = z.enum([
-  "googleai/gemini-2.5-flash",
-  "googleai/gemini-2.5-flash-lite",
-]);
+export const LLMModelSchema = z.enum(["gemini-2.5-flash", "gemini-2.5-flash-lite"]);
 export type LLMModel = z.infer<typeof LLMModelSchema>;

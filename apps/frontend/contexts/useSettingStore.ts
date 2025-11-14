@@ -33,7 +33,7 @@ const [SettingContextProvider, _useSettingStore] = buildContext<SettingContextVa
       delayMap: new Map(),
       defaultLanguage: "ko",
       showParagraphSummary: true,
-      defaultLLMModel: "googleai/gemini-2.5-flash-lite",
+      defaultLLMModel: "gemini-2.5-flash-lite",
     },
     isLoading: true,
     updateSetting: () => {},
@@ -63,7 +63,7 @@ function SettingProvider({ children }: { children: ReactNode }) {
     delayMap: new Map(),
     defaultLanguage: "ko",
     showParagraphSummary: true,
-    defaultLLMModel: "googleai/gemini-2.5-flash-lite",
+    defaultLLMModel: "gemini-2.5-flash-lite",
   });
   const [isLoading, setIsLoading] = useState(true);
 
