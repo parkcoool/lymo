@@ -17,11 +17,18 @@ import { styles } from "./Player.styles";
 interface TrackPlayerProps {
   track: TrackDoc;
   lyrics: LyricsDoc["lyrics"];
+  lyricsProvider: LyricsProvider;
   provider?: ProviderDoc;
   trackDetail: Omit<TrackDetailDoc, "lyricsProvider"> & { lyricsProvider?: LyricsProvider };
 }
 
-export default function PlayerContent({ track, lyrics, provider, trackDetail }: TrackPlayerProps) {
+export default function PlayerContent({
+  track,
+  lyrics,
+  lyricsProvider,
+  provider,
+  trackDetail,
+}: TrackPlayerProps) {
   const { data: coverColor } = useCoverColorQuery(track.coverUrl);
 
   // 현재 활성화된 문장 View
@@ -73,7 +80,11 @@ export default function PlayerContent({ track, lyrics, provider, trackDetail }: 
         />
 
         {/* 가사 */}
-        <Lyrics activeSentenceRef={currentRef} lyrics={processedLyrics} />
+        <Lyrics
+          activeSentenceRef={currentRef}
+          lyrics={processedLyrics}
+          lyricsProvider={lyricsProvider}
+        />
       </ScrollView>
 
       {/* 현재 가사로 이동 */}

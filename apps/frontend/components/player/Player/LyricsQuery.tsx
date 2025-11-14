@@ -27,7 +27,13 @@ export default function LyricsQuery({
 
   if (trackDetail && provider)
     return (
-      <PlayerContent track={track} lyrics={lyrics} provider={provider} trackDetail={trackDetail} />
+      <PlayerContent
+        track={track}
+        lyrics={lyrics}
+        lyricsProvider={lyricsProvider}
+        provider={provider}
+        trackDetail={trackDetail}
+      />
     );
   else
     return (

@@ -35,7 +35,6 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
     lyricsProvider,
     model: setting.defaultLLMModel,
   };
-  console.log(key);
 
   return useSuspenseQuery({
     queryKey: ["track-stream", key],

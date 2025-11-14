@@ -37,6 +37,7 @@ export default function StreamingQuery({
     <PlayerContent
       track={track}
       lyrics={lyrics}
+      lyricsProvider={lyricsProvider}
       provider={generateDetailResult.provider}
       trackDetail={generateDetailResult.trackDetail}
     />
