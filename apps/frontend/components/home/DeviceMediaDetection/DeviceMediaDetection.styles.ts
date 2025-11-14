@@ -4,32 +4,11 @@ import { colors } from "@/constants/colors";
 
 export const styles = StyleSheet.create({
   wrapper: {
-    alignSelf: "stretch",
-    position: "relative",
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-
-  overlay: {
     flexDirection: "column",
-    alignItems: "flex-start",
-    backgroundColor: `${colors.primaryBackground}B3`,
-  },
-
-  header: {
-    flexDirection: "row",
-    gap: 8,
-    alignItems: "center",
-    padding: 16,
-    paddingBottom: 0,
-  },
-
-  headerIcon: {
-    color: colors.onPrimaryBackground,
-  },
-
-  headerText: {
-    color: colors.onPrimaryBackground,
+    position: "relative",
+    borderRadius: 16,
+    backgroundColor: colors.black,
+    overflow: "hidden",
   },
 
   closeButton: {
@@ -42,74 +21,76 @@ export const styles = StyleSheet.create({
     color: colors.onPrimaryBackground,
   },
 
-  trackWrapper: {
-    alignSelf: "stretch",
-  },
-
-  track: {
-    flexDirection: "row",
-    gap: 12,
-    padding: 12,
-    paddingBottom: 0,
-    alignItems: "center",
-    overflow: "hidden",
+  coverWrapper: {
+    position: "relative",
+    width: "100%",
+    height: 300,
   },
 
   cover: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: colors.surface,
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+
+  coverGradient: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
   },
 
   trackMetadata: {
+    position: "absolute",
+    bottom: 0,
+    left: 16,
+    right: 16,
     flexDirection: "column",
-    flexGrow: 1,
+    flex: 1,
   },
 
   title: {
-    color: colors.onPrimaryBackground,
-    fontSize: 16,
-    fontWeight: 700,
+    color: colors.onBackground,
+    fontSize: 32,
+    fontWeight: 800,
   },
 
-  artist: {
-    color: colors.onPrimaryBackgroundSubtle,
-    fontSize: 14,
+  details: {
+    color: colors.onBackgroundSubtle,
+    fontSize: 16,
   },
 
   footer: {
-    padding: 12,
-    flexDirection: "column",
-    gap: 12,
-    alignSelf: "stretch",
-    alignItems: "flex-start",
-    justifyContent: "center",
+    display: "flex",
+    flexDirection: "row",
+    padding: 16,
+    gap: 16,
   },
 
-  description: {
+  information: {
     flexDirection: "row",
     gap: 8,
     alignItems: "center",
+    paddingBottom: 0,
   },
 
-  castIcon: {
+  informationIcon: {
     color: colors.onPrimaryBackground,
   },
 
-  descriptionText: {
+  informationText: {
     color: colors.onPrimaryBackground,
-    fontSize: 16,
   },
 
   button: {
-    paddingVertical: 8,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     flexDirection: "row",
     gap: 8,
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.surface,
     borderRadius: 16,
+    flex: 1,
   },
 
   buttonIcon: {

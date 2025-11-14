@@ -13,17 +13,14 @@ export default function Home() {
         flexDirection: "column",
         flex: 1,
       }}
-      stickyHeaderIndices={[0]}
     >
-      <View>
-        {/* 상단 영역 */}
-        <SafeAreaView edges={["top"]} style={{ paddingTop: 60 }} />
+      {/* 상단 영역 */}
+      <SafeAreaView edges={["top"]} style={{ paddingTop: 60 }} />
 
-        {/* 알림 구역 */}
-        <View style={{ padding: 12 }}>
-          <NotificationAccessRequired />
-          <DeviceMediaDetection />
-        </View>
+      {/* 알림 구역 */}
+      <View style={{ padding: 12 }}>
+        <NotificationAccessRequired />
+        <DeviceMediaDetection />
       </View>
 
       {/* 최상단 섹션 */}
