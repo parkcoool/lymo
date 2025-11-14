@@ -104,7 +104,6 @@ export default function PlayerContent({
       </View>
 
       {/* 헤더 설정 */}
-
       <Stack.Screen
         options={{ header: (props) => <Header {...props} backgroundColor={coverColor} /> }}
       />
