@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { NativeEventEmitter } from "react-native";
+import { EmitterSubscription, NativeEventEmitter } from "react-native";
 
 import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
@@ -9,16 +9,18 @@ import type { DeviceMedia } from "@/types/mediaModule";
 
 const eventEmitter = new NativeEventEmitter(MediaModule);
 
-const checkPermission = async (setHasPermission: (value: boolean) => void) => {
+const startObserver = async (setHasPermission: (value: boolean) => void) => {
   try {
     const isGranted = await MediaModule.checkNotificationListenerPermission();
     setHasPermission(isGranted);
-    if (isGranted) {
-      MediaModule.startObserver();
-    }
+
+    if (isGranted) return await MediaModule.startObserver();
   } catch (error) {
     console.error("Failed to check permission", error);
   }
+
+  setHasPermission(false);
+  return false;
 };
 
 /**
@@ -32,26 +34,45 @@ export default function useSyncDeviceMedia() {
   const { isSynced } = useSyncStore();
 
   useEffect(() => {
-    checkPermission(setHasPermission);
+    let subscription: EmitterSubscription;
 
-    const subscription = eventEmitter.addListener(
-      "onMediaDataChanged",
-      (newDeviceMedia: DeviceMedia | null) => {
-        if (newDeviceMedia == null) return;
-        if (newDeviceMedia.duration === 0) return;
-        const fixedDeviceMedia = {
-          ...newDeviceMedia,
-          duration: Math.floor(newDeviceMedia.duration / 1000),
-        };
+    (async () => {
+      while (true) {
+        const success = await startObserver(setHasPermission);
 
-        setDeviceMedia(fixedDeviceMedia);
+        // 시작에 실패했으면 5초 후에 재시도
+        if (!success) {
+          console.warn("Failed to start media observer");
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          return;
+        }
 
-        if (isSynced) setTrackSource({ from: "device", track: fixedDeviceMedia });
+        // 성공적으로 시작
+        console.log("Media observer started");
+
+        // 이벤트 리스너 등록
+        subscription = eventEmitter.addListener(
+          "onMediaDataChanged",
+          (newDeviceMedia: DeviceMedia | null) => {
+            if (newDeviceMedia == null) return;
+            if (newDeviceMedia.duration === 0) return;
+            const fixedDeviceMedia = {
+              ...newDeviceMedia,
+              duration: Math.floor(newDeviceMedia.duration / 1000),
+            };
+
+            setDeviceMedia(fixedDeviceMedia);
+            if (isSynced) setTrackSource({ from: "device", track: fixedDeviceMedia });
+          }
+        );
+
+        // 성공적으로 시작했으므로 루프 종료
+        break;
       }
-    );
+    })();
 
     return () => {
-      subscription.remove();
+      if (subscription) subscription.remove();
     };
     // setHasPermission, setDeviceMedia와 setTrackSource는 안정적임.
     // eslint-disable-next-line react-hooks/exhaustive-deps
