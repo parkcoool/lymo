@@ -1,6 +1,7 @@
 import { TrackDetailDoc, TrackDoc } from "@lymo/schemas/doc";
 import { LyricsProvider } from "@lymo/schemas/shared";
 
+import { useSettingStore } from "@/contexts/useSettingStore";
 import useProvidersQuery from "@/hooks/queries/useProvidersQuery";
 
 import DetailQuery from "./DetailQuery";
@@ -21,12 +22,10 @@ export default function ProvidersQuery({
   lyricsProvider,
   providerId,
 }: ProvidersQueryProps) {
+  const { setting } = useSettingStore();
   const { data: providers, error } = useProvidersQuery({ trackId });
 
   if (error) throw error;
-
-  // TODO: provider 선택 UI 추가
-  const provider = providers.find((p) => p.id === providerId) ?? providers[0];
 
   if (providers.length === 0)
     return (
@@ -37,6 +36,12 @@ export default function ProvidersQuery({
         lyricsProvider={lyricsProvider}
       />
     );
+
+  // 우선순위에 따라 provider 결정
+  const provider =
+    providers.find((p) => p.id === providerId) ??
+    providers.find((p) => p.id === setting.defaultLLMModel) ??
+    providers[0];
 
   return (
     <DetailQuery

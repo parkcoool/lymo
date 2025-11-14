@@ -30,14 +30,13 @@ export default function DetailQuery({
   });
 
   if (trackDetailError) throw trackDetailError;
-  if (!trackDetail) throw new Error("곡 상세 정보를 찾을 수 없습니다.");
 
   return (
     <LyricsQuery
       track={track}
       trackId={trackId}
       provider={provider}
-      trackDetail={trackDetail}
+      trackDetail={trackDetail ?? undefined}
       lyricsProvider={lyricsProvider}
     />
   );

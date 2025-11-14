@@ -40,7 +40,7 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
     queryKey: ["track-stream", key],
 
     queryFn: streamedQuery({
-      streamFn: async function* (context) {
+      streamFn: async function* () {
         const flow = generateDetail(key);
 
         for await (const chunk of flow.stream) {
