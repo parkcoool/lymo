@@ -5,6 +5,7 @@ import { ScrollView, View } from "react-native";
 
 import Lyrics from "@/components/player/Lyrics";
 import MoveToCurrent from "@/components/player/MoveToCurrent";
+import ProviderInformation from "@/components/player/ProviderInformation";
 import Summary from "@/components/player/Summary";
 import TrackToCurrent from "@/components/player/TrackToCurrent";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
@@ -78,6 +79,9 @@ export default function PlayerContent({
           publishedAt={track.publishedAt}
           summary={trackDetail?.summary}
         />
+
+        {/* 제공자 정보 */}
+        {provider && <ProviderInformation provider={provider} />}
 
         {/* 가사 */}
         <Lyrics
