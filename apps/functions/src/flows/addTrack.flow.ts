@@ -81,6 +81,7 @@ export const addTrackFlow = ai.defineFlow(
         title: spotifyResult.title,
         createdAt: new Date().toISOString(),
         lyricsProviders: [lyricsProvider],
+        play: 0,
       };
 
       await admin.firestore().runTransaction(async (transaction) => {

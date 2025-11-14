@@ -16,6 +16,7 @@ export const TrackDocSchema = z.object({
   title: z.string(),
   createdAt: z.string(),
   lyricsProviders: z.array(LyricsProviderSchema),
+  play: z.number(),
 });
 export type TrackDoc = z.infer<typeof TrackDocSchema>;
 
