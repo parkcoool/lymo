@@ -97,8 +97,6 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
 
       initialValue,
     }),
-
-    initialData: initialValue,
   });
 }
 
