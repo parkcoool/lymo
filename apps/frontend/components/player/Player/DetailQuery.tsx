@@ -5,7 +5,6 @@ import { useSettingStore } from "@/contexts/useSettingStore";
 import useTrackDetailQuery from "@/hooks/queries/useTrackDetailQuery";
 
 import LyricsQuery from "./LyricsQuery";
-import StreamingQuery from "./StreamingQuery";
 
 interface DetailQueryProps {
   track: TrackDoc;
@@ -31,24 +30,15 @@ export default function DetailQuery({
   });
 
   if (trackDetailError) throw trackDetailError;
+  if (!trackDetail) throw new Error("곡 상세 정보를 찾을 수 없습니다.");
 
-  if (!trackDetail)
-    return (
-      <StreamingQuery
-        track={track}
-        trackId={trackId}
-        provider={provider}
-        lyricsProvider={lyricsProvider}
-      />
-    );
-  else
-    return (
-      <LyricsQuery
-        track={track}
-        trackId={trackId}
-        provider={provider}
-        trackDetail={trackDetail}
-        lyricsProvider={lyricsProvider}
-      />
-    );
+  return (
+    <LyricsQuery
+      track={track}
+      trackId={trackId}
+      provider={provider}
+      trackDetail={trackDetail}
+      lyricsProvider={lyricsProvider}
+    />
+  );
 }

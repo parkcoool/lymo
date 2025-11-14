@@ -8,12 +8,18 @@ import {
 import generateDetail from "@/apis/generateDetail";
 import { useSettingStore } from "@/contexts/useSettingStore";
 
-export interface GenerateDetailResult {
-  provider?: ProviderDoc;
-  providerId?: string;
-  trackDetail: Omit<TrackDetailDoc, "lyricsProvider"> & { lyricsProvider?: LyricsProvider };
-  lyrics: Lyrics;
-}
+export type GenerateDetailResult =
+  | {
+      exists: false;
+      provider?: ProviderDoc;
+      providerId?: string;
+      trackDetail: Omit<TrackDetailDoc, "lyricsProvider"> & { lyricsProvider?: LyricsProvider };
+      lyrics: Lyrics;
+    }
+  | {
+      exists: true;
+      providerId: string;
+    };
 
 /**
  * @description 곡 정보를 생성하는 스트리밍 suspenseQuery 훅입니다.
@@ -34,17 +40,24 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
     queryKey: ["track-stream", key],
 
     queryFn: streamedQuery({
-      streamFn: async function* () {
+      streamFn: async function* (context) {
         const flow = generateDetail(key);
 
         for await (const chunk of flow.stream) {
           yield chunk;
         }
+
+        const output = await flow.output;
+        if (!output.success) throw new Error("곡 상세 정보를 생성하는 데 실패하였습니다.");
+
+        if (output.exists) {
+          yield { event: "already_exists" as const, data: output.providerId };
+        }
       },
 
       reducer: (acc, chunk) => {
         const result = structuredClone(acc);
-        console.log(chunk);
+        if (result.exists) return result;
 
         switch (chunk.event) {
           case "lyrics_provider_set":
@@ -73,12 +86,16 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
             result.providerId = providerId;
             break;
           }
+
+          case "already_exists":
+            return { exists: true as const, providerId: chunk.data };
         }
 
         return result;
       },
 
       initialValue: {
+        exists: false,
         trackDetail: {
           summary: "",
           lyricsSplitIndices: [],

@@ -1,39 +1,32 @@
-import { ProviderDoc, TrackDoc } from "@lymo/schemas/doc";
+import { LyricsDoc, ProviderDoc, TrackDoc } from "@lymo/schemas/doc";
 import { LyricsProvider } from "@lymo/schemas/shared";
 
 import useGenerateDetailQuery from "@/hooks/queries/useGenerateDetailQuery";
-import useLyricsQuery from "@/hooks/queries/useLyricsQuery";
 
 import PlayerContent from "./PlayerContent";
 
 interface StreamingQueryProps {
   track: TrackDoc;
   trackId: string;
-  provider: ProviderDoc;
+  lyrics: LyricsDoc["lyrics"];
   lyricsProvider: LyricsProvider;
 }
 
 export default function StreamingQuery({
   track,
   trackId,
-  provider,
+  lyrics,
   lyricsProvider,
 }: StreamingQueryProps) {
-  // TODO: 두 suspense query를 별도 컴포넌트로 분리
-  const { data: lyrics, error: lyricsError } = useLyricsQuery({ trackId, lyricsProvider });
-  const { data: generateDetailResult, error: generateDetailError } = useGenerateDetailQuery(
-    trackId,
-    lyricsProvider
-  );
+  const { data: generateDetailResult, error } = useGenerateDetailQuery(trackId, lyricsProvider);
 
-  if (generateDetailError) throw generateDetailError;
-  if (lyricsError) throw lyricsError;
-
+  if (error) throw error;
+  if (generateDetailResult.exists) throw new Error("곡 상세 정보가 이미 존재합니다.");
   return (
     <PlayerContent
       track={track}
       lyrics={lyrics}
-      provider={provider}
+      provider={generateDetailResult.provider}
       trackDetail={generateDetailResult.trackDetail}
     />
   );
