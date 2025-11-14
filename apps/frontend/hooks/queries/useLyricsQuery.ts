@@ -13,15 +13,15 @@ interface UseLyricsQueryProps {
  *
  * @returns suspenseQuery 결과
  */
-export default function useLyricsQuery({ trackId, lyricsProvider }: UseLyricsQueryProps) {
-  // 쿼리 반환
+export default function useLyricsQuery(props: UseLyricsQueryProps) {
+  const key = props;
+
   return useSuspenseQuery({
-    queryKey: ["lyrics", trackId, lyricsProvider],
-    staleTime: Infinity,
+    queryKey: ["lyrics", key],
 
     queryFn: async () => {
-      if (!trackId) throw new Error("곡 ID가 제공되지 않았습니다.");
-      const lyricsDoc = await getLyrics({ trackId, lyricsProvider });
+      if (!key.trackId) throw new Error("곡 ID가 제공되지 않았습니다.");
+      const lyricsDoc = await getLyrics(key);
       return lyricsDoc.lyrics;
     },
   });

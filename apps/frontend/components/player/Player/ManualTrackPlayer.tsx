@@ -1,7 +1,7 @@
 import useTrackAndProvidersQueries from "@/hooks/queries/useTrackAndProvidersQueries";
 
-import StreamingTrackPlayer from "./StreamingTrackPlayer";
-import TrackPlayer from "./TrackPlayer";
+import DetailQuery from "./DetailQuery";
+import StreamingQuery from "./StreamingQuery";
 
 interface ManualTrackPlayerProps {
   trackId: string;
@@ -22,7 +22,7 @@ export default function ManualTrackPlayer({ trackId }: ManualTrackPlayerProps) {
 
   if (providers.length === 0)
     return (
-      <StreamingTrackPlayer
+      <StreamingQuery
         track={track}
         trackId={trackId}
         provider={provider}
@@ -31,7 +31,7 @@ export default function ManualTrackPlayer({ trackId }: ManualTrackPlayerProps) {
     );
   else
     return (
-      <TrackPlayer
+      <DetailQuery
         track={track}
         trackId={trackId}
         provider={provider}

@@ -21,7 +21,6 @@ export default function useTrackAndProvidersQueries({
       // 곡 정보
       {
         queryKey: ["track", trackId],
-        staleTime: Infinity,
         queryFn: async () => {
           const trackDoc = await getTrack({ trackId });
           return trackDoc;
@@ -31,7 +30,6 @@ export default function useTrackAndProvidersQueries({
       // 제공자 목록
       {
         queryKey: ["providers", trackId],
-        staleTime: Infinity,
         queryFn: async () => {
           const providers = await getProviders({ trackId });
           return providers;

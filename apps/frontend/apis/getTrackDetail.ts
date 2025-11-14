@@ -27,7 +27,7 @@ export default async function getTrackDetail({
 
   const trackDetailData = (await detailDoc.get()).data();
 
-  if (!trackDetailData) throw new Error("곡 상세 정보를 찾을 수 없습니다.");
+  if (!trackDetailData) return null;
 
   return trackDetailData;
 }

@@ -23,17 +23,19 @@ export interface GenerateDetailResult {
 export default function useGenerateDetailQuery(trackId: string, lyricsProvider?: LyricsProvider) {
   const { setting } = useSettingStore();
 
+  const key = {
+    id: trackId,
+    language: setting.defaultLanguage,
+    lyricsProvider,
+    model: setting.defaultLLMModel,
+  };
+
   return useSuspenseQuery({
-    queryKey: ["track-stream", trackId],
+    queryKey: ["track-stream", key],
 
     queryFn: streamedQuery({
       streamFn: async function* () {
-        const flow = generateDetail({
-          id: trackId,
-          language: setting.defaultLanguage,
-          lyricsProvider,
-          model: setting.defaultLLMModel,
-        });
+        const flow = generateDetail(key);
 
         for await (const chunk of flow.stream) {
           yield chunk;
@@ -42,6 +44,7 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
 
       reducer: (acc, chunk) => {
         const result = structuredClone(acc);
+        console.log(chunk);
 
         switch (chunk.event) {
           case "lyrics_provider_set":
@@ -85,7 +88,5 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
         lyrics: [],
       } as GenerateDetailResult,
     }),
-
-    staleTime: Infinity,
   });
 }

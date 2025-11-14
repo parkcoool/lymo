@@ -6,19 +6,19 @@ import useLyricsQuery from "@/hooks/queries/useLyricsQuery";
 
 import PlayerContent from "./PlayerContent";
 
-interface TrackPlayerProps {
+interface StreamingQueryProps {
   track: TrackDoc;
   trackId: string;
   provider: ProviderDoc;
   lyricsProvider: LyricsProvider;
 }
 
-export default function StreamingTrackPlayer({
+export default function StreamingQuery({
   track,
   trackId,
   provider,
   lyricsProvider,
-}: TrackPlayerProps) {
+}: StreamingQueryProps) {
   // TODO: 두 suspense query를 별도 컴포넌트로 분리
   const { data: lyrics, error: lyricsError } = useLyricsQuery({ trackId, lyricsProvider });
   const { data: generateDetailResult, error: generateDetailError } = useGenerateDetailQuery(

@@ -14,17 +14,16 @@ interface UseAddTrackProps {
  * @returns suspenseQuery 결과
  */
 export default function useAddTrackQuery(props: UseAddTrackProps) {
-  // 쿼리 반환
+  const key = props;
+
   return useSuspenseQuery({
-    queryKey: ["track", "stream", props],
+    queryKey: ["track", "stream", key],
 
     queryFn: async () => {
-      const result = await addTrack(props);
+      const result = await addTrack(key);
       if (result.notFound) throw new Error("곡을 찾을 수 없습니다.");
       const { notFound, ...data } = result;
       return data;
     },
-
-    staleTime: Infinity,
   });
 }

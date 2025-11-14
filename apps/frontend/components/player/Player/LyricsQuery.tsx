@@ -1,31 +1,28 @@
-import { ProviderDoc, TrackDoc } from "@lymo/schemas/doc";
+import { ProviderDoc, TrackDetailDoc, TrackDoc } from "@lymo/schemas/doc";
 import { LyricsProvider } from "@lymo/schemas/shared";
 
 import useLyricsQuery from "@/hooks/queries/useLyricsQuery";
-import useTrackDetailQuery from "@/hooks/queries/useTrackDetailQuery";
 
 import PlayerContent from "./PlayerContent";
 
-interface TrackPlayerProps {
+interface LyricsQueryProps {
   track: TrackDoc;
   trackId: string;
   provider: ProviderDoc;
-  providerId: string;
+  trackDetail: TrackDetailDoc;
   lyricsProvider: LyricsProvider;
 }
 
-export default function TrackPlayer({
+export default function LyricsQuery({
   track,
   trackId,
   provider,
-  providerId,
+  trackDetail,
   lyricsProvider,
-}: TrackPlayerProps) {
+}: LyricsQueryProps) {
   // TODO: 두 suspense query를 별도 컴포넌트로 분리
-  const { data: trackDetail, error: trackDetailError } = useTrackDetailQuery(trackId, providerId);
   const { data: lyrics, error: lyricsError } = useLyricsQuery({ trackId, lyricsProvider });
 
-  if (trackDetailError) throw trackDetailError;
   if (lyricsError) throw lyricsError;
 
   return (
