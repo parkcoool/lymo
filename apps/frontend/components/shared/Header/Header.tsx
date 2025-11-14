@@ -9,11 +9,7 @@ interface HeaderProps extends NativeStackHeaderProps {
   onSettingsPress?: () => void;
 }
 
-export default function Header({
-  back,
-  navigation,
-  onSettingsPress,
-}: HeaderProps) {
+export default function Header({ back, navigation, onSettingsPress }: HeaderProps) {
   return (
     <View style={styles.container}>
       {/* 상단 영역 */}
@@ -24,11 +20,7 @@ export default function Header({
           {/* 뒤로 가기 버튼 */}
           {back && (
             <TouchableOpacity onPress={navigation.goBack}>
-              <MaterialIcons
-                name="chevron-left"
-                size={28}
-                style={styles.buttonIcon}
-              />
+              <MaterialIcons name="chevron-left" size={28} style={styles.buttonIcon} />
             </TouchableOpacity>
           )}
 
@@ -39,11 +31,7 @@ export default function Header({
         <View style={styles.right}>
           {/* 설정 버튼 */}
           <TouchableOpacity onPress={onSettingsPress}>
-            <MaterialIcons
-              name="settings"
-              size={28}
-              style={styles.buttonIcon}
-            />
+            <MaterialIcons name="settings" size={28} style={styles.buttonIcon} />
           </TouchableOpacity>
         </View>
       </View>

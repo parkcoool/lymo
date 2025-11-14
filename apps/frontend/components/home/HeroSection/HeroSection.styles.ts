@@ -6,12 +6,6 @@ export const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "center",
-    gap: 48,
-    padding: 24,
-    minHeight: 480,
-  },
-
-  searchBox: {
-    width: "100%",
+    padding: 80,
   },
 });
