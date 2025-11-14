@@ -42,15 +42,15 @@ export default function LoadingIndicator({
         {/* 가사 */}
         <View style={styles.lyricsSkeletonContainer}>
           <View style={styles.lyricsSkeleton}>
-            <Skeleton height={25} opacity={0.3} />
+            <Skeleton height={24} opacity={0.3} />
             <Skeleton height={20} width="70%" opacity={0.2} />
           </View>
           <View style={styles.lyricsSkeleton}>
-            <Skeleton height={25} opacity={0.3} />
+            <Skeleton height={24} opacity={0.3} />
             <Skeleton height={20} width="70%" opacity={0.2} />
           </View>
           <View style={styles.lyricsSkeleton}>
-            <Skeleton height={25} opacity={0.3} />
+            <Skeleton height={24} opacity={0.3} />
             <Skeleton height={20} width="70%" opacity={0.2} />
           </View>
         </View>

@@ -38,4 +38,14 @@ export const styles = StyleSheet.create({
   sectionContentWrapper: {
     gap: 8,
   },
+
+  skeletonColumn: {
+    padding: 12,
+    flexDirection: "column",
+  },
+
+  skeletonRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
 });

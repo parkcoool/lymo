@@ -38,7 +38,7 @@ export default function PopularTracksSection() {
           contentContainerStyle={styles.sectionContentContainer}
           columnWrapperStyle={styles.sectionContentWrapper}
           key={popularTracks.length}
-          numColumns={Math.ceil(popularTracks.length / 4)}
+          numColumns={Math.max(Math.ceil(popularTracks.length / 4), 2)}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           data={popularTracks}

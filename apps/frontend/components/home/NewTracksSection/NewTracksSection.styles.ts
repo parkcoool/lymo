@@ -29,5 +29,6 @@ export const styles = StyleSheet.create({
   sectionContent: {
     padding: 20,
     gap: 12,
+    flexDirection: "row",
   },
 });
