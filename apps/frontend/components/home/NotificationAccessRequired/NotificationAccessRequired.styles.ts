@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     position: "relative",
     borderRadius: 20,
     overflow: "hidden",
-    backgroundColor: `${colors.primaryBackground}B3`,
+    backgroundColor: `${colors.surface}`,
     flexDirection: "column",
     alignItems: "flex-start",
   },
@@ -20,19 +20,40 @@ export const styles = StyleSheet.create({
   },
 
   closeIcon: {
-    color: colors.onPrimaryBackground,
+    color: colors.onSurface,
   },
 
   body: {
-    padding: 12,
+    padding: 20,
+    gap: 20,
     paddingBottom: 0,
-    alignItems: "center",
-    marginRight: 100,
   },
 
-  description: {
-    color: colors.onPrimaryBackground,
+  title: {
+    color: colors.onSurface,
+    fontSize: 24,
+    fontWeight: 700,
+  },
+
+  descriptionContainer: {
+    gap: 8,
+  },
+
+  descriptionWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 8,
+  },
+
+  descriptionIcon: {
+    color: colors.onSurfaceSubtle,
+  },
+
+  descriptionText: {
+    color: colors.onSurfaceSubtle,
     fontSize: 16,
+    flex: 1,
   },
 
   footer: {
@@ -45,13 +66,15 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    paddingVertical: 8,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     flexDirection: "row",
     gap: 8,
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.surface,
     borderRadius: 16,
+    flex: 1,
   },
 
   buttonIcon: {
