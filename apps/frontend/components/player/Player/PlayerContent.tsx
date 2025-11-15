@@ -90,7 +90,7 @@ export default function PlayerContent({
           />
 
           {/* 제공자 정보 */}
-          {provider && <ProviderInformation provider={provider} />}
+          <ProviderInformation provider={provider} />
 
           {/* 가사 */}
           <Lyrics

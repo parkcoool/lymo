@@ -9,10 +9,10 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    height: 40,
   },
 
   providerNameWrapper: {
-    paddingVertical: 8,
     borderRadius: 8,
     display: "flex",
     flexDirection: "row",
