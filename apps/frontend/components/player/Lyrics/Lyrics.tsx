@@ -1,4 +1,4 @@
-import { Lyrics as LyricsType, LyricsSentence, LyricsProvider } from "@lymo/schemas/shared";
+import { LyricsProvider } from "@lymo/schemas/shared";
 import { Ref } from "react";
 import { Text, View } from "react-native";
 
@@ -9,11 +9,12 @@ import { useSyncStore } from "@/contexts/useSyncStore";
 import useDeviceMediaTimestamp from "@/hooks/useDeviceMediaTimestamp";
 import useTrackKey from "@/hooks/useTrackKey";
 import getLyricsProviderName from "@/utils/getLyricsProviderName";
+import { PostLyricsResult } from "@/utils/processLyrics";
 
 import { styles } from "./Lyrics.styles";
 
 interface LyricsProps {
-  lyrics: LyricsType;
+  lyrics: PostLyricsResult;
   lyricsProvider?: LyricsProvider;
   activeSentenceRef: Ref<View>;
 }
@@ -66,10 +67,12 @@ export default function Lyrics({ lyrics, lyricsProvider, activeSentenceRef }: Ly
   );
 }
 
-const isActiveParagraph = (paragraph: LyricsSentence[], timestamp: number) =>
+const isActiveParagraph = (paragraph: PostLyricsResult[number]["sentences"], timestamp: number) =>
   paragraph.length > 0 &&
   paragraph[0].start <= timestamp &&
   timestamp < paragraph[paragraph.length - 1].end;
 
-const isActiveSentence = (sentence: LyricsSentence, timestamp: number) =>
-  sentence.start <= timestamp && timestamp < sentence.end;
+const isActiveSentence = (
+  sentence: PostLyricsResult[number]["sentences"][number],
+  timestamp: number
+) => sentence.start <= timestamp && timestamp < sentence.end;

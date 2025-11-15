@@ -15,6 +15,11 @@ export const styles = StyleSheet.create({
     color: colors.onBackgroundSubtle,
   },
 
+  active: {
+    color: colors.onBackground,
+    fontWeight: 900,
+  },
+
   translation: {
     fontSize: 16,
     color: colors.onBackgroundSubtle,

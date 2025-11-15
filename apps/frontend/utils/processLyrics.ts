@@ -1,4 +1,9 @@
-import { Lyrics } from "@lymo/schemas/shared";
+import { LyricsSentence } from "@lymo/schemas/shared";
+
+export type PostLyricsResult = {
+  sentences: (Omit<LyricsSentence, "translation"> & { translation?: string | null })[];
+  summary: string | null;
+}[];
 
 interface ProcessLyricsProps {
   rawLyrics: { text: string; start: number; end: number }[];
@@ -24,11 +29,11 @@ export default function processLyrics({
   lyricsSplitIndices,
   translations,
   paragraphSummaries,
-}: ProcessLyricsProps): Lyrics {
+}: ProcessLyricsProps): PostLyricsResult {
   // groupLyrics가 반환한 인덱스(i)는 rawLyrics[i]와 rawLyrics[i+1] 사이 경계를 의미하므로
   // 이를 문단 시작 인덱스로 변환하기 위해 +1 해준다.
   const paragraphStartIndices = [0, ...lyricsSplitIndices.map((i) => i + 1), rawLyrics.length];
-  const lyrics: Lyrics = [];
+  const lyrics: PostLyricsResult = [];
 
   for (let p = 0; p < paragraphStartIndices.length - 1; p++) {
     const startIdx = paragraphStartIndices[p];
@@ -39,7 +44,7 @@ export default function processLyrics({
       const globalIdx = startIdx + idx;
       return {
         text: lyric.text,
-        translation: translations[globalIdx] ?? null,
+        translation: translations[globalIdx],
         start: lyric.start,
         end: lyric.end,
       };
