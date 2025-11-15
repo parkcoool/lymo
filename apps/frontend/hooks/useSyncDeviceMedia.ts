@@ -44,30 +44,31 @@ export default function useSyncDeviceMedia() {
         if (!success) {
           console.warn("Failed to start media observer");
           await new Promise((resolve) => setTimeout(resolve, 5000));
-          return;
         }
 
         // 성공적으로 시작
-        console.log("Media observer started");
+        else {
+          console.log("Media observer started");
 
-        // 이벤트 리스너 등록
-        subscription = eventEmitter.addListener(
-          "onMediaDataChanged",
-          (newDeviceMedia: DeviceMedia | null) => {
-            if (newDeviceMedia == null) return;
-            if (newDeviceMedia.duration === 0) return;
-            const fixedDeviceMedia = {
-              ...newDeviceMedia,
-              duration: Math.floor(newDeviceMedia.duration / 1000),
-            };
+          // 이벤트 리스너 등록
+          subscription = eventEmitter.addListener(
+            "onMediaDataChanged",
+            (newDeviceMedia: DeviceMedia | null) => {
+              if (newDeviceMedia == null) return;
+              if (newDeviceMedia.duration === 0) return;
+              const fixedDeviceMedia = {
+                ...newDeviceMedia,
+                duration: Math.floor(newDeviceMedia.duration / 1000),
+              };
 
-            setDeviceMedia(fixedDeviceMedia);
-            if (isSynced) setTrackSource({ from: "device", track: fixedDeviceMedia });
-          }
-        );
+              setDeviceMedia(fixedDeviceMedia);
+              if (isSynced) setTrackSource({ from: "device", track: fixedDeviceMedia });
+            }
+          );
 
-        // 성공적으로 시작했으므로 루프 종료
-        break;
+          // 성공적으로 시작했으므로 루프 종료
+          break;
+        }
       }
     })();
 
