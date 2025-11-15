@@ -1,4 +1,5 @@
-import { View, Text } from "react-native";
+import { useEffect, useRef } from "react";
+import { View, Text, Animated } from "react-native";
 
 import { colors } from "@/constants/colors";
 
@@ -13,18 +14,29 @@ interface ParagraphProps {
 export default function Paragraph({ summary, active, children }: ParagraphProps) {
   const parsedSummary = summary === "null" ? null : summary;
 
+  const progress = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(progress, {
+      toValue: active ? 1 : 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [active, progress]);
+
+  const backgroundColor = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["transparent", `${colors.white}20`],
+  });
+
   return (
-    <View style={[styles.wrapper, active && activeStyle]}>
+    <Animated.View style={[styles.wrapper, { backgroundColor }]}>
       {parsedSummary && (
         <View style={styles.summaryWrapper}>
           <Text style={styles.summary}>{parsedSummary}</Text>
         </View>
       )}
       <View style={styles.sentenceContainer}>{children}</View>
-    </View>
+    </Animated.View>
   );
 }
-
-const activeStyle = {
-  backgroundColor: `${colors.white}20`,
-};
