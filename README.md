@@ -1,21 +1,38 @@
-<img width="223" height="80" alt="brand" src="https://github.com/user-attachments/assets/ca021ad1-8496-4cf5-904e-d5cc21036f48" />
+<div align="center">
+   
+   <img width="223" height="80" alt="brand" src="https://github.com/user-attachments/assets/ca021ad1-8496-4cf5-904e-d5cc21036f48" />
+      
+   **이야기와 감정을 온전히 이해하는 새로운 음악 감상**
+   
+   <i>Lymo는 어떤 음악 앱을 사용하든, 그 안에 담긴 숨겨진 의미와 이야기를 깊이 있게 탐색해주는 음악 감상 앱입니다.</i>
+   <div>
+      
+   ![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+   ![Expo](https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37)
+   ![React Query](https://img.shields.io/badge/-React%20Query-FF4154?style=for-the-badge&logo=react%20query&logoColor=white)
+   ![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
+   
+   </div>
 
-> 이야기와 감정을 온전히 이해하는 새로운 음악 감상
+</div>
 
-Lymo는 노래에 담긴 숨겨진 의미와 아티스트의 진짜 이야기를 깊이 있게 탐색하고 싶은 분들을 위한 '**음악 해석 및 심층 감상 플랫폼**'입니다.
+## 📸 인앱 스크린샷
+<div align="center">
+   
+   <img src="https://github.com/user-attachments/assets/91291322-8486-4e27-a2ec-3decd3317f83" alt="home" width="300"/>
+   <img src="https://github.com/user-attachments/assets/7c71eadf-442d-4da7-a5df-d80a218214c8" alt="player" width="300"/>
+   <img src="https://github.com/user-attachments/assets/7d55d62e-34e8-40d1-9b07-21d3509cf443" alt="setting" width="300"/>
+   
+</div>
 
-### 💡 핵심 기능 및 특징
+## 💡 핵심 기능 및 특징
 
-1. **AI 기반의 깊이 있는 가사 해석**
-   아티스트가 제공하는 곡에 대한 소개, 커뮤니티에서 공유되는 의견, 문화적 배경 등 다양한 정보를 기반으로 AI가 깊이 있는 해석을 제공합니다. 이를 통해 당신이 사랑하는 노래의 새로운 의미를 발견하게 될 것입니다.
+1. **자동 음악 감지** - 어떤 음악 앱을 사용하든, 기기에서 재생되는 음악을 자동으로 감지합니다.
+2. **실시간 싱크 해석** - 지금 듣고 계신 음악 재생 시점과 연동됩니다. 현재 재생되는 부분의 가사 해석이 실시간으로 제공됩니다.
+3. **다국어 지원** - 영어로 된 음악이든, 일본어로 된 음악이든, 원하는 언어로 해석할 수 있습니다.
+4. **해석 커뮤니티 (예정)** - 음악에 대한 감상과 자신만의 해석을 다른 사용자들과 공유하고, 이에 대해 토론할 수 있습니다.
 
-2. **음악과 함께 흐르는 '싱크 가사 해석'**
-   음악을 감상하는 동안, 현재 재생되는 부분의 가사 해석이 실시간으로 눈앞에 펼쳐집니다. 더 이상 노래를 중단하고 가사 의미를 검색할 필요가 없습니다.
-
-3. **노래의 세계를 완성하는 '비하인드 스토리'**
-   이 노래가 어떤 경험을 통해 탄생했는지, 앨범의 컨셉은 무엇인지, 당시의 문화적 배경은 어떠했는지 등 곡의 이해를 돕는 다채로운 부가 정보를 제공하여 당신의 음악 감상을 더욱 풍성하게 만들어 드립니다.
-
-### 👍 이런 분들께 추천합니다
+## 👍 이런 분들께 추천합니다
 
 - 최애곡의 가사를 곱씹으며 그 의미를 온전히 이해하고 싶으신 분
 
