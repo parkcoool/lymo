@@ -103,6 +103,10 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
 
     initialData: initialValue,
     placeholderData: initialValue,
+    staleTime: (query) => {
+      if (query.state.fetchStatus === "idle") return 0;
+      return Infinity;
+    },
   });
 }
 

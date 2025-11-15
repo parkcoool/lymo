@@ -19,5 +19,6 @@ export default function useTrackQuery({ trackId }: UseTrackQuery) {
       const trackDoc = await getTrack({ trackId });
       return trackDoc;
     },
+    staleTime: Infinity,
   });
 }

@@ -22,5 +22,6 @@ export default function useTrackDetailQuery(props: UseTrackDetailQueryProps) {
       const trackDetailDoc = await getTrackDetail(props);
       return trackDetailDoc;
     },
+    staleTime: Infinity,
   });
 }

@@ -26,5 +26,6 @@ export default function useAddTrackQuery(props: UseAddTrackProps) {
       const { notFound, ...data } = result;
       return data;
     },
+    staleTime: Infinity,
   });
 }

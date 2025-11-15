@@ -25,5 +25,7 @@ export default function useLyricsQuery(props: UseLyricsQueryProps) {
       const lyricsDoc = await getLyrics(key);
       return lyricsDoc.lyrics;
     },
+
+    staleTime: Infinity,
   });
 }

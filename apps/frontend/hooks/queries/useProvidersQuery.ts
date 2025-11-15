@@ -19,5 +19,6 @@ export default function useProvidersQuery({ trackId }: UseProvidersQueryProps) {
       const providers = await getProviders({ trackId });
       return providers;
     },
+    staleTime: Infinity,
   });
 }
