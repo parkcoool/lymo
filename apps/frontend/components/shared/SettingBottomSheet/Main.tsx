@@ -48,14 +48,14 @@ export default function Main({ setView }: MainProps) {
       />
 
       {/* 문단 요약 보이기 */}
-      <SettingToggle
+      {/* <SettingToggle
         icon="summarize"
         label="문단 요약 보이기"
         value={setting.showParagraphSummary}
         onValueChange={(value: boolean) =>
           updateSetting((prev) => ({ ...prev, showParagraphSummary: value }))
         }
-      />
+      /> */}
     </View>
   );
 }
