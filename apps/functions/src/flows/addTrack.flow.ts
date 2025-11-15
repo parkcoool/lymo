@@ -46,7 +46,10 @@ export const addTrackFlow = ai.defineFlow(
         if (existingLyrics) {
           return {
             id: trackId,
-            track: existingTrack,
+            track: {
+              ...existingTrack,
+              play: existingTrack.play ?? 0, // for legacy data
+            },
             lyrics: existingLyrics.lyrics,
             lyricsProvider: existingLyrics.provider,
             notFound: false as const,
