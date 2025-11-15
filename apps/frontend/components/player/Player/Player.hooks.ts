@@ -20,7 +20,7 @@ interface UseTrackingReturn {
 
 export function useTracking({ currentY, track }: UseTrackingParams): UseTrackingReturn {
   // 트래킹 모드 활성화 여부
-  const [isTrackingMode, setIsTrackingMode] = useState(true);
+  const [isTrackingMode, setIsTrackingMode] = useState(false);
 
   // 자동 스크롤 중인지 여부 (사용자 스크롤과 구분하기 위함)
   const isAutoScrollingRef = useRef<boolean>(false);
