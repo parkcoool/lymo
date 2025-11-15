@@ -8,11 +8,11 @@ export const styles = StyleSheet.create({
     position: "relative",
     borderRadius: 20,
     overflow: "hidden",
-    backgroundColor: colors.primary,
+    backgroundColor: colors.surface,
     flexDirection: "column",
     alignItems: "flex-start",
     height: 400,
-    boxShadow: "0 4px 20px rgba(255, 255, 255, 0.2)",
+    boxShadow: "0 4px 32px rgba(255, 255, 255, 0.1)",
   },
 
   overlay: {

@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: colors.black,
     overflow: "hidden",
+    boxShadow: "0 4px 32px rgba(255, 255, 255, 0.1)",
   },
 
   closeButton: {
