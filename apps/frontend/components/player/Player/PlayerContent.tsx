@@ -7,8 +7,8 @@ import { ScrollView, View } from "react-native";
 import Lyrics from "@/components/player/Lyrics";
 import MoveToCurrent from "@/components/player/MoveToCurrent";
 import ProviderInformation from "@/components/player/ProviderInformation";
+import StartTrack from "@/components/player/StartTrack";
 import Summary from "@/components/player/Summary";
-import TrackToCurrent from "@/components/player/TrackToCurrent";
 import Header from "@/components/shared/Header";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
@@ -106,7 +106,7 @@ export default function PlayerContent({
         )}
 
         {/* 트래킹 모드 활성화 */}
-        <TrackToCurrent isTrackingMode={isTrackingMode} onPress={handleMoveToCurrent} />
+        <StartTrack isTrackingMode={isTrackingMode} onPress={handleMoveToCurrent} />
       </View>
 
       {/* 헤더 설정 */}

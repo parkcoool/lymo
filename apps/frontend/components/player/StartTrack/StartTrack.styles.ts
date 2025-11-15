@@ -15,11 +15,11 @@ export const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: colors.white,
     opacity: 0.7,
   },
 
   icon: {
-    color: colors.onSurface,
+    color: colors.black,
   },
 });

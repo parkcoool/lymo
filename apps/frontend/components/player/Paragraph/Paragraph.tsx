@@ -10,11 +10,7 @@ interface ParagraphProps {
   children: React.ReactNode;
 }
 
-export default function Paragraph({
-  summary,
-  active,
-  children,
-}: ParagraphProps) {
+export default function Paragraph({ summary, active, children }: ParagraphProps) {
   const parsedSummary = summary === "null" ? null : summary;
 
   return (

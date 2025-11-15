@@ -15,12 +15,12 @@ export const styles = StyleSheet.create({
   summaryWrapper: {
     padding: 16,
     borderRadius: 16,
-    backgroundColor: `${colors.surface}B3`,
+    backgroundColor: `${colors.white}80`,
   },
 
   summary: {
     fontSize: 14,
-    color: colors.onSurface,
+    color: colors.black,
   },
 
   sentenceContainer: {

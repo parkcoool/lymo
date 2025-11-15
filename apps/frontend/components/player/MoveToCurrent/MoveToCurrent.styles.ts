@@ -18,16 +18,16 @@ export const styles = StyleSheet.create({
     borderRadius: 32,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: colors.white,
     opacity: 0.7,
   },
 
   text: {
     fontSize: 16,
-    color: colors.onSurface,
+    color: colors.black,
   },
 
   icon: {
-    color: colors.onSurface,
+    color: colors.black,
   },
 });
