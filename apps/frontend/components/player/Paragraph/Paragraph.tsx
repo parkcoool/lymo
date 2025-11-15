@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { View, Text, Animated } from "react-native";
 
 import { colors } from "@/constants/colors";
@@ -11,7 +11,7 @@ interface ParagraphProps {
   children: React.ReactNode;
 }
 
-export default function Paragraph({ summary, active, children }: ParagraphProps) {
+const Paragraph = memo(({ summary, active, children }: ParagraphProps) => {
   const parsedSummary = summary === "null" ? null : summary;
 
   const progress = useRef(new Animated.Value(0)).current;
@@ -39,4 +39,8 @@ export default function Paragraph({ summary, active, children }: ParagraphProps)
       <View style={styles.sentenceContainer}>{children}</View>
     </Animated.View>
   );
-}
+});
+
+Paragraph.displayName = "Paragraph";
+
+export default Paragraph;

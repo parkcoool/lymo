@@ -7,7 +7,7 @@ import { MediaModule } from "@/core/mediaModule";
  * @description
  * 기기에서 재생되는 미디어의 현재 시각을 가져오는 훅입니다.
  *
- * 반환되는 `timestamp` 상태값은 업데이트되는 빈도가 매우 짧으므로 사용 시 잦은 리렌러딩을 유발할 수 있음에 유의하세요.
+ * 반환되는 `timestamp` 상태값은 0.1초(100ms)마다 갱신되며, 재생 상태에 따라 보정됩니다.
  *
  * @returns 기기에서 재생되는 미디어의 현재 시각
  */
@@ -20,7 +20,6 @@ export default function useDeviceMediaTimestamp() {
     syncTime: Date.now(), // 마지막 위치를 받은 로컬 시간
     isPlaying: false, // 현재 재생 상태
   });
-  const animationFrameId = useRef<number>(0);
 
   const isPlaying = deviceMedia?.isPlaying ?? false;
 
@@ -52,7 +51,7 @@ export default function useDeviceMediaTimestamp() {
   }, [isPlaying]);
 
   useEffect(() => {
-    const animate = () => {
+    const updateTimestamp = () => {
       // isPlaying 상태일 때만 타임스탬프를 보간
       if (syncData.current.isPlaying) {
         const elapsedTime = Date.now() - syncData.current.syncTime;
@@ -60,18 +59,12 @@ export default function useDeviceMediaTimestamp() {
         const sec = interpolatedTimestamp / 1000;
         setTimestamp(sec);
       }
-      // 다음 프레임에 animate 함수를 다시 호출
-      animationFrameId.current = requestAnimationFrame(animate);
     };
 
-    // 애니메이션 루프 시작
-    animationFrameId.current = requestAnimationFrame(animate);
+    // 0.1초(100ms)마다 타임스탬프 업데이트
+    const interval = setInterval(updateTimestamp, 100);
 
-    return () => {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
-    };
+    return () => clearInterval(interval);
   }, []);
 
   return timestamp;

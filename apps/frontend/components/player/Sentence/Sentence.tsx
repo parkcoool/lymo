@@ -1,4 +1,4 @@
-import React, { Ref, useEffect, useRef } from "react";
+import React, { memo, Ref, useEffect, useRef } from "react";
 import { View, Animated } from "react-native";
 
 import Skeleton from "@/components/shared/Skeleton";
@@ -13,7 +13,7 @@ interface SentenceProps {
   ref?: Ref<View>;
 }
 
-export default function Sentence({ sentence, translation, active, ref }: SentenceProps) {
+const Sentence = memo(({ sentence, translation, active, ref }: SentenceProps) => {
   const progress = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -41,4 +41,8 @@ export default function Sentence({ sentence, translation, active, ref }: Sentenc
       )}
     </View>
   );
-}
+});
+
+Sentence.displayName = "Sentence";
+
+export default Sentence;

@@ -1,5 +1,5 @@
 import { LyricsProvider } from "@lymo/schemas/shared";
-import { Ref } from "react";
+import { Ref, useMemo } from "react";
 import { Text, View } from "react-native";
 
 import Paragraph from "@/components/player/Paragraph";
@@ -26,7 +26,11 @@ export default function Lyrics({ lyrics, lyricsProvider, activeSentenceRef }: Ly
   const { isSynced } = useSyncStore();
 
   // 설정에 의해 조정된 타임스탬프
-  const adjustedTimestamp = timestamp + (trackKey ? setting.delayMap.get(trackKey) ?? 0 : 0) / 1000;
+  const delay = useMemo(
+    () => (trackKey ? setting.delayMap.get(trackKey) ?? 0 : 0) / 1000,
+    [setting.delayMap, trackKey]
+  );
+  const adjustedTimestamp = timestamp + delay;
 
   // 가사 제공자 이름
   const lyricsProviderName = lyricsProvider ? getLyricsProviderName(lyricsProvider) : null;
