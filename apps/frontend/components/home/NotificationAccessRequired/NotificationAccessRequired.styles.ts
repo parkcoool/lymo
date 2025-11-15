@@ -8,9 +8,18 @@ export const styles = StyleSheet.create({
     position: "relative",
     borderRadius: 20,
     overflow: "hidden",
-    backgroundColor: `${colors.surface}`,
+    backgroundColor: colors.primary,
     flexDirection: "column",
     alignItems: "flex-start",
+    height: 400,
+    boxShadow: "0 4px 20px rgba(255, 255, 255, 0.2)",
+  },
+
+  overlay: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#00000080",
   },
 
   closeButton: {
@@ -24,9 +33,12 @@ export const styles = StyleSheet.create({
   },
 
   body: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     padding: 20,
     gap: 20,
-    paddingBottom: 0,
   },
 
   title: {
@@ -57,12 +69,7 @@ export const styles = StyleSheet.create({
   },
 
   footer: {
-    padding: 12,
-    flexDirection: "column",
-    gap: 12,
     alignSelf: "stretch",
-    alignItems: "flex-start",
-    justifyContent: "center",
   },
 
   button: {
@@ -85,5 +92,13 @@ export const styles = StyleSheet.create({
     color: colors.onSurface,
     fontSize: 14,
     fontWeight: 700,
+  },
+
+  // Preview
+  previewContainer: {
+    overflow: "hidden",
+    width: "100%",
+    gap: 8,
+    padding: 20,
   },
 });
