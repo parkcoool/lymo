@@ -22,6 +22,7 @@ export default function StreamingQuery({
   const { data: generateDetailResult, error } = useGenerateDetailQuery(trackId, lyricsProvider);
 
   if (error) throw error;
+  if (!generateDetailResult) return new Error("곡 상세 정보를 불러올 수 없습니다.");
 
   if (generateDetailResult.exists)
     return (

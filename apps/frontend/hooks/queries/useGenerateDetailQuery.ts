@@ -21,6 +21,8 @@ export type GenerateDetailResult =
 /**
  * @description 곡 정보를 생성하는 스트리밍 query 훅입니다.
  *
+ * data가 undefined인 경우는 오류가 발생한 경우가 유일합니다.
+ *
  * @returns query 결과
  */
 export default function useGenerateDetailQuery(trackId: string, lyricsProvider?: LyricsProvider) {
@@ -101,12 +103,8 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
       initialValue,
     }),
 
-    initialData: initialValue,
     placeholderData: initialValue,
-    staleTime: (query) => {
-      if (query.state.fetchStatus === "idle") return 0;
-      return Infinity;
-    },
+    staleTime: Infinity,
   });
 }
 
