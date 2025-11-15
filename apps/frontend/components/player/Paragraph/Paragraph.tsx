@@ -26,5 +26,5 @@ export default function Paragraph({ summary, active, children }: ParagraphProps)
 }
 
 const activeStyle = {
-  backgroundColor: `${colors.surface}33`,
+  backgroundColor: `${colors.white}20`,
 };

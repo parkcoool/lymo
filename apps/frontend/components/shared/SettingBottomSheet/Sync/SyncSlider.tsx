@@ -18,8 +18,9 @@ export default function SyncSlider({ value, onValueChange }: SyncSliderProps) {
       value={value}
       onValueChange={onValueChange}
       style={styles.slider}
-      thumbTintColor={colors.surface}
-      minimumTrackTintColor={colors.surface}
+      maximumTrackTintColor={colors.onBackground}
+      thumbTintColor={colors.onSurface}
+      minimumTrackTintColor={colors.onSurface}
     />
   );
 }
