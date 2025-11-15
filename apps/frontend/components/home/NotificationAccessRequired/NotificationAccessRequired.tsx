@@ -67,7 +67,7 @@ export default function NotificationAccessRequired() {
           <View style={styles.descriptionWrapper}>
             <MaterialIcons name="audiotrack" size={16} style={styles.descriptionIcon} />
             <Text style={styles.descriptionText}>
-              현재 재생되는 부분의 가사 해석이 실시간으로 눈앞에 펼쳐집니다.
+              현재 재생되는 부분의 가사 해석이 실시간으로 제공됩니다.
             </Text>
           </View>
         </View>

@@ -35,10 +35,13 @@ export default function DeviceMediaDetection() {
     router.push("/player");
   };
 
+  // 미디어가 감지되지 않았을 때
   if (!deviceMedia) {
+    // TODO: 안내 UI 추가
     return null;
   }
 
+  // 미디어가 감지되었을 때
   return (
     <View style={styles.wrapper}>
       <View style={[styles.coverWrapper]}>

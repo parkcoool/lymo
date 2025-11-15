@@ -98,7 +98,7 @@ export const styles = StyleSheet.create({
   previewContainer: {
     overflow: "hidden",
     width: "100%",
-    gap: 8,
+    gap: 16,
     padding: 20,
   },
 });
