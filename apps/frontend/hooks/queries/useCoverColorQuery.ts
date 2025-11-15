@@ -38,6 +38,6 @@ export default function useCoverColorQuery(
     },
     enabled: !!coverUrl,
     staleTime: Infinity,
-    initialData: placeholderColor,
+    placeholderData: placeholderColor,
   });
 }

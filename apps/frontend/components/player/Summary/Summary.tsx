@@ -3,31 +3,31 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { View, Image, Text, TouchableOpacity, type TextLayoutEvent } from "react-native";
 
-import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useWindowSize from "@/hooks/useWindowSize";
 import getTrackDetailString from "@/utils/getTrackDetailString";
 
 import { styles } from "./Summary.styles";
 
 interface SummaryProps {
-  coverUrl: string;
   title: string;
   artist: string[];
   album: string | null;
   publishedAt: string | null;
   summary: string;
+  coverUrl?: string;
+  coverColor?: string;
 }
 
 export default function Summary({
-  coverUrl,
   title,
   artist,
   album,
   publishedAt,
   summary,
+  coverUrl,
+  coverColor,
 }: SummaryProps) {
   const { width: windowWidth } = useWindowSize();
-  const { data: coverColor } = useCoverColorQuery(coverUrl);
   const [summaryLine, setSummaryLine] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
@@ -52,7 +52,7 @@ export default function Summary({
           style={styles.coverGradient}
           colors={["transparent", coverColor ?? "#000000"]}
         />
-        <LinearGradient style={styles.coverGradient} colors={["transparent", "#00000080"]} />
+        <LinearGradient style={styles.coverGradient} colors={["transparent", "#000000CC"]} />
 
         {/* 곡 정보 */}
         <View style={styles.trackMetadata}>

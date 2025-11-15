@@ -27,46 +27,42 @@ export default function Header({
   const handleSettingsOpen = () => bottomSheetRef.current?.present();
 
   return (
-    <>
+    <View style={styles.container}>
+      {/* 그라데이션 오버레이 */}
       <LinearGradient
-        style={styles.container}
+        style={styles.gradient}
         colors={[backgroundColor ?? colors.background, "transparent"]}
-      >
-        <LinearGradient
-          style={styles.container}
-          colors={[backgroundColor ? "#00000080" : "transparent", "transparent"]}
-        >
-          {/* 상단 영역 */}
-          <SafeAreaView edges={["top"]} />
+      />
 
-          <View style={styles.header}>
-            <View style={styles.left}>
-              {/* 뒤로 가기 버튼 */}
-              {back && (
-                <TouchableOpacity onPress={navigation.goBack}>
-                  <MaterialIcons name="chevron-left" size={28} style={styles.buttonIcon} />
-                </TouchableOpacity>
-              )}
+      {/* 상단 영역 */}
+      <SafeAreaView edges={["top"]} />
 
-              {/* 로고 */}
-              {showLogo && <HeaderLogo />}
+      <View style={styles.header}>
+        <View style={styles.left}>
+          {/* 뒤로 가기 버튼 */}
+          {back && (
+            <TouchableOpacity onPress={navigation.goBack}>
+              <MaterialIcons name="chevron-left" size={28} style={styles.buttonIcon} />
+            </TouchableOpacity>
+          )}
 
-              {/* 검색 박스 */}
-              {/* <SearchBoxLink style={styles.searchBox} /> */}
-            </View>
+          {/* 로고 */}
+          {showLogo && <HeaderLogo />}
 
-            <View style={styles.right}>
-              {/* 설정 버튼 */}
-              <TouchableOpacity onPress={handleSettingsOpen}>
-                <MaterialIcons name="settings" size={28} style={styles.buttonIcon} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </LinearGradient>
-      </LinearGradient>
+          {/* 검색 박스 */}
+          {/* <SearchBoxLink style={styles.searchBox} /> */}
+        </View>
+
+        <View style={styles.right}>
+          {/* 설정 버튼 */}
+          <TouchableOpacity onPress={handleSettingsOpen}>
+            <MaterialIcons name="settings" size={28} style={styles.buttonIcon} />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {/* 설정 바텀시트 */}
       <SettingBottomSheet ref={bottomSheetRef} />
-    </>
+    </View>
   );
 }

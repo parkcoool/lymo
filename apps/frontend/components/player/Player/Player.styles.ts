@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
   content: {
     flexDirection: "column",
     flex: 1,
-    backgroundColor: "#00000080",
     paddingBottom: 12,
+    backgroundColor: "#000000CC",
   },
 });

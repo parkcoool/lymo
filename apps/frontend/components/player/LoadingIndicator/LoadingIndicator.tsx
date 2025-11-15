@@ -1,10 +1,12 @@
 import { Stack } from "expo-router";
+import { useMemo } from "react";
 import { ScrollView, View } from "react-native";
 
 import { SummarySkeleton } from "@/components/player/Summary";
 import Header from "@/components/shared/Header/Header";
 import Skeleton from "@/components/shared/Skeleton";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
+import mixColors from "@/utils/blend";
 
 import { styles } from "./LoadingIndicator.styles";
 
@@ -22,6 +24,10 @@ export default function LoadingIndicator({
   coverUrl,
 }: LoadingIndicatorProps) {
   const { data: coverColor } = useCoverColorQuery(coverUrl);
+  const headerBackgroundColor = useMemo(
+    () => mixColors([coverColor ?? "#000000", "#000000CC"]),
+    [coverColor]
+  );
 
   return (
     <>
@@ -35,7 +41,7 @@ export default function LoadingIndicator({
           style={{
             flexDirection: "column",
             flex: 1,
-            backgroundColor: "#000000AA",
+            backgroundColor: "#000000CC",
             paddingBottom: 12,
           }}
         >
@@ -62,7 +68,9 @@ export default function LoadingIndicator({
 
       {/* 헤더 설정 */}
       <Stack.Screen
-        options={{ header: (props) => <Header {...props} backgroundColor={coverColor} /> }}
+        options={{
+          header: (props) => <Header {...props} backgroundColor={headerBackgroundColor} />,
+        }}
       />
     </>
   );

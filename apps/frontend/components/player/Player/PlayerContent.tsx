@@ -12,6 +12,7 @@ import TrackToCurrent from "@/components/player/TrackToCurrent";
 import Header from "@/components/shared/Header";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
+import mixColors from "@/utils/blend";
 import processLyrics from "@/utils/processLyrics";
 
 import { useTracking } from "./Player.hooks";
@@ -33,6 +34,10 @@ export default function PlayerContent({
   trackDetail,
 }: TrackPlayerProps) {
   const { data: coverColor } = useCoverColorQuery(track.coverUrl);
+  const headerBackgroundColor = useMemo(
+    () => mixColors([coverColor ?? "#000000", "#000000CC"]),
+    [coverColor]
+  );
 
   // 현재 활성화된 문장 View
   const currentRef = useRef<View>(null);
@@ -75,12 +80,13 @@ export default function PlayerContent({
         >
           {/* 곡 메타데이터 및 설명 */}
           <Summary
-            coverUrl={track.coverUrl}
             title={track.title}
             artist={track.artist}
             album={track.album}
             publishedAt={track.publishedAt}
             summary={trackDetail?.summary}
+            coverUrl={track.coverUrl}
+            coverColor={coverColor}
           />
 
           {/* 제공자 정보 */}
@@ -105,7 +111,9 @@ export default function PlayerContent({
 
       {/* 헤더 설정 */}
       <Stack.Screen
-        options={{ header: (props) => <Header {...props} backgroundColor={coverColor} /> }}
+        options={{
+          header: (props) => <Header {...props} backgroundColor={headerBackgroundColor} />,
+        }}
       />
     </>
   );

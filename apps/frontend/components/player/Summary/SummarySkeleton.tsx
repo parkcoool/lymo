@@ -39,7 +39,7 @@ export default function SummarySkeleton({
           style={styles.coverGradient}
           colors={["transparent", coverColor ?? "#000000"]}
         />
-        <LinearGradient style={styles.coverGradient} colors={["transparent", "#00000080"]} />
+        <LinearGradient style={styles.coverGradient} colors={["transparent", "#000000CC"]} />
 
         {/* 곡 정보 */}
         <View style={styles.trackMetadata}>

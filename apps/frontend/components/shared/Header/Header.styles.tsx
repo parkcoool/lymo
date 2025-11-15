@@ -3,7 +3,15 @@ import { StyleSheet } from "react-native";
 import { colors } from "@/constants/colors";
 
 export const styles = StyleSheet.create({
-  container: {},
+  container: {
+    position: "relative",
+  },
+
+  gradient: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
 
   header: {
     flexDirection: "row",
