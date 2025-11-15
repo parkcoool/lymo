@@ -1,5 +1,6 @@
 import { memo, useEffect, useRef } from "react";
 import { View, Text, Animated } from "react-native";
+import Reanimated, { Easing, LinearTransition } from "react-native-reanimated";
 
 import { colors } from "@/constants/colors";
 
@@ -32,9 +33,12 @@ const Paragraph = memo(({ summary, active, children }: ParagraphProps) => {
   return (
     <Animated.View style={[styles.wrapper, { backgroundColor }]}>
       {parsedSummary && (
-        <View style={styles.summaryWrapper}>
+        <Reanimated.View
+          style={styles.summaryWrapper}
+          layout={LinearTransition.duration(300).easing(Easing.out(Easing.quad))}
+        >
           <Text style={styles.summary}>{parsedSummary}</Text>
-        </View>
+        </Reanimated.View>
       )}
       <View style={styles.sentenceContainer}>{children}</View>
     </Animated.View>
