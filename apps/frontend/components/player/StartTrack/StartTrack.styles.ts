@@ -5,7 +5,6 @@ import { colors } from "@/constants/colors";
 export const styles = StyleSheet.create({
   wrapper: {
     position: "absolute",
-    bottom: 20,
     left: 20,
   },
 
