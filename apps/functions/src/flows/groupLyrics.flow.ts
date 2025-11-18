@@ -58,6 +58,7 @@ export const groupLyricsFlow = ai.defineFlow(
           Input: 10 lines of lyrics
           Output: [2, 5, 8] (creates 4 paragraphs: lines 0-2, 3-5, 6-8, 9)
         `,
+        model: "googleai/gemini-2.5-flash-lite",
         prompt: JSON.stringify({ lyrics }),
         output: {
           schema: GroupLyricsOutputSchema,
@@ -74,6 +75,7 @@ export const groupLyricsFlow = ai.defineFlow(
         const isValid = result.every(
           (idx, i, arr) => idx >= 0 && idx < lyrics.length - 1 && (i === 0 || idx > arr[i - 1])
         );
+
         if (isValid) return result;
       }
 

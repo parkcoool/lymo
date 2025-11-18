@@ -14,8 +14,8 @@ import getTrackDetailFromDB from "@/helpers/generateDetail/getTrackDetailFromDB"
 import getLyricsFromDB from "@/helpers/shared/getLyricsFromDB";
 import getProviderNameFromLLMModel from "@/helpers/shared/getProviderNameFromLLMModel";
 import getTrackFromDB from "@/helpers/shared/getTrackFromDB";
-import { groupLyrics } from "@/tools/groupLyrics";
 
+import { groupLyricsFlow } from "./groupLyrics.flow";
 import { summarizeParagraphFlow } from "./summarizeParagraph.flow";
 import { summarizeSongFlow } from "./summarizeSong.flow";
 import { translateLyricsFlow } from "./translateLyrics.flow";
@@ -60,10 +60,7 @@ export const generateDetailFlow = ai.defineFlow(
         data: { lyricsProvider: rawLyrics.provider },
       });
 
-      // 3) 문단 나누기
-      const breaks = await groupLyrics({ lyrics: rawLyrics.lyrics });
-
-      // 4) 생성을 위한 데이터 준비
+      // 3) 데이터 준비
       const baseData = {
         title: track.title,
         artist: track.artist.join(", "),
@@ -71,7 +68,21 @@ export const generateDetailFlow = ai.defineFlow(
         language: input.language,
       };
 
-      // 4-1) 문단별 가사 구조 생성
+      // 4) 가사 번역 생성 및 스트림
+      const { stream: translateLyricsStream, output: translateLyricsOutput } =
+        translateLyricsFlow.stream({ ...baseData, lyrics: rawLyrics.lyrics });
+      for await (const chunk of translateLyricsStream) {
+        sendChunk(chunk);
+      }
+      const translations = await translateLyricsOutput;
+
+      // 4) 문단 나누기
+      const breaks = await groupLyricsFlow({
+        lyrics: rawLyrics.lyrics,
+      });
+      sendChunk({ event: "lyrics_group", data: breaks });
+
+      // 5) 문단별 가사 구조 생성
       const lyrics: Lyrics = [];
       let lastBreak = -1;
       for (const breakIndex of breaks) {
@@ -88,7 +99,7 @@ export const generateDetailFlow = ai.defineFlow(
         summary: "",
       });
 
-      // 5-1) 곡 요약 생성
+      // 6) 곡 요약 생성
       const { stream: summarizeSongStream, output: summarizeSongOutput } = summarizeSongFlow.stream(
         {
           ...baseData,
@@ -96,20 +107,16 @@ export const generateDetailFlow = ai.defineFlow(
         }
       );
 
-      // 5-2) 가사 번역 생성
-      const { stream: translateLyricsStream, output: translateLyricsOutput } =
-        translateLyricsFlow.stream({ ...baseData, lyrics: rawLyrics.lyrics });
-
-      // 5-3) 문단 요약 생성
+      // 7) 문단 요약 생성
       const { stream: summarizeParagraphStream, output: summarizeParagraphOutput } =
         summarizeParagraphFlow.stream({
           ...baseData,
           lyrics: lyrics.map((paragraph) => paragraph.sentences.map((sentence) => sentence.text)),
         });
 
-      // 6) 스트림 처리
+      // 8) 스트림 처리
       await Promise.all(
-        [summarizeSongStream, translateLyricsStream, summarizeParagraphStream].map((stream) =>
+        [summarizeSongStream, summarizeParagraphStream].map((stream) =>
           (async () => {
             for await (const chunk of stream) {
               sendChunk(chunk);
@@ -119,13 +126,12 @@ export const generateDetailFlow = ai.defineFlow(
       );
 
       // 7) 최종 결과 가져오기
-      const [summary, translations, paragraphSummaries] = await Promise.all([
+      const [summary, paragraphSummaries] = await Promise.all([
         summarizeSongOutput,
-        translateLyricsOutput,
         summarizeParagraphOutput,
       ]);
 
-      // 8) 최종 결과 DB에 저장하기
+      // 10) 최종 결과 DB에 저장하기
       const providerDocRef = admin
         .firestore()
         .collection("tracks")
@@ -139,14 +145,14 @@ export const generateDetailFlow = ai.defineFlow(
       const date = new Date().toISOString();
 
       admin.firestore().runTransaction(async (transaction) => {
-        // 8-1) 제공자 문서 생성
+        // 11-1) 제공자 문서 생성
         transaction.set(providerDocRef, {
           createdAt: date,
           updatedAt: date,
           providerName,
         });
 
-        // 8-2) 트랙 상세 정보 저장
+        // 11-2) 트랙 상세 정보 저장
         transaction.set(trackDetailDocRef, {
           summary,
           lyricsSplitIndices: breaks,
@@ -163,7 +169,7 @@ export const generateDetailFlow = ai.defineFlow(
 
       sendChunk({ event: "complete", data: null });
 
-      // 9) 최종 결과 반환
+      // 12) 최종 결과 반환
       return { success: true as const, exists: false as const };
     } catch (error) {
       logger.error("An error occurred in generateDetailFlow", error);

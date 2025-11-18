@@ -6,4 +6,4 @@ export { default as generateDetail } from "@/flows/generateDetail.handler";
 export { searchLastfm } from "@/tools/searchLastfm";
 export { searchLRCLib } from "@/tools/searchLRCLib";
 export { searchSpotify } from "@/tools/searchSpotify";
-export { groupLyrics } from "@/tools/groupLyrics";
+export { groupLyricsFlow } from "@/flows/groupLyrics.flow";
