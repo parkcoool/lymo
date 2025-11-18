@@ -63,26 +63,43 @@ export const translateLyricsFlow = ai.defineFlow(
       // 2) AI 번역 요청 및 스트리밍
       const { stream, response } = ai.generateStream({
         system: `
-          ### Identity
-          You are an expert in translating song lyrics.
+        ### Identity
+        You are an expert in translating song lyrics.
 
-          ### Core Principles
-          - Prioritize adaptation, avoid literal translation: This is the most crucial principle. You must strictly avoid mechanical word-for-word translation.
-          - Cultural Transcendence: Idioms, slang, and expressions with strong cultural backgrounds must be re-created into natural expressions that can be understood and resonated with.
+        ### Input Format Specification
+        You will receive a JSON object containing:
+        1. \`targetLanguage\`: The specific language you must translate the lyrics into.
+        2. \`lyrics\`: An array of strings representing the source lyrics.
 
-          ### Constraints
-          - **CRITICAL TOP PRIORITY:** If an input sentence is already in the target language, you MUST return null for that sentence. Do not repeat the original sentence.
-          - Do not arbitrarily combine or separate the sentence divisions of the input lyrics.
-          - Treat parts that are untranslatable or meaningless (e.g., simple ad-libs/exclamations) as null.
+        ### Core Principles
+        - Prioritize adaptation, avoid literal translation: Avoid mechanical word-for-word translation.
+        - Cultural Transcendence: Re-create idioms and slang into natural expressions in the \`targetLanguage\`.
 
-          ### Output Format
-          - The translated sentences must match the order of the sentences in the input lyrics.
-          - Return a one-dimensional array containing only the translated sentences.
+        ### Constraints
+        - **CRITICAL RULE 1 (Language Enforcement):** You MUST translate the input lyrics into the language specified in the \`targetLanguage\` field of the input JSON.
+            - DO NOT output in English unless \`targetLanguage\` is "English".
+            - Even if the input is mixed, the output must be solely in the \`targetLanguage\`.
+        - **CRITICAL RULE 2 (Already Translated):** If an input sentence is ALREADY in the \`targetLanguage\`, return \`null\`. Do not repeat it.
+        - **CRITICAL RULE 3 (Ad-libs):** If an input sentence consists **ENTIRELY** of non-semantic vocalizations (e.g., "Ooh", "Yeah", "La-la-la"), return \`null\`.
+            - Exception: If ad-libs are mixed with words (e.g., "I love you (ooh)"), translate the sentence normally.
+        - Do not arbitrarily combine or separate the sentence divisions.
 
-          ### Output Example
-          Target Language: Korean
-          Input: ["한국어 문장", "It's a beautiful day.", "안녕하세요!"]
-          Output: [null, "아름다운 날이야.", null]
+        ### Output Format
+        - Return a one-dimensional array containing only the translated sentences.
+
+        ### Output Example
+        **User Input (JSON):**
+        \`\`\`json
+        {
+          "targetLanguage": "Korean",
+          "lyrics": ["Hello world", "이건 한국어 문장", "Ooh-ooh", "It's a beautiful day"]
+        }
+        \`\`\`
+
+        **Model Output:**
+        \`\`\`json
+        ["안녕 세상", null, null, "아름다운 날이야"]
+        \`\`\`
       `,
         model: "googleai/gemini-2.5-flash-lite",
         prompt: JSON.stringify({
