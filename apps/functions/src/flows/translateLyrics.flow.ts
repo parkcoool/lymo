@@ -75,25 +75,40 @@ export const translateLyricsFlow = ai.defineFlow(
         },
       });
 
-      let s = 0,
-        i = 0;
+      // 현재 처리 중인 문장의 인덱스
+      let sentenceIndex = 0;
+      // 각 문장별로 이미 전송한 문자 길이를 추적 (중복 전송 방지)
+      const sentenceProgress: number[] = [];
+
       for await (const chunk of stream) {
+        // "null" 문자열을 실제 null로 변환하여 번역 배열 추출
         const translations =
           chunk.output?.map((item) => (item?.trim() === "null" ? null : item)) ?? null;
         if (translations === null) continue;
-        for (; s < translations.length; s++, i = 0) {
-          const translation = translations[s];
-          if (translation === null) continue;
-          sendChunk({
-            event: "translation_set",
-            data: {
-              sentenceIndex: s,
-              text: translation.slice(i, translation.length),
-            },
-          });
-          i = translation.length;
 
-          if (s === translations.length - 1) break;
+        // 현재 청크에 포함된 모든 문장을 순회
+        for (; sentenceIndex < translations.length; sentenceIndex++) {
+          const translation = translations[sentenceIndex];
+          // 번역 불가능한 문장(ad-lib 등)은 건너뛰기
+          if (translation === null) continue;
+
+          // 이전 청크에서 이미 전송한 길이를 확인
+          const previousLength = sentenceProgress[sentenceIndex] ?? 0;
+          // 새로 생성된 부분만 추출
+          const newContent = translation.slice(previousLength);
+
+          // 실제로 새로운 내용이 있을 때만 클라이언트에 전송
+          if (newContent.length > 0) {
+            sendChunk({
+              event: "translation_set",
+              data: {
+                sentenceIndex,
+                text: newContent,
+              },
+            });
+            // 현재 문장의 전송 진행 상황 업데이트
+            sentenceProgress[sentenceIndex] = translation.length;
+          }
         }
       }
 
