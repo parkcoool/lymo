@@ -19,7 +19,7 @@ export const TranslationSetEventSchema = z.object({
   event: z.literal("translation_set"),
   data: z.object({
     sentenceIndex: z.number(),
-    text: z.string(),
+    text: z.string().nullable(),
   }),
 });
 export type TranslationSetEvent = z.infer<typeof TranslationSetEventSchema>;
