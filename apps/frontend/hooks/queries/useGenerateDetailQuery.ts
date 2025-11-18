@@ -65,9 +65,7 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
             break;
 
           case "translation_set": {
-            const translation = result.trackDetail.translations[chunk.data.sentenceIndex] || "";
-            result.trackDetail.translations[chunk.data.sentenceIndex] =
-              translation + chunk.data.text;
+            result.trackDetail.translations[chunk.data.sentenceIndex] = chunk.data.text;
             break;
           }
 

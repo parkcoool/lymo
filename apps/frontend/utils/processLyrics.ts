@@ -1,7 +1,7 @@
 import { LyricsSentence } from "@lymo/schemas/shared";
 
 export type PostLyricsResult = {
-  sentences: (Omit<LyricsSentence, "translation"> & { translation?: string | null })[];
+  sentences: LyricsSentence[];
   summary: string | null;
 }[];
 
