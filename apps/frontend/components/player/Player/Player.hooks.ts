@@ -7,7 +7,7 @@ interface UseTrackingParams {
   track: TrackDoc;
 }
 
-interface UseTrackingReturn {
+export interface UseTrackingReturn {
   isTrackingMode: boolean;
   isAutoScrollingRef: React.RefObject<boolean>;
   scrollViewRef: React.RefObject<ScrollView | null>;

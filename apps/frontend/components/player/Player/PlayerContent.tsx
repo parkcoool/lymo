@@ -17,6 +17,7 @@ import processLyrics from "@/utils/processLyrics";
 
 import { useTracking } from "./Player.hooks";
 import { styles } from "./Player.styles";
+import useScrollPositionPreservation from "./useScrollPositionPreservation";
 
 interface TrackPlayerProps {
   track: TrackDoc;
@@ -49,6 +50,7 @@ export default function PlayerContent({
   const {
     isTrackingMode,
     scrollViewRef,
+    scrollYRef,
     handleScrollViewScroll,
     handleScrollEnd,
     handleMoveToCurrent,
@@ -56,6 +58,13 @@ export default function PlayerContent({
     currentY,
     track,
   });
+
+  // 스크롤 위치 보존 로직
+  const { contentRef: lyricsContainerRef, handleLayout: handleLyricsLayout } =
+    useScrollPositionPreservation({
+      scrollViewRef,
+      scrollYRef,
+    });
 
   // 처리된 가사 데이터
   const processedLyrics = useMemo(
@@ -93,11 +102,13 @@ export default function PlayerContent({
           <ProviderInformation provider={provider} />
 
           {/* 가사 */}
-          <Lyrics
-            activeSentenceRef={currentRef}
-            lyrics={processedLyrics}
-            lyricsProvider={lyricsProvider}
-          />
+          <View ref={lyricsContainerRef} onLayout={handleLyricsLayout} collapsable={false}>
+            <Lyrics
+              activeSentenceRef={currentRef}
+              lyrics={processedLyrics}
+              lyricsProvider={lyricsProvider}
+            />
+          </View>
         </ScrollView>
 
         {/* 현재 가사로 이동 */}
