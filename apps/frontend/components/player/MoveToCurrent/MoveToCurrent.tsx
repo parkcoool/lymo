@@ -22,7 +22,7 @@ export default function MoveToCurrent({ activeSentenceY, onPress }: MoveToCurren
   const scrollDirection =
     activeSentenceY < 0 ? "up" : activeSentenceY + 100 > height ? "down" : null;
 
-  if (scrollDirection === null) return;
+  if (scrollDirection === null) return null;
 
   return (
     <Animated.View
