@@ -51,20 +51,19 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
-    private fun sendMediaData() {
+    private fun createMediaDataMap(): WritableMap? {
         val controller = mediaController
         val metadata = controller?.metadata
         val state = controller?.playbackState
 
         if (controller == null || metadata == null || state == null) {
-            sendEvent("onMediaDataChanged", null)
-            return
+            return null
         }
 
         val albumArtBitmap = metadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART)
         val albumArtBase64 = "data:image/png;base64," + bitmapToBase64(albumArtBitmap)
 
-        val mediaData = Arguments.createMap().apply {
+        return Arguments.createMap().apply {
             putString("title", metadata.getString(MediaMetadata.METADATA_KEY_TITLE))
             putString("artist", metadata.getString(MediaMetadata.METADATA_KEY_ARTIST))
             putString("album", metadata.getString(MediaMetadata.METADATA_KEY_ALBUM))
@@ -72,7 +71,19 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
             putBoolean("isPlaying", state.state == PlaybackState.STATE_PLAYING)
             putString("coverUrl", albumArtBase64)
         }
-        sendEvent("onMediaDataChanged", mediaData)
+    }
+
+    private fun sendMediaData() {
+        sendEvent("onMediaDataChanged", createMediaDataMap())
+    }
+
+    @ReactMethod
+    fun getCurrentMediaState(promise: Promise) {
+        try {
+            promise.resolve(createMediaDataMap())
+        } catch (e: Exception) {
+            promise.reject("GET_MEDIA_STATE_ERROR", e.message)
+        }
     }
 
     private fun sendEvent(eventName: String, params: WritableMap?) {

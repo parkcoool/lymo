@@ -12,6 +12,12 @@ export interface MediaModule {
   startObserver(): Promise<boolean>;
 
   /**
+   * 현재 미디어 상태를 가져옵니다.
+   * @returns {Promise<DeviceMedia | null>} 현재 미디어 상태를 반환하는 Promise
+   */
+  getCurrentMediaState(): Promise<DeviceMedia | null>;
+
+  /**
    * 현재 재생 위치를 가져옵니다.
    * @returns {Promise<number>} 현재 재생 위치(ms)를 반환하는 Promise
    */
