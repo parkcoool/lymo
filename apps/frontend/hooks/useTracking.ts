@@ -18,7 +18,7 @@ export interface UseTrackingReturn {
   handleMoveToCurrent: () => void;
 }
 
-export function useTracking({ currentY, track }: UseTrackingParams): UseTrackingReturn {
+export default function useTracking({ currentY, track }: UseTrackingParams): UseTrackingReturn {
   // 트래킹 모드 활성화 여부
   const [isTrackingMode, setIsTrackingMode] = useState(false);
 

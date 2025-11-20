@@ -6,7 +6,7 @@ import { SummarySkeleton } from "@/components/player/Summary";
 import Header from "@/components/shared/Header/Header";
 import Skeleton from "@/components/shared/Skeleton";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
-import mixColors from "@/utils/blend";
+import mixColors from "@/utils/mixColors";
 
 import { styles } from "./LoadingIndicator.styles";
 

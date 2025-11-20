@@ -12,12 +12,12 @@ import Summary from "@/components/player/Summary";
 import Header from "@/components/shared/Header";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
-import mixColors from "@/utils/blend";
+import useScrollPositionPreservation from "@/hooks/useScrollPositionPreservation";
+import useTracking from "@/hooks/useTracking";
+import mixColors from "@/utils/mixColors";
 import processLyrics from "@/utils/processLyrics";
 
-import { useTracking } from "./Player.hooks";
 import { styles } from "./Player.styles";
-import useScrollPositionPreservation from "./useScrollPositionPreservation";
 
 interface TrackPlayerProps {
   track: TrackDoc;
