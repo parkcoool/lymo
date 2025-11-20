@@ -1,76 +1,54 @@
 import { ProviderDoc, TrackDetailDoc } from "@lymo/schemas/doc";
-import {
-  GenerateDetailFlowInputSchema,
-  GenerateDetailFlowOutputSchema,
-  GenerateDetailFlowStreamSchema,
-} from "@lymo/schemas/function";
-import { LLMModel, Lyrics } from "@lymo/schemas/shared";
+import { Lyrics } from "@lymo/schemas/shared";
 import admin from "firebase-admin";
 import { DocumentReference } from "firebase-admin/firestore";
 import { logger } from "genkit/logging";
 
 import ai from "@/core/genkit";
-import getTrackDetailFromDB from "@/helpers/generateDetail/getTrackDetailFromDB";
-import getLyricsFromDB from "@/helpers/shared/getLyricsFromDB";
-import getProviderNameFromLLMModel from "@/helpers/shared/getProviderNameFromLLMModel";
-import getTrackFromDB from "@/helpers/shared/getTrackFromDB";
+import getProviderNameFromLLMModel from "@/helpers/getProviderNameFromLLMModel";
+import getTrackDetailFromDB from "@/helpers/getTrackDetailFromDB";
 
+import {
+  GetDetailFlowInputSchema,
+  GetDetailFlowOutputSchema,
+  GetDetailFlowStreamSchema,
+} from "./getDetail.schemas";
 import { groupLyricsFlow } from "./groupLyrics.flow";
 import { summarizeParagraphFlow } from "./summarizeParagraph.flow";
 import { summarizeSongFlow } from "./summarizeSong.flow";
 import { translateLyricsFlow } from "./translateLyrics.flow";
 
 /**
- * @description 트랙 상세 정보를 생성하는 플로우
+ * @description 트랙 상세 정보를 가져오거나 생성하는 플로우
  */
-export const generateDetailFlow = ai.defineFlow(
+export const getDetailFlow = ai.defineFlow(
   {
-    name: "generateDetailFlow",
-    inputSchema: GenerateDetailFlowInputSchema,
-    streamSchema: GenerateDetailFlowStreamSchema,
-    outputSchema: GenerateDetailFlowOutputSchema,
+    name: "getDetailFlow",
+    inputSchema: GetDetailFlowInputSchema,
+    streamSchema: GetDetailFlowStreamSchema,
+    outputSchema: GetDetailFlowOutputSchema,
   },
   async (input, sendChunk) => {
     try {
-      // 1) 중복 확인
-      const llmModel: LLMModel = input.model ?? "gemini-2.5-flash-lite";
-      const providerName = getProviderNameFromLLMModel(llmModel);
+      // 1) 상세 정보가 이미 있으면 반환
       const existingDetailDoc = await getTrackDetailFromDB({
-        trackId: input.id,
+        trackId: input.trackId,
         language: input.language,
-        providerId: llmModel,
+        providerId: input.model,
       });
-      if (existingDetailDoc) {
-        sendChunk({ event: "complete", data: null });
-        return { success: true as const, exists: true as const, providerId: llmModel };
-      }
+      if (existingDetailDoc) return existingDetailDoc;
 
-      // 2) 곡 및 가사 문서 확인
-      const [track, rawLyrics] = [
-        await getTrackFromDB(input.id),
-        await getLyricsFromDB(input.id, input.lyricsProvider),
-      ];
-      if (!track || !rawLyrics) {
-        sendChunk({ event: "complete", data: null });
-        return { success: false as const, exists: false as const };
-      }
-
-      sendChunk({
-        event: "lyrics_provider_set",
-        data: { lyricsProvider: rawLyrics.provider },
-      });
-
-      // 3) 데이터 준비
+      // 2) 데이터 준비
       const baseData = {
-        title: track.title,
-        artist: track.artist.join(", "),
-        album: track.album,
+        title: input.metadata.title,
+        artist: input.metadata.artist,
+        album: input.metadata.album,
         language: input.language,
       };
 
-      // 4) 가사 번역 생성 및 스트림
+      // 3) 가사 번역 생성 및 스트림
       const { stream: translateLyricsStream, output: translateLyricsOutput } =
-        translateLyricsFlow.stream({ ...baseData, lyrics: rawLyrics.lyrics });
+        translateLyricsFlow.stream({ ...baseData, lyrics: input.lyrics });
       for await (const chunk of translateLyricsStream) {
         sendChunk(chunk);
       }
@@ -78,7 +56,7 @@ export const generateDetailFlow = ai.defineFlow(
 
       // 4) 문단 나누기
       const breaks = await groupLyricsFlow({
-        lyrics: rawLyrics.lyrics,
+        lyrics: input.lyrics,
       });
       sendChunk({ event: "lyrics_group", data: breaks });
 
@@ -87,7 +65,7 @@ export const generateDetailFlow = ai.defineFlow(
       let lastBreak = -1;
       for (const breakIndex of breaks) {
         lyrics.push({
-          sentences: rawLyrics.lyrics
+          sentences: input.lyrics
             .slice(lastBreak + 1, breakIndex + 1)
             .map((s) => ({ ...s, translation: null })),
           summary: null,
@@ -95,7 +73,7 @@ export const generateDetailFlow = ai.defineFlow(
         lastBreak = breakIndex;
       }
       lyrics.push({
-        sentences: rawLyrics.lyrics.slice(lastBreak + 1).map((s) => ({ ...s, translation: null })),
+        sentences: input.lyrics.slice(lastBreak + 1).map((s) => ({ ...s, translation: null })),
         summary: "",
       });
 
@@ -103,7 +81,7 @@ export const generateDetailFlow = ai.defineFlow(
       const { stream: summarizeSongStream, output: summarizeSongOutput } = summarizeSongFlow.stream(
         {
           ...baseData,
-          lyrics: rawLyrics.lyrics.map((sentence) => sentence.text),
+          lyrics: input.lyrics.map((sentence) => sentence.text),
         }
       );
 
@@ -125,7 +103,7 @@ export const generateDetailFlow = ai.defineFlow(
         )
       );
 
-      // 7) 최종 결과 가져오기
+      // 9) 최종 결과 가져오기
       const [summary, paragraphSummaries] = await Promise.all([
         summarizeSongOutput,
         summarizeParagraphOutput,
@@ -135,46 +113,41 @@ export const generateDetailFlow = ai.defineFlow(
       const providerDocRef = admin
         .firestore()
         .collection("tracks")
-        .doc(input.id)
+        .doc(input.trackId)
         .collection("providers")
-        .doc(llmModel) as DocumentReference<ProviderDoc>;
+        .doc(input.model) as DocumentReference<ProviderDoc>;
       const trackDetailDocRef = providerDocRef
         .collection("details")
         .doc(input.language) as DocumentReference<TrackDetailDoc>;
 
       const date = new Date().toISOString();
+      const detailDoc: TrackDetailDoc = {
+        summary,
+        lyricsSplitIndices: breaks,
+        lyricsProvider: input.lyricsProvider,
+        translations,
+        paragraphSummaries,
+      };
 
       admin.firestore().runTransaction(async (transaction) => {
         // 11-1) 제공자 문서 생성
         transaction.set(providerDocRef, {
           createdAt: date,
           updatedAt: date,
-          providerName,
+          providerName: getProviderNameFromLLMModel(input.model),
         });
 
         // 11-2) 트랙 상세 정보 저장
-        transaction.set(trackDetailDocRef, {
-          summary,
-          lyricsSplitIndices: breaks,
-          lyricsProvider: rawLyrics.provider,
-          translations,
-          paragraphSummaries,
-        });
-      });
-
-      sendChunk({
-        event: "provider_set",
-        data: { createdAt: date, updatedAt: date, providerName, providerId: llmModel },
+        transaction.set(trackDetailDocRef, detailDoc);
       });
 
       sendChunk({ event: "complete", data: null });
 
       // 12) 최종 결과 반환
-      return { success: true as const, exists: false as const };
+      return detailDoc;
     } catch (error) {
-      logger.error("An error occurred in generateDetailFlow", error);
-      sendChunk({ event: "complete", data: null });
-      return { success: false as const, exists: false as const };
+      logger.error("An error occurred in getDetailFlow", error);
+      throw error;
     }
   }
 );
