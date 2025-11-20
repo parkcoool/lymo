@@ -1,6 +1,11 @@
 import { ProviderDoc, TrackDetailDoc } from "@lymo/schemas/doc";
 import { Lyrics, LyricsProvider } from "@lymo/schemas/shared";
-import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
+import {
+  experimental_streamedQuery as streamedQuery,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { useEffect, useMemo } from "react";
 
 import generateDetail from "@/apis/generateDetail";
 import { useSettingStore } from "@/contexts/useSettingStore";
@@ -28,14 +33,17 @@ export type GenerateDetailResult =
 export default function useGenerateDetailQuery(trackId: string, lyricsProvider?: LyricsProvider) {
   const { setting } = useSettingStore();
 
-  const key = {
-    id: trackId,
-    language: setting.defaultLanguage,
-    lyricsProvider,
-    model: setting.defaultLLMModel,
-  };
+  const key = useMemo(
+    () => ({
+      id: trackId,
+      language: setting.defaultLanguage,
+      lyricsProvider,
+      model: setting.defaultLLMModel,
+    }),
+    [trackId, lyricsProvider, setting.defaultLanguage, setting.defaultLLMModel]
+  );
 
-  return useQuery<GenerateDetailResult>({
+  const query = useQuery<GenerateDetailResult>({
     queryKey: ["track-stream", key],
 
     queryFn: streamedQuery({
@@ -101,9 +109,21 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
       initialValue,
     }),
 
-    placeholderData: initialValue,
     staleTime: Infinity,
+    placeholderData: initialValue,
   });
+
+  // 스트리밍 도중 컴포넌트가 언마운트되면 부분적으로 쌓인 데이터를 무효화
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    return () => {
+      if (!query.isSuccess) {
+        queryClient.removeQueries({ queryKey: ["track-stream", key] });
+      }
+    };
+  }, [query.isSuccess, queryClient, key]);
+
+  return query;
 }
 
 const initialValue: GenerateDetailResult = {
