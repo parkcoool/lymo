@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { LyricsDocSchema, TrackDocSchema } from "./doc";
+import { LyricsDocSchema, ProviderDocSchema, TrackDetailDocSchema, TrackDocSchema } from "./doc";
 import {
   CompleteEventSchema,
   LyricsGroupEventSchema,
@@ -12,83 +12,56 @@ import {
 } from "./event";
 import { LanguageSchema, LLMModelSchema, LyricsProviderSchema } from "./shared";
 
-/**
- * addTrackFlow 입력
- */
-export const AddTrackFlowInputSchema = z.object({
-  title: z.string(),
-  artist: z.string(),
-  duration: z.number().positive(),
-});
-export type AddTrackFlowInput = z.infer<typeof AddTrackFlowInputSchema>;
+// =============== 공통 스키마 ===============
 
-/**
- * addTrackFlow 출력
- */
-export const AddTrackFlowOutputSchema = z.union([
-  z.object({
-    id: z.string(),
-    track: TrackDocSchema,
-    lyrics: LyricsDocSchema.shape.lyrics,
-    lyricsProvider: LyricsProviderSchema,
-    notFound: z.literal(false),
-  }),
-
-  z.object({
-    id: z.undefined(),
-    track: z.undefined(),
-    lyrics: z.undefined(),
-    lyricsProvider: z.undefined(),
-    notFound: z.literal(true),
-  }),
-]);
-export type AddTrackFlowOutput = z.infer<typeof AddTrackFlowOutputSchema>;
-
-/**
- * generateDetailFlow 입력
- */
-export const GenerateDetailFlowInputSchema = z.object({
-  id: z.string(),
+const CommonGetTrackFlowInputSchema = z.object({
   language: LanguageSchema,
-  lyricsProvider: LyricsProviderSchema.optional(),
-  model: LLMModelSchema.optional(),
+  model: LLMModelSchema,
 });
-export type GenerateDetailFlowInput = z.infer<typeof GenerateDetailFlowInputSchema>;
 
-/**
- * generateDetailFlow 스트림
- */
-export const GenerateDetailFlowStreamSchema = z.discriminatedUnion("event", [
-  LyricsProviderSetEventSchema,
-  TranslationSetEventSchema,
-  LyricsGroupEventSchema,
+const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
   SummaryAppendEventSchema,
   ParagraphSummaryAppendEventSchema,
   ProviderSetEventSchema,
+  LyricsProviderSetEventSchema,
+  TranslationSetEventSchema,
+  LyricsGroupEventSchema,
   CompleteEventSchema,
 ]);
-export type GenerateDetailFlowStream = z.infer<typeof GenerateDetailFlowStreamSchema>;
 
-/**
- * generateDetailFlow 출력
- */
-export const GenerateDetailFlowOutputSchema = z.union([
-  z.object({
-    providerId: z.string(),
-    success: z.literal(true),
-    exists: z.literal(true),
-  }),
+const CommonGetTrackFlowOutputSchema = z.object({
+  detail: TrackDetailDocSchema,
+  providerId: z.string(),
+  provider: ProviderDocSchema,
+  lyricsProvider: LyricsProviderSchema,
+  lyrics: LyricsDocSchema,
+  track: TrackDocSchema,
+});
 
-  z.object({
-    providerId: z.undefined(),
-    success: z.literal(true),
-    exists: z.literal(false),
-  }),
+// =============== getTrackFromId 스키마 ===============
+export const GetTrackFromIdFlowInputSchema = CommonGetTrackFlowInputSchema.extend({
+  trackId: z.string(),
+});
+export type GetTrackFromIdFlowInput = z.infer<typeof GetTrackFromIdFlowInputSchema>;
 
-  z.object({
-    providerId: z.undefined(),
-    success: z.literal(false),
-    exists: z.literal(false),
+export const GetTrackFromIdFlowStreamSchema = CommonGetTrackFlowStreamSchema;
+export type GetTrackFromIdFlowStream = z.infer<typeof GetTrackFromIdFlowStreamSchema>;
+
+export const GetTrackFromIdFlowOutputSchema = CommonGetTrackFlowOutputSchema.nullable();
+export type GetTrackFromIdFlowOutput = z.infer<typeof GetTrackFromIdFlowOutputSchema>;
+
+// =============== getTrackFromMetadata 스키마 ===============
+export const GetTrackFromMetadataFlowInputSchema = CommonGetTrackFlowInputSchema.extend({
+  trackMetadata: z.object({
+    title: z.string(),
+    artist: z.string(),
+    durationMs: z.number(),
   }),
-]);
-export type GenerateDetailFlowOutput = z.infer<typeof GenerateDetailFlowOutputSchema>;
+});
+export type GetTrackFromMetadataFlowInput = z.infer<typeof GetTrackFromMetadataFlowInputSchema>;
+
+export const GetTrackFromMetadataFlowStreamSchema = CommonGetTrackFlowStreamSchema;
+export type GetTrackFromMetadataFlowStream = z.infer<typeof GetTrackFromMetadataFlowStreamSchema>;
+
+export const GetTrackFromMetadataFlowOutputSchema = CommonGetTrackFlowOutputSchema.nullable();
+export type GetTrackFromMetadataFlowOutput = z.infer<typeof GetTrackFromMetadataFlowOutputSchema>;
