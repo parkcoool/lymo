@@ -1,6 +1,17 @@
 import { z } from "zod";
 
+import { LyricsDocSchema } from "./doc";
 import { LyricsProviderSchema } from "./shared";
+
+/**
+ * 가사 설정 이벤트
+ */
+export const LyricsSetEventSchema = z.object({
+  event: z.literal("lyrics_set"),
+  data: z.object({
+    lyrics: LyricsDocSchema.shape["lyrics"],
+  }),
+});
 
 /**
  * 가사 제공자 설정 이벤트
