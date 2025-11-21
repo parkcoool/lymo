@@ -5,6 +5,7 @@ import {
   CompleteEventSchema,
   LyricsGroupEventSchema,
   LyricsProviderSetEventSchema,
+  LyricsSetEventSchema,
   ParagraphSummaryAppendEventSchema,
   ProviderSetEventSchema,
   SummaryAppendEventSchema,
@@ -20,6 +21,7 @@ const CommonGetTrackFlowInputSchema = z.object({
 });
 
 const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
+  LyricsSetEventSchema,
   SummaryAppendEventSchema,
   ParagraphSummaryAppendEventSchema,
   ProviderSetEventSchema,

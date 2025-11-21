@@ -13,7 +13,7 @@ export const GetDetailFlowInputSchema = z.object({
   metadata: z.object({
     title: z.string(),
     artist: z.string(),
-    album: z.string(),
+    album: z.string().nullable(),
   }),
   lyricsProvider: LyricsProviderSchema,
   lyrics: LyricsDocSchema.shape["lyrics"],

@@ -1,14 +1,14 @@
 import { onCallGenkit } from "firebase-functions/v2/https";
 
-import { addTrackFlow } from "./addTrack.flow";
+import { getTrackFromIdFlow } from "./getTrackFromId";
 
-const addTrack = onCallGenkit(
+const getTrackFromId = onCallGenkit(
   {
     cors: true,
     timeoutSeconds: 300,
     region: "asia-northeast3",
   },
-  addTrackFlow
+  getTrackFromIdFlow
 );
 
-export default addTrack;
+export default getTrackFromId;

@@ -2,11 +2,24 @@ import { searchLRCLib } from "@/tools/searchLRCLib";
 import { LRCLIBResult } from "@/types/lrclib";
 import getCombinations from "@/utils/getCombinations";
 
-export default async function getLyricsFromLRCLIB(
-  title: string,
-  artists: string[],
-  duration: number
-) {
+interface GetLyricsFromLRCLIBParams {
+  title: string;
+  artists: string[];
+  duration: number;
+}
+
+/**
+ * @description LRCLIB에서 가사를 검색하는 헬퍼 함수
+ * @param title 노래 제목
+ * @param artists 아티스트 이름 배열
+ * @param duration 노래 길이 (초)
+ * @returns lyricsProvider와 가사 데이터로 구성된 객체 또는 null (가사를 찾지 못한 경우)
+ */
+export default async function getLyricsFromLRCLIB({
+  title,
+  artists,
+  duration,
+}: GetLyricsFromLRCLIBParams) {
   let lrcLibResult: LRCLIBResult | null = null;
   for (let r = 1; r <= artists.length; r++) {
     const artistStringCandidates = getCombinations(artists, r);
