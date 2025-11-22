@@ -1,6 +1,6 @@
 import { onCallGenkit } from "firebase-functions/v2/https";
 
-import { getTrackFromIdFlow } from "./getTrackFromId";
+import { getTrackFromIdFlow } from "./getTrackFromId.flow";
 
 const getTrackFromId = onCallGenkit(
   {
