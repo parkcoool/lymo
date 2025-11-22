@@ -109,7 +109,16 @@ export const getDetailFlow = ai.defineFlow(
         summarizeParagraphOutput,
       ]);
 
-      // 10) 최종 결과 DB에 저장하기
+      // 10) 상세 정보 문서 데이터 준비
+      const detailDoc: TrackDetailDoc = {
+        summary,
+        lyricsSplitIndices: breaks,
+        lyricsProvider: input.lyricsProvider,
+        translations,
+        paragraphSummaries,
+      };
+
+      // 11) DB에 저장
       const providerDocRef = admin
         .firestore()
         .collection("tracks")
@@ -120,16 +129,9 @@ export const getDetailFlow = ai.defineFlow(
         .collection("details")
         .doc(input.language) as DocumentReference<TrackDetailDoc>;
 
-      const date = new Date().toISOString();
-      const detailDoc: TrackDetailDoc = {
-        summary,
-        lyricsSplitIndices: breaks,
-        lyricsProvider: input.lyricsProvider,
-        translations,
-        paragraphSummaries,
-      };
-
       admin.firestore().runTransaction(async (transaction) => {
+        const date = new Date().toISOString();
+
         // 11-1) 제공자 문서 생성
         transaction.set(providerDocRef, {
           createdAt: date,
