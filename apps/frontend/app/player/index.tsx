@@ -6,7 +6,7 @@ import { View } from "react-native";
 
 import ErrorIndicator from "@/components/player/ErrorIndicator";
 import LoadingIndicator from "@/components/player/LoadingIndicator";
-import { DeviceTrackPlayer, ManualTrackPlayer } from "@/components/player/Player";
+import { TrackLoaderFromId, TrackLoaderFromMetadata } from "@/components/player/Player";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 export default function Player() {
@@ -20,8 +20,14 @@ export default function Player() {
     <View style={{ flex: 1 }}>
       <ErrorBoundary FallbackComponent={ErrorIndicator} onReset={reset}>
         <Suspense fallback={<LoadingIndicator {...trackSource?.track} />}>
-          {trackSource.from === "manual" && <ManualTrackPlayer trackId={trackSource.track.id} />}
-          {trackSource.from === "device" && <DeviceTrackPlayer {...trackSource.track} />}
+          {trackSource.from === "manual" && <TrackLoaderFromId trackId={trackSource.track.id} />}
+          {trackSource.from === "device" && (
+            <TrackLoaderFromMetadata
+              title={trackSource.track.title}
+              artist={trackSource.track.artist}
+              durationInSeconds={trackSource.track.duration}
+            />
+          )}
         </Suspense>
       </ErrorBoundary>
     </View>

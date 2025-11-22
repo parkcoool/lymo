@@ -39,6 +39,7 @@ export default function useGetTrackFromMetadataQuery({
 
     queryFn: streamedQuery({
       streamFn: async function* (context) {
+        console.log("Fetching track from metadata with key:", key);
         const flow = getTrackFromMetadata(key);
 
         // 스트림 및 최종 결과 처리

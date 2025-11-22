@@ -31,10 +31,11 @@ export default function useGetTrackFromIdQuery(trackId: string) {
   );
 
   const query = useQuery<GetTrackFlowResult>({
-    queryKey: ["get-track-from-id", key],
+    queryKey: ["get-track", key],
 
     queryFn: streamedQuery({
       streamFn: async function* (context) {
+        console.log("Fetching track from ID with key:", key);
         const flow = getTrackFromId(key);
 
         // 스트림 및 최종 결과 처리
@@ -47,7 +48,7 @@ export default function useGetTrackFromIdQuery(trackId: string) {
         // 스트리밍이 아니면 반환된 결과를 캐시에 저장
         if (!output.stream) {
           const { stream, ...result } = output;
-          context.client.setQueryData<GetTrackFlowResult>(["get-track-from-id", key], result);
+          context.client.setQueryData<GetTrackFlowResult>(["get-track", key], result);
         }
       },
 

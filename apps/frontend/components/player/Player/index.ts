@@ -1,2 +1,2 @@
-export { default as DeviceTrackPlayer } from "./DeviceTrackPlayer";
-export { default as ManualTrackPlayer } from "./ManualTrackPlayer";
+export { default as TrackLoaderFromId } from "./TrackLoaderFromId";
+export { default as TrackLoaderFromMetadata } from "./TrackLoaderFromMetadata";
