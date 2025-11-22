@@ -4,7 +4,6 @@ import { LyricsProvider } from "@lymo/schemas/shared";
 import useGenerateDetailQuery from "@/hooks/queries/useGenerateDetailQuery";
 
 import PlayerContent from "./PlayerContent";
-import ProvidersQuery from "./ProvidersQuery";
 
 interface StreamingQueryProps {
   track: TrackDoc;

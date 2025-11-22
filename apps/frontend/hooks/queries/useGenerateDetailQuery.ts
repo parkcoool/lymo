@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 
-import generateDetail from "@/apis/generateDetail";
+import getTrackFromId from "@/apis/getTrackFromId";
 import { useSettingStore } from "@/contexts/useSettingStore";
 
 export type GenerateDetailResult =
@@ -49,7 +49,7 @@ export default function useGenerateDetailQuery(trackId: string, lyricsProvider?:
     queryFn: streamedQuery({
       streamFn: async function* () {
         console.log("useGenerateDetailQuery called");
-        const flow = generateDetail(key);
+        const flow = getTrackFromId(key);
 
         for await (const chunk of flow.stream) {
           yield chunk;
