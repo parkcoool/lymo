@@ -1,4 +1,4 @@
-import { GetTrackFlowResult } from "@lymo/schemas/function";
+import { GetTrackFlowResult, GetTrackFromMetadataFlowInput } from "@lymo/schemas/function";
 import {
   experimental_streamedQuery as streamedQuery,
   useQuery,
@@ -6,36 +6,40 @@ import {
 } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 
-import getTrackFromId from "@/apis/getTrackFromId";
+import getTrackFromMetadata from "@/apis/getTrackFromMetadata";
 import { useSettingStore } from "@/contexts/useSettingStore";
 import streamGetTrackReducer from "@/helpers/streamGetTrackReducer";
 
 /**
- * @description getTrackFromId API를 사용하여 곡 정보를 가져오는 쿼리 훅입니다.
+ * @description getTrackFromMetadata API를 사용하여 곡 정보를 가져오는 쿼리 훅입니다.
  *
  * 곡 정보에는 곡 정보, 가사 정보, 제공자 정보, 곡 상세 정보가 포함됩니다.
  *
  * @param trackId 곡 ID
  * @returns query 결과
  */
-export default function useGetTrackFromIdQuery(trackId: string) {
+export default function useGetTrackFromMetadataQuery({
+  title,
+  artist,
+  durationInSeconds,
+}: GetTrackFromMetadataFlowInput["trackMetadata"]) {
   const { setting } = useSettingStore();
 
   const key = useMemo(
     () => ({
-      trackId,
+      trackMetadata: { title, artist, durationInSeconds },
       language: setting.defaultLanguage,
       model: setting.defaultLLMModel,
     }),
-    [trackId, setting.defaultLanguage, setting.defaultLLMModel]
+    [title, artist, durationInSeconds, setting.defaultLanguage, setting.defaultLLMModel]
   );
 
   const query = useQuery<GetTrackFlowResult>({
-    queryKey: ["get-track-from-id", key],
+    queryKey: ["get-track", key],
 
     queryFn: streamedQuery({
       streamFn: async function* (context) {
-        const flow = getTrackFromId(key);
+        const flow = getTrackFromMetadata(key);
 
         // 스트림 및 최종 결과 처리
         for await (const chunk of flow.stream) yield chunk;
@@ -47,7 +51,7 @@ export default function useGetTrackFromIdQuery(trackId: string) {
         // 스트리밍이 아니면 반환된 결과를 캐시에 저장
         if (!output.stream) {
           const { stream, ...result } = output;
-          context.client.setQueryData<GetTrackFlowResult>(["get-track-from-id", key], result);
+          context.client.setQueryData<GetTrackFlowResult>(["get-track", key], result);
         }
       },
 
