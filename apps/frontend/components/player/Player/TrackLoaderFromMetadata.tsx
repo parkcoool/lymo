@@ -16,7 +16,6 @@ export default function TrackLoaderFromMetadata({
   const { data, error } = useGetTrackFromMetadataQuery({ title, artist, durationInSeconds });
 
   if (error) throw error;
-  if (!data) throw new Error("곡 정보를 불러올 수 없습니다.");
 
   return (
     <PlayerContent
