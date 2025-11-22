@@ -28,7 +28,7 @@ export const getTrackFromMetadataFlow = ai.defineFlow(
       const spotifyResult = await searchSpotify({
         title: input.trackMetadata.title,
         artist: input.trackMetadata.artist,
-        duration: input.trackMetadata.durationMs,
+        duration: input.trackMetadata.durationInSeconds,
       });
 
       // 1-1) 곡을 찾지 못한 경우 null 반환

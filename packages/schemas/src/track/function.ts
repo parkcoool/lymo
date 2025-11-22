@@ -57,7 +57,7 @@ export const GetTrackFromMetadataFlowInputSchema = CommonGetTrackFlowInputSchema
   trackMetadata: z.object({
     title: z.string(),
     artist: z.string(),
-    durationMs: z.number(),
+    durationInSeconds: z.number(),
   }),
 });
 export type GetTrackFromMetadataFlowInput = z.infer<typeof GetTrackFromMetadataFlowInputSchema>;
