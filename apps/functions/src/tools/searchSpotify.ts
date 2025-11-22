@@ -50,8 +50,10 @@ export const searchSpotify = ai.defineTool(
       }
     }
 
+    const id = mostAccurateTrack.external_ids.isrc ?? mostAccurateTrack.id;
+
     return {
-      id: mostAccurateTrack.id,
+      id,
       title: mostAccurateTrack.name,
       artist: mostAccurateTrack.artists.map((a) => a.name),
       album: mostAccurateTrack.album.name || null,
