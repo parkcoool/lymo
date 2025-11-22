@@ -2,7 +2,6 @@ import axios from "axios";
 import { z } from "genkit";
 
 import ai from "@/core/genkit";
-import type { RawLRCLIBResult } from "@/types/lrclib";
 import parseLyrics from "@/utils/parseLyrics";
 
 export const SearchLRCLibInputSchema = z.object({
@@ -27,7 +26,17 @@ export const SearchLRCLibOutputSchema = z
   })
   .nullable();
 
-type LRCLibSearchResponse = RawLRCLIBResult[];
+export interface LRCLIBSearchItem {
+  id: number;
+  name: string;
+  trackName: string;
+  artistName: string;
+  albumName: string;
+  duration: number;
+  instrumental: boolean;
+  plainLyrics: string;
+  syncedLyrics: string | null;
+}
 
 export const searchLRCLib = ai.defineTool(
   {
@@ -38,7 +47,7 @@ export const searchLRCLib = ai.defineTool(
       "Fetch the lyrics, title, artist and album of a song given its title, artist and duration in seconds from LRCLib",
   },
   async ({ title, artist, duration }) => {
-    const response = await axios.get<LRCLibSearchResponse>("https://lrclib.net/api/search", {
+    const response = await axios.get<LRCLIBSearchItem[]>("https://lrclib.net/api/search", {
       params: { track_name: title, artist_name: artist },
     });
 
@@ -48,7 +57,7 @@ export const searchLRCLib = ai.defineTool(
     const songs = response.data;
 
     // 후보 검증
-    let song: RawLRCLIBResult | null = null;
+    let song: LRCLIBSearchItem | null = null;
     for (const candidate of songs) {
       if (Math.abs(candidate.duration - duration) > 2) continue;
       const { syncedLyrics: lyricsString } = candidate;
@@ -63,7 +72,9 @@ export const searchLRCLib = ai.defineTool(
     }
 
     // 형식 변환
-    const lyrics = parseLyrics(song.syncedLyrics!, duration);
+    const { syncedLyrics } = song;
+    if (!syncedLyrics) throw new Error("Synced lyrics not found");
+    const lyrics = parseLyrics(syncedLyrics, duration);
 
     return {
       lyrics,

@@ -1,6 +1,17 @@
 import { searchLRCLib } from "@/tools/searchLRCLib";
-import { LRCLIBResult } from "@/types/lrclib";
 import getCombinations from "@/utils/getCombinations";
+
+export interface LRCLIBResult {
+  lyrics: {
+    start: number;
+    end: number;
+    text: string;
+  }[];
+  title: string;
+  artist: string;
+  album: string;
+  duration: number;
+}
 
 interface GetLyricsFromLRCLIBParams {
   title: string;

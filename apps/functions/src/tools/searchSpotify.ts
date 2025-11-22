@@ -88,7 +88,7 @@ function getAccurationScore(
     1 - Math.abs(track.duration_ms / 1000 - query.duration) / query.duration
   );
 
-  // 4. 가중치를 적용하여 최종 점수를 합산합니다.
+  // 4. 가중치를 적용하여 최종 점수 계산
   const finalScore =
     titleScore * SCORE_WEIGHTS.title +
     artistScore * SCORE_WEIGHTS.artist +
