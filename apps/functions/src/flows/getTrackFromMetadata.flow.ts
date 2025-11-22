@@ -80,7 +80,7 @@ export const getTrackFromMetadataFlow = ai.defineFlow(
       return getTrackFromIdFlowOutput;
     } catch (error) {
       logger.error("An error occurred in getTrackFromMetadataFlow", error);
-      return null;
+      return { success: false, message: "서버에서 오류가 발생했습니다." };
     }
   }
 );

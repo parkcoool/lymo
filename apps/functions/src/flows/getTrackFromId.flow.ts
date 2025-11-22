@@ -29,8 +29,8 @@ export const getTrackFromIdFlow = ai.defineFlow(
       // 1) track 문서 가져오기
       const trackDoc = await getTrackFromDB({ trackId: input.trackId });
 
-      // 1-1) track 문서가 존재하지 않는 경우 error 반환
-      if (!trackDoc) throw new Error("Track not found");
+      // 1-1) track 문서가 존재하지 않는 경우
+      if (!trackDoc) return { success: false, message: "곡 정보를 찾을 수 없습니다." };
 
       // 1-2) track 문서 스트리밍
       sendChunk({ event: "track_set", data: trackDoc });
@@ -53,14 +53,8 @@ export const getTrackFromIdFlow = ai.defineFlow(
         });
 
         for await (const chunk of stream) sendChunk(chunk);
-        return { stream: true } as const;
+        return { success: true };
       }
-
-      // 2-2) provider 문서 스트리밍
-      sendChunk({
-        event: "provider_set",
-        data: { ...providerDoc.provider, providerId: providerDoc.id },
-      });
 
       // 3) trackDetail 문서 가져오기
       const trackDetailDoc = await getTrackDetailFromDB({
@@ -84,30 +78,28 @@ export const getTrackFromIdFlow = ai.defineFlow(
         });
 
         for await (const chunk of stream) sendChunk(chunk);
-        return { stream: true } as const;
+        return { success: true };
       }
 
-      // 4) lyrics 문서 가져오기
+      // 4) provider 문서 스트리밍
+      sendChunk({
+        event: "provider_set",
+        data: { ...providerDoc.provider, providerId: providerDoc.id },
+      });
+
+      // 5) lyrics 문서 가져오기
       const lyricsDoc = await getLyricsFromDB({
         trackId: input.trackId,
         lyricsProvider: trackDetailDoc.lyricsProvider,
       });
 
-      // lyrics 문서가 존재하지 않는 경우 error 반환
-      if (!lyricsDoc) throw new Error("Lyrics not found");
+      // 5-1) lyrics 문서가 존재하지 않는 경우 error 반환
+      if (!lyricsDoc) return { success: false, message: "가사 정보를 찾을 수 없습니다." };
 
-      return {
-        detail: trackDetailDoc,
-        providerId: providerDoc.id,
-        provider: providerDoc.provider,
-        lyricsProvider: trackDetailDoc.lyricsProvider,
-        lyrics: lyricsDoc,
-        track: trackDoc,
-        stream: false,
-      };
+      return { success: true };
     } catch (error) {
       logger.error("An error occurred in getTrackFromIdFlow", error);
-      return null;
+      return { success: false, message: "서버에서 오류가 발생했습니다." };
     }
   }
 );

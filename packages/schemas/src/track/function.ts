@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { LyricsDocSchema, ProviderDocSchema, TrackDetailDocSchema, TrackDocSchema } from "./doc";
 import {
   TrackSetEventSchema,
   CompleteEventSchema,
@@ -12,7 +11,7 @@ import {
   SummaryAppendEventSchema,
   TranslationSetEventSchema,
 } from "./event";
-import { LanguageSchema, LLMModelSchema, LyricsProviderSchema } from "./shared";
+import { LanguageSchema, LLMModelSchema } from "./shared";
 
 // =============== 공통 스키마 ===============
 
@@ -34,20 +33,10 @@ export const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
 ]);
 export type CommonGetTrackFlowStream = z.infer<typeof CommonGetTrackFlowStreamSchema>;
 
-export const GetTrackFlowResultSchema = z.object({
-  detail: TrackDetailDocSchema,
-  providerId: z.string(),
-  provider: ProviderDocSchema,
-  lyricsProvider: LyricsProviderSchema,
-  lyrics: LyricsDocSchema,
-  track: TrackDocSchema,
+const CommonGetTrackFlowOutputSchema = z.object({
+  success: z.boolean(),
+  message: z.string().optional(),
 });
-export type GetTrackFlowResult = z.infer<typeof GetTrackFlowResultSchema>;
-
-const CommonGetTrackFlowOutputSchema = z.discriminatedUnion("stream", [
-  GetTrackFlowResultSchema.extend({ stream: z.literal(false) }),
-  z.object({ stream: z.literal(true) }),
-]);
 
 // =============== getTrackFromId 스키마 ===============
 export const GetTrackFromIdFlowInputSchema = CommonGetTrackFlowInputSchema.extend({

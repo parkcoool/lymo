@@ -3,6 +3,7 @@ import {
   CompleteEventSchema,
   LyricsGroupEventSchema,
   ParagraphSummaryAppendEventSchema,
+  ProviderSetEventSchema,
   SummaryAppendEventSchema,
   TranslationSetEventSchema,
 } from "@lymo/schemas/event";
@@ -28,6 +29,7 @@ export const GetDetailFlowStreamSchema = z.discriminatedUnion("event", [
   ParagraphSummaryAppendEventSchema,
   SummaryAppendEventSchema,
   TranslationSetEventSchema,
+  ProviderSetEventSchema,
 ]);
 
 export const GetDetailFlowOutputSchema = TrackDetailDocSchema;

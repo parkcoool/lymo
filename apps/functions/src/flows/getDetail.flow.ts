@@ -118,7 +118,20 @@ export const getDetailFlow = ai.defineFlow(
         paragraphSummaries,
       };
 
-      // 11) DB에 저장
+      // 11) 제공자 스트리밍
+      const date = new Date().toISOString();
+      const providerName = getProviderNameFromLLMModel(input.model);
+      sendChunk({
+        event: "provider_set",
+        data: {
+          createdAt: date,
+          updatedAt: date,
+          providerName,
+          providerId: input.model,
+        },
+      });
+
+      // 12) DB에 저장
       const providerDocRef = admin
         .firestore()
         .collection("tracks")
@@ -130,22 +143,20 @@ export const getDetailFlow = ai.defineFlow(
         .doc(input.language) as DocumentReference<TrackDetailDoc>;
 
       admin.firestore().runTransaction(async (transaction) => {
-        const date = new Date().toISOString();
-
-        // 11-1) 제공자 문서 생성
+        // 12-1) 제공자 문서 생성
         transaction.set(providerDocRef, {
           createdAt: date,
           updatedAt: date,
-          providerName: getProviderNameFromLLMModel(input.model),
+          providerName,
         });
 
-        // 11-2) 트랙 상세 정보 저장
+        // 12-2) 트랙 상세 정보 저장
         transaction.set(trackDetailDocRef, detailDoc);
       });
 
       sendChunk({ event: "complete", data: null });
 
-      // 12) 최종 결과 반환
+      // 13) 최종 결과 반환
       return detailDoc;
     } catch (error) {
       logger.error("An error occurred in getDetailFlow", error);
