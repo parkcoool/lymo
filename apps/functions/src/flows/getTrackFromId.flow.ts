@@ -96,7 +96,7 @@ export const getTrackFromIdFlow = ai.defineFlow(
         track: trackDoc,
       };
     } catch (error) {
-      logger.error("An error occurred in addTrackFlow", error);
+      logger.error("An error occurred in getTrackFromIdFlow", error);
       return null;
     }
   }
