@@ -97,6 +97,7 @@ export const getTrackFromIdFlow = ai.defineFlow(
         lyricsProvider: trackDetailDoc.lyricsProvider,
         lyrics: lyricsDoc,
         track: trackDoc,
+        stream: false,
       };
     } catch (error) {
       logger.error("An error occurred in getTrackFromIdFlow", error);

@@ -33,7 +33,7 @@ const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
   CompleteEventSchema,
 ]);
 
-const CommonGetTrackFlowOutputSchema = z.object({
+const GetTrackFlowResultSchema = z.object({
   detail: TrackDetailDocSchema,
   providerId: z.string(),
   provider: ProviderDocSchema,
@@ -41,6 +41,11 @@ const CommonGetTrackFlowOutputSchema = z.object({
   lyrics: LyricsDocSchema,
   track: TrackDocSchema,
 });
+
+const CommonGetTrackFlowOutputSchema = z.discriminatedUnion("stream", [
+  GetTrackFlowResultSchema.extend({ stream: z.literal(false) }),
+  z.object({ stream: z.literal(true) }),
+]);
 
 // =============== getTrackFromId 스키마 ===============
 export const GetTrackFromIdFlowInputSchema = CommonGetTrackFlowInputSchema.extend({

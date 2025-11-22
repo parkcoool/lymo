@@ -46,8 +46,8 @@ export const getTrackFromMetadataFlow = ai.defineFlow(
 
       // 2-1) 스트림 처리 및 최종 결과 반환
       for await (const chunk of stream) sendChunk(chunk);
-      let track = await output;
-      if (track) return track;
+      let getTrackFromIdFlowOutput = await output;
+      if (getTrackFromIdFlowOutput) return getTrackFromIdFlowOutput;
 
       // 3) track 문서 생성
       const date = new Date().toISOString();
@@ -77,8 +77,8 @@ export const getTrackFromMetadataFlow = ai.defineFlow(
 
       // 4-1) 스트림 처리 및 최종 결과 반환
       for await (const chunk of stream) sendChunk(chunk);
-      track = await output;
-      return track;
+      getTrackFromIdFlowOutput = await output;
+      return getTrackFromIdFlowOutput;
     } catch (error) {
       logger.error("An error occurred in getTrackFromMetadataFlow", error);
       return null;
