@@ -21,7 +21,7 @@ const CommonGetTrackFlowInputSchema = z.object({
   model: LLMModelSchema,
 });
 
-const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
+export const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
   TrackSetEventSchema,
   LyricsSetEventSchema,
   SummaryAppendEventSchema,
@@ -32,8 +32,9 @@ const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
   LyricsGroupEventSchema,
   CompleteEventSchema,
 ]);
+export type CommonGetTrackFlowStream = z.infer<typeof CommonGetTrackFlowStreamSchema>;
 
-const GetTrackFlowResultSchema = z.object({
+export const GetTrackFlowResultSchema = z.object({
   detail: TrackDetailDocSchema,
   providerId: z.string(),
   provider: ProviderDocSchema,
@@ -41,6 +42,7 @@ const GetTrackFlowResultSchema = z.object({
   lyrics: LyricsDocSchema,
   track: TrackDocSchema,
 });
+export type GetTrackFlowResult = z.infer<typeof GetTrackFlowResultSchema>;
 
 const CommonGetTrackFlowOutputSchema = z.discriminatedUnion("stream", [
   GetTrackFlowResultSchema.extend({ stream: z.literal(false) }),

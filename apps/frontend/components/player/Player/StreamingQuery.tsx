@@ -1,7 +1,7 @@
 import { LyricsDoc, TrackDoc } from "@lymo/schemas/doc";
 import { LyricsProvider } from "@lymo/schemas/shared";
 
-import useGenerateDetailQuery from "@/hooks/queries/useGenerateDetailQuery";
+import useGenerateDetailQuery from "@/hooks/queries/useGetTrackFromIdQuery";
 
 import PlayerContent from "./PlayerContent";
 
