@@ -1,4 +1,6 @@
-import { CommonGetTrackFlowStream, GetTrackFlowResult } from "@lymo/schemas/function";
+import { CommonGetTrackFlowStream } from "@lymo/schemas/function";
+
+import { GetTrackFlowResult } from "@/hooks/queries/useGetTrackQuery";
 
 /**
  * @description 곡 정보를 스트리밍 방식으로 받아올 때 사용하는 reducer 함수입니다.

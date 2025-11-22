@@ -1,9 +1,9 @@
 import {
   CommonGetTrackFlowStream,
-  GetTrackFlowResult,
   GetTrackFromIdFlowInput,
   GetTrackFromMetadataFlowInput,
 } from "@lymo/schemas/function";
+import { LyricsProvider } from "@lymo/schemas/shared";
 import {
   experimental_streamedQuery as streamedQuery,
   useQueryClient,
@@ -14,40 +14,41 @@ import { useEffect, useMemo } from "react";
 import { useSettingStore } from "@/contexts/useSettingStore";
 import streamGetTrackReducer from "@/helpers/streamGetTrackReducer";
 
-const initialValue: GetTrackFlowResult = {
+export interface GetTrackFlowResult {
   detail: {
-    summary: "",
-    lyricsSplitIndices: [],
-    lyricsProvider: "none",
-    translations: [],
-    paragraphSummaries: [],
-  },
-  providerId: "",
-  provider: {
-    createdAt: "",
-    updatedAt: "",
-    providerName: "",
-  },
-  lyricsProvider: "none",
+    summary?: string;
+    lyricsSplitIndices: number[];
+    lyricsProvider?: LyricsProvider;
+    translations: (string | null | undefined)[];
+    paragraphSummaries: (string | null | undefined)[];
+  };
+  providerId?: string;
+  provider?: {
+    createdAt: string;
+    updatedAt: string;
+    providerName: string;
+  };
+  lyricsProvider?: LyricsProvider;
+  lyrics: { lyrics: { start: number; end: number; text: string }[] };
+  track?: {
+    album: string | null;
+    artist: string[];
+    coverUrl: string;
+    duration: number;
+    publishedAt: string | null;
+    title: string;
+    createdAt: string;
+    play: number;
+  };
+}
+
+const initialValue: GetTrackFlowResult = {
+  detail: { lyricsSplitIndices: [], translations: [], paragraphSummaries: [] },
   lyrics: { lyrics: [] },
-  track: {
-    album: null,
-    artist: [],
-    coverUrl: "",
-    duration: 0,
-    publishedAt: null,
-    title: "",
-    createdAt: "",
-    play: 0,
-  },
 };
 
 type FlowOutput = {
-  readonly output: Promise<
-    | (GetTrackFlowResult & { stream: false })
-    | (Partial<GetTrackFlowResult> & { stream: true })
-    | null
-  >;
+  readonly output: Promise<{ success: boolean; message?: string }>;
   readonly stream: AsyncIterable<CommonGetTrackFlowStream>;
 };
 
@@ -83,7 +84,7 @@ export default function useGetTrackQuery<
     queryKey: ["get-track", key],
 
     queryFn: streamedQuery({
-      streamFn: async function* (context) {
+      streamFn: async function* () {
         const flow = getFlow(key);
 
         // 스트림 및 최종 결과 처리
@@ -91,13 +92,7 @@ export default function useGetTrackQuery<
         const output = await flow.output;
 
         // 곡 정보를 가져올 수 없는 경우 에러 처리
-        if (!output) throw new Error("곡 정보를 가져올 수 없습니다.");
-
-        // 스트리밍이 아니면 반환된 결과를 캐시에 저장
-        if (!output.stream) {
-          const { stream, ...result } = output;
-          context.client.setQueryData<GetTrackFlowResult>(["get-track", key], result);
-        }
+        if (!output.success) throw new Error(output.message || "곡 정보를 가져올 수 없습니다.");
       },
 
       reducer: streamGetTrackReducer,
