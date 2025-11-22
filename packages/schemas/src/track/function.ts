@@ -47,7 +47,7 @@ export type GetTrackFromIdFlowInput = z.infer<typeof GetTrackFromIdFlowInputSche
 export const GetTrackFromIdFlowStreamSchema = CommonGetTrackFlowStreamSchema;
 export type GetTrackFromIdFlowStream = z.infer<typeof GetTrackFromIdFlowStreamSchema>;
 
-export const GetTrackFromIdFlowOutputSchema = CommonGetTrackFlowOutputSchema.nullable();
+export const GetTrackFromIdFlowOutputSchema = CommonGetTrackFlowOutputSchema;
 export type GetTrackFromIdFlowOutput = z.infer<typeof GetTrackFromIdFlowOutputSchema>;
 
 // =============== getTrackFromMetadata 스키마 ===============
@@ -63,5 +63,5 @@ export type GetTrackFromMetadataFlowInput = z.infer<typeof GetTrackFromMetadataF
 export const GetTrackFromMetadataFlowStreamSchema = CommonGetTrackFlowStreamSchema;
 export type GetTrackFromMetadataFlowStream = z.infer<typeof GetTrackFromMetadataFlowStreamSchema>;
 
-export const GetTrackFromMetadataFlowOutputSchema = CommonGetTrackFlowOutputSchema.nullable();
+export const GetTrackFromMetadataFlowOutputSchema = CommonGetTrackFlowOutputSchema;
 export type GetTrackFromMetadataFlowOutput = z.infer<typeof GetTrackFromMetadataFlowOutputSchema>;
