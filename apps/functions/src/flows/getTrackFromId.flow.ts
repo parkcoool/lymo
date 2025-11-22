@@ -32,6 +32,9 @@ export const getTrackFromIdFlow = ai.defineFlow(
       // 1-1) track 문서가 존재하지 않는 경우 error 반환
       if (!trackDoc) throw new Error("Track not found");
 
+      // 1-2) track 문서 스트리밍
+      sendChunk({ event: "track_set", data: trackDoc });
+
       // 2) provider 문서 가져오기
       const providerDoc = await getProviderFromDB({ trackId: input.trackId, model: input.model });
 

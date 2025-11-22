@@ -65,6 +65,7 @@ export const getTrackFromMetadataFlow = ai.defineFlow(
         createdAt: date,
         play: 0,
       };
+      sendChunk({ event: "track_set", data: trackData });
       await trackDocRef.set(trackData);
 
       // 4) 다시 getTrackFromIdFlow 호출
