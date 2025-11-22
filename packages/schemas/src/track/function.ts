@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { LyricsDocSchema, ProviderDocSchema, TrackDetailDocSchema, TrackDocSchema } from "./doc";
 import {
+  TrackSetEventSchema,
   CompleteEventSchema,
   LyricsGroupEventSchema,
   LyricsProviderSetEventSchema,
@@ -21,6 +22,7 @@ const CommonGetTrackFlowInputSchema = z.object({
 });
 
 const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
+  TrackSetEventSchema,
   LyricsSetEventSchema,
   SummaryAppendEventSchema,
   ParagraphSummaryAppendEventSchema,
