@@ -37,7 +37,7 @@ export const getTrackFromIdFlow = ai.defineFlow(
 
       // 2-1) provider 문서가 존재하지 않는 경우 스트리밍 시작
       if (!providerDoc) {
-        streamLyricsAndTrackDetail({
+        const stream = streamLyricsAndTrackDetail({
           trackId: input.trackId,
           metadata: {
             title: trackDoc.title,
@@ -47,9 +47,9 @@ export const getTrackFromIdFlow = ai.defineFlow(
           },
           language: input.language,
           model: input.model,
-          sendChunk,
         });
 
+        for await (const chunk of stream) sendChunk(chunk);
         return null;
       }
 
@@ -62,7 +62,7 @@ export const getTrackFromIdFlow = ai.defineFlow(
 
       // 3-1) trackDetail 문서가 존재하지 않는 경우 스트리밍 시작
       if (!trackDetailDoc) {
-        streamLyricsAndTrackDetail({
+        const stream = streamLyricsAndTrackDetail({
           trackId: input.trackId,
           metadata: {
             title: trackDoc.title,
@@ -72,9 +72,9 @@ export const getTrackFromIdFlow = ai.defineFlow(
           },
           language: input.language,
           model: input.model,
-          sendChunk,
         });
 
+        for await (const chunk of stream) sendChunk(chunk);
         return null;
       }
 

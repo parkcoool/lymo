@@ -74,7 +74,7 @@ export const getTrackFromMetadataFlow = ai.defineFlow(
         model: input.model,
       }));
 
-      // 2-1) 스트림 처리 및 최종 결과 반환
+      // 4-1) 스트림 처리 및 최종 결과 반환
       for await (const chunk of stream) sendChunk(chunk);
       track = await output;
       return track;

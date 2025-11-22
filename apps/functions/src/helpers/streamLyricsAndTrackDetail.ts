@@ -3,7 +3,7 @@ import { LyricsDoc } from "@lymo/schemas/doc";
 import { GetTrackFromIdFlowStreamSchema } from "@lymo/schemas/function";
 import { Language, LLMModel } from "@lymo/schemas/shared";
 import admin from "firebase-admin";
-import { StreamingCallback, z } from "genkit";
+import { z } from "genkit";
 
 import { getDetailFlow } from "@/flows/getDetail.flow";
 
@@ -15,7 +15,6 @@ interface StreamLyricsAndTrackDetailParams {
   metadata: { title: string; album: string | null; artists: string[]; duration: number };
   language: Language;
   model: LLMModel;
-  sendChunk: StreamingCallback<z.infer<typeof GetTrackFromIdFlowStreamSchema>>;
 }
 
 /**
@@ -24,15 +23,15 @@ interface StreamLyricsAndTrackDetailParams {
  * @param metadata 트랙 메타데이터
  * @param language 생성할 상세 정보의 언어
  * @param model 생성할 상세 정보의 LLM 모델
- * @param sendChunk 스트리밍 콜백 함수
  */
-export async function streamLyricsAndTrackDetail({
+export async function* streamLyricsAndTrackDetail({
   trackId,
   metadata: { title, album, artists, duration },
   language,
   model,
-  sendChunk,
-}: StreamLyricsAndTrackDetailParams) {
+}: StreamLyricsAndTrackDetailParams): AsyncGenerator<
+  z.infer<typeof GetTrackFromIdFlowStreamSchema>
+> {
   // 1) lyrics 문서 가져오기
   const lyricsDoc = await getLyricsFromDB({ trackId });
 
@@ -53,10 +52,10 @@ export async function streamLyricsAndTrackDetail({
     else throw new Error("Lyrics not found");
 
     // 2-3) 가사 정보 스트림
-    sendChunk({
+    yield {
       event: "lyrics_set",
       data: { lyrics },
-    });
+    };
 
     // 2-4) 가사를 DB에 저장
     const lyricsDocRef = admin
@@ -68,10 +67,10 @@ export async function streamLyricsAndTrackDetail({
     await lyricsDocRef.set({ lyrics });
   } else {
     // 기존 가사 정보 스트림
-    sendChunk({
+    yield {
       event: "lyrics_set",
       data: { lyrics },
-    });
+    };
   }
 
   // 3) 상세 정보 생성 및 스트림
@@ -80,8 +79,8 @@ export async function streamLyricsAndTrackDetail({
     ...{ lyricsProvider, lyrics, trackId, language, model },
   });
   for await (const chunk of stream) {
-    sendChunk(chunk);
+    yield chunk;
   }
 
-  sendChunk({ event: "complete", data: null });
+  yield { event: "complete", data: null };
 }
