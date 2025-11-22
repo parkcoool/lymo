@@ -53,7 +53,7 @@ export const getTrackFromIdFlow = ai.defineFlow(
         });
 
         for await (const chunk of stream) sendChunk(chunk);
-        return null;
+        return { stream: true } as const;
       }
 
       // 3) trackDetail 문서 가져오기
@@ -78,7 +78,7 @@ export const getTrackFromIdFlow = ai.defineFlow(
         });
 
         for await (const chunk of stream) sendChunk(chunk);
-        return null;
+        return { stream: true } as const;
       }
 
       // 4) lyrics 문서 가져오기
