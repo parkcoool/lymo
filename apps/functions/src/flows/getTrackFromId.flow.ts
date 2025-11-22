@@ -56,6 +56,12 @@ export const getTrackFromIdFlow = ai.defineFlow(
         return { stream: true } as const;
       }
 
+      // 2-2) provider 문서 스트리밍
+      sendChunk({
+        event: "provider_set",
+        data: { ...providerDoc.provider, providerId: providerDoc.id },
+      });
+
       // 3) trackDetail 문서 가져오기
       const trackDetailDoc = await getTrackDetailFromDB({
         trackId: input.trackId,

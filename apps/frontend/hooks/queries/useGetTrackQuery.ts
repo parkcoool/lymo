@@ -94,7 +94,7 @@ export default function useGetTrackQuery<
         if (!output) throw new Error("곡 정보를 가져올 수 없습니다.");
 
         // 스트리밍이 아니면 반환된 결과를 캐시에 저장
-        if ("stream" in output && !output.stream) {
+        if (!output.stream) {
           const { stream, ...result } = output;
           context.client.setQueryData<GetTrackFlowResult>(["get-track", key], result);
         }

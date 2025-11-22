@@ -34,8 +34,8 @@ export const getTrackFromMetadataFlow = ai.defineFlow(
         duration: input.trackMetadata.durationInSeconds,
       });
 
-      // 1-1) 곡을 찾지 못한 경우 null 반환
-      if (!spotifyResult) return null;
+      // 1-1) 곡을 찾지 못한 경우 error 반환
+      if (!spotifyResult) throw new Error("Spotify track not found");
 
       // 2) getTrackFromIdFlow 호출
       let { output, stream } = getTrackFromIdFlow.stream({
@@ -65,7 +65,6 @@ export const getTrackFromMetadataFlow = ai.defineFlow(
         createdAt: date,
         play: 0,
       };
-      sendChunk({ event: "track_set", data: trackData });
       await trackDocRef.set(trackData);
 
       // 4) 다시 getTrackFromIdFlow 호출
