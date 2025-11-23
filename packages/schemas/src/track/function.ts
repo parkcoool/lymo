@@ -1,15 +1,14 @@
 import { z } from "zod";
 
 import {
-  TrackSetEventSchema,
-  CompleteEventSchema,
-  LyricsGroupEventSchema,
-  LyricsProviderSetEventSchema,
-  LyricsSetEventSchema,
-  ParagraphSummaryAppendEventSchema,
-  ProviderSetEventSchema,
-  SummaryAppendEventSchema,
-  TranslationSetEventSchema,
+  UpdateTrackEventSchema,
+  UpdateProviderEventSchema,
+  UpdateLyricsEventSchema,
+  AppendSummaryEventSchema,
+  UpdateLyricsSplitIndicesEventSchema,
+  UpdateTranslationEventSchema,
+  AppendParagraphSummaryEventSchema,
+  UpdateParagraphSummaryEventSchema,
 } from "./event";
 import { LanguageSchema, LLMModelSchema } from "./shared";
 
@@ -21,15 +20,14 @@ const CommonGetTrackFlowInputSchema = z.object({
 });
 
 export const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
-  TrackSetEventSchema,
-  LyricsSetEventSchema,
-  SummaryAppendEventSchema,
-  ParagraphSummaryAppendEventSchema,
-  ProviderSetEventSchema,
-  LyricsProviderSetEventSchema,
-  TranslationSetEventSchema,
-  LyricsGroupEventSchema,
-  CompleteEventSchema,
+  UpdateTrackEventSchema,
+  UpdateProviderEventSchema,
+  UpdateLyricsEventSchema,
+  AppendSummaryEventSchema,
+  UpdateLyricsSplitIndicesEventSchema,
+  UpdateTranslationEventSchema,
+  AppendParagraphSummaryEventSchema,
+  UpdateParagraphSummaryEventSchema,
 ]);
 export type CommonGetTrackFlowStream = z.infer<typeof CommonGetTrackFlowStreamSchema>;
 

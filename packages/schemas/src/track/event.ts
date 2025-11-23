@@ -1,96 +1,96 @@
 import { z } from "zod";
 
-import { LyricsDocSchema, TrackDocSchema } from "./doc";
+import { LyricsDocSchema, ProviderDocSchema, TrackDocSchema } from "./doc";
 import { LyricsProviderSchema } from "./shared";
 
 /**
- * 곡 설정 이벤트
+ * track update 이벤트
  */
-export const TrackSetEventSchema = z.object({
-  event: z.literal("track_set"),
-  data: TrackDocSchema,
-});
-
-/**
- * 가사 설정 이벤트
- */
-export const LyricsSetEventSchema = z.object({
-  event: z.literal("lyrics_set"),
+export const UpdateTrackEventSchema = z.object({
+  event: z.literal("update_track"),
   data: z.object({
-    lyrics: LyricsDocSchema.shape["lyrics"],
+    track: TrackDocSchema,
+    trackId: z.string(),
   }),
 });
 
 /**
- * 가사 제공자 설정 이벤트
+ * lyrics update 이벤트
  */
-export const LyricsProviderSetEventSchema = z.object({
-  event: z.literal("lyrics_provider_set"),
+export const UpdateLyricsEventSchema = z.object({
+  event: z.literal("update_lyrics"),
   data: z.object({
+    lyrics: LyricsDocSchema.shape["lyrics"],
     lyricsProvider: LyricsProviderSchema,
   }),
 });
 
 /**
- * 가사 문장 번역 설정 이벤트
+ * provider update 이벤트
  */
-export const TranslationSetEventSchema = z.object({
-  event: z.literal("translation_set"),
+export const UpdateProviderEventSchema = z.object({
+  event: z.literal("update_provider"),
   data: z.object({
-    sentenceIndex: z.number(),
-    text: z.string().nullable(),
-  }),
-});
-export type TranslationSetEvent = z.infer<typeof TranslationSetEventSchema>;
-
-/**
- * 가사 문단 구분 이벤트
- */
-export const LyricsGroupEventSchema = z.object({
-  event: z.literal("lyrics_group"),
-  data: z.array(z.number()),
-});
-export type LyricsGroupEvent = z.infer<typeof LyricsGroupEventSchema>;
-
-/**
- * 곡 요약 append 이벤트
- */
-export const SummaryAppendEventSchema = z.object({
-  event: z.literal("summary_append"),
-  data: z.object({
-    summary: z.string(),
-  }),
-});
-export type SummaryAppendEvent = z.infer<typeof SummaryAppendEventSchema>;
-
-/**
- * 문단 요약 append 이벤트
- */
-export const ParagraphSummaryAppendEventSchema = z.object({
-  event: z.literal("paragraph_summary_append"),
-  data: z.object({
-    paragraphIndex: z.number(),
-    summary: z.string(),
-  }),
-});
-export type ParagraphSummaryAppendEvent = z.infer<typeof ParagraphSummaryAppendEventSchema>;
-
-/**
- * 제공자 설정 이벤트
- */
-export const ProviderSetEventSchema = z.object({
-  event: z.literal("provider_set"),
-  data: z.object({
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    providerName: z.string(),
+    provider: ProviderDocSchema,
     providerId: z.string(),
   }),
 });
 
+// =============== trackDetail 관련 이벤트 ===============
+
 /**
- * 스트리밍 완료 이벤트
+ * summary append 이벤트
  */
+export const AppendSummaryEventSchema = z.object({
+  event: z.literal("append_summary"),
+  data: z.object({
+    summary: z.string(),
+  }),
+});
+
+/**
+ * lyricsSplitIndices update 이벤트
+ */
+export const UpdateLyricsSplitIndicesEventSchema = z.object({
+  event: z.literal("update_lyrics_split_indices"),
+  data: z.object({
+    lyricsSplitIndices: z.array(z.number()),
+  }),
+});
+
+/**
+ * translation update 이벤트
+ */
+export const UpdateTranslationEventSchema = z.object({
+  event: z.literal("update_translation"),
+  data: z.object({
+    sentenceIndex: z.number(),
+    translation: z.string().nullable(),
+  }),
+});
+
+/**
+ * paragraphSummary append 이벤트
+ */
+export const AppendParagraphSummaryEventSchema = z.object({
+  event: z.literal("append_paragraph_summary"),
+  data: z.object({
+    paragraphIndex: z.number(),
+    paragraphSummary: z.string(),
+  }),
+});
+
+/**
+ * paragraphSummary update 이벤트
+ */
+export const UpdateParagraphSummaryEventSchema = z.object({
+  event: z.literal("update_paragraph_summary"),
+  data: z.object({
+    paragraphIndex: z.number(),
+    paragraphSummary: z.string().nullable(),
+  }),
+});
+
 export const CompleteEventSchema = z.object({
   event: z.literal("complete"),
   data: z.null(),

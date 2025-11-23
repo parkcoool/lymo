@@ -28,7 +28,7 @@ export const getDetailFlow = ai.defineFlow(
     streamSchema: GetDetailFlowStreamSchema,
     outputSchema: GetDetailFlowOutputSchema,
   },
-  async (input, sendChunk) => {
+  async (input, { sendChunk }) => {
     try {
       // 1) 상세 정보가 이미 있으면 반환
       const existingDetailDoc = await getTrackDetailFromDB({
