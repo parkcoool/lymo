@@ -1,4 +1,3 @@
-import { TranslationSetEventSchema } from "@lymo/schemas/event";
 import { LanguageSchema } from "@lymo/schemas/shared";
 import { logger } from "firebase-functions";
 import { z } from "genkit";
@@ -23,6 +22,11 @@ export const TranslateLyricsInputSchema = z.object({
   language: LanguageSchema.describe("The target language for translation"),
 });
 
+export const TranslateLyricsStreamSchema = z.object({
+  sentenceIndex: z.number().describe("The index of the translated sentence"),
+  translation: z.string().nullable().describe("The translated text of the sentence"),
+});
+
 export const TranslateLyricsOutputSchema = z.array(
   z.string().nullable().describe("The translated text of the sentence")
 );
@@ -31,7 +35,7 @@ export const translateLyricsFlow = ai.defineFlow(
   {
     name: "translateLyricsFlow",
     inputSchema: TranslateLyricsInputSchema,
-    streamSchema: TranslationSetEventSchema,
+    streamSchema: TranslateLyricsStreamSchema,
     outputSchema: TranslateLyricsOutputSchema,
   },
   async ({ title, artist, album, lyrics, language }, { sendChunk }) => {
@@ -113,11 +117,13 @@ export const translateLyricsFlow = ai.defineFlow(
           schema: TranslateLyricsOutputSchema,
         },
         config: {
-          temperature: 0.3,
+          // 재시도 시 temperature 점진적 증가
+          temperature: retry * 0.2 + 0.3,
         },
       });
 
       // 3) 스트리밍 처리
+
       // 현재 처리 중인 문장의 인덱스
       let sentenceIndex = 0;
 
@@ -132,12 +138,10 @@ export const translateLyricsFlow = ai.defineFlow(
           const translation = translations[sentenceIndex];
           const validatedTranslation = validateTranslation(translation, sentenceIndex);
 
+          // 번역 결과 스트리밍 전송
           sendChunk({
-            event: "translation_set",
-            data: {
-              sentenceIndex,
-              text: validatedTranslation,
-            },
+            sentenceIndex,
+            translation: validatedTranslation,
           });
 
           // 마지막 문장까지 처리했으면 종료
@@ -149,11 +153,17 @@ export const translateLyricsFlow = ai.defineFlow(
         (await response).output?.map((item) => (item?.trim() === "null" ? null : item)) ?? null;
 
       // 4) 결과 검증 및 반환
+
       // 번역 문장 개수가 입력된 문장 개수와 일치하는지 확인
       if (result !== null && result.length === lyrics.length) {
         // 최종 결과에도 동일한 검증 로직 적용
         return result.map((translation, index) => validateTranslation(translation, index));
-      } else retry++;
+      }
+
+      // 불일치하는 경우 재시도
+      else {
+        retry++;
+      }
     }
 
     // 3회 재시도 후에도 실패한 경우 마지막 결과 반환
