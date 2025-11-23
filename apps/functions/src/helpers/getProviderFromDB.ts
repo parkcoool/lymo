@@ -19,14 +19,14 @@ export default async function getProviderFromDB({ trackId, model }: GetProviderF
     .firestore()
     .collection("tracks")
     .doc(trackId)
-    .collection("details") as CollectionReference<ProviderDoc>;
+    .collection("providers") as CollectionReference<ProviderDoc>;
 
   // 모델이 지정된 경우 해당 모델에 맞는 제공자 문서 우선 검색
   if (model) {
     const modelProviderDocSnap = await providersCollectionRef.doc(model).get();
     const modelProviderDoc = modelProviderDocSnap.data();
     if (modelProviderDocSnap.exists && modelProviderDoc) {
-      return { provider: modelProviderDoc, id: modelProviderDocSnap.id };
+      return { provider: modelProviderDoc, providerId: modelProviderDocSnap.id };
     }
   }
 
@@ -38,5 +38,5 @@ export default async function getProviderFromDB({ trackId, model }: GetProviderF
   const providerDocSnap = providerDocSnaps.docs[0];
   const providerDoc = providerDocSnap.data();
   if (!providerDoc) return null;
-  return { provider: providerDoc, id: providerDocSnap.id };
+  return { provider: providerDoc, providerId: providerDocSnap.id };
 }

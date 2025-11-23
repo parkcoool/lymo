@@ -7,9 +7,11 @@ import calculateSimilarity from "@/utils/calculateSimilarity";
 import detectLanguage from "@/utils/detectLanguage";
 
 export const TranslateLyricsInputSchema = z.object({
-  title: z.string().describe("The title of the song"),
-  artist: z.string().describe("The artist of the song"),
-  album: z.string().nullable().describe("The album of the song"),
+  track: z.object({
+    title: z.string().describe("The title of the song"),
+    artist: z.string().describe("The artist of the song"),
+    album: z.string().nullable().describe("The album of the song"),
+  }),
   lyrics: z
     .array(
       z.object({
@@ -19,7 +21,9 @@ export const TranslateLyricsInputSchema = z.object({
       })
     )
     .describe("The lyrics of the song"),
-  language: LanguageSchema.describe("The target language for translation"),
+  config: z.object({
+    language: LanguageSchema.describe("The target language for translation"),
+  }),
 });
 
 export const TranslateLyricsStreamSchema = z.object({
@@ -38,7 +42,7 @@ export const translateLyricsFlow = ai.defineFlow(
     streamSchema: TranslateLyricsStreamSchema,
     outputSchema: TranslateLyricsOutputSchema,
   },
-  async ({ title, artist, album, lyrics, language }, { sendChunk }) => {
+  async ({ track, lyrics, config: { language } }, { sendChunk }) => {
     // 1) 이미 목표 언어인 문장 필터링
     const needsTranslation = lyrics.map((lyric) => {
       const detectedLang = detectLanguage(lyric.text);
@@ -106,13 +110,7 @@ export const translateLyricsFlow = ai.defineFlow(
         \`\`\`
       `,
         model: "googleai/gemini-2.5-flash-lite",
-        prompt: JSON.stringify({
-          title,
-          artist,
-          album,
-          lyrics,
-          targetLanguage: language,
-        }),
+        prompt: JSON.stringify({ track, lyrics, targetLanguage: language }),
         output: {
           schema: TranslateLyricsOutputSchema,
         },
@@ -171,7 +169,7 @@ export const translateLyricsFlow = ai.defineFlow(
       expected: lyrics.length,
       actual: result?.length ?? 0,
       retries: retry,
-      track: { title, artist, album },
+      track,
     });
     return result ?? [];
   }

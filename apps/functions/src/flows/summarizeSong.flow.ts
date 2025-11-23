@@ -1,20 +1,25 @@
-import { SummaryAppendEventSchema } from "@lymo/schemas/event";
 import { LanguageSchema } from "@lymo/schemas/shared";
 import { z } from "genkit";
 
 import ai from "@/core/genkit";
 
 export const SummarizeSongInputSchema = z.object({
-  title: z.string().describe("The title of the song"),
-  artist: z.string().describe("The artist of the song"),
-  album: z.string().nullable().describe("The album of the song"),
+  track: z.object({
+    title: z.string().describe("The title of the song"),
+    artist: z.string().describe("The artist of the song"),
+    album: z.string().nullable().describe("The album of the song"),
+  }),
   lyrics: z
     .array(z.string().describe("A sentence from the lyrics"))
     .describe("The lyrics of the song"),
-  language: LanguageSchema.describe("The language for the summary"),
+  config: z.object({
+    language: LanguageSchema.describe("The language for the summary"),
+  }),
 });
 
-export const SummarizeSongOutputSchema = z.string().describe("The summary of the song");
+export const SummaryAppendEventSchema = z.string().describe("The summary append event");
+
+export const SummarizeSongOutputSchema = z.string().describe("A chunk of the summary for the song");
 
 export const summarizeSongFlow = ai.defineFlow(
   {
@@ -23,7 +28,7 @@ export const summarizeSongFlow = ai.defineFlow(
     streamSchema: SummaryAppendEventSchema,
     outputSchema: SummarizeSongOutputSchema,
   },
-  async ({ title, artist, album, lyrics, language }, { sendChunk }) => {
+  async ({ track, lyrics, config: { language } }, { sendChunk }) => {
     const { stream, response } = ai.generateStream({
       system: `
         ### Role
@@ -39,23 +44,14 @@ export const summarizeSongFlow = ai.defineFlow(
         - Paragraphs must be separated by two newline characters.
         - The summary must be written in the given target language.
       `,
-      prompt: JSON.stringify({
-        title,
-        artist,
-        album,
-        lyrics,
-        targetLanguage: language,
-      }),
+      prompt: JSON.stringify({ track, lyrics, targetLanguage: language }),
       config: {
         temperature: 0.3,
       },
     });
 
     for await (const chunk of stream) {
-      sendChunk({
-        event: "summary_append",
-        data: { summary: chunk.text },
-      });
+      sendChunk(chunk.text);
     }
 
     const result = (await response).text;

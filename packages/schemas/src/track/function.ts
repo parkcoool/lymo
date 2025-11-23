@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { errorCode } from "./error";
 import {
   UpdateTrackEventSchema,
   UpdateProviderEventSchema,
@@ -9,6 +10,7 @@ import {
   UpdateTranslationEventSchema,
   AppendParagraphSummaryEventSchema,
   UpdateParagraphSummaryEventSchema,
+  UpdateTrackDetailEventSchema,
 } from "./event";
 import { LanguageSchema, LLMModelSchema } from "./shared";
 
@@ -23,6 +25,7 @@ export const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
   UpdateTrackEventSchema,
   UpdateProviderEventSchema,
   UpdateLyricsEventSchema,
+  UpdateTrackDetailEventSchema,
   AppendSummaryEventSchema,
   UpdateLyricsSplitIndicesEventSchema,
   UpdateTranslationEventSchema,
@@ -34,6 +37,7 @@ export type CommonGetTrackFlowStream = z.infer<typeof CommonGetTrackFlowStreamSc
 const CommonGetTrackFlowOutputSchema = z.object({
   success: z.boolean(),
   message: z.string().optional(),
+  errorCode: errorCode.optional(),
 });
 
 // =============== getTrackFromId 스키마 ===============

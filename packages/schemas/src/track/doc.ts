@@ -9,7 +9,7 @@ import { LyricsProviderSchema } from "./shared";
  */
 export const TrackDocSchema = z.object({
   album: z.string().nullable(),
-  artist: z.array(z.string()),
+  artists: z.string().array(),
   coverUrl: z.string(),
   duration: z.number(),
   publishedAt: z.string().nullable(),
@@ -41,8 +41,6 @@ export type LyricsDoc = z.infer<typeof LyricsDocSchema>;
  * 문서 경로: `tracks/{trackId}/providers/{providerId}`
  */
 export const ProviderDocSchema = z.object({
-  createdAt: z.string(),
-  updatedAt: z.string(),
   providerName: z.string(),
 });
 export type ProviderDoc = z.infer<typeof ProviderDocSchema>;
