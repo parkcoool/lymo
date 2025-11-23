@@ -1,4 +1,5 @@
 import { TrackDoc } from "@lymo/schemas/doc";
+import { errorCode } from "@lymo/schemas/error";
 import {
   GetTrackFromMetadataFlowInputSchema,
   GetTrackFromMetadataFlowOutputSchema,
@@ -9,6 +10,7 @@ import { DocumentReference } from "firebase-admin/firestore";
 import { logger } from "genkit/logging";
 
 import ai from "@/core/genkit";
+import getTrackFromTrack from "@/helpers/getTrackFromTrack";
 import { searchSpotify } from "@/tools/searchSpotify";
 
 import { getTrackFromIdFlow } from "./getTrackFromId.flow";
@@ -25,59 +27,63 @@ export const getTrackFromMetadataFlow = ai.defineFlow(
     streamSchema: GetTrackFromMetadataFlowStreamSchema,
     outputSchema: GetTrackFromMetadataFlowOutputSchema,
   },
-  async (input, { sendChunk }) => {
+  async ({ trackMetadata, language, model }, { sendChunk }) => {
     try {
       // 1) Spotify에서 곡 검색
       const spotifyResult = await searchSpotify({
-        title: input.trackMetadata.title,
-        artist: input.trackMetadata.artist,
-        duration: input.trackMetadata.durationInSeconds,
+        title: trackMetadata.title,
+        artist: trackMetadata.artist,
+        duration: trackMetadata.durationInSeconds,
       });
 
       // 1-1) 곡을 찾지 못한 경우 error 반환
-      if (!spotifyResult) throw new Error("Spotify track not found");
+      if (!spotifyResult)
+        return {
+          success: false,
+          message: "곡을 찾을 수 없습니다.",
+          errorCode: errorCode.enum.TRACK_SEARCH_NOT_FOUND,
+        };
+      const trackId = spotifyResult.id;
 
       // 2) getTrackFromIdFlow 호출
-      let { output, stream } = getTrackFromIdFlow.stream({
-        trackId: spotifyResult.id,
-        language: input.language,
-        model: input.model,
-      });
+      {
+        const { output, stream } = getTrackFromIdFlow.stream({ trackId, language, model });
 
-      // 2-1) 스트림 처리 및 최종 결과 반환
-      for await (const chunk of stream) sendChunk(chunk);
-      let getTrackFromIdFlowOutput = await output;
-      if (getTrackFromIdFlowOutput) return getTrackFromIdFlowOutput;
+        // 2-1) 스트림 처리 및 최종 결과 반환
+        for await (const chunk of stream) sendChunk(chunk);
+        const getTrackFromIdFlowOutput = await output;
+        if (getTrackFromIdFlowOutput.errorCode !== errorCode.enum.TRACK_NOT_FOUND)
+          return getTrackFromIdFlowOutput;
+      }
 
-      // 3) track 문서 생성
-      const date = new Date().toISOString();
+      // 3) track 문서 생성 및 스트림
       const trackDocRef = admin
         .firestore()
         .collection("tracks")
         .doc(spotifyResult.id) as DocumentReference<TrackDoc>;
-      const trackData: TrackDoc = {
+      const trackDoc: TrackDoc = {
         title: spotifyResult.title,
-        artist: spotifyResult.artist,
+        artists: spotifyResult.artists,
         album: spotifyResult.album,
         coverUrl: spotifyResult.coverUrl,
         duration: spotifyResult.duration,
         publishedAt: spotifyResult.publishedAt,
-        createdAt: date,
+        createdAt: new Date().toISOString(),
         play: 0,
       };
-      await trackDocRef.set(trackData);
 
-      // 4) 다시 getTrackFromIdFlow 호출
-      ({ output, stream } = getTrackFromIdFlow.stream({
-        trackId: spotifyResult.id,
-        language: input.language,
-        model: input.model,
-      }));
+      sendChunk({ event: "update_track", data: { track: trackDoc, trackId } });
+      await trackDocRef.set(trackDoc);
 
-      // 4-1) 스트림 처리 및 최종 결과 반환
-      for await (const chunk of stream) sendChunk(chunk);
-      getTrackFromIdFlowOutput = await output;
-      return getTrackFromIdFlowOutput;
+      // 4) provider, trackDetail, lyrics 문서 가져오기 및 스트리밍 처리
+      const stream = getTrackFromTrack({
+        track: { trackDoc, trackId },
+        config: { language, model },
+      });
+
+      let chunk;
+      while (!(chunk = await stream.next()).done) sendChunk(chunk.value);
+      return chunk.value;
     } catch (error) {
       logger.error("An error occurred in getTrackFromMetadataFlow", error);
       return { success: false, message: "서버에서 오류가 발생했습니다." };

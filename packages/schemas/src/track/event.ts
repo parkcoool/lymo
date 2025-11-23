@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { LyricsDocSchema, ProviderDocSchema, TrackDocSchema } from "./doc";
+import { LyricsDocSchema, ProviderDocSchema, TrackDetailDocSchema, TrackDocSchema } from "./doc";
 import { LyricsProviderSchema } from "./shared";
 
 /**
@@ -37,6 +37,14 @@ export const UpdateProviderEventSchema = z.object({
 });
 
 // =============== trackDetail 관련 이벤트 ===============
+
+/**
+ * trackDetail update 이벤트
+ */
+export const UpdateTrackDetailEventSchema = z.object({
+  event: z.literal("update_track_detail"),
+  data: TrackDetailDocSchema,
+});
 
 /**
  * summary append 이벤트

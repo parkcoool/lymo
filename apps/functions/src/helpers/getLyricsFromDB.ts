@@ -28,7 +28,7 @@ export default async function getLyricsFromDB({ trackId, lyricsProvider }: GetLy
     const lyricsDoc = lyricsDocSnap.data();
 
     if (lyricsDocSnap.exists && lyricsDoc) {
-      return { lyrics: lyricsDoc.lyrics, provider: lyricsProvider };
+      return { lyrics: lyricsDoc.lyrics, lyricsProvider };
     }
   }
 
@@ -36,14 +36,14 @@ export default async function getLyricsFromDB({ trackId, lyricsProvider }: GetLy
   const lyricsProviders: LyricsProvider[] = ["lrclib", "none"];
 
   // 우선 순위에 따라 첫 번째로 발견된 가사 문서를 반환
-  for (const provider of lyricsProviders) {
-    const lyricsDocRef = lyricsCollectionRef.doc(provider) as DocumentReference<LyricsDoc>;
+  for (const lyricsProvider of lyricsProviders) {
+    const lyricsDocRef = lyricsCollectionRef.doc(lyricsProvider) as DocumentReference<LyricsDoc>;
     const lyricsDocSnap = await lyricsDocRef.get();
     const lyricsDoc = lyricsDocSnap.data();
 
     if (!lyricsDocSnap.exists || !lyricsDoc) continue;
 
-    return { lyrics: lyricsDoc.lyrics, provider };
+    return { lyrics: lyricsDoc.lyrics, lyricsProvider };
   }
 
   // 해당하는 가사 문서가 없는 경우

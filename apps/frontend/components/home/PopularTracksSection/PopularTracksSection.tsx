@@ -47,7 +47,7 @@ export default function PopularTracksSection() {
             <Link href={`/player`} key={track.id} asChild>
               <NormalTrack
                 title={track.title}
-                artist={track.artist}
+                artists={track.artists}
                 coverUrl={track.coverUrl}
                 onPress={() =>
                   handlePlayTrack({ id: track.id, title: track.title, coverUrl: track.coverUrl })

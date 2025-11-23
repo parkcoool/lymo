@@ -13,7 +13,7 @@ interface SummaryProps {
   artist: string[];
   album: string | null;
   publishedAt: string | null;
-  summary: string;
+  summary?: string;
   coverUrl?: string;
   coverColor?: string;
 }

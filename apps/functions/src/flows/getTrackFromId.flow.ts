@@ -1,3 +1,4 @@
+import { errorCode } from "@lymo/schemas/error";
 import {
   GetTrackFromIdFlowInputSchema,
   GetTrackFromIdFlowOutputSchema,
@@ -6,11 +7,8 @@ import {
 import { logger } from "genkit/logging";
 
 import ai from "@/core/genkit";
-import getLyricsFromDB from "@/helpers/getLyricsFromDB";
-import getProviderFromDB from "@/helpers/getProviderFromDB";
-import getTrackDetailFromDB from "@/helpers/getTrackDetailFromDB";
 import getTrackFromDB from "@/helpers/getTrackFromDB";
-import { streamLyricsAndTrackDetail } from "@/helpers/streamLyricsAndTrackDetail";
+import getTrackFromTrack from "@/helpers/getTrackFromTrack";
 
 /**
  * @description 트랙 ID를 받아 관련 정보를 가져오거나 생성하여 DB에 저장한 뒤 반환하는 플로우
@@ -24,79 +22,31 @@ export const getTrackFromIdFlow = ai.defineFlow(
     streamSchema: GetTrackFromIdFlowStreamSchema,
     outputSchema: GetTrackFromIdFlowOutputSchema,
   },
-  async (input, { sendChunk }) => {
+  async ({ trackId, language, model }, { sendChunk }) => {
     try {
       // 1) track 문서 가져오기
-      const trackDoc = await getTrackFromDB({ trackId: input.trackId });
+      const trackDoc = await getTrackFromDB({ trackId });
 
       // 1-1) track 문서가 존재하지 않는 경우
-      if (!trackDoc) return { success: false, message: "곡 정보를 찾을 수 없습니다." };
+      if (!trackDoc)
+        return {
+          success: false,
+          message: "곡 정보를 찾을 수 없습니다.",
+          errorCode: errorCode.enum.TRACK_NOT_FOUND,
+        };
 
       // 1-2) track 문서 스트리밍
-      sendChunk({ event: "track_set", data: trackDoc });
+      sendChunk({ event: "update_track", data: { track: trackDoc, trackId } });
 
-      // 2) provider 문서 가져오기
-      const providerDoc = await getProviderFromDB({ trackId: input.trackId, model: input.model });
-
-      // 2-1) provider 문서가 존재하지 않는 경우 스트리밍 시작
-      if (!providerDoc) {
-        const stream = streamLyricsAndTrackDetail({
-          trackId: input.trackId,
-          metadata: {
-            title: trackDoc.title,
-            album: trackDoc.album,
-            artists: trackDoc.artist,
-            duration: trackDoc.duration,
-          },
-          language: input.language,
-          model: input.model,
-        });
-
-        for await (const chunk of stream) sendChunk(chunk);
-        return { success: true };
-      }
-
-      // 3) trackDetail 문서 가져오기
-      const trackDetailDoc = await getTrackDetailFromDB({
-        trackId: input.trackId,
-        language: input.language,
-        providerId: providerDoc.id,
+      // 2) provider, trackDetail, lyrics 문서 가져오기 및 스트리밍 처리
+      const stream = getTrackFromTrack({
+        track: { trackDoc, trackId },
+        config: { language, model },
       });
 
-      // 3-1) trackDetail 문서가 존재하지 않는 경우 스트리밍 시작
-      if (!trackDetailDoc) {
-        const stream = streamLyricsAndTrackDetail({
-          trackId: input.trackId,
-          metadata: {
-            title: trackDoc.title,
-            album: trackDoc.album,
-            artists: trackDoc.artist,
-            duration: trackDoc.duration,
-          },
-          language: input.language,
-          model: input.model,
-        });
-
-        for await (const chunk of stream) sendChunk(chunk);
-        return { success: true };
-      }
-
-      // 4) provider 문서 스트리밍
-      sendChunk({
-        event: "provider_set",
-        data: { ...providerDoc.provider, providerId: providerDoc.id },
-      });
-
-      // 5) lyrics 문서 가져오기
-      const lyricsDoc = await getLyricsFromDB({
-        trackId: input.trackId,
-        lyricsProvider: trackDetailDoc.lyricsProvider,
-      });
-
-      // 5-1) lyrics 문서가 존재하지 않는 경우 error 반환
-      if (!lyricsDoc) return { success: false, message: "가사 정보를 찾을 수 없습니다." };
-
-      return { success: true };
+      let chunk;
+      while (!(chunk = await stream.next()).done) sendChunk(chunk.value);
+      return chunk.value;
     } catch (error) {
       logger.error("An error occurred in getTrackFromIdFlow", error);
       return { success: false, message: "서버에서 오류가 발생했습니다." };

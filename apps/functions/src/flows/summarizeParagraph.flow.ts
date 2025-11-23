@@ -1,4 +1,7 @@
-import { ParagraphSummaryAppendEventSchema } from "@lymo/schemas/event";
+import {
+  AppendParagraphSummaryEventSchema,
+  UpdateParagraphSummaryEventSchema,
+} from "@lymo/schemas/event";
 import { LanguageSchema } from "@lymo/schemas/shared";
 import { logger } from "firebase-functions";
 import { z } from "genkit";
@@ -6,16 +9,25 @@ import { z } from "genkit";
 import ai from "@/core/genkit";
 
 export const SummarizeParagraphInputSchema = z.object({
-  title: z.string().describe("The title of the song"),
-  artist: z.string().describe("The artist of the song"),
-  album: z.string().nullable().describe("The album of the song"),
+  track: z.object({
+    title: z.string().describe("The title of the song"),
+    artist: z.string().describe("The artist of the song"),
+    album: z.string().nullable().describe("The album of the song"),
+  }),
   lyrics: z
     .array(
       z.array(z.string().describe("A sentence in the lyrics")).describe("A paragraph in the lyrics")
     )
     .describe("The lyrics of the song, organized by paragraphs"),
-  language: LanguageSchema.describe("The target language of the summaries"),
+  config: z.object({
+    language: LanguageSchema.describe("The target language of the summaries"),
+  }),
 });
+
+export const SummarizeParagraphStreamSchema = z.union([
+  AppendParagraphSummaryEventSchema,
+  UpdateParagraphSummaryEventSchema,
+]);
 
 export const SummarizeParagraphOutputSchema = z.array(z.string().nullable());
 
@@ -23,10 +35,10 @@ export const summarizeParagraphFlow = ai.defineFlow(
   {
     name: "summarizeParagraphFlow",
     inputSchema: SummarizeParagraphInputSchema,
-    streamSchema: ParagraphSummaryAppendEventSchema,
+    streamSchema: SummarizeParagraphStreamSchema,
     outputSchema: SummarizeParagraphOutputSchema,
   },
-  async ({ title, artist, album, lyrics, language }, { sendChunk }) => {
+  async ({ track, lyrics, config: { language } }, { sendChunk }) => {
     let retry = 0;
     let result: (string | null)[] | null = null;
 
@@ -50,18 +62,13 @@ export const summarizeParagraphFlow = ai.defineFlow(
           ### Output Example
           ["Summary of the first paragraph", "Summary of the second paragraph", null, "Summary of the fourth paragraph"]
       `,
-        prompt: JSON.stringify({
-          title,
-          artist,
-          album,
-          lyrics,
-          targetLanguage: language,
-        }),
+        prompt: JSON.stringify({ track, lyrics, targetLanguage: language }),
         output: {
           schema: z.array(z.string().nullable()),
         },
         config: {
-          temperature: 0.3,
+          // 재시도 시 temperature 점진적 증가
+          temperature: retry * 0.2 + 0.3,
         },
       });
 
@@ -73,14 +80,29 @@ export const summarizeParagraphFlow = ai.defineFlow(
         if (summaries === null) continue;
         for (; p < summaries.length; p++, s = 0) {
           const summary = summaries[p];
-          if (summary === null) continue;
-          sendChunk({
-            event: "paragraph_summary_append",
-            data: {
-              paragraphIndex: p,
-              summary: summary.slice(s, summary.length),
-            },
-          });
+
+          // 요약이 null인 경우
+          if (summary === null) {
+            sendChunk({
+              event: "update_paragraph_summary",
+              data: {
+                paragraphIndex: p,
+                paragraphSummary: null,
+              },
+            });
+            continue;
+          }
+
+          // 요약이 null이 아닌 경우
+          else {
+            sendChunk({
+              event: "append_paragraph_summary",
+              data: {
+                paragraphIndex: p,
+                paragraphSummary: summary.slice(s, summary.length),
+              },
+            });
+          }
           s = summary.length;
 
           if (p === summaries.length - 1) break;
@@ -100,7 +122,7 @@ export const summarizeParagraphFlow = ai.defineFlow(
       expected: lyrics.length,
       actual: result?.length ?? 0,
       retries: retry,
-      track: { title, artist, album },
+      track,
     });
     return result ?? [];
   }

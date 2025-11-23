@@ -1,54 +1,30 @@
+import { ErrorCode } from "@lymo/schemas/error";
 import {
   CommonGetTrackFlowStream,
   GetTrackFromIdFlowInput,
   GetTrackFromMetadataFlowInput,
 } from "@lymo/schemas/function";
-import { LyricsProvider } from "@lymo/schemas/shared";
 import {
   experimental_streamedQuery as streamedQuery,
+  useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 
 import { useSettingStore } from "@/contexts/useSettingStore";
 import streamGetTrackReducer from "@/helpers/streamGetTrackReducer";
+import { StreamingFullTrack } from "@/types/shared";
 
-export interface GetTrackFlowResult {
-  detail: {
-    summary?: string;
-    lyricsSplitIndices: number[];
-    lyricsProvider?: LyricsProvider;
-    translations: (string | null | undefined)[];
-    paragraphSummaries: (string | null | undefined)[];
-  };
-  providerId?: string;
-  provider?: {
-    createdAt: string;
-    updatedAt: string;
-    providerName: string;
-  };
-  lyricsProvider?: LyricsProvider;
-  lyrics: { lyrics: { start: number; end: number; text: string }[] };
-  track?: {
-    album: string | null;
-    artist: string[];
-    coverUrl: string;
-    duration: number;
-    publishedAt: string | null;
-    title: string;
-    createdAt: string;
-    play: number;
-  };
-}
-
-const initialValue: GetTrackFlowResult = {
-  detail: { lyricsSplitIndices: [], translations: [], paragraphSummaries: [] },
-  lyrics: { lyrics: [] },
+const initialValue: StreamingFullTrack = {
+  trackDetail: {
+    lyricsSplitIndices: [],
+    translations: [],
+    paragraphSummaries: [],
+  },
 };
 
 type FlowOutput = {
-  readonly output: Promise<{ success: boolean; message?: string }>;
+  readonly output: Promise<{ success: boolean; message?: string; errorCode?: ErrorCode }>;
   readonly stream: AsyncIterable<CommonGetTrackFlowStream>;
 };
 
@@ -80,7 +56,7 @@ export default function useGetTrackQuery<
     [queryKey, setting.defaultLanguage, setting.defaultLLMModel]
   ) as TQueryKey & TFlowInput;
 
-  const query = useSuspenseQuery<GetTrackFlowResult>({
+  const query = useQuery<StreamingFullTrack>({
     queryKey: ["get-track", key],
 
     queryFn: streamedQuery({
@@ -92,7 +68,11 @@ export default function useGetTrackQuery<
         const output = await flow.output;
 
         // 곡 정보를 가져올 수 없는 경우 에러 처리
-        if (!output.success) throw new Error(output.message || "곡 정보를 가져올 수 없습니다.");
+        if (!output.success) {
+          if (output.message && output.errorCode)
+            throw new Error(`${output.message} (${output.errorCode})`);
+          else throw new Error("곡 정보를 가져올 수 없습니다.");
+        }
       },
 
       reducer: streamGetTrackReducer,
@@ -102,6 +82,7 @@ export default function useGetTrackQuery<
 
     staleTime: Infinity,
     retry: false,
+    placeholderData: initialValue,
   });
 
   // 스트리밍 도중 컴포넌트가 언마운트되면 부분적으로 쌓인 데이터를 무효화

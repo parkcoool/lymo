@@ -4,7 +4,7 @@ import { NativeScrollEvent, NativeSyntheticEvent, ScrollView } from "react-nativ
 
 interface UseTrackingParams {
   currentY: number;
-  track: TrackDoc;
+  track?: TrackDoc;
 }
 
 export interface UseTrackingReturn {

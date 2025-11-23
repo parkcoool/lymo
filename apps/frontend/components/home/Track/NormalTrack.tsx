@@ -6,11 +6,11 @@ import { styles } from "./NormalTrack.styles";
 interface NormalTrackProps {
   coverUrl: string;
   title: string;
-  artist: string[];
+  artists: string[];
   onPress?: () => void;
 }
 
-export default function NormalTrack({ coverUrl, title, artist, onPress }: NormalTrackProps) {
+export default function NormalTrack({ coverUrl, title, artists, onPress }: NormalTrackProps) {
   return (
     <TouchableOpacity style={styles.wrapper} onPress={onPress}>
       <Image source={{ uri: coverUrl }} style={styles.cover} />
@@ -19,7 +19,7 @@ export default function NormalTrack({ coverUrl, title, artist, onPress }: Normal
           {title}
         </Text>
         <Text style={styles.artist} numberOfLines={1}>
-          {artist.join(", ")}
+          {artists.join(", ")}
         </Text>
       </View>
       <MaterialIcons name="chevron-right" size={24} style={styles.playIcon} />

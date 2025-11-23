@@ -16,14 +16,6 @@ export default function TrackLoaderFromMetadata({
   const { data, error } = useGetTrackFromMetadataQuery({ title, artist, durationInSeconds });
 
   if (error) throw error;
-
-  return (
-    <PlayerContent
-      track={data.track}
-      lyrics={data.lyrics.lyrics}
-      lyricsProvider={data.lyricsProvider}
-      provider={data.provider}
-      trackDetail={data.detail}
-    />
-  );
+  if (!data) return null;
+  return <PlayerContent {...data} />;
 }

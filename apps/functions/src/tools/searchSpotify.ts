@@ -14,7 +14,7 @@ export const SearchSpotifyOutputSchema = z
   .object({
     id: z.string().describe("The ID of the song"),
     title: z.string().describe("The title of the song"),
-    artist: z.array(z.string()).describe("The artists of the song"),
+    artists: z.string().array().describe("The artists of the song"),
     album: z.string().nullable().describe("The album of the song"),
     coverUrl: z.string().describe("The cover URL of the song"),
     publishedAt: z.string().describe("The published date of the song").nullable(),
@@ -55,7 +55,7 @@ export const searchSpotify = ai.defineTool(
     return {
       id,
       title: mostAccurateTrack.name,
-      artist: mostAccurateTrack.artists.map((a) => a.name),
+      artists: mostAccurateTrack.artists.map((a) => a.name),
       album: mostAccurateTrack.album.name || null,
       coverUrl: mostAccurateTrack.album.images[0]?.url || "",
       publishedAt: mostAccurateTrack.album.release_date || null,
