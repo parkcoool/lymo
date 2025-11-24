@@ -1,71 +1,35 @@
 import { z } from "zod";
 
-/**
- * 가사 문장
- */
-export const LyricsSentenceSchema = z.object({
-  text: z.string().min(1),
-  translation: z.string().min(1).nullable(),
-  start: z.number().nonnegative(),
-  end: z.number().nonnegative(),
+// 가사 문장 스키마
+export const LyricSchema = z.object({
+  text: z.string(),
+  start: z.number(),
+  end: z.number(),
 });
-export type LyricsSentence = z.infer<typeof LyricsSentenceSchema>;
+export type Lyric = z.infer<typeof LyricSchema>;
 
-/**
- * 여러 가사 문장들로 구성된 문단
- */
-export const LyricsParagraphSchema = z.object({
-  sentences: z.array(LyricsSentenceSchema),
-  summary: z.string().nullable(),
+// 가사 문단 스키마
+export const SectionSchema = z.object({
+  lyrics: LyricSchema.array(),
+  start: z.number(),
+  end: z.number(),
+  note: z.string().nullable(),
 });
-export type LyricsParagraph = z.infer<typeof LyricsParagraphSchema>;
+export type SectionSchema = z.infer<typeof SectionSchema>;
 
-/**
- * 여러 문단으로 구성된 가사
- */
-export const LyricsSchema = z.array(LyricsParagraphSchema);
-export type Lyrics = z.infer<typeof LyricsSchema>;
-
-/**
- * 곡 정보
- */
-export const TrackSchema = z.object({
-  id: z.string().min(1),
-  album: z.string().min(1).nullable(),
-  artist: z.array(z.string()),
-  coverUrl: z.string(),
-  duration: z.number().positive(),
-  publishedAt: z.string().nullable(),
-  title: z.string().min(1),
-  createdAt: z.string(),
-  providers: z.array(z.string()),
-});
-export type Track = z.infer<typeof TrackSchema>;
-
-/**
- * 곡 상세 정보
- */
-export const TrackDetailSchema = z.object({
-  lyrics: LyricsSchema,
-  lyricsProvider: z.string(),
-  summary: z.string(),
-});
-export type TrackDetail = z.infer<typeof TrackDetailSchema>;
-
-/**
- * 언어
- */
+// 언어 스키마
 export const LanguageSchema = z.enum(["en", "ko"]);
 export type Language = z.infer<typeof LanguageSchema>;
 
-/**
- * 가사 제공자
- */
+// 가사 제공자 스키마
 export const LyricsProviderSchema = z.enum(["lrclib", "none"]);
 export type LyricsProvider = z.infer<typeof LyricsProviderSchema>;
 
-/**
- * AI 모델
- */
-export const LLMModelSchema = z.enum(["gemini-2.5-flash", "gemini-2.5-flash-lite"]);
-export type LLMModel = z.infer<typeof LLMModelSchema>;
+// 해석 생성 상태
+export const StoryGenerationStatusSchema = z.enum([
+  "PENDING",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "FAILED",
+]);
+export type StoryGenerationStatus = z.infer<typeof StoryGenerationStatusSchema>;

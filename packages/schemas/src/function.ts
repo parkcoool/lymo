@@ -1,69 +1,29 @@
 import { z } from "zod";
 
-import { errorCode } from "./error";
-import {
-  UpdateTrackEventSchema,
-  UpdateProviderEventSchema,
-  UpdateLyricsEventSchema,
-  AppendSummaryEventSchema,
-  UpdateLyricsSplitIndicesEventSchema,
-  UpdateTranslationEventSchema,
-  AppendParagraphSummaryEventSchema,
-  UpdateParagraphSummaryEventSchema,
-  UpdateTrackDetailEventSchema,
-} from "./event";
-import { LanguageSchema, LLMModelSchema } from "./shared";
+import { LanguageSchema } from "./shared";
 
-// =============== 공통 스키마 ===============
+// `generateStory` 함수 입출력 스키마
+export const generateStoryIO = {
+  input: z.union([
+    z.object({
+      language: LanguageSchema,
 
-const CommonGetTrackFlowInputSchema = z.object({
-  language: LanguageSchema,
-  model: LLMModelSchema,
-});
+      trackId: z.string(),
+    }),
 
-export const CommonGetTrackFlowStreamSchema = z.discriminatedUnion("event", [
-  UpdateTrackEventSchema,
-  UpdateProviderEventSchema,
-  UpdateLyricsEventSchema,
-  UpdateTrackDetailEventSchema,
-  AppendSummaryEventSchema,
-  UpdateLyricsSplitIndicesEventSchema,
-  UpdateTranslationEventSchema,
-  AppendParagraphSummaryEventSchema,
-  UpdateParagraphSummaryEventSchema,
-]);
-export type CommonGetTrackFlowStream = z.infer<typeof CommonGetTrackFlowStreamSchema>;
+    z.object({
+      language: LanguageSchema,
 
-const CommonGetTrackFlowOutputSchema = z.object({
-  success: z.boolean(),
-  message: z.string().optional(),
-  errorCode: errorCode.optional(),
-});
+      title: z.string(),
+      artist: z.string().optional(),
+      durationInSeconds: z.number().optional(),
+    }),
+  ]),
 
-// =============== getTrackFromId 스키마 ===============
-export const GetTrackFromIdFlowInputSchema = CommonGetTrackFlowInputSchema.extend({
-  trackId: z.string(),
-});
-export type GetTrackFromIdFlowInput = z.infer<typeof GetTrackFromIdFlowInputSchema>;
+  output: z.object({ ready: z.boolean() }),
+};
+export type GenerateStoryIO = InferSchemaRecord<typeof generateStoryIO>;
 
-export const GetTrackFromIdFlowStreamSchema = CommonGetTrackFlowStreamSchema;
-export type GetTrackFromIdFlowStream = z.infer<typeof GetTrackFromIdFlowStreamSchema>;
-
-export const GetTrackFromIdFlowOutputSchema = CommonGetTrackFlowOutputSchema;
-export type GetTrackFromIdFlowOutput = z.infer<typeof GetTrackFromIdFlowOutputSchema>;
-
-// =============== getTrackFromMetadata 스키마 ===============
-export const GetTrackFromMetadataFlowInputSchema = CommonGetTrackFlowInputSchema.extend({
-  trackMetadata: z.object({
-    title: z.string(),
-    artist: z.string(),
-    durationInSeconds: z.number(),
-  }),
-});
-export type GetTrackFromMetadataFlowInput = z.infer<typeof GetTrackFromMetadataFlowInputSchema>;
-
-export const GetTrackFromMetadataFlowStreamSchema = CommonGetTrackFlowStreamSchema;
-export type GetTrackFromMetadataFlowStream = z.infer<typeof GetTrackFromMetadataFlowStreamSchema>;
-
-export const GetTrackFromMetadataFlowOutputSchema = CommonGetTrackFlowOutputSchema;
-export type GetTrackFromMetadataFlowOutput = z.infer<typeof GetTrackFromMetadataFlowOutputSchema>;
+type InferSchemaRecord<T> = {
+  [K in keyof T]: T[K] extends z.ZodTypeAny ? z.infer<T[K]> : never;
+};

@@ -1,60 +1,81 @@
 import { z } from "zod";
 
-import { LyricsProviderSchema } from "./shared";
+import { errorCode } from "./error";
+import { LanguageSchema, LyricSchema, LyricsProviderSchema } from "./shared";
 
-/**
- * Track 문서
- *
- * 문서 경로: `tracks/{trackId}`
- */
-export const TrackDocSchema = z.object({
-  album: z.string().nullable(),
-  artists: z.string().array(),
-  coverUrl: z.string(),
-  duration: z.number(),
-  publishedAt: z.string().nullable(),
+// `tracks/{trackId}` 문서 스키마
+export const Track = z.object({
   title: z.string(),
+  artists: z.string().array(),
+  album: z.string().nullable(),
+  albumArt: z.string(),
+  durationInSeconds: z.number(),
+  publishedAt: z.string().nullable(),
+  lyrics: z.record(LyricsProviderSchema, LyricSchema.array()),
+
   createdAt: z.string(),
-  play: z.number(),
+  stats: z.object({
+    storyCount: z.number(),
+    viewCount: z.number(),
+  }),
 });
-export type TrackDoc = z.infer<typeof TrackDocSchema>;
+export type Track = z.infer<typeof Track>;
 
-/**
- * Track 가사 문서
- *
- * 문서 경로: `tracks/{trackId}/lyrics/{lyricsProvider}`
- */
-export const LyricsDocSchema = z.object({
-  lyrics: z.array(
-    z.object({
-      text: z.string(),
-      start: z.number(),
-      end: z.number(),
-    })
-  ),
+// #region `stories/{storyId}` 관련 스키마
+
+// 공통 필드
+export const BaseStoryFieldsSchema = z.object({
+  trackId: z.string(),
+  trackTitle: z.string(),
+  trackArtists: z.string().array(),
+  trackAlbum: z.string().nullable(),
+  trackAlbumArt: z.string(),
+
+  userId: z.string(),
+  userName: z.string(),
+  userAvatar: z.string().nullable(),
+  language: LanguageSchema,
+
+  stats: z.object({
+    favoriteCount: z.number(),
+    viewCount: z.number(),
+  }),
 });
-export type LyricsDoc = z.infer<typeof LyricsDocSchema>;
+export type BaseStoryFields = z.infer<typeof BaseStoryFieldsSchema>;
 
-/**
- * 제공자 문서
- *
- * 문서 경로: `tracks/{trackId}/providers/{providerId}`
- */
-export const ProviderDocSchema = z.object({
-  providerName: z.string(),
-});
-export type ProviderDoc = z.infer<typeof ProviderDocSchema>;
-
-/**
- * Track 상세 문서
- *
- * 문서 경로: `tracks/{trackId}/providers/{providerId}/details/{language}`
- */
-export const TrackDetailDocSchema = z.object({
-  summary: z.string(),
-  lyricsSplitIndices: z.array(z.number()),
+// AI 생성 필드
+export const GeneratedStoryFieldsSchema = z.object({
   lyricsProvider: LyricsProviderSchema,
-  translations: z.array(z.string().nullable()),
-  paragraphSummaries: z.array(z.string().nullable()),
+  overview: z.string(),
+  sectionBreaks: z.number().array(),
+  translations: z.string().nullable().array(),
+  sectionNotes: z.string().nullable().array(),
 });
-export type TrackDetailDoc = z.infer<typeof TrackDetailDocSchema>;
+export type GeneratedStoryFields = z.infer<typeof GeneratedStoryFieldsSchema>;
+
+// `stories/{storyId}` 문서 스키마
+export const StorySchema = z.union([
+  // status가 PENDING일 경우
+  BaseStoryFieldsSchema.extend({
+    status: z.literal("PENDING"),
+  }),
+
+  // status가 IN_PROGRESS일 경우
+  BaseStoryFieldsSchema.merge(GeneratedStoryFieldsSchema.partial()).extend({
+    status: z.literal("IN_PROGRESS"),
+  }),
+
+  // status가 COMPLETED일 경우
+  BaseStoryFieldsSchema.merge(GeneratedStoryFieldsSchema).extend({
+    status: z.literal("COMPLETED"),
+  }),
+
+  // status가 FAILED일 경우
+  BaseStoryFieldsSchema.extend({
+    status: z.literal("FAILED"),
+    errorCode: errorCode,
+  }),
+]);
+export type Story = z.infer<typeof StorySchema>;
+
+// #endregion

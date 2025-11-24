@@ -60,6 +60,7 @@ export default defineConfig([
         },
         node: {
           extensions: [".js", ".jsx", ".ts", ".tsx"],
+          paths: ["."],
         },
       },
     },
