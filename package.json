@@ -9,7 +9,6 @@
   ],
   "scripts": {
     "build": "npm run build --ws --if-present",
-    "schemas:build": "npm run build --workspace=@lymo/schemas",
     "functions:start": "npm run genkit:start --workspace=@lymo/functions",
     "functions:deploy": "npm run build && firebase deploy --only functions",
     "frontend:start": "npm run start --workspace=@lymo/frontend",
