@@ -15,7 +15,7 @@ export const SectionSchema = z.object({
   end: z.number(),
   note: z.string().nullable(),
 });
-export type SectionSchema = z.infer<typeof SectionSchema>;
+export type Section = z.infer<typeof SectionSchema>;
 
 // 언어 스키마
 export const LanguageSchema = z.enum(["en", "ko"]);

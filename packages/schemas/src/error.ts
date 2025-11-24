@@ -18,6 +18,12 @@ export const errorCode = z.enum([
 
   // AI 생성이 실패한 경우
   "AI_GENERATION_FAILED",
+
+  // 해석 정보를 DB에 저장하는 데 실패한 경우
+  "STORY_SAVE_FAILED",
+
+  // 곡 정보를 DB에 저장하는 데 실패한 경우
+  "TRACK_SAVE_FAILED",
 ]);
 export const ERROR_CODES = errorCode.enum;
 export type ErrorCode = z.infer<typeof errorCode>;
