@@ -6,6 +6,4 @@ admin.initializeApp({
   credential: applicationDefault(),
 });
 
-admin.firestore().settings({ databaseId: "main" });
-
 setGlobalOptions({ maxInstances: 10 });

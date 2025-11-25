@@ -1,5 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { ProviderDoc } from "@lymo/schemas/doc";
+import { Pro } from "@lymo/schemas/doc";
 import { View, Text } from "react-native";
 
 import Skeleton from "@/components/shared/Skeleton";

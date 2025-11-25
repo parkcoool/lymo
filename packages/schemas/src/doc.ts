@@ -3,6 +3,10 @@ import { z } from "zod";
 import { errorCode } from "./error";
 import { LanguageSchema, LyricSchema, LyricsProvider, LyricsProviderSchema } from "./shared";
 
+// ==============================
+// track 관련 스키마
+// ==============================
+
 // `tracks/{trackId}` 문서 스키마
 export const TrackSchema = z.object({
   title: z.string(),
@@ -23,16 +27,12 @@ export type Track = Omit<z.infer<typeof TrackSchema>, "lyrics"> & {
   lyrics: Partial<Record<LyricsProvider, z.infer<typeof LyricSchema>[]>>;
 };
 
-// #region `stories/{storyId}` 관련 스키마
+// ==============================
+// story 관련 스키마
+// ==============================
 
 // 공통 필드
 export const BaseStoryFieldsSchema = z.object({
-  trackId: z.string(),
-  trackTitle: z.string(),
-  trackArtists: z.string().array(),
-  trackAlbum: z.string().nullable(),
-  trackAlbumArt: z.string(),
-
   userId: z.string(),
   userName: z.string(),
   userAvatar: z.string().nullable(),
@@ -48,6 +48,15 @@ export const BaseStoryFieldsSchema = z.object({
 });
 export type BaseStoryFields = z.infer<typeof BaseStoryFieldsSchema>;
 
+// track 정보 필드
+export const TrackInfoFieldsSchema = z.object({
+  trackId: z.string(),
+  trackTitle: z.string(),
+  trackArtists: z.string().array(),
+  trackAlbum: z.string().nullable(),
+  trackAlbumArt: z.string(),
+});
+
 // AI 생성 필드
 export const GeneratedStoryFieldsSchema = z.object({
   overview: z.string(),
@@ -58,9 +67,39 @@ export const GeneratedStoryFieldsSchema = z.object({
 export type GeneratedStoryFields = z.infer<typeof GeneratedStoryFieldsSchema>;
 
 // `stories/{storyId}` 문서 스키마
-export const StorySchema = z.union([
+export const StorySchema = BaseStoryFieldsSchema.merge(TrackInfoFieldsSchema).merge(
+  GeneratedStoryFieldsSchema
+);
+export type Story = z.infer<typeof StorySchema>;
+
+// ==============================
+// trackRequest 관련 스키마
+// ==============================
+
+// `trackRequests/{trackRequestId}` 문서 스키마
+export const TrackRequestSchema = z.union([
+  z.object({
+    language: LanguageSchema,
+    trackId: z.string(),
+  }),
+
+  z.object({
+    language: LanguageSchema,
+    title: z.string(),
+    artist: z.string(),
+    durationInSeconds: z.number(),
+  }),
+]);
+export type TrackRequest = z.infer<typeof TrackRequestSchema>;
+
+// `trackRequests/{trackRequestId}/previews/track` 문서 스키마
+export const TrackPreviewSchema = TrackSchema;
+export type TrackPreview = z.infer<typeof TrackPreviewSchema>;
+
+// `trackRequests/{trackRequestId}/previews/story` 문서 스키마
+export const StoryPreviewSchema = z.union([
   // status가 PENDING일 경우
-  BaseStoryFieldsSchema.extend({
+  z.object({
     status: z.literal("PENDING"),
   }),
 
@@ -75,38 +114,9 @@ export const StorySchema = z.union([
   }),
 
   // status가 FAILED일 경우
-  BaseStoryFieldsSchema.extend({
+  z.object({
     status: z.literal("FAILED"),
     errorCode: errorCode,
   }),
 ]);
-export type Story = z.infer<typeof StorySchema>;
-
-// #endregion
-
-// #region `trackRequests/{trackRequestId}` 관련 스키마
-
-// 공통 필드
-const BaseTrackRequestFieldsSchema = z.object({
-  storyId: z.string().optional(),
-  trackId: z.string().optional(),
-});
-export type BaseTrackRequestFields = z.infer<typeof BaseTrackRequestFieldsSchema>;
-
-// `trackRequests/{trackRequestId}` 문서 스키마
-export const TrackRequestSchema = z.union([
-  BaseTrackRequestFieldsSchema.extend({
-    language: LanguageSchema,
-    trackId: z.string(),
-  }),
-
-  BaseTrackRequestFieldsSchema.extend({
-    language: LanguageSchema,
-    title: z.string(),
-    artist: z.string(),
-    durationInSeconds: z.number(),
-  }),
-]);
-export type TrackRequest = z.infer<typeof TrackRequestSchema>;
-
-// #endregion
+export type StoryPreview = z.infer<typeof StoryPreviewSchema>;

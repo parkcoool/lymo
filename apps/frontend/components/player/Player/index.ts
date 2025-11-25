@@ -1,2 +1,2 @@
-export { default as TrackLoaderFromId } from "./TrackLoaderFromId";
+export { default as TrackLoaderFromId } from "./RequestTrack";
 export { default as TrackLoaderFromMetadata } from "./TrackLoaderFromMetadata";
