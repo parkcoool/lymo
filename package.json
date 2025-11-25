@@ -12,7 +12,8 @@
     "functions:start": "npm run genkit:start --workspace=@lymo/functions",
     "functions:deploy": "npm run build && firebase deploy --only functions",
     "frontend:start": "npm run start --workspace=@lymo/frontend",
-    "lint": "eslint --fix"
+    "lint": "eslint --fix",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.46.3",
@@ -22,6 +23,7 @@
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
+    "patch-package": "^8.0.1",
     "typescript-eslint": "^8.44.1"
   }
 }

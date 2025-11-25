@@ -19,20 +19,8 @@ export const onTrackRequestCreate = onDocumentCreated("requests/{requestId}", as
   const input = TrackRequestSchema.parse(request);
 
   try {
-    // trackId를 전달한 경우
-    if ("trackId" in input) {
-      const { trackId, language } = input;
-
-      // 1) DB에서 track 문서 가져오기
-      const track = await getTrackDoc({ trackId });
-      if (!track) throw new Error(ERROR_CODES.TRACK_NOT_FOUND);
-
-      // 2) 곡 해석 생성 및 저장
-      await ensureDefaultStory({ track, trackId, language });
-    }
-
     // title, artist, durationInSeconds를 전달한 경우
-    else {
+    if ("title" in input && "artist" in input && "durationInSeconds" in input) {
       const { language, title, artist, durationInSeconds } = input;
 
       // 1) Spotify에서 트랙 검색
@@ -69,9 +57,24 @@ export const onTrackRequestCreate = onDocumentCreated("requests/{requestId}", as
 
       // 4) track 문서 생성
       await createTrackDoc({ trackDoc: track, id: trackId });
+      event.data?.ref.update({ trackId });
 
       // 5) 곡 해석 생성 및 저장
-      await ensureDefaultStory({ track, trackId, language });
+      const storyId = await ensureDefaultStory({ track, trackId, language });
+      event.data?.ref.update({ storyId });
+    }
+
+    // trackId를 전달한 경우
+    else {
+      const { trackId, language } = input;
+
+      // 1) DB에서 track 문서 가져오기
+      const track = await getTrackDoc({ trackId });
+      if (!track) throw new Error(ERROR_CODES.TRACK_NOT_FOUND);
+
+      // 2) 곡 해석 생성 및 저장
+      const storyId = await ensureDefaultStory({ track, trackId, language });
+      event.data?.ref.update({ storyId });
     }
   } catch (error) {
     if (error instanceof CommonError) {
@@ -80,8 +83,5 @@ export const onTrackRequestCreate = onDocumentCreated("requests/{requestId}", as
     }
 
     logger.error(`An unexpected error occurred in \`onTrackRequestCreate\``, error);
-  } finally {
-    // 요청 문서 삭제
-    await event.data?.ref.delete();
   }
 });

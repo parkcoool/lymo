@@ -1,6 +1,6 @@
 import { Track } from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
-import { Language, LyricsProvider } from "@lymo/schemas/shared";
+import { Language } from "@lymo/schemas/shared";
 
 import { generateStoryFlow } from "../../flows/generateStory";
 import { createStoryDoc } from "../../tools/createStoryDoc";
@@ -29,10 +29,10 @@ interface SaveGeneratedStoryParams {
 export async function ensureDefaultStory({ track, trackId, language }: SaveGeneratedStoryParams) {
   // 1) DB에서 default story 문서 가져오기
   const storyQuery = await getStoryFromDB({ trackId, language, userId: "bot" });
-  if (storyQuery) return false;
+  if (storyQuery) return storyQuery.id;
 
   // 2) 가사 제공자 결정하기
-  const lyricsProvider = Object.keys(track.lyrics)[0] as LyricsProvider | undefined;
+  const lyricsProvider = Object.keys(track.lyrics)[0] as keyof typeof track.lyrics | undefined;
   if (!lyricsProvider) throw new Error(ERROR_CODES.LYRICS_NOT_FOUND);
 
   // 3) story 문서 생성하기
@@ -61,11 +61,11 @@ export async function ensureDefaultStory({ track, trackId, language }: SaveGener
   // 5) generateStoryFlow 실행
   const { stream, output } = generateStoryFlow.stream({
     track,
-    config: { lyricsProvider: lyricsProvider!, language },
+    config: { lyricsProvider, language },
   });
 
   // 6) 스트림 및 최종 결과 처리
   for await (const chunk of stream) await storyUpdater.update(chunk);
   await storyUpdater.complete(await output);
-  return true;
+  return stroyDocId;
 }

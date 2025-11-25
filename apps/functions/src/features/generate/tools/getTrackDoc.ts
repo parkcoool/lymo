@@ -1,4 +1,4 @@
-import { Track } from "@lymo/schemas/doc";
+import { Track, TrackSchema } from "@lymo/schemas/doc";
 import admin from "firebase-admin";
 import { DocumentReference } from "firebase-admin/firestore";
 import { z } from "genkit";
@@ -9,7 +9,7 @@ const InputSchema = z.object({
   trackId: z.string(),
 });
 
-const OutputSchema = Track.nullable();
+const OutputSchema = TrackSchema.nullable();
 
 export const getTrackDoc = ai.defineTool(
   {

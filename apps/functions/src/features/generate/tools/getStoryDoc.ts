@@ -12,7 +12,12 @@ const InputSchema = z.object({
   language: LanguageSchema,
 });
 
-const OutputSchema = StorySchema.nullable();
+const OutputSchema = z
+  .object({
+    id: z.string(),
+    data: StorySchema,
+  })
+  .nullable();
 
 export const getStoryFromDB = ai.defineTool(
   {
@@ -31,7 +36,9 @@ export const getStoryFromDB = ai.defineTool(
       .where("language", "==", language)
       .limit(1);
 
-    const story = (await q.get()).docs[0]?.data();
-    return story ?? null;
+    const story = (await q.get()).docs[0];
+
+    if (story.exists) return { id: story.id, data: story.data() };
+    return null;
   }
 );

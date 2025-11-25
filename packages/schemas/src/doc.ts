@@ -84,14 +84,23 @@ export type Story = z.infer<typeof StorySchema>;
 
 // #endregion
 
+// #region `trackRequests/{trackRequestId}` 관련 스키마
+
+// 공통 필드
+const BaseTrackRequestFieldsSchema = z.object({
+  storyId: z.string().optional(),
+  trackId: z.string().optional(),
+});
+export type BaseTrackRequestFields = z.infer<typeof BaseTrackRequestFieldsSchema>;
+
 // `trackRequests/{trackRequestId}` 문서 스키마
 export const TrackRequestSchema = z.union([
-  z.object({
+  BaseTrackRequestFieldsSchema.extend({
     language: LanguageSchema,
     trackId: z.string(),
   }),
 
-  z.object({
+  BaseTrackRequestFieldsSchema.extend({
     language: LanguageSchema,
     title: z.string(),
     artist: z.string(),
@@ -99,3 +108,5 @@ export const TrackRequestSchema = z.union([
   }),
 ]);
 export type TrackRequest = z.infer<typeof TrackRequestSchema>;
+
+// #endregion

@@ -15,5 +15,5 @@
     }
   },
   "compileOnSave": true,
-  "include": ["src", "src/features/generate/flows/.flow.ts"]
+  "include": ["./src/*"]
 }
