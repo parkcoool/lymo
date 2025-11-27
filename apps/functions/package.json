@@ -2,6 +2,7 @@
   "name": "@lymo/functions",
   "scripts": {
     "build": "tsc && tsc-alias",
+    "build:watch": "concurrently \"tsc -w\" \"tsc-alias -w\"",
     "deploy": "firebase deploy --only functions",
     "genkit:start": "genkit start -- npx tsx --watch src/index.ts"
   },

@@ -1,8 +1,11 @@
+import { defineSecret } from "firebase-functions/params";
 import { z } from "genkit";
 
 import ai from "@/core/genkit";
 import spotify from "@/core/spotify";
 import calculateSimilarity from "@/features/shared/utils/calculateSimilarity";
+
+const spotifyClientSecret = defineSecret("SPOTIFY_CLIENT_SECRET");
 
 export const SearchSpotifyInputSchema = z.object({
   title: z.string().describe("The title of the song"),
@@ -31,6 +34,7 @@ export const searchSpotify = ai.defineTool(
       "Fetch the official title, artist, album, cover URL, published date and summary of a song given its title and artist from Spotify",
   },
   async ({ title, artist, durationInSeconds }) => {
+    spotify.setClientSecret(spotifyClientSecret.value());
     const credentialsResponse = await spotify.clientCredentialsGrant();
     spotify.setAccessToken(credentialsResponse.body["access_token"]);
 

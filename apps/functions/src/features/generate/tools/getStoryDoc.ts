@@ -38,7 +38,7 @@ export const getStoryFromDB = ai.defineTool(
 
     const story = (await q.get()).docs[0];
 
-    if (story.exists) return { id: story.id, data: story.data() };
+    if (story?.exists) return { id: story.id, data: story.data() };
     return null;
   }
 );
