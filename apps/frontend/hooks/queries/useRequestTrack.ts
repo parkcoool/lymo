@@ -5,6 +5,7 @@ import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack
 import { useEffect, useRef } from "react";
 
 import db from "@/core/firestore";
+import { createStreamChannel } from "@/utils/createStreamChannel";
 
 type UseRequestTrackParams =
   | {
@@ -45,131 +46,126 @@ export default function useRequestTrack(params: UseRequestTrackParams) {
 
     queryFn: streamedQuery<Partial<UseRequestTrackResult>, UseRequestTrackResult>({
       streamFn: async function* () {
-        // 이벤트를 전달할 채널 생성
-        const channel: Partial<UseRequestTrackResult>[] = [];
-        let resolveNext: ((value: IteratorResult<Partial<UseRequestTrackResult>>) => void) | null =
-          null;
-        let error: Error | null = null;
-        let isCompleted = false;
+        console.log("streamFn started");
+        const { push, close, fail, iterator } =
+          createStreamChannel<Partial<UseRequestTrackResult>>();
 
-        // 데이터를 채널에 푸시하는 함수
-        const push = (data: Partial<UseRequestTrackResult>) => {
-          if (resolveNext) {
-            resolveNext({ value: data, done: false });
-            resolveNext = null;
-          } else {
-            channel.push(data);
-          }
-        };
+        (async () => {
+          try {
+            // 요청 문서 생성
+            const trackRequestDocRef = doc(
+              trackRequestCollectionRef
+            ) as FirebaseFirestoreTypes.DocumentReference<TrackRequest>;
 
-        // 완료 처리 함수
-        const complete = () => {
-          isCompleted = true;
-          unsubscribeTrack.current?.();
-          unsubscribeStory.current?.();
-          if (resolveNext) {
-            resolveNext({ value: undefined, done: true });
-            resolveNext = null;
-          }
-        };
+            console.log("Creating request doc...", trackRequestDocRef.id);
+            // 요청 문서 작성
+            await trackRequestDocRef.set(params);
+            console.log("Request doc created");
 
-        // 요청 문서 생성
-        const trackRequestDocRef = doc(
-          trackRequestCollectionRef
-        ) as FirebaseFirestoreTypes.DocumentReference<TrackRequest>;
+            // previews 컬렉션 참조
+            const previewCollectionRef = collection(
+              trackRequestDocRef,
+              "previews"
+            ) as FirebaseFirestoreTypes.CollectionReference;
 
-        // 요청 문서 작성
-        await trackRequestDocRef.set(params);
+            // trackId가 없는 경우 track preview 관찰
+            if (!("trackId" in params)) {
+              const trackPreviewDocRef = doc(
+                previewCollectionRef,
+                "track"
+              ) as FirebaseFirestoreTypes.DocumentReference<TrackPreview>;
 
-        // previews 컬렉션 참조
-        const previewCollectionRef = collection(
-          trackRequestDocRef,
-          "previews"
-        ) as FirebaseFirestoreTypes.CollectionReference;
+              console.log("Listening to track preview at:", trackPreviewDocRef.path);
+              unsubscribeTrack.current = trackPreviewDocRef.onSnapshot(
+                (snapshot) => {
+                  console.log(
+                    `Track snapshot event. Path: ${
+                      trackPreviewDocRef.path
+                    }, Exists: ${snapshot.exists()}`
+                  );
 
-        // trackId가 없는 경우 track preview 관찰
-        if (!("trackId" in params)) {
-          const trackPreviewDocRef = doc(
-            previewCollectionRef,
-            "track"
-          ) as FirebaseFirestoreTypes.DocumentReference<TrackPreview>;
+                  const data = snapshot.data();
+                  if (!data) {
+                    console.log("Track snapshot data is empty/undefined");
+                    return;
+                  }
+                  console.log("Track data received, pushing to channel");
+                  push({ trackPreview: data });
 
-          unsubscribeTrack.current = trackPreviewDocRef.onSnapshot(
-            (snapshot) => {
+                  // track은 생성 즉시 완료 처리 (구독 해제)
+                  unsubscribeTrack.current?.();
+                },
+                (err) => {
+                  console.error("Track snapshot error:", err);
+                  fail(err);
+                }
+              );
+            }
+            // trackId가 있는 경우 이미 있는 track 문서 가져오기
+            else {
+              const trackDocRef = doc(
+                trackCollectionRef,
+                params.trackId
+              ) as FirebaseFirestoreTypes.DocumentReference<Track>;
+              const snapshot = await trackDocRef.get();
               const data = snapshot.data();
-              if (!data) return;
-              push({ trackPreview: data });
-
-              // track은 생성 즉시 완료 처리
-              unsubscribeTrack.current?.();
-            },
-            (err) => {
-              error = err;
-              if (resolveNext) {
-                resolveNext({ value: undefined, done: true });
-                resolveNext = null;
+              if (data) {
+                push({ trackPreview: data });
+              } else {
+                throw new Error("곡을 찾을 수 없습니다.");
               }
             }
-          );
-        }
 
-        // trackId가 있는 경우 이미 있는 track 문서 가져오기
-        else {
-          const trackDocRef = doc(
-            trackCollectionRef,
-            params.trackId
-          ) as FirebaseFirestoreTypes.DocumentReference<Track>;
-          const snapshot = await trackDocRef.get();
-          const data = snapshot.data();
-          if (data) {
-            yield { trackPreview: data };
-          } else {
-            throw new Error("곡을 찾을 수 없습니다.");
-          }
-        }
+            // story preview 관찰
+            const storyPreviewDocRef = doc(
+              previewCollectionRef,
+              "story"
+            ) as FirebaseFirestoreTypes.DocumentReference<StoryPreview>;
 
-        // story preview 관찰
-        const storyPreviewDocRef = doc(
-          previewCollectionRef,
-          "story"
-        ) as FirebaseFirestoreTypes.DocumentReference<StoryPreview>;
+            console.log("Listening to story preview at:", storyPreviewDocRef.path);
+            unsubscribeStory.current = storyPreviewDocRef.onSnapshot(
+              (snapshot) => {
+                console.log(
+                  `Story snapshot event. Path: ${
+                    storyPreviewDocRef.path
+                  }, Exists: ${snapshot.exists()}`
+                );
 
-        unsubscribeStory.current = storyPreviewDocRef.onSnapshot(
-          (snapshot) => {
-            const data = snapshot.data();
-            if (!data) return;
-            push({ storyPreview: data });
+                const data = snapshot.data();
+                if (!data) {
+                  console.log("Story snapshot data is empty/undefined");
+                  return;
+                }
+                console.log("Story data received, pushing to channel. Status:", data.status);
+                push({ storyPreview: data });
 
-            // status가 COMPLETED이면 완료 처리
-            if (data.status === "COMPLETED") complete();
-          },
-          (err) => {
-            error = err;
-            if (resolveNext) {
-              resolveNext({ value: undefined, done: true });
-              resolveNext = null;
-            }
-          }
-        );
-
-        // 채널에서 데이터를 yield
-        while (!isCompleted) {
-          if (error) throw error;
-
-          if (channel.length > 0) {
-            yield channel.shift()!;
-          } else {
-            const result = await new Promise<IteratorResult<Partial<UseRequestTrackResult>>>(
-              (resolve) => {
-                resolveNext = resolve;
+                // status가 COMPLETED이면 완료 처리
+                if (data.status === "COMPLETED") close();
+              },
+              (err) => {
+                console.error("Story snapshot error:", err);
+                fail(err);
               }
             );
-            if (result.done) break;
+          } catch (error) {
+            console.error("Async setup error:", error);
+            fail(error as Error);
           }
+        })();
+
+        try {
+          console.log("Starting iterator");
+          yield* iterator();
+          console.log("Iterator finished");
+        } finally {
+          console.log("Cleanup stream");
+          unsubscribeTrack.current?.();
+          unsubscribeStory.current?.();
         }
       },
 
       reducer: (acc, chunk) => {
+        console.log("Received chunk:", chunk);
         return {
           trackPreview: chunk.trackPreview ?? acc.trackPreview,
           storyPreview: chunk.storyPreview ?? acc.storyPreview,
@@ -181,11 +177,6 @@ export default function useRequestTrack(params: UseRequestTrackParams) {
         storyPreview: { status: "PENDING" },
       },
     }),
-
-    initialData: {
-      trackPreview: undefined,
-      storyPreview: { status: "PENDING" },
-    },
   });
 }
 

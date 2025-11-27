@@ -20,6 +20,6 @@ export default function RequestTrack(props: RequestTrackProps) {
   if (error) throw error;
 
   const { trackPreview, storyPreview } = data ?? {};
-  if (!trackPreview) return null;
+  if (!trackPreview || !storyPreview) return null;
   return <PlayerContent track={trackPreview} storyPreview={storyPreview} />;
 }
