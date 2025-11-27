@@ -1,4 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Track } from "@lymo/schemas/doc";
 import { Link } from "expo-router";
 import { View, Text, FlatList } from "react-native";
 
@@ -15,10 +16,10 @@ export default function NewTracksSection() {
   const { setTrackSource } = useTrackSourceStore();
   const { setIsSynced } = useSyncStore();
 
-  const handlePlayTrack = (track: { id: string; title: string; coverUrl: string }) => {
+  const handlePlayTrack = (trackId: string, track: Track) => {
     setTrackSource({
       from: "manual",
-      track: track,
+      track: { ...track, id: trackId },
     });
     setIsSynced(false);
   };
@@ -41,10 +42,8 @@ export default function NewTracksSection() {
           <Link href={`/player`} key={track.id} asChild>
             <CompactTrack
               title={track.title}
-              coverUrl={track.coverUrl}
-              onPress={() =>
-                handlePlayTrack({ id: track.id, title: track.title, coverUrl: track.coverUrl })
-              }
+              albumArt={track.albumArt}
+              onPress={() => handlePlayTrack(track.id, track)}
             />
           </Link>
         )}

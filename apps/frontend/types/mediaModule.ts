@@ -39,5 +39,5 @@ export type DeviceMedia = {
   album: string | null;
   duration: number;
   isPlaying: boolean;
-  coverUrl: string; // Base64 문자열
+  albumArt: string; // Base64 문자열
 };

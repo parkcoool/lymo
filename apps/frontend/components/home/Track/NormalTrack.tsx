@@ -4,16 +4,16 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./NormalTrack.styles";
 
 interface NormalTrackProps {
-  coverUrl: string;
+  albumArt: string;
   title: string;
   artists: string[];
   onPress?: () => void;
 }
 
-export default function NormalTrack({ coverUrl, title, artists, onPress }: NormalTrackProps) {
+export default function NormalTrack({ albumArt, title, artists, onPress }: NormalTrackProps) {
   return (
     <TouchableOpacity style={styles.wrapper} onPress={onPress}>
-      <Image source={{ uri: coverUrl }} style={styles.cover} />
+      <Image source={{ uri: albumArt }} style={styles.cover} />
       <View style={styles.textContainer}>
         <Text style={styles.title} numberOfLines={2}>
           {title}

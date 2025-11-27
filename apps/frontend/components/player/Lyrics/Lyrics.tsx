@@ -1,4 +1,4 @@
-import { LyricsProvider } from "@lymo/schemas/shared";
+import { Lyric, LyricsProvider } from "@lymo/schemas/shared";
 import { Ref, useMemo } from "react";
 import { Text, View } from "react-native";
 
@@ -8,13 +8,13 @@ import { useSettingStore } from "@/contexts/useSettingStore";
 import { useSyncStore } from "@/contexts/useSyncStore";
 import useDeviceMediaTimestamp from "@/hooks/useDeviceMediaTimestamp";
 import useTrackKey from "@/hooks/useTrackKey";
+import { Section } from "@/types/track";
 import getLyricsProviderName from "@/utils/getLyricsProviderName";
-import { PostLyricsResult } from "@/utils/processLyrics";
 
 import { styles } from "./Lyrics.styles";
 
 interface LyricsProps {
-  lyrics: PostLyricsResult;
+  lyrics: Section[];
   lyricsProvider?: LyricsProvider;
   activeSentenceRef: Ref<View>;
 }
@@ -38,21 +38,21 @@ export default function Lyrics({ lyrics, lyricsProvider, activeSentenceRef }: Ly
   return (
     <View style={styles.container}>
       <View style={styles.lyrics}>
-        {lyrics.map((paragraph, paragraphIndex) => (
+        {lyrics.map((section, sectionIndex) => (
           <Paragraph
-            key={paragraphIndex}
-            summary={paragraph.summary}
-            active={isSynced && isActiveParagraph(paragraph.sentences, adjustedTimestamp)}
+            key={sectionIndex}
+            summary={section.note}
+            active={isSynced && isActiveParagraph(section, adjustedTimestamp)}
           >
-            {paragraph.sentences.map((sentence, sentenceIndex) => {
-              const isActive = isSynced && isActiveSentence(sentence, adjustedTimestamp);
-              const sentenceKey = `${paragraphIndex}-${sentenceIndex}`;
+            {section.lyrics.map((lyric, lyricIndex) => {
+              const isActive = isSynced && isActiveSentence(lyric, adjustedTimestamp);
+              const sentenceKey = `${sectionIndex}-${lyricIndex}`;
 
               return (
                 <Sentence
                   key={sentenceKey}
-                  sentence={sentence.text}
-                  translation={sentence.translation}
+                  sentence={lyric.text}
+                  translation={lyric.translation}
                   active={isActive}
                   ref={isActive ? activeSentenceRef : undefined}
                 />
@@ -71,12 +71,10 @@ export default function Lyrics({ lyrics, lyricsProvider, activeSentenceRef }: Ly
   );
 }
 
-const isActiveParagraph = (paragraph: PostLyricsResult[number]["sentences"], timestamp: number) =>
-  paragraph.length > 0 &&
-  paragraph[0].start <= timestamp &&
-  timestamp < paragraph[paragraph.length - 1].end;
+const isActiveParagraph = (section: Section, timestamp: number) =>
+  section.lyrics.length > 0 &&
+  section.lyrics[0].start <= timestamp &&
+  timestamp < section.lyrics[section.lyrics.length - 1].end;
 
-const isActiveSentence = (
-  sentence: PostLyricsResult[number]["sentences"][number],
-  timestamp: number
-) => sentence.start <= timestamp && timestamp < sentence.end;
+const isActiveSentence = (lyric: Lyric, timestamp: number) =>
+  lyric.start <= timestamp && timestamp < lyric.end;

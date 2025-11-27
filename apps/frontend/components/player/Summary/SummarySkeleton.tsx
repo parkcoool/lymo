@@ -9,7 +9,7 @@ import getTrackDetailString from "@/utils/getTrackDetailString";
 import { styles } from "./Summary.styles";
 
 interface SummarySkeletonProps {
-  coverUrl: string;
+  albumArt: string;
   title: string;
   artist: string;
   album: string | null;
@@ -18,21 +18,21 @@ interface SummarySkeletonProps {
 }
 
 export default function SummarySkeleton({
-  coverUrl,
+  albumArt,
   title,
   artist,
   album,
   publishedAt,
 }: Partial<SummarySkeletonProps>) {
   const { width: windowWidth } = useWindowSize();
-  const { data: coverColor } = useCoverColorQuery(coverUrl);
+  const { data: coverColor } = useCoverColorQuery(albumArt);
   const detailString = getTrackDetailString({ artist: artist ? [artist] : [], album, publishedAt });
 
   return (
     <View style={styles.wrapper}>
       <View style={[styles.coverWrapper, { width: windowWidth, height: windowWidth }]}>
         {/* 커버 이미지 */}
-        <Image source={{ uri: coverUrl }} style={styles.cover} />
+        <Image source={{ uri: albumArt }} style={styles.cover} />
 
         {/* 그라데이션 오버레이 */}
         <LinearGradient

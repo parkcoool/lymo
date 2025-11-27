@@ -12,20 +12,20 @@ interface SummaryProps {
   title: string;
   artist: string[];
   album: string | null;
+  albumArt: string;
+  coverColor?: string;
   publishedAt: string | null;
   summary?: string;
-  coverUrl?: string;
-  coverColor?: string;
 }
 
 export default function Summary({
   title,
   artist,
   album,
+  albumArt,
+  coverColor,
   publishedAt,
   summary,
-  coverUrl,
-  coverColor,
 }: SummaryProps) {
   const { width: windowWidth } = useWindowSize();
   const [summaryLine, setSummaryLine] = useState(0);
@@ -45,7 +45,7 @@ export default function Summary({
     <View style={styles.wrapper}>
       <View style={[styles.coverWrapper, { width: windowWidth, height: windowWidth }]}>
         {/* 커버 이미지 */}
-        <Image source={{ uri: coverUrl }} style={styles.cover} />
+        <Image source={{ uri: albumArt }} style={styles.cover} />
 
         {/* 그라데이션 오버레이 */}
         <LinearGradient

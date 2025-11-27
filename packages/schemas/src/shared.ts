@@ -8,15 +8,6 @@ export const LyricSchema = z.object({
 });
 export type Lyric = z.infer<typeof LyricSchema>;
 
-// 가사 문단 스키마
-export const SectionSchema = z.object({
-  lyrics: LyricSchema.array(),
-  start: z.number(),
-  end: z.number(),
-  note: z.string().nullable(),
-});
-export type Section = z.infer<typeof SectionSchema>;
-
 // 언어 스키마
 export const LanguageSchema = z.enum(["en", "ko"]);
 export type Language = z.infer<typeof LanguageSchema>;

@@ -1,10 +1,10 @@
+import { StoryPreview, Track } from "@lymo/schemas/doc";
 import { Stack } from "expo-router";
 import { useMemo, useRef } from "react";
 import { ScrollView, View } from "react-native";
 
 import Lyrics from "@/components/player/Lyrics";
 import MoveToCurrent from "@/components/player/MoveToCurrent";
-import ProviderInformation from "@/components/player/ProviderInformation";
 import StartTrack from "@/components/player/StartTrack";
 import Summary, { SummarySkeleton } from "@/components/player/Summary";
 import Header from "@/components/shared/Header";
@@ -12,22 +12,18 @@ import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
 import useScrollPositionPreservation from "@/hooks/useScrollPositionPreservation";
 import useTracking from "@/hooks/useTracking";
-import { StreamingFullTrack } from "@/types/shared";
+import groupLyricsIntoSections from "@/utils/groupLyricsIntoSections";
 import mixColors from "@/utils/mixColors";
-import processLyrics from "@/utils/processLyrics";
 
 import { styles } from "./Player.styles";
 
-export default function PlayerContent({
-  track,
-  trackId,
-  provider,
-  providerId,
-  lyrics,
-  lyricsProvider,
-  trackDetail,
-}: StreamingFullTrack) {
-  const { data: coverColor } = useCoverColorQuery(track?.coverUrl);
+interface PlayerContentProps {
+  track: Track;
+  storyPreview: StoryPreview;
+}
+
+export default function PlayerContent({ track, storyPreview }: PlayerContentProps) {
+  const { data: coverColor } = useCoverColorQuery(track.albumArt);
   const headerBackgroundColor = useMemo(
     () => mixColors([coverColor ?? "#000000", "#000000CC"]),
     [coverColor]
@@ -60,16 +56,24 @@ export default function PlayerContent({
     });
 
   // 처리된 가사 데이터
-  const processedLyrics = useMemo(
-    () =>
-      processLyrics({
-        rawLyrics: lyrics?.lyrics ?? [],
-        lyricsSplitIndices: trackDetail.lyricsSplitIndices,
-        translations: trackDetail.translations,
-        paragraphSummaries: trackDetail.paragraphSummaries,
-      }),
-    [lyrics, trackDetail]
-  );
+  const processedLyrics = useMemo(() => {
+    // 해석 프리뷰 상태가 유효한지 검증
+    if (storyPreview.status !== "IN_PROGRESS" && storyPreview.status !== "COMPLETED") return;
+
+    // 가사 관련 데이터가 모두 존재하는지 검증
+    const lyrics = track.lyrics[storyPreview.lyricsProvider];
+    const { sectionBreaks, lyricTranslations, sectionNotes } = storyPreview;
+    if (
+      lyrics === undefined ||
+      sectionBreaks === undefined ||
+      lyricTranslations === undefined ||
+      sectionNotes === undefined
+    )
+      return;
+
+    // 가사 처리
+    return groupLyricsIntoSections({ lyrics, sectionBreaks, lyricTranslations, sectionNotes });
+  }, [track, storyPreview]);
 
   return (
     <>
@@ -87,25 +91,26 @@ export default function PlayerContent({
               artist={track.artists}
               album={track.album}
               publishedAt={track.publishedAt}
-              summary={trackDetail?.summary}
-              coverUrl={track.coverUrl}
+              summary={"overview" in storyPreview ? storyPreview.overview : undefined}
+              albumArt={track.albumArt}
               coverColor={coverColor}
             />
           ) : (
             <SummarySkeleton />
           )}
 
-          {/* 제공자 정보 */}
-          <ProviderInformation provider={provider} />
-
           {/* 가사 */}
-          <View ref={lyricsContainerRef} onLayout={handleLyricsLayout} collapsable={false}>
-            <Lyrics
-              activeSentenceRef={currentRef}
-              lyrics={processedLyrics}
-              lyricsProvider={lyricsProvider}
-            />
-          </View>
+          {processedLyrics && (
+            <View ref={lyricsContainerRef} onLayout={handleLyricsLayout} collapsable={false}>
+              <Lyrics
+                activeSentenceRef={currentRef}
+                lyrics={processedLyrics}
+                lyricsProvider={
+                  "lyricsProvider" in storyPreview ? storyPreview.lyricsProvider : undefined
+                }
+              />
+            </View>
+          )}
         </ScrollView>
 
         {/* 현재 가사로 이동 */}

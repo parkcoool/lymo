@@ -69,7 +69,7 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
             putString("album", metadata.getString(MediaMetadata.METADATA_KEY_ALBUM))
             putDouble("duration", metadata.getLong(MediaMetadata.METADATA_KEY_DURATION).toDouble())
             putBoolean("isPlaying", state.state == PlaybackState.STATE_PLAYING)
-            putString("coverUrl", albumArtBase64)
+            putString("albumArt", albumArtBase64)
         }
     }
 

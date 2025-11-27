@@ -46,7 +46,7 @@ export default function DeviceMediaDetection() {
     <View style={styles.wrapper}>
       <View style={[styles.coverWrapper]}>
         {/* 커버 이미지 */}
-        <Image source={{ uri: deviceMedia.coverUrl }} style={styles.cover} />
+        <Image source={{ uri: deviceMedia.albumArt }} style={styles.cover} />
 
         {/* 그라데이션 오버레이 */}
         <LinearGradient style={styles.coverGradient} colors={["transparent", colors.black]} />

@@ -18,5 +18,8 @@ export default function RequestTrack(props: RequestTrackProps) {
   const { data, error } = useRequestTrack({ ...props, language: setting.defaultLanguage });
 
   if (error) throw error;
-  if (!data) return null;
+
+  const { trackPreview, storyPreview } = data ?? {};
+  if (!trackPreview) return null;
+  return <PlayerContent track={trackPreview} storyPreview={storyPreview} />;
 }
