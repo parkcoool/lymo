@@ -4,9 +4,7 @@ import { logger } from "firebase-functions";
 import { onDocumentCreated } from "firebase-functions/firestore";
 
 import CommonError from "@/features/shared/errors/CommonError";
-import { searchSpotify } from "@/features/shared/tools/searchSpotify";
-
-import { getTrackDoc } from "../../tools/getTrackDoc";
+import { getOrCreateTrack } from "@/features/shared/tools/getOrCreateTrack";
 
 import { ensureDefaultStory } from "./helpers";
 
@@ -21,34 +19,13 @@ export const onStoryRequestCreate = onDocumentCreated(
       const input = StoryRequestSchema.parse(request);
 
       if (input.status !== "PENDING") throw new CommonError(ERROR_CODES.INVALID_INPUT);
+      const { language, status, ...trackParams } = input;
 
-      const { language } = input;
-      let trackId: string;
-
-      // 1-1) title, artist, durationInSeconds를 전달한 경우 Spotify에서 트랙 검색
-      if ("title" in input && "artist" in input && "durationInSeconds" in input) {
-        const { title, artist, durationInSeconds } = input;
-
-        const spotifyResult = await searchSpotify({
-          title,
-          artist,
-          durationInSeconds,
-        });
-        if (!spotifyResult) throw new CommonError(ERROR_CODES.EXTERNAL_TRACK_NOT_FOUND);
-        trackId = spotifyResult.id;
-      }
-
-      // 1-2) trackId를 전달한 경우
-      else {
-        ({ trackId } = input);
-      }
-
-      // 2) DB에서 track 문서 가져오기
-      const track = await getTrackDoc({ trackId });
-      if (!track) throw new CommonError(ERROR_CODES.TRACK_NOT_FOUND);
+      // 2) 트랙 조회 또는 생성
+      const track = await getOrCreateTrack(trackParams);
 
       // 3) 곡 해석 생성 및 저장
-      await ensureDefaultStory({ track, trackId, requestId, language });
+      await ensureDefaultStory({ track: track.data, trackId: track.id, requestId, language });
     } catch (error) {
       if (error instanceof CommonError) {
         logger.error(`An error occurred in \`onStoryRequestCreate\`: ${error.code}`, error);
