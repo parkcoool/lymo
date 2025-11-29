@@ -1,5 +1,5 @@
 import { useSettingStore } from "@/contexts/useSettingStore";
-import useRequestTrack from "@/hooks/queries/useRequestTrack";
+import useRequestTrack from "@/hooks/queries/useRequestStoryQuery";
 
 import PlayerContent from "./PlayerContent";
 
@@ -13,7 +13,7 @@ type RequestTrackProps =
       durationInSeconds: number;
     };
 
-export default function RequestTrack(props: RequestTrackProps) {
+export default function Loader(props: RequestTrackProps) {
   const { setting } = useSettingStore();
   const { data, error } = useRequestTrack({ ...props, language: setting.defaultLanguage });
 
