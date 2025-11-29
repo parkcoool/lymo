@@ -3,10 +3,10 @@ import { ERROR_CODES } from "@lymo/schemas/error";
 import { z } from "genkit";
 
 import ai from "@/core/genkit";
-import getLyricsFromLRCLIB from "@/features/generate/helpers/getLyricsFromLRCLIB";
-import { createTrackDoc } from "@/features/generate/tools/createTrackDoc";
-import { getTrackDoc } from "@/features/generate/tools/getTrackDoc";
 import CommonError from "@/features/shared/errors/CommonError";
+import getLyricsFromLRCLIB from "@/features/shared/helpers/getLyricsFromLRCLIB";
+import { createTrackDoc } from "@/features/shared/tools/createTrackDoc";
+import { getTrackDoc } from "@/features/shared/tools/getTrackDoc";
 import { searchSpotify } from "@/features/shared/tools/searchSpotify";
 
 export const InputSchema = z.union([

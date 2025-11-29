@@ -19,6 +19,7 @@ export const onStoryRequestCreate = onDocumentCreated(
       const input = StoryRequestSchema.parse(request);
 
       if (input.status !== "PENDING") throw new CommonError(ERROR_CODES.INVALID_INPUT);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { language, status, ...trackParams } = input;
 
       // 2) 트랙 조회 또는 생성
