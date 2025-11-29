@@ -18,12 +18,12 @@ import mixColors from "@/utils/mixColors";
 import { styles } from "./Player.styles";
 
 interface PlayerContentProps {
-  track: Track;
+  track?: Track;
   story?: BaseStoryFields & Partial<GeneratedStoryFields>;
 }
 
 export default function PlayerContent({ track, story }: PlayerContentProps) {
-  const { data: coverColor } = useCoverColorQuery(track.albumArt);
+  const { data: coverColor } = useCoverColorQuery(track?.albumArt);
   const headerBackgroundColor = useMemo(
     () => mixColors([coverColor ?? "#000000", "#000000CC"]),
     [coverColor]
@@ -57,7 +57,7 @@ export default function PlayerContent({ track, story }: PlayerContentProps) {
 
   // 처리된 가사 데이터
   const processedLyrics = useMemo(() => {
-    if (!story) return;
+    if (!story || !track) return;
 
     // 가사 관련 데이터가 모두 존재하는지 검증
     const lyrics = track.lyrics[story.lyricsProvider];

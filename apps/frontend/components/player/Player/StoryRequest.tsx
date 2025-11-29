@@ -14,7 +14,7 @@ type RequestTrackProps = (
       artist: string;
       durationInSeconds: number;
     }
-) & { track: Track };
+) & { track?: Track };
 
 export default function StoryRequest({ track, ...props }: RequestTrackProps) {
   const { setting } = useSettingStore();

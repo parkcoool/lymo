@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /storyRequests/{requestId} {
+      allow get, create: if true;
+    }
+
+    match /stories/{storyId} {
+      allow get: if true;
+    }
+
+    match /tracks/{trackId} {
+      allow read: if true;
+    }
+  }
+}

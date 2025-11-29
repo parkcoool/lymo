@@ -4,7 +4,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import { View } from "react-native";
 
 import ErrorIndicator from "@/components/player/ErrorIndicator";
-import { Loader } from "@/components/player/Player";
+import FromDevice from "@/components/player/Player/FromDevice";
+import FromManual from "@/components/player/Player/FromManual";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 export default function Player() {
@@ -17,9 +18,9 @@ export default function Player() {
   return (
     <View style={{ flex: 1 }}>
       <ErrorBoundary FallbackComponent={ErrorIndicator} onReset={reset}>
-        {trackSource.from === "manual" && <Loader trackId={trackSource.track.id} />}
+        {trackSource.from === "manual" && <FromManual trackId={trackSource.track.id} />}
         {trackSource.from === "device" && (
-          <Loader
+          <FromDevice
             title={trackSource.track.title}
             artist={trackSource.track.artist}
             durationInSeconds={trackSource.track.duration}

@@ -1,7 +1,13 @@
 import { StoryRequest } from "@lymo/schemas/doc";
 import { RetrieveTrackInput } from "@lymo/schemas/functions";
 import { Language } from "@lymo/schemas/shared";
-import { collection, doc, FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+import {
+  collection,
+  doc,
+  FirebaseFirestoreTypes,
+  onSnapshot,
+  Unsubscribe,
+} from "@react-native-firebase/firestore";
 import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 
@@ -16,18 +22,17 @@ type UseRequestStoryParams = RetrieveTrackInput & { language: Language };
  * @returns 요청 상태를 반환합니다.
  */
 export default function useRequestStory(params: UseRequestStoryParams) {
-  const unsubscribe = useRef<() => void>(null);
+  const unsubscribe = useRef<Unsubscribe>(null);
 
   useEffect(() => {
     return () => unsubscribe.current?.();
-  }, [params]);
+  }, []);
 
   return useQuery({
     queryKey: ["request-story", params],
 
     queryFn: streamedQuery<StoryRequest, StoryRequest>({
       streamFn: async function* () {
-        console.log("streamFn started");
         const { push, close, fail, iterator } = createStreamChannel<StoryRequest>();
 
         (async () => {
@@ -36,13 +41,17 @@ export default function useRequestStory(params: UseRequestStoryParams) {
             const storyRequestDocRef = doc(
               storyRequestCollectionRef
             ) as FirebaseFirestoreTypes.DocumentReference<StoryRequest>;
-            storyRequestDocRef.set({
+            await storyRequestDocRef.set({
               ...params,
               status: "PENDING",
             });
 
+            // 기존 구독 해제
+            unsubscribe.current?.();
+
             // 스냅샷 구독 시작
-            unsubscribe.current = storyRequestDocRef.onSnapshot(
+            unsubscribe.current = onSnapshot(
+              storyRequestDocRef,
               (snapshot) => {
                 const data = snapshot.data();
                 if (!data) return;
@@ -52,6 +61,7 @@ export default function useRequestStory(params: UseRequestStoryParams) {
                 if (data.status === "COMPLETED") close();
               },
               (err) => {
+                console.error("Error in snapshot listener:", err);
                 fail(err);
               }
             );
@@ -74,6 +84,11 @@ export default function useRequestStory(params: UseRequestStoryParams) {
 
       initialValue: { ...params, status: "PENDING" },
     }),
+
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    retry: false,
   });
 }
 
