@@ -3,7 +3,8 @@ import { ERROR_CODES } from "@lymo/schemas/error";
 import { Language } from "@lymo/schemas/shared";
 
 import { generateStoryFlow } from "../../flows/generateStory";
-import { getStoryFromDB } from "../../tools/getStoryDoc";
+import { copyStoryDoc } from "../../tools/copyStoryDoc";
+import { getStoryDoc } from "../../tools/getStoryDoc";
 
 import { StoryUpdater } from "./utils";
 
@@ -34,15 +35,19 @@ export async function ensureDefaultStory({
   language,
 }: SaveGeneratedStoryParams) {
   // 1) 이미 봇 계정의 곡 해석이 존재하는지 확인
-  const storyQuery = await getStoryFromDB({ trackId, language, userId: "bot" });
-  if (storyQuery) {
+  const story = await getStoryDoc({ trackId, language, userId: "bot" });
+
+  // 1-1) 존재하면 복사
+  if (story) {
+    await copyStoryDoc({ requestId, story: story.data });
+    return false;
   }
 
   // 2) 가사 제공자 결정하기
   const lyricsProvider = Object.keys(track.lyrics)[0] as keyof typeof track.lyrics | undefined;
   if (!lyricsProvider) throw new Error(ERROR_CODES.LYRICS_NOT_FOUND);
 
-  // 4) StoryUpdater 인스턴스 생성
+  // 3) StoryUpdater 인스턴스 생성
   const storyUpdater = new StoryUpdater({
     track,
     trackId,
@@ -50,13 +55,15 @@ export async function ensureDefaultStory({
     config: { language, lyricsProvider },
   });
 
-  // 5) generateStoryFlow 실행
+  // 4) generateStoryFlow 실행
   const { stream, output } = generateStoryFlow.stream({
     track,
     config: { lyricsProvider, language },
   });
 
-  // 6) 스트림 및 최종 결과 처리
+  // 5) 스트림 및 최종 결과 처리
   for await (const chunk of stream) await storyUpdater.update(chunk);
   await storyUpdater.complete(await output);
+
+  return true;
 }

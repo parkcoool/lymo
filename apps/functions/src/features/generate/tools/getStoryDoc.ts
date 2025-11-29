@@ -19,9 +19,9 @@ const OutputSchema = z
   })
   .nullable();
 
-export const getStoryFromDB = ai.defineTool(
+export const getStoryDoc = ai.defineTool(
   {
-    name: "getStoryFromDB",
+    name: "getStoryDoc",
     inputSchema: InputSchema,
     outputSchema: OutputSchema,
     description: "Retrieve a story document from DB",

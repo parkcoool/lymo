@@ -1,0 +1,1 @@
+export { onStoryRequestCreate } from "./trigger";

@@ -73,35 +73,27 @@ export const StorySchema = BaseStoryFieldsSchema.merge(TrackInfoFieldsSchema).me
 export type Story = z.infer<typeof StorySchema>;
 
 // ==============================
-// trackRequest 관련 스키마
+// storyRequest 관련 스키마
 // ==============================
 
-// `trackRequests/{trackRequestId}` 문서 스키마
-export const TrackRequestSchema = z.union([
-  z.object({
-    language: LanguageSchema,
-    trackId: z.string(),
-  }),
-
-  z.object({
-    language: LanguageSchema,
-    title: z.string(),
-    artist: z.string(),
-    durationInSeconds: z.number(),
-  }),
-]);
-export type TrackRequest = z.infer<typeof TrackRequestSchema>;
-
-// `trackRequests/{trackRequestId}/previews/track` 문서 스키마
-export const TrackPreviewSchema = TrackSchema;
-export type TrackPreview = z.infer<typeof TrackPreviewSchema>;
-
-// `trackRequests/{trackRequestId}/previews/story` 문서 스키마
-export const StoryPreviewSchema = z.union([
+// `storyRequests/{storyRequestId}` 문서 스키마
+export const StoryRequestSchema = z.union([
   // status가 PENDING일 경우
-  z.object({
-    status: z.literal("PENDING"),
-  }),
+  z.union([
+    z.object({
+      status: z.literal("PENDING"),
+      language: LanguageSchema,
+      trackId: z.string(),
+    }),
+
+    z.object({
+      status: z.literal("PENDING"),
+      language: LanguageSchema,
+      title: z.string(),
+      artist: z.string(),
+      durationInSeconds: z.number(),
+    }),
+  ]),
 
   // status가 IN_PROGRESS일 경우
   BaseStoryFieldsSchema.merge(GeneratedStoryFieldsSchema.partial()).extend({
@@ -119,4 +111,4 @@ export const StoryPreviewSchema = z.union([
     errorCode: errorCode,
   }),
 ]);
-export type StoryPreview = z.infer<typeof StoryPreviewSchema>;
+export type StoryRequest = z.infer<typeof StoryRequestSchema>;

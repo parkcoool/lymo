@@ -24,6 +24,9 @@ export const errorCode = z.enum([
 
   // 곡 정보를 DB에 저장하는 데 실패한 경우
   "TRACK_SAVE_FAILED",
+
+  // 잘못된 입력이 제공된 경우
+  "INVALID_INPUT",
 ]);
 export const ERROR_CODES = errorCode.enum;
 export type ErrorCode = z.infer<typeof errorCode>;

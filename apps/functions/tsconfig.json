@@ -15,5 +15,5 @@
     }
   },
   "compileOnSave": true,
-  "include": ["./src/*"]
+  "include": ["**/*.ts", "**/*.tsx"]
 }

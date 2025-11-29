@@ -2,7 +2,7 @@ import {
   GeneratedStoryFields,
   GeneratedStoryFieldsSchema,
   Story,
-  StoryPreview,
+  StoryRequest,
   Track,
 } from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
@@ -23,7 +23,7 @@ interface StoryUpdaterParams {
 }
 
 /**
- * `stories` 해석 문서와 `trackRequests/{requestId}/story` 프리뷰 문서를 생성하고 업데이트하는 유틸리티 클래스
+ * `stories` 해석 문서와 `storyRequests/{requestId}` 문서를 업데이트하는 유틸리티 클래스
  */
 export class StoryUpdater {
   track: Track;
@@ -32,9 +32,9 @@ export class StoryUpdater {
   lyricsProvider: LyricsProvider;
 
   // story 본 문서
-  storyDocRef: admin.firestore.DocumentReference<Story>;
-  // trackRequest 내의 story preview 문서
-  storyPreviewDocRef: admin.firestore.DocumentReference<StoryPreview>;
+  storyDocRef: DocumentReference<Story>;
+  // storyRequests/{requestId} 문서
+  storyRequestDocRef: DocumentReference<StoryRequest>;
 
   lastWrittenAt: number = 0;
   pendingData: Partial<GeneratedStoryFields> = {};
@@ -53,15 +53,13 @@ export class StoryUpdater {
 
     // 문서 참조 생성
     this.storyDocRef = admin.firestore().collection("stories").doc() as DocumentReference<Story>;
-    this.storyPreviewDocRef = admin
+    this.storyRequestDocRef = admin
       .firestore()
-      .collection("trackRequests")
-      .doc(requestId)
-      .collection("previews")
-      .doc("story") as DocumentReference<StoryPreview>;
+      .collection("storyRequests")
+      .doc(requestId) as DocumentReference<StoryRequest>;
 
     // story preview 문서 초기화
-    this.storyPreviewDocRef.set({
+    this.storyRequestDocRef.set({
       ...this.baseFields,
       status: "PENDING",
     });
@@ -82,7 +80,7 @@ export class StoryUpdater {
 
     // story preview 문서 업데이트 수행
     const now = new Date().toISOString();
-    await this.storyPreviewDocRef.update({
+    await this.storyRequestDocRef.update({
       ...this.pendingData,
       updatedAt: now,
       status: "IN_PROGRESS",
@@ -111,7 +109,7 @@ export class StoryUpdater {
 
       await Promise.all([
         // preview 문서 업데이트
-        this.storyPreviewDocRef.update({
+        this.storyRequestDocRef.update({
           ...parsedFinalData,
           status: "COMPLETED",
           updatedAt: now,
@@ -122,7 +120,7 @@ export class StoryUpdater {
       ]);
     } catch (error) {
       // 검증 실패 시 story preview 문서의 상태를 FAILED로 업데이트
-      await this.storyPreviewDocRef.set({
+      await this.storyRequestDocRef.set({
         status: "FAILED",
         errorCode: ERROR_CODES.STORY_SAVE_FAILED,
       });
