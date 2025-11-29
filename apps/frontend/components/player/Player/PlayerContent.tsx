@@ -1,4 +1,4 @@
-import { StoryPreview, Track } from "@lymo/schemas/doc";
+import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { Stack } from "expo-router";
 import { useMemo, useRef } from "react";
 import { ScrollView, View } from "react-native";
@@ -19,10 +19,10 @@ import { styles } from "./Player.styles";
 
 interface PlayerContentProps {
   track: Track;
-  storyPreview: StoryPreview;
+  story?: BaseStoryFields & Partial<GeneratedStoryFields>;
 }
 
-export default function PlayerContent({ track, storyPreview }: PlayerContentProps) {
+export default function PlayerContent({ track, story }: PlayerContentProps) {
   const { data: coverColor } = useCoverColorQuery(track.albumArt);
   const headerBackgroundColor = useMemo(
     () => mixColors([coverColor ?? "#000000", "#000000CC"]),
@@ -57,12 +57,11 @@ export default function PlayerContent({ track, storyPreview }: PlayerContentProp
 
   // 처리된 가사 데이터
   const processedLyrics = useMemo(() => {
-    // 해석 프리뷰 상태가 유효한지 검증
-    if (storyPreview.status !== "IN_PROGRESS" && storyPreview.status !== "COMPLETED") return;
+    if (!story) return;
 
     // 가사 관련 데이터가 모두 존재하는지 검증
-    const lyrics = track.lyrics[storyPreview.lyricsProvider];
-    const { sectionBreaks, lyricTranslations, sectionNotes } = storyPreview;
+    const lyrics = track.lyrics[story.lyricsProvider];
+    const { sectionBreaks, lyricTranslations, sectionNotes } = story;
     if (
       lyrics === undefined ||
       sectionBreaks === undefined ||
@@ -73,7 +72,7 @@ export default function PlayerContent({ track, storyPreview }: PlayerContentProp
 
     // 가사 처리
     return groupLyricsIntoSections({ lyrics, sectionBreaks, lyricTranslations, sectionNotes });
-  }, [track, storyPreview]);
+  }, [track, story]);
 
   return (
     <>
@@ -91,7 +90,7 @@ export default function PlayerContent({ track, storyPreview }: PlayerContentProp
               artist={track.artists}
               album={track.album}
               publishedAt={track.publishedAt}
-              summary={"overview" in storyPreview ? storyPreview.overview : undefined}
+              summary={story?.overview}
               albumArt={track.albumArt}
               coverColor={coverColor}
             />
@@ -105,9 +104,7 @@ export default function PlayerContent({ track, storyPreview }: PlayerContentProp
               <Lyrics
                 activeSentenceRef={currentRef}
                 lyrics={processedLyrics}
-                lyricsProvider={
-                  "lyricsProvider" in storyPreview ? storyPreview.lyricsProvider : undefined
-                }
+                lyricsProvider={story?.lyricsProvider}
               />
             </View>
           )}
