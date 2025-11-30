@@ -1,13 +1,14 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { Stack } from "expo-router";
 import { useMemo, useRef } from "react";
-import { ScrollView, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import Lyrics from "@/components/player/Lyrics";
 import MoveToCurrent from "@/components/player/MoveToCurrent";
 import StartTrack from "@/components/player/StartTrack";
-import Summary, { SummarySkeleton } from "@/components/player/Summary";
+import Summary from "@/components/player/Summary";
 import Header from "@/components/shared/Header";
+import { colors } from "@/constants/colors";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
 import useProcessLyrics from "@/hooks/useProcessLyrics";
@@ -68,22 +69,18 @@ export default function PlayerContent({ track, story }: PlayerContentProps) {
           onMomentumScrollEnd={handleScrollEnd}
         >
           {/* 곡 메타데이터 및 설명 */}
-          {track ? (
-            <Summary
-              title={track.title}
-              artist={track.artists}
-              album={track.album}
-              publishedAt={track.publishedAt}
-              summary={story?.overview}
-              albumArt={track.albumArt}
-              coverColor={coverColor}
-            />
-          ) : (
-            <SummarySkeleton />
-          )}
+          <Summary
+            title={track?.title}
+            artist={track?.artists}
+            album={track?.album}
+            publishedAt={track?.publishedAt}
+            overview={story?.overview}
+            albumArt={track?.albumArt}
+            coverColor={coverColor}
+          />
 
           {/* 가사 */}
-          {processedLyrics && (
+          {processedLyrics ? (
             <View ref={lyricsContainerRef} onLayout={handleLyricsLayout} collapsable={false}>
               <Lyrics
                 activeSentenceRef={currentRef}
@@ -91,6 +88,12 @@ export default function PlayerContent({ track, story }: PlayerContentProps) {
                 lyricsProvider={story?.lyricsProvider}
               />
             </View>
+          ) : (
+            <ActivityIndicator
+              style={{ marginTop: 50 }}
+              size={60}
+              color={colors.onBackgroundSubtle}
+            />
           )}
         </ScrollView>
 

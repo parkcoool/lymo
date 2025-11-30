@@ -33,6 +33,7 @@ export const styles = StyleSheet.create({
     right: 16,
     flexDirection: "column",
     flex: 1,
+    gap: 4,
   },
 
   title: {
