@@ -11,4 +11,4 @@ admin.initializeApp({
 
 admin.firestore().settings({ databaseId: "main" });
 
-setGlobalOptions({ maxInstances: 10 });
+setGlobalOptions({ maxInstances: 10, region: "asia-northeast3" });
