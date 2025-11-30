@@ -3,7 +3,6 @@ import { View } from "react-native";
 import { useSettingStore } from "@/contexts/useSettingStore";
 import useTrackKey from "@/hooks/useTrackKey";
 
-import { getProviderNameFromLLMModel } from "./Model/Model.helpers";
 import type { SettingViews } from "./SettingBottomSheet";
 import { styles } from "./SettingBottomSheet.styles";
 import SettingButton from "./SettingButton";
@@ -37,14 +36,6 @@ export default function Main({ setView }: MainProps) {
         label="번역 대상 언어"
         content={getLanguageName(setting.defaultLanguage)}
         onPress={() => setView("translate")}
-      />
-
-      {/* 해석 모델 */}
-      <SettingButton
-        icon="auto-awesome"
-        label="해석 모델"
-        content={getProviderNameFromLLMModel(setting.defaultLLMModel)}
-        onPress={() => setView("model")}
       />
 
       {/* 문단 요약 보이기 */}

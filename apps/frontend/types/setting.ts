@@ -1,4 +1,4 @@
-import { Language, LLMModel } from "@lymo/schemas/shared";
+import { Language } from "@lymo/schemas/shared";
 
 export interface Setting {
   /**
@@ -15,9 +15,4 @@ export interface Setting {
    * 문단 요약 표시 여부
    */
   showParagraphSummary: boolean;
-
-  /**
-   * 기본 LLM 모델
-   */
-  defaultLLMModel: LLMModel;
 }

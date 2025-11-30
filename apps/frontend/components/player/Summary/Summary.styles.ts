@@ -33,6 +33,7 @@ export const styles = StyleSheet.create({
     right: 16,
     flexDirection: "column",
     flex: 1,
+    gap: 4,
   },
 
   title: {
@@ -46,21 +47,20 @@ export const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  summary: {
+  overview: {
     color: colors.onBackgroundSubtle,
     fontSize: 16,
     marginHorizontal: 16,
     lineHeight: 24,
   },
 
-  summarySkeleton: {
-    display: "flex",
+  overviewSkeletonContainer: {
+    marginHorizontal: 16,
     flexDirection: "column",
     gap: 8,
-    paddingHorizontal: 16,
   },
 
-  summaryButton: {
+  overviewButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     flexDirection: "row",
@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
 
-  summaryButtonContent: {
+  overviewButtonContent: {
     color: colors.onBackground,
   },
 

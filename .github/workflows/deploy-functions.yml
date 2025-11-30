@@ -1,0 +1,39 @@
+name: Deploy Firebase Functions
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/functions/**"
+      - "packages/schemas/**"
+      - ".github/workflows/deploy-functions.yml"
+
+jobs:
+  deploy_functions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Functions
+        working-directory: apps/functions
+        run: npm run build
+
+      - name: Deploy to Firebase
+        uses: firebase/firebase-tools-action@v0.2
+        with:
+          args: deploy --only functions
+        env:
+          FIREBASE_CONFIG: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+          PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}

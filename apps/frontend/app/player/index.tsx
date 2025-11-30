@@ -1,12 +1,11 @@
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 import { Redirect } from "expo-router";
-import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { View } from "react-native";
 
 import ErrorIndicator from "@/components/player/ErrorIndicator";
-import LoadingIndicator from "@/components/player/LoadingIndicator";
-import { DeviceTrackPlayer, ManualTrackPlayer } from "@/components/player/Player";
+import FromDevice from "@/components/player/Player/FromDevice";
+import FromManual from "@/components/player/Player/FromManual";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
 
 export default function Player() {
@@ -19,10 +18,16 @@ export default function Player() {
   return (
     <View style={{ flex: 1 }}>
       <ErrorBoundary FallbackComponent={ErrorIndicator} onReset={reset}>
-        <Suspense fallback={<LoadingIndicator {...trackSource?.track} />}>
-          {trackSource.from === "manual" && <ManualTrackPlayer trackId={trackSource.track.id} />}
-          {trackSource.from === "device" && <DeviceTrackPlayer {...trackSource.track} />}
-        </Suspense>
+        {trackSource.from === "manual" && (
+          <FromManual trackId={trackSource.track.id} track={trackSource.track} />
+        )}
+        {trackSource.from === "device" && (
+          <FromDevice
+            title={trackSource.track.title}
+            artist={trackSource.track.artist}
+            durationInSeconds={trackSource.track.duration}
+          />
+        )}
       </ErrorBoundary>
     </View>
   );

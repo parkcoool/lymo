@@ -3,6 +3,7 @@ import { View, Animated } from "react-native";
 
 import Skeleton from "@/components/shared/Skeleton";
 import { colors } from "@/constants/colors";
+import { useTypingAnimation } from "@/hooks/useTypingAnimation";
 
 import { styles } from "./Sentence.styles";
 
@@ -15,6 +16,7 @@ interface SentenceProps {
 
 const Sentence = memo(({ sentence, translation, active, ref }: SentenceProps) => {
   const progress = useRef(new Animated.Value(0)).current;
+  const displayedTranslation = useTypingAnimation(translation);
 
   useEffect(() => {
     Animated.timing(progress, {
@@ -36,8 +38,10 @@ const Sentence = memo(({ sentence, translation, active, ref }: SentenceProps) =>
       {translation === undefined && <Skeleton width="70%" height={16} opacity={0.4} />}
 
       {/* 번역 표시 */}
-      {translation && (
-        <Animated.Text style={[styles.translation, { color }]}>{translation}</Animated.Text>
+      {!!displayedTranslation && (
+        <Animated.Text style={[styles.translation, { color }]}>
+          {displayedTranslation}
+        </Animated.Text>
       )}
     </View>
   );

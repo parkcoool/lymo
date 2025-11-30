@@ -6,3 +6,5 @@ firebase-debug.log
 firestore-debug.log
 
 dist
+
+dev-data

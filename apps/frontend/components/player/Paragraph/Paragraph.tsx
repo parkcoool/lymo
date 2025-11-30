@@ -3,17 +3,19 @@ import { View, Text, Animated } from "react-native";
 import Reanimated, { Easing, LinearTransition } from "react-native-reanimated";
 
 import { colors } from "@/constants/colors";
+import { useTypingAnimation } from "@/hooks/useTypingAnimation";
 
 import { styles } from "./Paragraph.styles";
 
 interface ParagraphProps {
-  summary: string | null;
+  note: string | null;
   active: boolean;
   children: React.ReactNode;
 }
 
-const Paragraph = memo(({ summary, active, children }: ParagraphProps) => {
-  const parsedSummary = summary === "null" ? null : summary;
+const Paragraph = memo(({ note, active, children }: ParagraphProps) => {
+  const parsedNote = note === "null" ? null : note;
+  const displayedNote = useTypingAnimation(parsedNote);
 
   const progress = useRef(new Animated.Value(0)).current;
 
@@ -32,12 +34,12 @@ const Paragraph = memo(({ summary, active, children }: ParagraphProps) => {
 
   return (
     <Animated.View style={[styles.wrapper, { backgroundColor }]}>
-      {parsedSummary && (
+      {parsedNote && (
         <Reanimated.View
-          style={styles.summaryWrapper}
+          style={styles.noteWrapper}
           layout={LinearTransition.duration(300).easing(Easing.out(Easing.quad))}
         >
-          <Text style={styles.summary}>{parsedSummary}</Text>
+          <Text style={styles.note}>{displayedNote}</Text>
         </Reanimated.View>
       )}
       <View style={styles.sentenceContainer}>{children}</View>

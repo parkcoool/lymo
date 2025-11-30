@@ -13,6 +13,9 @@ import { SettingProvider } from "@/contexts/useSettingStore";
 import { SyncProvider } from "@/contexts/useSyncStore";
 import { TrackSourceProvider } from "@/contexts/useTrackSourceStore";
 
+import "@/core/firestore";
+import "@/core/functions";
+
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
