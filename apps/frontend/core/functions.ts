@@ -1,7 +1,7 @@
 import { connectFunctionsEmulator, getFunctions } from "@react-native-firebase/functions";
 import expoConstants from "expo-constants";
 
-const functions = getFunctions();
+const functions = getFunctions(undefined, "asia-northeast3");
 
 if (__DEV__) {
   const debuggerHost = expoConstants.expoConfig?.hostUri;
