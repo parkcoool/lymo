@@ -1,6 +1,12 @@
 {
   "rules": {
     ".read": true,
-    ".write": true
+    ".write": true,
+    "storyRequests": {
+      "$requestId": {
+        ".write": "!data.exists() && newData.exists()",
+        ".validate": "newData.child('status').val() === 'PENDING' && ( (newData.hasChildren(['language', 'trackId']) && newData.child('trackId').isString() && newData.child('language').isString()) || (newData.hasChildren(['language', 'title', 'artist', 'durationInSeconds']) && newData.child('language').isString() && newData.child('title').isString() && newData.child('artist').isString() && newData.child('durationInSeconds').isNumber()) )"
+      }
+    }
   }
 }
