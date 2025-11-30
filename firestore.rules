@@ -6,7 +6,7 @@ service cloud.firestore {
     }
 
     match /stories/{storyId} {
-      allow get: if true;
+      allow read: if true;
     }
 
     match /tracks/{trackId} {

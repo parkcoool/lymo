@@ -10,9 +10,9 @@ import Summary, { SummarySkeleton } from "@/components/player/Summary";
 import Header from "@/components/shared/Header";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
+import useProcessLyrics from "@/hooks/useProcessLyrics";
 import useScrollPositionPreservation from "@/hooks/useScrollPositionPreservation";
 import useTracking from "@/hooks/useTracking";
-import groupLyricsIntoSections from "@/utils/groupLyricsIntoSections";
 import mixColors from "@/utils/mixColors";
 
 import { styles } from "./Player.styles";
@@ -56,23 +56,7 @@ export default function PlayerContent({ track, story }: PlayerContentProps) {
     });
 
   // 처리된 가사 데이터
-  const processedLyrics = useMemo(() => {
-    if (!story || !track) return;
-
-    // 가사 관련 데이터가 모두 존재하는지 검증
-    const lyrics = track.lyrics[story.lyricsProvider];
-    const { sectionBreaks, lyricTranslations, sectionNotes } = story;
-    if (
-      lyrics === undefined ||
-      sectionBreaks === undefined ||
-      lyricTranslations === undefined ||
-      sectionNotes === undefined
-    )
-      return;
-
-    // 가사 처리
-    return groupLyricsIntoSections({ lyrics, sectionBreaks, lyricTranslations, sectionNotes });
-  }, [track, story]);
+  const processedLyrics = useProcessLyrics({ story, track });
 
   return (
     <>

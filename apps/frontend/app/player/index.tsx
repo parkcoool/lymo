@@ -18,7 +18,9 @@ export default function Player() {
   return (
     <View style={{ flex: 1 }}>
       <ErrorBoundary FallbackComponent={ErrorIndicator} onReset={reset}>
-        {trackSource.from === "manual" && <FromManual trackId={trackSource.track.id} />}
+        {trackSource.from === "manual" && (
+          <FromManual trackId={trackSource.track.id} track={trackSource.track} />
+        )}
         {trackSource.from === "device" && (
           <FromDevice
             title={trackSource.track.title}

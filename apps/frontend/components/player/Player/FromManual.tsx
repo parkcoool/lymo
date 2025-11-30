@@ -1,16 +1,19 @@
+import { Track } from "@lymo/schemas/doc";
+
 import { useSettingStore } from "@/contexts/useSettingStore";
-import useTrackAndStoryQuery from "@/hooks/queries/useTrackAndStoryQuery";
+import useStoryQuery from "@/hooks/queries/useStoryQuery";
 
 import PlayerContent from "./PlayerContent";
 import StoryRequest from "./StoryRequest";
 
 interface FromFromManualProps {
   trackId: string;
+  track: Track;
 }
 
-export default function FromManual({ trackId }: FromFromManualProps) {
+export default function FromManual({ trackId, track }: FromFromManualProps) {
   const { setting } = useSettingStore();
-  const [{ data: track }, { data: story }] = useTrackAndStoryQuery({
+  const { data: story } = useStoryQuery({
     trackId,
     language: setting.defaultLanguage,
   });
