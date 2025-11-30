@@ -6,7 +6,7 @@ import { SummarySkeleton } from "@/components/player/Summary";
 import Header from "@/components/shared/Header/Header";
 import Skeleton from "@/components/shared/Skeleton";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
-import mixColors from "@/utils/blend";
+import mixColors from "@/utils/mixColors";
 
 import { styles } from "./LoadingIndicator.styles";
 
@@ -14,16 +14,16 @@ interface LoadingIndicatorProps {
   title?: string;
   artist?: string;
   album?: string | null;
-  coverUrl?: string;
+  albumArt?: string;
 }
 
 export default function LoadingIndicator({
   title,
   artist,
   album,
-  coverUrl,
+  albumArt,
 }: LoadingIndicatorProps) {
-  const { data: coverColor } = useCoverColorQuery(coverUrl);
+  const { data: coverColor } = useCoverColorQuery(albumArt);
   const headerBackgroundColor = useMemo(
     () => mixColors([coverColor ?? "#000000", "#000000CC"]),
     [coverColor]
@@ -46,7 +46,7 @@ export default function LoadingIndicator({
           }}
         >
           {/* 곡 메타데이터 및 설명 */}
-          <SummarySkeleton title={title} artist={artist} album={album} coverUrl={coverUrl} />
+          <SummarySkeleton title={title} artist={artist} album={album} albumArt={albumArt} />
 
           {/* 가사 */}
           <View style={styles.lyricsSkeletonContainer}>

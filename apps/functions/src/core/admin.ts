@@ -1,14 +1,9 @@
 import * as admin from "firebase-admin";
+import { applicationDefault } from "firebase-admin/app";
 import { setGlobalOptions } from "firebase-functions";
 
-import firebaseAccountCredentials from "@/serviceAccountKey.json";
-
-const serviceAccount = firebaseAccountCredentials as admin.ServiceAccount;
-
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: applicationDefault(),
 });
-
-admin.firestore().settings({ databaseId: "main" });
 
 setGlobalOptions({ maxInstances: 10 });

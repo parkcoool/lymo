@@ -1,6 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { TouchableOpacity, Text } from "react-native";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import useWindowSize from "@/hooks/useWindowSize";
 
@@ -14,22 +15,20 @@ interface MoveToCurrentProps {
 const slideInDown = SlideInDown.springify();
 const slideOutDown = SlideOutDown.springify();
 
-export default function MoveToCurrent({
-  activeSentenceY,
-  onPress,
-}: MoveToCurrentProps) {
+export default function MoveToCurrent({ activeSentenceY, onPress }: MoveToCurrentProps) {
+  const { bottom } = useSafeAreaInsets();
   const { height } = useWindowSize();
 
   const scrollDirection =
     activeSentenceY < 0 ? "up" : activeSentenceY + 100 > height ? "down" : null;
 
-  if (scrollDirection === null) return;
+  if (scrollDirection === null) return null;
 
   return (
     <Animated.View
       entering={slideInDown}
       exiting={slideOutDown}
-      style={styles.wrapper}
+      style={[styles.wrapper, { bottom: bottom + 20 }]}
     >
       <TouchableOpacity style={styles.button} onPress={onPress}>
         <MaterialIcons

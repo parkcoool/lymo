@@ -1,5 +1,5 @@
 interface GetTrackDetailStringProps {
-  artist?: string[];
+  artist?: string[] | string;
   album?: string | null;
   publishedAt?: string | null;
 }
@@ -15,5 +15,7 @@ export default function getTrackDetailString({
   publishedAt,
 }: GetTrackDetailStringProps) {
   const year = publishedAt ? new Date(publishedAt).getFullYear() : null;
-  return [artist?.join(", "), album, year].filter(Boolean).join(" • ");
+  return [Array.isArray(artist) ? artist.join(", ") : artist, album, year]
+    .filter(Boolean)
+    .join(" • ");
 }

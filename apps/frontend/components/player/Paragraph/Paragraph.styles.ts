@@ -12,13 +12,13 @@ export const styles = StyleSheet.create({
     overflow: "hidden",
   },
 
-  summaryWrapper: {
+  noteWrapper: {
     padding: 16,
     borderRadius: 16,
     backgroundColor: `${colors.white}80`,
   },
 
-  summary: {
+  note: {
     fontSize: 14,
     color: colors.black,
   },

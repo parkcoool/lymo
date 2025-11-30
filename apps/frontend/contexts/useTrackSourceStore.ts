@@ -1,4 +1,4 @@
-import type { Track } from "@lymo/schemas/shared";
+import { Track } from "@lymo/schemas/doc";
 import { useState, ReactNode, createElement } from "react";
 import { buildContext } from "react-simplikit";
 
@@ -7,14 +7,11 @@ import type { DeviceMedia } from "@/types/mediaModule";
 export type TrackSource =
   | {
       from: "device";
-      track: Pick<
-        DeviceMedia,
-        "title" | "artist" | "album" | "duration" | "coverUrl"
-      >;
+      track: DeviceMedia;
     }
   | {
       from: "manual";
-      track: Pick<Track, "id" | "title" | "coverUrl">;
+      track: Track & { id: string };
     };
 
 interface TrackSourceContextStates {
@@ -32,19 +29,18 @@ interface TrackSourceContextActions {
   setTrackSource: (track?: TrackSource) => void;
 }
 
-type TrackSourceContextValues = TrackSourceContextStates &
-  TrackSourceContextActions;
+type TrackSourceContextValues = TrackSourceContextStates & TrackSourceContextActions;
 
-const [TrackSourceContextProvider, _useTrackSourceStore] =
-  buildContext<TrackSourceContextValues>("TrackSourceContext", {
+const [TrackSourceContextProvider, _useTrackSourceStore] = buildContext<TrackSourceContextValues>(
+  "TrackSourceContext",
+  {
     trackSource: undefined,
     setTrackSource: () => {},
-  });
+  }
+);
 
 function TrackSourceProvider({ children }: { children: ReactNode }) {
-  const [trackSource, setTrackSource] = useState<TrackSource | undefined>(
-    undefined
-  );
+  const [trackSource, setTrackSource] = useState<TrackSource | undefined>(undefined);
 
   // react-simplikit의 buildContext에서 생성된 Provider는 children을 props로 받도록 설계됨
   // eslint-disable-next-line react/no-children-prop

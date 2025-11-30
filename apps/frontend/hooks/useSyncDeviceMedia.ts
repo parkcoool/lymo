@@ -35,6 +35,7 @@ export default function useSyncDeviceMedia() {
 
   useEffect(() => {
     let subscription: EmitterSubscription;
+    let intervalId: number;
 
     (async () => {
       while (true) {
@@ -50,21 +51,32 @@ export default function useSyncDeviceMedia() {
         else {
           console.log("Media observer started");
 
-          // 이벤트 리스너 등록
-          subscription = eventEmitter.addListener(
-            "onMediaDataChanged",
-            (newDeviceMedia: DeviceMedia | null) => {
-              if (newDeviceMedia == null) return;
-              if (newDeviceMedia.duration === 0) return;
-              const fixedDeviceMedia = {
-                ...newDeviceMedia,
-                duration: Math.floor(newDeviceMedia.duration / 1000),
-              };
+          const handleMediaUpdate = (newDeviceMedia: DeviceMedia | null) => {
+            if (newDeviceMedia == null) return;
+            if (newDeviceMedia.duration === 0) return;
+            const fixedDeviceMedia = {
+              ...newDeviceMedia,
+              duration: Math.floor(newDeviceMedia.duration / 1000),
+            };
 
-              setDeviceMedia(fixedDeviceMedia);
-              if (isSynced) setTrackSource({ from: "device", track: fixedDeviceMedia });
+            setDeviceMedia(fixedDeviceMedia);
+            if (isSynced) setTrackSource({ from: "device", track: fixedDeviceMedia });
+          };
+
+          // 이벤트 리스너 등록
+          subscription = eventEmitter.addListener("onMediaDataChanged", handleMediaUpdate);
+
+          // 5초마다 폴링
+          const pollMediaState = async () => {
+            try {
+              const mediaState = await MediaModule.getCurrentMediaState();
+              handleMediaUpdate(mediaState);
+            } catch (e) {
+              console.error("Failed to poll media state", e);
             }
-          );
+          };
+          intervalId = setInterval(pollMediaState, 5000);
+          pollMediaState();
 
           // 성공적으로 시작했으므로 루프 종료
           break;
@@ -74,6 +86,7 @@ export default function useSyncDeviceMedia() {
 
     return () => {
       if (subscription) subscription.remove();
+      if (intervalId) clearInterval(intervalId);
     };
     // setHasPermission, setDeviceMedia와 setTrackSource는 안정적임.
     // eslint-disable-next-line react-hooks/exhaustive-deps

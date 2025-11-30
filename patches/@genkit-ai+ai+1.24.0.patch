@@ -1,0 +1,15 @@
+# genkit의 generateStream stream 제네릭 타입 패치
+
+diff --git a/node_modules/@genkit-ai/ai/lib/generate-CGXKfudO.d.ts b/node_modules/@genkit-ai/ai/lib/generate-CGXKfudO.d.ts
+index de6b11f..2e0318c 100644
+--- a/node_modules/@genkit-ai/ai/lib/generate-CGXKfudO.d.ts
++++ b/node_modules/@genkit-ai/ai/lib/generate-CGXKfudO.d.ts
+@@ -463,7 +463,7 @@ declare function generateOperation<O extends z.ZodTypeAny = z.ZodTypeAny, Custom
+ declare function toGenerateActionOptions<O extends z.ZodTypeAny = z.ZodTypeAny, CustomOptions extends z.ZodTypeAny = typeof GenerationCommonConfigSchema>(registry: Registry, options: GenerateOptions<O, CustomOptions>): Promise<GenerateActionOptions>;
+ type GenerateStreamOptions<O extends z.ZodTypeAny = z.ZodTypeAny, CustomOptions extends z.ZodTypeAny = typeof GenerationCommonConfigSchema> = Omit<GenerateOptions<O, CustomOptions>, 'streamingCallback'>;
+ interface GenerateStreamResponse<O extends z.ZodTypeAny = z.ZodTypeAny> {
+-    get stream(): AsyncIterable<GenerateResponseChunk>;
++    get stream(): AsyncIterable<GenerateResponseChunk<O>>;
+     get response(): Promise<GenerateResponse<O>>;
+ }
+ declare function generateStream<O extends z.ZodTypeAny = z.ZodTypeAny, CustomOptions extends z.ZodTypeAny = typeof GenerationCommonConfigSchema>(registry: Registry, options: GenerateOptions<O, CustomOptions> | PromiseLike<GenerateOptions<O, CustomOptions>>): GenerateStreamResponse<O>;

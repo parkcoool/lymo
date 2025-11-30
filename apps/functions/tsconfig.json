@@ -10,9 +10,10 @@
     "strict": true,
     "target": "es2017",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@lymo/schemas/*": ["../../packages/schemas/src/*"]
     }
   },
   "compileOnSave": true,
-  "include": ["src"]
+  "include": ["**/*.ts", "**/*.tsx"]
 }
