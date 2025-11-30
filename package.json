@@ -13,6 +13,7 @@
     "be:dev": "concurrently \"npm run build:watch --workspace=@lymo/functions\" \"firebase emulators:start --import=./dev-data --export-on-exit=./dev-data\"",
     "be:deploy": "npm run deploy --workspace=@lymo/functions",
     "fe:start": "npm run start --workspace=@lymo/frontend",
+    "fe:start:prod": "npm run start --workspace=@lymo/frontend -- --no-dev",
     "lint": "eslint --fix",
     "postinstall": "patch-package"
   },
