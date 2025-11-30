@@ -17,6 +17,12 @@
   "firestore": {
     "rules": "firestore.rules"
   },
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "react-native": {
+    "android_bypass_emulator_url_remap": true
+  },
   "emulators": {
     "firestore": {
       "port": 8080,
@@ -29,9 +35,9 @@
     "ui": {
       "enabled": true
     },
+    "database": {
+      "port": 9000
+    },
     "singleProjectMode": true
-  },
-  "react-native": {
-    "android_bypass_emulator_url_remap": true
   }
 }

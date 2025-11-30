@@ -1,13 +1,8 @@
-import {
-  GeneratedStoryFields,
-  GeneratedStoryFieldsSchema,
-  Story,
-  StoryRequest,
-  Track,
-} from "@lymo/schemas/doc";
+import { GeneratedStoryFields, GeneratedStoryFieldsSchema, Story, Track } from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
 import { Language, LyricsProvider } from "@lymo/schemas/shared";
 import admin from "firebase-admin";
+import { Reference } from "firebase-admin/database";
 import { DocumentReference } from "firebase-admin/firestore";
 
 const MIN_DELAY_BETWEEN_WRITES = 500;
@@ -23,7 +18,7 @@ interface StoryUpdaterParams {
 }
 
 /**
- * `stories` 해석 문서와 `storyRequests/{requestId}` 문서를 업데이트하는 유틸리티 클래스
+ * `stories` 해석 문서와 `storyRequests/{requestId}` 데이터베이스를 업데이트하는 유틸리티 클래스
  */
 export class StoryUpdater {
   track: Track;
@@ -34,7 +29,7 @@ export class StoryUpdater {
   // story 본 문서
   storyDocRef: DocumentReference<Story>;
   // storyRequests/{requestId} 문서
-  storyRequestDocRef: DocumentReference<StoryRequest>;
+  storyRequestDocRef: Reference;
 
   lastWrittenAt: number = 0;
   pendingData: Partial<GeneratedStoryFields> = {};
@@ -53,10 +48,7 @@ export class StoryUpdater {
 
     // 문서 참조 생성
     this.storyDocRef = admin.firestore().collection("stories").doc() as DocumentReference<Story>;
-    this.storyRequestDocRef = admin
-      .firestore()
-      .collection("storyRequests")
-      .doc(requestId) as DocumentReference<StoryRequest>;
+    this.storyRequestDocRef = admin.database().ref(`storyRequests/${requestId}`);
 
     // story preview 문서 초기화
     this.storyRequestDocRef.set({

@@ -1,7 +1,7 @@
 import { StoryRequestSchema } from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
 import { logger } from "firebase-functions";
-import { onDocumentCreated } from "firebase-functions/firestore";
+import { onValueCreated } from "firebase-functions/database";
 import { defineSecret } from "firebase-functions/params";
 
 import CommonError from "@/features/shared/errors/CommonError";
@@ -11,17 +11,18 @@ import { ensureDefaultStory } from "./helpers";
 
 const spotifyClientSecret = defineSecret("SPOTIFY_CLIENT_SECRET");
 
-export const onStoryRequestCreate = onDocumentCreated(
+export const onStoryRequestCreate = onValueCreated(
   {
-    document: "storyRequests/{requestId}",
+    ref: "/storyRequests/{requestId}",
+    region: "us-central1",
     secrets: [spotifyClientSecret],
   },
   async (event) => {
     try {
       if (!event.data) return;
 
-      const requestId = event.data.id;
-      const request = event.data.data();
+      const requestId = event.params.requestId;
+      const request = event.data.val();
       const input = StoryRequestSchema.parse(request);
 
       if (input.status !== "PENDING") throw new CommonError(ERROR_CODES.INVALID_INPUT);

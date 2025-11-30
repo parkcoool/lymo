@@ -1,6 +1,5 @@
-import { StoryRequest, StorySchema } from "@lymo/schemas/doc";
+import { StorySchema } from "@lymo/schemas/doc";
 import admin from "firebase-admin";
-import { DocumentReference } from "firebase-admin/firestore";
 import { z } from "genkit";
 
 import ai from "@/core/genkit";
@@ -17,15 +16,12 @@ export const copyStoryDoc = ai.defineTool(
     name: "copyStoryDoc",
     inputSchema: InputSchema,
     outputSchema: OutputSchema,
-    description: "Copy a story document into a storyRequest document`",
+    description: "Copy a story document into a storyRequest database`",
   },
   async ({ story, requestId }) => {
-    const storyRequestRef = admin
-      .firestore()
-      .collection("storyRequests")
-      .doc(requestId) as DocumentReference<StoryRequest>;
+    const storyRequestRef = admin.database().ref(`storyRequests/${requestId}`);
 
-    storyRequestRef.set({
+    await storyRequestRef.set({
       ...story,
       status: "COMPLETED",
     });
