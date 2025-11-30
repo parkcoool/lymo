@@ -41,7 +41,7 @@ export default function Lyrics({ lyrics, lyricsProvider, activeSentenceRef }: Ly
         {lyrics.map((section, sectionIndex) => (
           <Paragraph
             key={sectionIndex}
-            summary={section.note}
+            note={section.note}
             active={isSynced && isActiveParagraph(section, adjustedTimestamp)}
           >
             {section.lyrics.map((lyric, lyricIndex) => {

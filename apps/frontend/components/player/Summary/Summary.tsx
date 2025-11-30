@@ -1,10 +1,11 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
-import { View, Image, Text, TouchableOpacity, type TextLayoutEvent } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 
 import Skeleton from "@/components/shared/Skeleton";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
+import { useTypingAnimation } from "@/hooks/useTypingAnimation";
 import useWindowSize from "@/hooks/useWindowSize";
 import { DeviceMedia } from "@/types/mediaModule";
 import getTrackDetailString from "@/utils/getTrackDetailString";
@@ -23,7 +24,6 @@ interface SummaryProps {
 
 export default function Summary(props: SummaryProps) {
   const { width: windowWidth } = useWindowSize();
-  const [overviewLine, setOverviewLine] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
   // 디바이스에서 재생 중인 트랙 정보 병합
@@ -32,15 +32,15 @@ export default function Summary(props: SummaryProps) {
     trackSource?.from === "device" ? trackSource.track : {};
   const track = { ...props, ...placeholderTrack };
 
+  // 개요 문자열 타이핑 애니메이션 적용
+  const displayedOverview = useTypingAnimation(track.overview);
+
+  // 곡 메타데이터 문자열 생성
   const detailString = getTrackDetailString({
     artist: track.artist,
     album: track.album,
     publishedAt: track.publishedAt,
   });
-
-  const handleOverviewTextLayout = (e: TextLayoutEvent) => {
-    setOverviewLine(e.nativeEvent.lines.length);
-  };
 
   const handleExpand = () => {
     setExpanded(true);
@@ -79,26 +79,32 @@ export default function Summary(props: SummaryProps) {
       </View>
 
       {/* 요약 */}
-      {track.overview && track.overview.length > 0 && (
-        <Text style={styles.summary} numberOfLines={!expanded ? 8 : undefined}>
-          {track.overview}
-        </Text>
-      )}
+      <View style={{ height: expanded ? undefined : 192, overflow: "hidden" }}>
+        {displayedOverview.length > 0 ? (
+          <Text style={styles.overview} numberOfLines={expanded ? undefined : 8}>
+            {displayedOverview}
+          </Text>
+        ) : (
+          <View style={styles.overviewSkeletonContainer}>
+            <Skeleton height={16} width="100%" opacity={0.4} />
+            <Skeleton height={16} width="100%" opacity={0.4} />
+            <Skeleton height={16} width="80%" opacity={0.4} />
+            <Skeleton height={16} width="0%" opacity={0.4} />
+            <Skeleton height={16} width="100%" opacity={0.4} />
+            <Skeleton height={16} width="100%" opacity={0.4} />
+            <Skeleton height={16} width="0%" opacity={0.4} />
+            <Skeleton height={16} width="80%" opacity={0.4} />
+          </View>
+        )}
+      </View>
 
-      {/* 요약이 8줄 이상일 때만 자세히 보기 버튼 노출 */}
-      {overviewLine > 8 && !expanded && (
-        <TouchableOpacity style={styles.summaryButton} onPress={handleExpand}>
-          <MaterialIcons name={"expand-more"} size={20} style={styles.summaryButtonContent} />
-          <Text style={styles.summaryButtonContent}>자세히 보기</Text>
+      {/* 자세히 보기 상태가 아닐 때만 자세히 보기 버튼 노출 */}
+      {displayedOverview.length > 0 && !expanded && (
+        <TouchableOpacity style={styles.overviewButton} onPress={handleExpand}>
+          <MaterialIcons name={"expand-more"} size={20} style={styles.overviewButtonContent} />
+          <Text style={styles.overviewButtonContent}>자세히 보기</Text>
         </TouchableOpacity>
       )}
-
-      {/* 높이 측정을 위한 안 보이는 요약 */}
-      <View pointerEvents="none" style={styles.invisible}>
-        <Text style={styles.summary} onTextLayout={handleOverviewTextLayout}>
-          {track.overview}
-        </Text>
-      </View>
     </View>
   );
 }

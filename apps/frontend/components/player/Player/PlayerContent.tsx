@@ -12,7 +12,6 @@ import { colors } from "@/constants/colors";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
 import useProcessLyrics from "@/hooks/useProcessLyrics";
-import useScrollPositionPreservation from "@/hooks/useScrollPositionPreservation";
 import useTracking from "@/hooks/useTracking";
 import mixColors from "@/utils/mixColors";
 
@@ -40,7 +39,6 @@ export default function PlayerContent({ track, story }: PlayerContentProps) {
   const {
     isTrackingMode,
     scrollViewRef,
-    scrollYRef,
     handleScrollViewScroll,
     handleScrollEnd,
     handleMoveToCurrent,
@@ -48,13 +46,6 @@ export default function PlayerContent({ track, story }: PlayerContentProps) {
     currentY,
     track,
   });
-
-  // 스크롤 위치 보존 로직
-  const { contentRef: lyricsContainerRef, handleLayout: handleLyricsLayout } =
-    useScrollPositionPreservation({
-      scrollViewRef,
-      scrollYRef,
-    });
 
   // 처리된 가사 데이터
   const processedLyrics = useProcessLyrics({ story, track });
@@ -81,7 +72,7 @@ export default function PlayerContent({ track, story }: PlayerContentProps) {
 
           {/* 가사 */}
           {processedLyrics ? (
-            <View ref={lyricsContainerRef} onLayout={handleLyricsLayout} collapsable={false}>
+            <View collapsable={false}>
               <Lyrics
                 activeSentenceRef={currentRef}
                 lyrics={processedLyrics}
