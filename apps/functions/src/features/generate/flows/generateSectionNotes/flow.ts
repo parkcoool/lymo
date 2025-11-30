@@ -36,6 +36,7 @@ export const generateSectionNotesFlow = ai.defineFlow(
           ### Output Example
           ["Summary of the first section", "Summary of the second section", null, "Summary of the fourth section"]
       `,
+        model: "googleai/gemini-2.5-flash",
         prompt: JSON.stringify({ track, lyrics, targetLanguage: language }),
         output: { schema: z.string().nullable().array() },
         config: {

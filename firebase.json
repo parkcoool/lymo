@@ -9,8 +9,7 @@
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log",
-        "serviceAccount.json",
-        ".env"
+        "serviceAccount.json"
       ],
       "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run build"]
     }

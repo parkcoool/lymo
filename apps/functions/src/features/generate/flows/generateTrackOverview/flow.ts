@@ -25,6 +25,7 @@ export const generateTrackOverviewFlow = ai.defineFlow(
         - Sections must be separated by two newline characters.
         - The summary must be written in the given target language.
       `,
+      model: "googleai/gemini-2.5-flash",
       prompt: JSON.stringify({ track: trackInfo, lyrics, targetLanguage: language }),
       config: {
         temperature: 0.3,

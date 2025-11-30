@@ -2,14 +2,20 @@ import { StoryRequestSchema } from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
 import { logger } from "firebase-functions";
 import { onDocumentCreated } from "firebase-functions/firestore";
+import { defineSecret } from "firebase-functions/params";
 
 import CommonError from "@/features/shared/errors/CommonError";
 import { getOrCreateTrack } from "@/features/shared/tools/getOrCreateTrack";
 
 import { ensureDefaultStory } from "./helpers";
 
+const spotifyClientSecret = defineSecret("SPOTIFY_CLIENT_SECRET");
+
 export const onStoryRequestCreate = onDocumentCreated(
-  "storyRequests/{requestId}",
+  {
+    document: "storyRequests/{requestId}",
+    secrets: [spotifyClientSecret],
+  },
   async (event) => {
     try {
       if (!event.data) return;

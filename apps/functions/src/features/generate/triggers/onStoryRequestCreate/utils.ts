@@ -61,7 +61,7 @@ export class StoryUpdater {
     // story preview 문서 초기화
     this.storyRequestDocRef.set({
       ...this.baseFields,
-      status: "PENDING",
+      status: "IN_PROGRESS",
     });
   }
 
