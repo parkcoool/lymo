@@ -1,4 +1,4 @@
-import { StoryRequest, StoryRequestSchema } from "@lymo/schemas/doc";
+import { StoryRequest } from "@lymo/schemas/doc";
 import { RetrieveTrackInput } from "@lymo/schemas/functions";
 import { Language } from "@lymo/schemas/shared";
 import { ref, push as pushValue, onValue, Unsubscribe, set } from "@react-native-firebase/database";
@@ -42,12 +42,12 @@ export default function useRequestStory(params: UseRequestStoryParams) {
             unsubscribe.current = onValue(
               storyRequestRef,
               (snapshot) => {
-                const data = snapshot.val() as unknown;
-                const parsedData = StoryRequestSchema.parse(data);
-                push(parsedData);
+                // TODO: 스키마 검증
+                const data = snapshot.val() as StoryRequest;
+                push(data);
 
                 // status가 COMPLETED이면 완료 처리
-                if (parsedData.status === "COMPLETED") close();
+                if (data.status === "COMPLETED") close();
               },
               (err) => {
                 console.error("Error in snapshot listener:", err);

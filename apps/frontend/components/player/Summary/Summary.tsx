@@ -33,7 +33,7 @@ export default function Summary(props: SummaryProps) {
   const track = { ...props, ...placeholderTrack };
 
   // 개요 문자열 타이핑 애니메이션 적용
-  const displayedOverview = useTypingAnimation(track.overview);
+  const displayedOverview = useTypingAnimation(track.overview, 5);
 
   // 곡 메타데이터 문자열 생성
   const detailString = getTrackDetailString({
