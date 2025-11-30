@@ -1,17 +1,11 @@
-import { StoryRequest } from "@lymo/schemas/doc";
+import { StoryRequest, StoryRequestSchema } from "@lymo/schemas/doc";
 import { RetrieveTrackInput } from "@lymo/schemas/functions";
 import { Language } from "@lymo/schemas/shared";
-import {
-  collection,
-  doc,
-  FirebaseFirestoreTypes,
-  onSnapshot,
-  Unsubscribe,
-} from "@react-native-firebase/firestore";
+import { ref, push as pushValue, onValue, Unsubscribe, set } from "@react-native-firebase/database";
 import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 
-import db from "@/core/firestore";
+import database from "@/core/database";
 import { createStreamChannel } from "@/utils/createStreamChannel";
 
 type UseRequestStoryParams = RetrieveTrackInput & { language: Language };
@@ -38,27 +32,22 @@ export default function useRequestStory(params: UseRequestStoryParams) {
         (async () => {
           try {
             // 요청 문서 생성
-            const storyRequestDocRef = doc(
-              storyRequestCollectionRef
-            ) as FirebaseFirestoreTypes.DocumentReference<StoryRequest>;
-            await storyRequestDocRef.set({
-              ...params,
-              status: "PENDING",
-            });
+            const storyRequestRef = pushValue(storyRequestsRef);
+            await set(storyRequestRef, { ...params, status: "PENDING" });
 
             // 기존 구독 해제
             unsubscribe.current?.();
 
             // 스냅샷 구독 시작
-            unsubscribe.current = onSnapshot(
-              storyRequestDocRef,
+            unsubscribe.current = onValue(
+              storyRequestRef,
               (snapshot) => {
-                const data = snapshot.data();
-                if (!data) return;
-                push(data);
+                const data = snapshot.val() as unknown;
+                const parsedData = StoryRequestSchema.parse(data);
+                push(parsedData);
 
                 // status가 COMPLETED이면 완료 처리
-                if (data.status === "COMPLETED") close();
+                if (parsedData.status === "COMPLETED") close();
               },
               (err) => {
                 console.error("Error in snapshot listener:", err);
@@ -74,7 +63,7 @@ export default function useRequestStory(params: UseRequestStoryParams) {
         try {
           yield* iterator();
         } finally {
-          unsubscribe.current?.();
+          storyRequestsRef.off();
         }
       },
 
@@ -92,7 +81,4 @@ export default function useRequestStory(params: UseRequestStoryParams) {
   });
 }
 
-const storyRequestCollectionRef = collection(
-  db,
-  "storyRequests"
-) as FirebaseFirestoreTypes.CollectionReference<StoryRequest>;
+const storyRequestsRef = ref(database, `storyRequests`);

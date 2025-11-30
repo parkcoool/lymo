@@ -9,7 +9,7 @@ import {
   type FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
 
-import db from "@/core/firestore";
+import firestore from "@/core/firestore";
 
 interface GetStoryByTrackIdParams {
   trackId: string;
@@ -17,7 +17,7 @@ interface GetStoryByTrackIdParams {
 }
 
 export default async function getStoryByTrackId({ trackId, language }: GetStoryByTrackIdParams) {
-  const storyCollectionRef = collection(db, "stories");
+  const storyCollectionRef = collection(firestore, "stories");
   const q = query(
     storyCollectionRef,
     where("language", "==", language),

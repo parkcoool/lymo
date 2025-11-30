@@ -1,7 +1,7 @@
 import { connectFirestoreEmulator, getFirestore } from "@react-native-firebase/firestore";
 import expoConstants from "expo-constants";
 
-const db = getFirestore();
+const firestore = getFirestore();
 
 if (__DEV__) {
   const debuggerHost = expoConstants.expoConfig?.hostUri;
@@ -9,10 +9,10 @@ if (__DEV__) {
   console.log(`Connecting to Firestore Emulator at ${localhost}:8080`);
 
   try {
-    connectFirestoreEmulator(db, localhost, 8080);
+    connectFirestoreEmulator(firestore, localhost, 8080);
   } catch (e) {
     console.error("Error connecting to emulator:", e);
   }
 }
 
-export default db;
+export default firestore;

@@ -8,10 +8,10 @@ import {
   type FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
 
-import db from "@/core/firestore";
+import firestore from "@/core/firestore";
 
 export default async function getPopularTracks() {
-  const trackCollectionRef = collection(db, "tracks");
+  const trackCollectionRef = collection(firestore, "tracks");
   const q = query(
     trackCollectionRef,
     orderBy("stats.viewCount", "desc"),
