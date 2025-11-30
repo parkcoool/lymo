@@ -2,6 +2,7 @@ import {
   RetrieveTrackInputSchema as InputSchema,
   RetrieveTrackOutputSchema as OutputSchema,
 } from "@lymo/schemas/functions";
+import { logger } from "firebase-functions";
 
 import ai from "@/core/genkit";
 import CommonError from "@/features/shared/errors/CommonError";
@@ -19,8 +20,10 @@ export const retrieveTrack = ai.defineFlow(
       return { success: true as const, data: track };
     } catch (error) {
       if (error instanceof CommonError) {
+        logger.info(`An error occurred in \`retrieveTrack\`: ${error.code}`, error);
         return { success: false as const, error: error.code, message: error.message };
       }
+      logger.error(`An unexpected error in \`retrieveTrack\``, error);
       throw error;
     }
   }

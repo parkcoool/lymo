@@ -29,7 +29,7 @@ export const onStoryRequestCreate = onDocumentCreated(
       await ensureDefaultStory({ track: track.data, trackId: track.id, requestId, language });
     } catch (error) {
       if (error instanceof CommonError) {
-        logger.error(`An error occurred in \`onStoryRequestCreate\`: ${error.code}`, error);
+        logger.info(`An error occurred in \`onStoryRequestCreate\`: ${error.code}`, error);
         return;
       }
 
