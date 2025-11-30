@@ -1,40 +1,29 @@
-import type { LyricsDoc, ProviderDoc, TrackDetailDoc, TrackDoc } from "@lymo/schemas/doc";
-import { LyricsProvider } from "@lymo/schemas/shared";
+import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { Stack } from "expo-router";
 import { useMemo, useRef } from "react";
-import { ScrollView, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import Lyrics from "@/components/player/Lyrics";
 import MoveToCurrent from "@/components/player/MoveToCurrent";
-import ProviderInformation from "@/components/player/ProviderInformation";
 import StartTrack from "@/components/player/StartTrack";
 import Summary from "@/components/player/Summary";
 import Header from "@/components/shared/Header";
+import { colors } from "@/constants/colors";
 import useCoverColorQuery from "@/hooks/queries/useCoverColorQuery";
 import useYOffsetInWindow from "@/hooks/useActiveSentenceY";
-import useScrollPositionPreservation from "@/hooks/useScrollPositionPreservation";
+import useProcessLyrics from "@/hooks/useProcessLyrics";
 import useTracking from "@/hooks/useTracking";
 import mixColors from "@/utils/mixColors";
-import processLyrics from "@/utils/processLyrics";
 
 import { styles } from "./Player.styles";
 
-interface TrackPlayerProps {
-  track: TrackDoc;
-  lyrics: LyricsDoc["lyrics"];
-  lyricsProvider: LyricsProvider;
-  provider?: ProviderDoc;
-  trackDetail: Omit<TrackDetailDoc, "lyricsProvider"> & { lyricsProvider?: LyricsProvider };
+interface PlayerContentProps {
+  track?: Track;
+  story?: BaseStoryFields & Partial<GeneratedStoryFields>;
 }
 
-export default function PlayerContent({
-  track,
-  lyrics,
-  lyricsProvider,
-  provider,
-  trackDetail,
-}: TrackPlayerProps) {
-  const { data: coverColor } = useCoverColorQuery(track.coverUrl);
+export default function PlayerContent({ track, story }: PlayerContentProps) {
+  const { data: coverColor } = useCoverColorQuery(track?.albumArt);
   const headerBackgroundColor = useMemo(
     () => mixColors([coverColor ?? "#000000", "#000000CC"]),
     [coverColor]
@@ -50,7 +39,6 @@ export default function PlayerContent({
   const {
     isTrackingMode,
     scrollViewRef,
-    scrollYRef,
     handleScrollViewScroll,
     handleScrollEnd,
     handleMoveToCurrent,
@@ -59,24 +47,8 @@ export default function PlayerContent({
     track,
   });
 
-  // 스크롤 위치 보존 로직
-  const { contentRef: lyricsContainerRef, handleLayout: handleLyricsLayout } =
-    useScrollPositionPreservation({
-      scrollViewRef,
-      scrollYRef,
-    });
-
   // 처리된 가사 데이터
-  const processedLyrics = useMemo(
-    () =>
-      processLyrics({
-        rawLyrics: lyrics,
-        lyricsSplitIndices: trackDetail.lyricsSplitIndices,
-        translations: trackDetail.translations,
-        paragraphSummaries: trackDetail.paragraphSummaries,
-      }),
-    [lyrics, trackDetail]
-  );
+  const processedLyrics = useProcessLyrics({ story, track });
 
   return (
     <>
@@ -89,26 +61,31 @@ export default function PlayerContent({
         >
           {/* 곡 메타데이터 및 설명 */}
           <Summary
-            title={track.title}
-            artist={track.artist}
-            album={track.album}
-            publishedAt={track.publishedAt}
-            summary={trackDetail?.summary}
-            coverUrl={track.coverUrl}
+            title={track?.title}
+            artist={track?.artists}
+            album={track?.album}
+            publishedAt={track?.publishedAt}
+            overview={story?.overview}
+            albumArt={track?.albumArt}
             coverColor={coverColor}
           />
 
-          {/* 제공자 정보 */}
-          <ProviderInformation provider={provider} />
-
           {/* 가사 */}
-          <View ref={lyricsContainerRef} onLayout={handleLyricsLayout} collapsable={false}>
-            <Lyrics
-              activeSentenceRef={currentRef}
-              lyrics={processedLyrics}
-              lyricsProvider={lyricsProvider}
+          {processedLyrics ? (
+            <View collapsable={false}>
+              <Lyrics
+                activeSentenceRef={currentRef}
+                lyrics={processedLyrics}
+                lyricsProvider={story?.lyricsProvider}
+              />
+            </View>
+          ) : (
+            <ActivityIndicator
+              style={{ marginTop: 50 }}
+              size={60}
+              color={colors.onBackgroundSubtle}
             />
-          </View>
+          )}
         </ScrollView>
 
         {/* 현재 가사로 이동 */}
