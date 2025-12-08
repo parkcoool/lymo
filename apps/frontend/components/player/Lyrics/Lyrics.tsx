@@ -1,3 +1,4 @@
+import { StoryRequest } from "@lymo/schemas/doc";
 import { Lyric, LyricsProvider } from "@lymo/schemas/shared";
 import { Ref, useMemo } from "react";
 import { Text, View } from "react-native";
@@ -17,9 +18,10 @@ interface LyricsProps {
   lyrics: Section[];
   lyricsProvider?: LyricsProvider;
   activeSentenceRef: Ref<View>;
+  status?: StoryRequest["status"];
 }
 
-export default function Lyrics({ lyrics, lyricsProvider, activeSentenceRef }: LyricsProps) {
+export default function Lyrics({ lyrics, lyricsProvider, activeSentenceRef, status }: LyricsProps) {
   const { setting } = useSettingStore();
   const trackKey = useTrackKey();
   const timestamp = useDeviceMediaTimestamp();
@@ -43,6 +45,7 @@ export default function Lyrics({ lyrics, lyricsProvider, activeSentenceRef }: Ly
             key={sectionIndex}
             note={section.note}
             active={isSynced && isActiveParagraph(section, adjustedTimestamp)}
+            status={status}
           >
             {section.lyrics.map((lyric, lyricIndex) => {
               const isActive = isSynced && isActiveSentence(lyric, adjustedTimestamp);
@@ -55,6 +58,7 @@ export default function Lyrics({ lyrics, lyricsProvider, activeSentenceRef }: Ly
                   translation={lyric.translation}
                   active={isActive}
                   ref={isActive ? activeSentenceRef : undefined}
+                  status={status}
                 />
               );
             })}

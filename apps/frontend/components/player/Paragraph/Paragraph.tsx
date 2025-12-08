@@ -1,3 +1,4 @@
+import { StoryRequest } from "@lymo/schemas/doc";
 import { memo, useEffect, useRef } from "react";
 import { View, Text, Animated } from "react-native";
 import Reanimated, { Easing, LinearTransition } from "react-native-reanimated";
@@ -11,11 +12,12 @@ interface ParagraphProps {
   note: string | null;
   active: boolean;
   children: React.ReactNode;
+  status?: StoryRequest["status"];
 }
 
-const Paragraph = memo(({ note, active, children }: ParagraphProps) => {
+const Paragraph = memo(({ note, active, children, status }: ParagraphProps) => {
   const parsedNote = note === "null" ? null : note;
-  const displayedNote = useTypingAnimation(parsedNote);
+  const displayedNote = useTypingAnimation(parsedNote, 10, status === "IN_PROGRESS");
 
   const progress = useRef(new Animated.Value(0)).current;
 

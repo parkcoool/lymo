@@ -6,9 +6,14 @@ import { useState, useRef, useEffect } from "react";
  *
  * @param text 표시할 전체 텍스트
  * @param speed 타이핑 속도 (ms)
+ * @param enabled 타이핑 애니메이션 활성화 여부
  * @returns 현재 타이핑 진행 중인 텍스트
  */
-export const useTypingAnimation = (text?: string | null, speed: number = 10) => {
+export const useTypingAnimation = (
+  text?: string | null,
+  speed: number = 10,
+  enabled: boolean = true
+) => {
   const [displayedText, setDisplayedText] = useState(text || "");
   const currentTextRef = useRef(text || "");
   const targetTextRef = useRef(text || "");
@@ -25,6 +30,17 @@ export const useTypingAnimation = (text?: string | null, speed: number = 10) => 
       }
       currentTextRef.current = "";
       setDisplayedText("");
+      return;
+    }
+
+    // enabled가 false이면 즉시 타이핑 애니메이션 종료
+    if (!enabled) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      currentTextRef.current = text;
+      setDisplayedText(text);
       return;
     }
 
@@ -55,7 +71,7 @@ export const useTypingAnimation = (text?: string | null, speed: number = 10) => 
     if (!timeoutRef.current) {
       animate();
     }
-  }, [text, speed]);
+  }, [text, speed, enabled]);
 
   useEffect(() => {
     return () => {

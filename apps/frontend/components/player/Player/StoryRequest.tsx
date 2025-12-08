@@ -29,5 +29,5 @@ export default function StoryRequest({ track, ...props }: RequestTrackProps) {
     story = storyData;
   }
 
-  return <PlayerContent track={track} story={story} />;
+  return <PlayerContent track={track} story={story} status={data?.status} />;
 }

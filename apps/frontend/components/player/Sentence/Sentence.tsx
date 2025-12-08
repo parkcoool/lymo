@@ -1,3 +1,4 @@
+import { StoryRequest } from "@lymo/schemas/doc";
 import React, { memo, Ref, useEffect, useRef } from "react";
 import { View, Animated } from "react-native";
 
@@ -12,11 +13,12 @@ interface SentenceProps {
   translation?: string | null;
   active: boolean;
   ref?: Ref<View>;
+  status?: StoryRequest["status"];
 }
 
-const Sentence = memo(({ sentence, translation, active, ref }: SentenceProps) => {
+const Sentence = memo(({ sentence, translation, active, ref, status }: SentenceProps) => {
   const progress = useRef(new Animated.Value(0)).current;
-  const displayedTranslation = useTypingAnimation(translation);
+  const displayedTranslation = useTypingAnimation(translation, 10, status === "IN_PROGRESS");
 
   useEffect(() => {
     Animated.timing(progress, {
@@ -34,11 +36,11 @@ const Sentence = memo(({ sentence, translation, active, ref }: SentenceProps) =>
   return (
     <View style={styles.container} ref={ref}>
       <Animated.Text style={[styles.sentence, { color }]}>{sentence}</Animated.Text>
-      {/* 번역 스켈레톤 */}
-      {translation === undefined && <Skeleton width="70%" height={16} opacity={0.4} />}
-
-      {/* 번역 표시 */}
-      {!!displayedTranslation && (
+      {translation === undefined && (status === "PENDING" || status === "IN_PROGRESS") ? (
+        // 번역 스켈레톤
+        <Skeleton width="70%" height={16} opacity={0.4} />
+      ) : (
+        // 번역 텍스트
         <Animated.Text style={[styles.translation, { color }]}>
           {displayedTranslation}
         </Animated.Text>

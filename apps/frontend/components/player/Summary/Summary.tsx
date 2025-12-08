@@ -1,4 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { StoryRequest } from "@lymo/schemas/doc";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { View, Image, Text, TouchableOpacity } from "react-native";
@@ -19,10 +20,12 @@ interface SummaryProps {
   albumArt?: string;
   coverColor?: string;
   publishedAt?: string | null;
+
   overview?: string;
+  status?: StoryRequest["status"];
 }
 
-export default function Summary(props: SummaryProps) {
+export default function Summary({ overview, status, ...props }: SummaryProps) {
   const { width: windowWidth } = useWindowSize();
   const [expanded, setExpanded] = useState(false);
 
@@ -36,7 +39,7 @@ export default function Summary(props: SummaryProps) {
   const track = { ...placeholderTrack, ...filteredProps };
 
   // 개요 문자열 타이핑 애니메이션 적용
-  const displayedOverview = useTypingAnimation(track.overview, 5);
+  const displayedOverview = useTypingAnimation(overview, 0.5, status === "IN_PROGRESS");
 
   // 곡 메타데이터 문자열 생성
   const detailString = getTrackDetailString({
