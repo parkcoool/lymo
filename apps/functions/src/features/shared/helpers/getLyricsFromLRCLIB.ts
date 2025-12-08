@@ -31,23 +31,19 @@ export default async function getLyricsFromLRCLIB({
   artists,
   duration,
 }: GetLyricsFromLRCLIBParams) {
-  let lrcLibResult: LRCLIBResult | null = null;
   for (let r = 1; r <= artists.length; r++) {
     const artistStringCandidates = getCombinations(artists, r);
 
     for (const artistString of artistStringCandidates) {
-      const lrcLibResultCandidate = await searchLRCLib({
+      const result = await searchLRCLib({
         title: title,
         artist: artistString.join(" "),
         duration: duration,
       });
 
-      if (lrcLibResultCandidate) {
-        lrcLibResult = lrcLibResultCandidate;
-        break;
-      }
+      if (result) return result;
     }
   }
 
-  return lrcLibResult;
+  return null;
 }
