@@ -25,5 +25,6 @@ export default function useStoryQuery({
       return getStoryByTrackId({ trackId, language });
     },
     enabled,
+    staleTime: 1000 * 60 * 5,
   });
 }

@@ -16,5 +16,6 @@ export default function useRetrieveTrack(params: RetrieveTrackInput) {
       throw new Error(res.data.message || res.data.error);
     },
     throwOnError: true,
+    staleTime: 1000 * 60 * 5,
   });
 }

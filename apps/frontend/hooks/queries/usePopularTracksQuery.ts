@@ -10,5 +10,6 @@ export default function usePopularTracksQuery() {
   return useSuspenseQuery({
     queryKey: ["popular-tracks"],
     queryFn: async () => getPopularTracks(),
+    staleTime: 1000 * 60 * 5,
   });
 }

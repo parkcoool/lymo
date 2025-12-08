@@ -10,5 +10,6 @@ export default function useNewTracksQuery() {
   return useSuspenseQuery({
     queryKey: ["new-tracks"],
     queryFn: async () => getNewTracks(),
+    staleTime: 1000 * 60 * 5,
   });
 }
