@@ -14,7 +14,7 @@ import { styles } from "./Summary.styles";
 
 interface SummaryProps {
   title?: string;
-  artist?: string[];
+  artists?: string[];
   album?: string | null;
   albumArt?: string;
   coverColor?: string;
@@ -30,14 +30,17 @@ export default function Summary(props: SummaryProps) {
   const { trackSource } = useTrackSourceStore();
   const placeholderTrack: Partial<DeviceMedia> =
     trackSource?.from === "device" ? trackSource.track : {};
-  const track = { ...props, ...placeholderTrack };
+  const filteredProps = Object.fromEntries(
+    Object.entries(props).filter(([_, value]) => value !== undefined && value !== null)
+  ) as Partial<SummaryProps>;
+  const track = { ...placeholderTrack, ...filteredProps };
 
   // 개요 문자열 타이핑 애니메이션 적용
   const displayedOverview = useTypingAnimation(track.overview, 5);
 
   // 곡 메타데이터 문자열 생성
   const detailString = getTrackDetailString({
-    artist: track.artist,
+    artist: track.artists ?? track.artist,
     album: track.album,
     publishedAt: track.publishedAt,
   });
@@ -50,7 +53,13 @@ export default function Summary(props: SummaryProps) {
     <View style={styles.wrapper}>
       <View style={[styles.coverWrapper, { width: windowWidth, height: windowWidth }]}>
         {/* 커버 이미지 */}
-        <Image source={{ uri: track.albumArt }} style={styles.cover} />
+        <Image
+          source={{ uri: track.albumArt }}
+          style={[styles.cover]}
+          width={windowWidth}
+          height={windowWidth}
+          resizeMode="cover"
+        />
 
         {/* 그라데이션 오버레이 */}
         <LinearGradient
@@ -68,6 +77,7 @@ export default function Summary(props: SummaryProps) {
           ) : (
             <Skeleton height={24} width="50%" />
           )}
+
           {detailString.length > 0 ? (
             <Text style={styles.details} numberOfLines={3}>
               {detailString}

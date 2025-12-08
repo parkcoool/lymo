@@ -62,7 +62,7 @@ export default function PlayerContent({ track, story }: PlayerContentProps) {
           {/* 곡 메타데이터 및 설명 */}
           <Summary
             title={track?.title}
-            artist={track?.artists}
+            artists={track?.artists}
             album={track?.album}
             publishedAt={track?.publishedAt}
             overview={story?.overview}

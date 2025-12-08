@@ -6,7 +6,9 @@ import { Dimensions, type ScaledSize } from "react-native";
  * @returns 창의 가로 및 세로 크기
  */
 export default function useWindowSize() {
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [windowSize, setWindowSize] = useState<{ width: number; height: number }>(
+    Dimensions.get("window")
+  );
 
   useEffect(() => {
     const handleResize = ({ window }: { window: ScaledSize }) => {
@@ -20,7 +22,7 @@ export default function useWindowSize() {
 
     // 초기 크기 설정
     const window = Dimensions.get("window");
-    setWindowSize(window);
+    setWindowSize({ width: window.width, height: window.height });
   }, []);
 
   return windowSize;
