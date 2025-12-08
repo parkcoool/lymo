@@ -1,7 +1,7 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 
 import { useSettingStore } from "@/contexts/useSettingStore";
-import useRequestTrack from "@/hooks/queries/useRequestStoryQuery";
+import useRequestStory from "@/hooks/queries/useRequestStoryQuery";
 
 import PlayerContent from "./PlayerContent";
 
@@ -18,7 +18,7 @@ type RequestTrackProps = (
 
 export default function StoryRequest({ track, ...props }: RequestTrackProps) {
   const { setting } = useSettingStore();
-  const { data, error } = useRequestTrack({ ...props, language: setting.defaultLanguage });
+  const { data, error } = useRequestStory({ ...props, language: setting.defaultLanguage });
 
   if (error) throw error;
 
