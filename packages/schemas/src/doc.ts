@@ -112,3 +112,16 @@ export const StoryRequestSchema = z.union([
   }),
 ]);
 export type StoryRequest = z.infer<typeof StoryRequestSchema>;
+
+// ==============================
+// retrieveTrackCache 관련 스키마
+// ==============================
+
+export const RetrieveTrackCacheSchema = z.object({
+  trackId: z.string(),
+  title: z.string(),
+  artist: z.string(),
+  durationInSeconds: z.number(),
+  createdAt: z.string(),
+});
+export type RetrieveTrackCache = z.infer<typeof RetrieveTrackCacheSchema>;

@@ -9,6 +9,9 @@ import { createTrackDoc } from "@/features/shared/tools/createTrackDoc";
 import { getTrackDoc } from "@/features/shared/tools/getTrackDoc";
 import { searchSpotify } from "@/features/shared/tools/searchSpotify";
 
+import { createRetrieveTrackCacheDoc } from "./createRetrieveTrackCacheDoc";
+import { getRetrieveTrackCacheDoc } from "./getRetrieveTrackCacheDoc";
+
 export const InputSchema = z.union([
   z.object({
     trackId: z.string(),
@@ -36,11 +39,16 @@ export const getOrCreateTrack = ai.defineTool(
   async (input) => {
     // 1) title, artist, durationInSeconds를 전달한 경우 트랙 검색
     if ("title" in input && "artist" in input && "durationInSeconds" in input) {
-      // 1-1) DB에서 먼저 조회
-      const trackResult = await getTrackDoc(input);
-      if (trackResult) return trackResult;
+      // 1-1) 캐시 조회
+      {
+        const trackId = await getRetrieveTrackCacheDoc(input);
+        if (trackId) {
+          const trackQuery = await getTrackDoc({ trackId });
+          if (trackQuery) return trackQuery;
+        }
+      }
 
-      // 1-2) DB에 없는 경우 외부 API에서 조회
+      // 1-2) 캐시 miss 시 외부 API에서 조회
       const spotifyResult = await searchSpotify(input);
       if (!spotifyResult) throw new CommonError(ERROR_CODES.EXTERNAL_TRACK_NOT_FOUND);
       const trackId = spotifyResult.id;
@@ -67,7 +75,10 @@ export const getOrCreateTrack = ai.defineTool(
         stats: { storyCount: 0, viewCount: 0 },
       };
 
-      // 1-5) 문서 생성 및 반환
+      // 1-5) 캐시 문서 생성
+      await createRetrieveTrackCacheDoc({ ...input, trackId });
+
+      // 1-6) 문서 생성 및 반환
       await createTrackDoc({ trackId, track });
       return { id: trackId, data: track };
     }
