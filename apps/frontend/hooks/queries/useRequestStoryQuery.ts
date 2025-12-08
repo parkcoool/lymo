@@ -1,7 +1,14 @@
 import { StoryRequest } from "@lymo/schemas/doc";
 import { RetrieveTrackInput } from "@lymo/schemas/functions";
 import { Language } from "@lymo/schemas/shared";
-import { ref, push as pushValue, onValue, Unsubscribe, set } from "@react-native-firebase/database";
+import {
+  ref,
+  push as pushValue,
+  onValue,
+  Unsubscribe,
+  set,
+  remove,
+} from "@react-native-firebase/database";
 import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 
@@ -41,16 +48,24 @@ export default function useRequestStory(params: UseRequestStoryParams) {
             // 스냅샷 구독 시작
             unsubscribe.current = onValue(
               storyRequestRef,
-              (snapshot) => {
+              async (snapshot) => {
                 // TODO: 스키마 검증
                 const data = snapshot.val() as StoryRequest;
                 push(data);
 
                 // status가 COMPLETED이면 완료 처리
-                if (data.status === "COMPLETED") close();
+                if (data.status === "COMPLETED") {
+                  await remove(storyRequestRef);
+                  unsubscribe.current?.();
+
+                  close();
+                }
               },
-              (err) => {
+              async (err) => {
                 console.error("Error in snapshot listener:", err);
+                await remove(storyRequestRef);
+                unsubscribe.current?.();
+
                 fail(err);
               }
             );
