@@ -23,12 +23,11 @@ const Paragraph = memo(({ note, active, children, status }: ParagraphProps) => {
 
   useEffect(() => {
     Animated.timing(progress, {
-      toValue: active ? 1 : 0,
+      toValue: active && parsedNote !== null ? 1 : 0,
       duration: 300,
       useNativeDriver: false,
     }).start();
-  }, [active, progress]);
-
+  }, [parsedNote, active, progress]);
   const backgroundColor = progress.interpolate({
     inputRange: [0, 1],
     outputRange: ["transparent", `${colors.white}20`],
