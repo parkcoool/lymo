@@ -5,7 +5,6 @@ import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import Lyrics from "@/components/player/Lyrics";
 import MoveToCurrent from "@/components/player/MoveToCurrent";
-import StartTrack from "@/components/player/StartTrack";
 import Summary from "@/components/player/Summary";
 import Header from "@/components/shared/Header";
 import { colors } from "@/constants/colors";
@@ -95,9 +94,6 @@ export default function PlayerContent({ track, story, status }: PlayerContentPro
         {!isTrackingMode && (
           <MoveToCurrent activeSentenceY={currentY} onPress={handleMoveToCurrent} />
         )}
-
-        {/* 트래킹 모드 활성화 */}
-        <StartTrack isTrackingMode={isTrackingMode} onPress={handleMoveToCurrent} />
       </View>
 
       {/* 헤더 설정 */}
