@@ -39,7 +39,7 @@ export const searchSpotify = ai.defineTool(
     spotify.setAccessToken(credentialsResponse.body["access_token"]);
 
     const tracksResponse = await spotify.searchTracks(`${title} ${artist}`, {
-      market: "KR",
+      // market: "KR",
     });
     const tracks = tracksResponse.body.tracks?.items;
     if (!tracks || tracks.length === 0) return null;
