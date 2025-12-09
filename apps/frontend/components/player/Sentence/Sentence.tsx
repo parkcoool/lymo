@@ -36,11 +36,13 @@ const Sentence = memo(({ sentence, translation, active, ref, status }: SentenceP
   return (
     <View style={styles.container} ref={ref}>
       <Animated.Text style={[styles.sentence, { color }]}>{sentence}</Animated.Text>
-      {translation === undefined && (status === "PENDING" || status === "IN_PROGRESS") ? (
-        // 번역 스켈레톤
+      {/* 번역 스켈레톤 */}
+      {translation === undefined && (status === "PENDING" || status === "IN_PROGRESS") && (
         <Skeleton width="70%" height={16} opacity={0.4} />
-      ) : (
-        // 번역 텍스트
+      )}
+
+      {/* 번역 텍스트 */}
+      {displayedTranslation.length > 0 && (
         <Animated.Text style={[styles.translation, { color }]}>
           {displayedTranslation}
         </Animated.Text>
