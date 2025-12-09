@@ -1,4 +1,4 @@
-package com.anonymous.lymoapp
+package com.parkcool.lymoapp
 
 import android.content.ComponentName
 import android.media.session.MediaController

@@ -1,4 +1,4 @@
-package com.anonymous.lymoapp
+package com.parkcool.lymoapp
 
 import android.app.Application
 import android.content.res.Configuration
@@ -16,7 +16,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
-import com.anonymous.lymoapp.MediaPackage
+import com.parkcool.lymoapp.MediaPackage
 
 class MainApplication : Application(), ReactApplication {
 

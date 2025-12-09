@@ -1,4 +1,4 @@
-package com.anonymous.lymoapp
+package com.parkcool.lymoapp
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

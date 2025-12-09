@@ -3,53 +3,11 @@
     "name": "Lymo",
     "slug": "lymoapp",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "scheme": "lymoapp",
-    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.lymoapp"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#3B1C12"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": true,
-      "package": "com.anonymous.lymoapp",
-      "googleServicesFile": "./google-services.json"
-    },
     "web": {
       "output": "static",
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "@react-native-firebase/app",
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
-        }
-      ],
-      "expo-web-browser",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "usesCleartextTraffic": true
-          }
-        }
-      ]
-    ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
@@ -60,6 +18,9 @@
         "projectId": "55ac0c16-e58f-4a88-9f6a-ea3d402061df"
       }
     },
-    "owner": "parkcool"
+    "owner": "parkcool",
+    "android": {
+      "package": "com.parkcool.lymoapp"
+    }
   }
 }
