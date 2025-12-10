@@ -50,7 +50,13 @@ export default function useRequestStory(params: UseRequestStoryParams) {
               storyRequestRef,
               async (snapshot) => {
                 // TODO: 스키마 검증
-                const data = snapshot.val() as StoryRequest;
+                const data = snapshot.val() as StoryRequest | null;
+                if (!data) {
+                  unsubscribe.current?.();
+                  close();
+                  return;
+                }
+
                 push(data);
 
                 // status가 COMPLETED이면 완료 처리
