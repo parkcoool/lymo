@@ -41,7 +41,7 @@ export default function useTracking({ currentY, track }: UseTrackingParams): Use
       if (isAutoScrollingRef.current || Math.abs(scrollYRef.current - y) < 5) return;
 
       isAutoScrollingRef.current = true;
-      console.log("auto scrolling started");
+      // console.log("auto scrolling started");
       scrollViewRef.current?.scrollTo({ y, x: 0, animated: true });
     },
     [isAutoScrollingRef]
@@ -56,7 +56,7 @@ export default function useTracking({ currentY, track }: UseTrackingParams): Use
       if (isAutoScrollingRef.current || !isTrackingMode) return;
 
       setIsTrackingMode(false);
-      console.log("tracking mode deactivated");
+      // console.log("tracking mode deactivated");
     },
     [isTrackingMode]
   );
@@ -65,14 +65,14 @@ export default function useTracking({ currentY, track }: UseTrackingParams): Use
   const handleScrollEnd = useCallback(() => {
     if (!isAutoScrollingRef.current) return;
     isAutoScrollingRef.current = false;
-    console.log("auto scrolling ended");
+    // console.log("auto scrolling ended");
   }, []);
 
   // 현재 가사로 이동 이벤트 핸들러
   const handleMoveToCurrent = useCallback(() => {
     scrollTo(scrollYRef.current + currentY - 200);
     setIsTrackingMode(true);
-    console.log("tracking mode activated");
+    // console.log("tracking mode activated");
   }, [currentY, scrollTo]);
 
   // tracking 모드일 때 현재 활성화된 문장으로 자동 스크롤
@@ -98,7 +98,7 @@ export default function useTracking({ currentY, track }: UseTrackingParams): Use
       // 현재 문장이 화면에 보이면 1초 타이머 시작
       visibilityTimerRef.current = setTimeout(() => {
         setIsTrackingMode(true);
-        console.log("tracking mode auto-activated");
+        // console.log("tracking mode auto-activated");
       }, 700);
     } else {
       // 현재 문장이 화면에서 벗어나면 타이머 취소
