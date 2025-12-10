@@ -13,7 +13,7 @@ export default function useProcessLyrics({ track, story }: UseProcessLyricsParam
     if (!track) return;
 
     // 해석 정보가 없는 경우
-    if (!story || !story.lyricTranslations || !story.sectionBreaks || !story.sectionNotes) {
+    if (!story || (!story.lyricTranslations && !story.sectionBreaks && !story.sectionNotes)) {
       const lyrics = Object.values(track.lyrics)[0];
       if (!lyrics) return;
 
@@ -31,13 +31,7 @@ export default function useProcessLyrics({ track, story }: UseProcessLyricsParam
       // 가사 관련 데이터가 모두 존재하는지 검증
       const lyrics = track.lyrics[story.lyricsProvider];
       const { sectionBreaks, lyricTranslations, sectionNotes } = story;
-      if (
-        lyrics === undefined ||
-        sectionBreaks === undefined ||
-        lyricTranslations === undefined ||
-        sectionNotes === undefined
-      )
-        return;
+      if (lyrics === undefined) return;
 
       // 가사 처리
       return groupLyricsIntoSections({ lyrics, sectionBreaks, lyricTranslations, sectionNotes });

@@ -7,9 +7,9 @@ interface ProcessLyricsParams {
   /**
    * lyrics[i]와 lyrics[i+1] 사이에 문단 구분이 있음을 의미하는 인덱스 배열
    */
-  sectionBreaks: number[];
-  lyricTranslations: (string | null)[];
-  sectionNotes: (string | null)[];
+  sectionBreaks?: number[];
+  lyricTranslations?: (string | null)[];
+  sectionNotes?: (string | null)[];
 }
 
 /**
@@ -28,7 +28,7 @@ export default function groupLyricsIntoSections({
 }: ProcessLyricsParams) {
   // groupLyrics가 반환한 인덱스(i)는 rawLyrics[i]와 rawLyrics[i+1] 사이 경계를 의미하므로
   // 이를 문단 시작 인덱스로 변환하기 위해 +1 해준다.
-  const paragraphStartIndices = [0, ...sectionBreaks.map((i) => i + 1), rawLyrics.length];
+  const paragraphStartIndices = [0, ...(sectionBreaks ?? []).map((i) => i + 1), rawLyrics.length];
   const sections: Section[] = [];
 
   for (let p = 0; p < paragraphStartIndices.length - 1; p++) {
@@ -40,13 +40,13 @@ export default function groupLyricsIntoSections({
       const globalIdx = startIdx + idx;
       return {
         text: lyric.text,
-        translation: lyricTranslations[globalIdx],
+        translation: lyricTranslations?.[globalIdx],
         start: lyric.start,
         end: lyric.end,
       };
     });
 
-    const section: Section = { lyrics, note: sectionNotes[p] ?? null };
+    const section: Section = { lyrics, note: sectionNotes?.[p] ?? null };
     sections.push(section);
   }
 
