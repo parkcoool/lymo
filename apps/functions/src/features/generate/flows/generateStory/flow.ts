@@ -106,9 +106,7 @@ export const generateStoryFlow = ai.defineFlow(
         // 3-2) 스트림 처리
         for await (const chunk of stream) {
           const { sentenceIndex, translation } = chunk;
-          if (typeof lyricTranslations[sentenceIndex] === "string")
-            lyricTranslations[sentenceIndex] += translation;
-          else lyricTranslations[sentenceIndex] = translation;
+          lyricTranslations[sentenceIndex] = translation;
 
           sendChunk({ lyricTranslations });
         }
