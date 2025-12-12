@@ -1,7 +1,7 @@
 <div align="center">
-   
-   <img width="223" height="80" alt="brand" src="https://github.com/user-attachments/assets/ca021ad1-8496-4cf5-904e-d5cc21036f48" />
-      
+
+   <img width="1024" height="500" alt="graphic" src="https://github.com/user-attachments/assets/aa177568-e53d-4804-8de1-4645237a80cb" />
+
    **이야기와 감정을 온전히 이해하는 새로운 음악 감상**
    
    <i>Lymo는 어떤 음악 앱을 사용하든, 그 안에 담긴 숨겨진 의미와 이야기를 깊이 있게 탐색해주는 음악 감상 앱입니다.</i>
