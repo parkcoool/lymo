@@ -1,5 +1,5 @@
-import { StoryRequestSchema } from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
+import { StoryRequestSchema } from "@lymo/schemas/rtdb";
 import { logger } from "firebase-functions";
 import { onValueCreated } from "firebase-functions/database";
 import { defineSecret } from "firebase-functions/params";

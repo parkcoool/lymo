@@ -1,19 +1,14 @@
-import { StoryRequest } from "@lymo/schemas/doc";
+import { BaseStoryFields, GeneratedStoryFields } from "@lymo/schemas/doc";
 import { RetrieveTrackInput } from "@lymo/schemas/functions";
+import { StoryRequest, StoryRequestSchema } from "@lymo/schemas/rtdb";
 import { Language } from "@lymo/schemas/shared";
-import {
-  ref,
-  push as pushValue,
-  onValue,
-  Unsubscribe,
-  set,
-  remove,
-} from "@react-native-firebase/database";
+import { ref, push as pushValue, onValue, Unsubscribe, set } from "@react-native-firebase/database";
 import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 
 import database from "@/core/database";
 import { createStreamChannel } from "@/utils/createStreamChannel";
+import { logObject } from "@/utils/logObject";
 
 type UseRequestStoryParams = RetrieveTrackInput & { language: Language };
 
@@ -32,67 +27,71 @@ export default function useRequestStory(params: UseRequestStoryParams) {
   return useQuery({
     queryKey: ["request-story", params],
 
-    queryFn: streamedQuery<StoryRequest, StoryRequest>({
+    queryFn: streamedQuery<
+      StoryRequest,
+      (BaseStoryFields & Partial<GeneratedStoryFields>) | undefined
+    >({
       streamFn: async function* () {
-        const { push, close, fail, iterator } = createStreamChannel<StoryRequest>();
+        // 1) 요청 문서 생성
+        const storyRequestRef = pushValue(storyRequestsRef);
+        await set(storyRequestRef, { ...params, status: "PENDING" });
 
-        (async () => {
-          try {
-            // 요청 문서 생성
-            const storyRequestRef = pushValue(storyRequestsRef);
-            await set(storyRequestRef, { ...params, status: "PENDING" });
+        // 2) 스트림 채널 생성
+        const streamChannel = createStreamChannel<StoryRequest>();
 
-            // 기존 구독 해제
-            unsubscribe.current?.();
+        // 3) 기존 구독 해제 및 새 구독 시작
+        unsubscribe.current?.();
+        unsubscribe.current = onValue(
+          storyRequestRef,
 
-            // 스냅샷 구독 시작
-            unsubscribe.current = onValue(
-              storyRequestRef,
-              async (snapshot) => {
-                // TODO: 스키마 검증
-                const data = snapshot.val() as StoryRequest | null;
-                if (!data) {
-                  unsubscribe.current?.();
-                  close();
-                  return;
-                }
+          // 3-1) 스냅샷 업데이트 처리
+          async (snapshot) => {
+            const storyRequest = StoryRequestSchema.safeParse(snapshot.val());
 
-                push(data);
+            if (!storyRequest.success) {
+              streamChannel.fail(new Error("해석 요청 데이터가 올바르지 않습니다."));
+              logObject(snapshot.val());
+              return;
+            }
 
-                // status가 COMPLETED이면 완료 처리
-                if (data.status === "COMPLETED") {
-                  await remove(storyRequestRef);
-                  unsubscribe.current?.();
+            streamChannel.push(storyRequest.data);
 
-                  close();
-                }
-              },
-              async (err) => {
-                console.error("Error in snapshot listener:", err);
-                await remove(storyRequestRef);
-                unsubscribe.current?.();
+            // 생성이 완료된 경우
+            if (storyRequest.data.status === "COMPLETED") {
+              unsubscribe.current?.();
+              streamChannel.close();
+            }
+          },
 
-                fail(err);
-              }
-            );
-          } catch (error) {
-            if (!(error instanceof Error)) throw error;
-            fail(error);
-          }
-        })();
+          // 3-2) 에러 처리
+          async (err) => streamChannel.fail(err)
+        );
 
-        try {
-          yield* iterator();
-        } finally {
-          storyRequestsRef.off();
-        }
+        yield* streamChannel.iterator();
+        unsubscribe.current?.();
       },
 
       reducer: (_acc, chunk) => {
-        return chunk;
+        if (chunk === undefined) return chunk;
+        if (chunk.status === "IN_PROGRESS" || chunk.status === "COMPLETED") {
+          // 1) userAvatar 변환
+          // string | null | undefined -> string | null 타입으로 변환
+          const userAvatar = chunk.userAvatar ?? null;
+
+          // 2) sectionNotes 변환
+          // Record<number, string> -> (string | null)[]
+          const sectionNotes: (string | null)[] = [];
+          if (chunk.sectionNotes) {
+            const maxIndex = Math.max(...Object.keys(chunk.sectionNotes).map((k) => Number(k)));
+            for (let i = 0; i <= maxIndex; i++) sectionNotes.push(chunk.sectionNotes[i] ?? null);
+          }
+
+          return { ...chunk, userAvatar, sectionNotes };
+        }
+        return undefined;
       },
 
-      initialValue: { ...params, status: "PENDING" },
+      initialValue: undefined,
     }),
 
     refetchOnMount: false,
