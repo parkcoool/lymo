@@ -2,12 +2,6 @@ import { LanguageSchema } from "@lymo/schemas/shared";
 import { z } from "genkit";
 
 export const InputSchema = z.object({
-  trackInfo: z.object({
-    title: z.string().describe("The title of the song"),
-    artists: z.string().array().describe("The artists of the song"),
-    album: z.string().nullable().describe("The album of the song"),
-  }),
-
   lyrics: z
     .array(
       z.object({

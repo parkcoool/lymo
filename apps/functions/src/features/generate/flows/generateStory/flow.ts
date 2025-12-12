@@ -96,7 +96,6 @@ export const generateStoryFlow = ai.defineFlow(
       (async () => {
         // 3-1) generateLyricsTranslationsFlow 실행
         const { output, stream } = generateLyricsTranslationsFlow.stream({
-          trackInfo: { title: track.title, artists: track.artists, album: track.album },
           lyrics,
           config: { language },
         });
