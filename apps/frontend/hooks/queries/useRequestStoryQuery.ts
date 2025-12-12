@@ -8,7 +8,6 @@ import { useEffect, useRef } from "react";
 
 import database from "@/core/database";
 import { createStreamChannel } from "@/utils/createStreamChannel";
-import { logObject } from "@/utils/logObject";
 
 type UseRequestStoryParams = RetrieveTrackInput & { language: Language };
 
@@ -50,7 +49,6 @@ export default function useRequestStory(params: UseRequestStoryParams) {
 
             if (!storyRequest.success) {
               streamChannel.fail(new Error("해석 요청 데이터가 올바르지 않습니다."));
-              logObject(snapshot.val());
               return;
             }
 
@@ -79,14 +77,14 @@ export default function useRequestStory(params: UseRequestStoryParams) {
           const userAvatar = chunk.userAvatar ?? null;
 
           // 2) sectionNotes 변환
-          // Record<number, string> -> (string | null)[]
-          const sectionNotes: (string | null)[] = [];
-          if (chunk.sectionNotes) {
-            const maxIndex = Math.max(...Object.keys(chunk.sectionNotes).map((k) => Number(k)));
-            for (let i = 0; i <= maxIndex; i++) sectionNotes.push(chunk.sectionNotes[i] ?? null);
-          }
+          // Record<number, string> | (string | null)[] -> (string | null)[]
+          const sectionNotes = convertToNullableArray(chunk.sectionNotes);
 
-          return { ...chunk, userAvatar, sectionNotes };
+          // 3) lyricTranslations 변환
+          // Record<number, string> | (string | null)[] -> (string | null)[]
+          const lyricTranslations = convertToNullableArray(chunk.lyricTranslations);
+
+          return { ...chunk, userAvatar, sectionNotes, lyricTranslations };
         }
         return undefined;
       },
@@ -102,3 +100,23 @@ export default function useRequestStory(params: UseRequestStoryParams) {
 }
 
 const storyRequestsRef = ref(database, `storyRequests`);
+
+/**
+ * `Record<number, string>` 또는 `(string | null)[]` 형태의 데이터를 `(string | null)[]` 배열로 변환합니다.
+ */
+function convertToNullableArray(
+  data: Record<number, string> | (string | null)[] | undefined
+): (string | null)[] {
+  if (!data) return [];
+
+  if (Array.isArray(data)) {
+    return [...data];
+  }
+
+  const maxIndex = Math.max(...Object.keys(data).map((k) => Number(k)));
+  const result: (string | null)[] = [];
+  for (let i = 0; i <= maxIndex; i++) {
+    result.push(data[i] ?? null);
+  }
+  return result;
+}

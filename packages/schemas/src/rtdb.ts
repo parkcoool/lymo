@@ -16,7 +16,11 @@ export const BaseStoryFieldsSchema = OriginalBaseStoryFieldsSchema.extend({
 });
 
 export const GeneratedStoryFieldsSchema = OriginalGeneratedStoryFieldsSchema.extend({
-  sectionNotes: z.record(z.number(), z.string()),
+  sectionNotes: z.union([z.record(z.coerce.number(), z.string()), z.array(z.string().nullable())]),
+  lyricTranslations: z.union([
+    z.record(z.coerce.number(), z.string()),
+    z.array(z.string().nullable()),
+  ]),
 });
 
 // `storyRequests/{storyRequestId}` 문서 스키마
