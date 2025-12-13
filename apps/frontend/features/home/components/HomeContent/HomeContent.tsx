@@ -1,13 +1,10 @@
-import { Suspense } from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import DeviceMediaDetection from "@/features/home/components/DeviceMediaDetection";
-import NewTracksSection, { NewTracksSectionSkeleton } from "@/features/home/components/NewTracksSection";
-import NotificationAccessRequired from "@/features/home/components/NotificationAccessRequired";
-import PopularTracksSection, {
-  PopularTracksSectionSkeleton,
-} from "@/features/home/components/PopularTracksSection";
+import DeviceMediaDetection from "@/entities/home/ui/DeviceMedia";
+import NotificationAccessRequired from "@/entities/home/ui/NotificationAccessRequired";
+import NewTracksSection from "@/features/home/components/NewTracksSection";
+import PopularTracksSection from "@/features/home/components/PopularTracksSection";
 
 import { styles } from "./HomeContent.styles";
 
@@ -25,14 +22,10 @@ export default function HomeContent() {
 
       <View style={styles.content}>
         {/* 인기 섹션 */}
-        <Suspense fallback={<PopularTracksSectionSkeleton />}>
-          <PopularTracksSection />
-        </Suspense>
+        <PopularTracksSection />
 
         {/* 신규 섹션 */}
-        <Suspense fallback={<NewTracksSectionSkeleton />}>
-          <NewTracksSection />
-        </Suspense>
+        <NewTracksSection />
       </View>
     </ScrollView>
   );
