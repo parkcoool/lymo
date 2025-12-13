@@ -1,3 +1,4 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { memo, useEffect, useRef } from "react";
 import { View, Text, Animated } from "react-native";
 import Reanimated, { Easing, LinearTransition } from "react-native-reanimated";
@@ -27,6 +28,7 @@ const Paragraph = memo(({ note, active, children, isCompleted = true }: Paragrap
       useNativeDriver: false,
     }).start();
   }, [parsedNote, active, progress]);
+
   const backgroundColor = progress.interpolate({
     inputRange: [0, 1],
     outputRange: ["transparent", `${colors.white}20`],
@@ -34,14 +36,22 @@ const Paragraph = memo(({ note, active, children, isCompleted = true }: Paragrap
 
   return (
     <Animated.View style={[styles.wrapper, { backgroundColor }]}>
+      {/* 문단 해석 */}
       {parsedNote && (
         <Reanimated.View
           style={styles.noteWrapper}
           layout={LinearTransition.duration(300).easing(Easing.out(Easing.quad))}
         >
+          <View style={styles.noteHeader}>
+            <MaterialIcons name="lightbulb" size={20} style={styles.noteIcon} />
+            <Text style={styles.noteTitle}>이해하기</Text>
+          </View>
+
           <Text style={styles.note}>{displayedNote}</Text>
         </Reanimated.View>
       )}
+
+      {/* 문장 */}
       <View style={styles.sentenceContainer}>{children}</View>
     </Animated.View>
   );

@@ -16,11 +16,30 @@ export const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     backgroundColor: `${colors.white}80`,
+    flexDirection: "column",
+    gap: 8,
+  },
+
+  noteHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  noteIcon: {
+    color: colors.surface,
+  },
+
+  noteTitle: {
+    color: colors.surface,
+    fontSize: 18,
+    fontWeight: 800,
   },
 
   note: {
     fontSize: 14,
     color: colors.black,
+    lineHeight: 20,
   },
 
   sentenceContainer: {
