@@ -1,4 +1,4 @@
-import { BaseStoryFields, GeneratedStoryFields, StoryRequest, Track } from "@lymo/schemas/doc";
+import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { Stack } from "expo-router";
 import { useMemo, useRef } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
@@ -19,10 +19,10 @@ import { styles } from "./Player.styles";
 interface PlayerContentProps {
   track?: Track;
   story?: BaseStoryFields & Partial<GeneratedStoryFields>;
-  status?: StoryRequest["status"];
+  isCompleted?: boolean;
 }
 
-export default function PlayerContent({ track, story, status }: PlayerContentProps) {
+export default function PlayerContent({ track, story, isCompleted = true }: PlayerContentProps) {
   const { data: coverColor } = useCoverColorQuery(track?.albumArt);
   const headerBackgroundColor = useMemo(
     () => mixColors([coverColor ?? "#000000", "#000000CC"]),
@@ -68,7 +68,7 @@ export default function PlayerContent({ track, story, status }: PlayerContentPro
             overview={story?.overview}
             albumArt={track?.albumArt}
             coverColor={coverColor}
-            status={status}
+            isCompleted={isCompleted}
           />
 
           {/* 가사 */}
@@ -78,7 +78,7 @@ export default function PlayerContent({ track, story, status }: PlayerContentPro
                 activeSentenceRef={currentRef}
                 lyrics={processedLyrics}
                 lyricsProvider={story?.lyricsProvider}
-                status={status}
+                isCompleted={isCompleted}
               />
             </View>
           ) : (

@@ -26,7 +26,5 @@ export default function StoryRequest({ track, ...props }: RequestTrackProps) {
 
   if (error) throw error;
 
-  return (
-    <PlayerContent track={track} story={story} status={isFetching ? "IN_PROGRESS" : undefined} />
-  );
+  return <PlayerContent track={track} story={story} isCompleted={!isFetching} />;
 }
