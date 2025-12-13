@@ -3,10 +3,10 @@ import { Redirect } from "expo-router";
 import { ErrorBoundary } from "react-error-boundary";
 import { View } from "react-native";
 
-import ErrorIndicator from "@/components/player/ErrorIndicator";
-import FromDevice from "@/components/player/Player/FromDevice";
-import FromManual from "@/components/player/Player/FromManual";
 import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
+import ErrorIndicator from "@/features/player/components/ErrorIndicator";
+import FromDevice from "@/features/player/components/Player/FromDevice";
+import FromManual from "@/features/player/components/Player/FromManual";
 
 export default function Player() {
   const { trackSource } = useTrackSourceStore();
