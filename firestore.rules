@@ -3,10 +3,18 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /stories/{storyId} {
       allow read: if true;
+      allow update: if 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stats']) &&
+        request.resource.data.stats.diff(resource.data.stats).affectedKeys().hasOnly(['viewCount']) &&
+        request.resource.data.stats.viewCount == resource.data.stats.viewCount + 1;
     }
 
     match /tracks/{trackId} {
       allow read: if true;
+      allow update: if 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stats']) &&
+        request.resource.data.stats.diff(resource.data.stats).affectedKeys().hasOnly(['viewCount']) &&
+        request.resource.data.stats.viewCount == resource.data.stats.viewCount + 1;
     }
   }
 }
