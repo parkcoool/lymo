@@ -1,6 +1,6 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { Stack } from "expo-router";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   ActivityIndicator,
   NativeScrollEvent,
@@ -20,6 +20,7 @@ import useDominantColorQuery from "@/shared/hooks/useDominantColorQuery";
 import useYOffsetInWindow from "@/shared/hooks/useYOffsetInWindow";
 import mixColors from "@/shared/utils/mixColors";
 
+import useIncreaseViews from "../../hooks/useIncreaseViews";
 import useProcessLyrics from "../../hooks/useProcessLyrics";
 import useTracking from "../../hooks/useTracking";
 import MoveToCurrent from "../MoveToCurrent";
@@ -27,8 +28,8 @@ import MoveToCurrent from "../MoveToCurrent";
 import { styles } from "./styles";
 
 interface PlayerViewProps {
-  track?: Track;
-  story?: BaseStoryFields & Partial<GeneratedStoryFields>;
+  track?: { id: string; data: Track };
+  story?: { id: string; data: BaseStoryFields & Partial<GeneratedStoryFields> };
 
   /**
    * `track`과 `story`가 모두 완전히 로드되었는지 여부
@@ -37,7 +38,7 @@ interface PlayerViewProps {
 }
 
 export default function PlayerView({ track, story, isCompleted = true }: PlayerViewProps) {
-  const { data: coverColor } = useDominantColorQuery(track?.albumArt);
+  const { data: coverColor } = useDominantColorQuery(track?.data.albumArt);
   const headerBackgroundColor = useMemo(
     () => mixColors([coverColor ?? "#000000", "#000000CC"]),
     [coverColor]
@@ -55,17 +56,20 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
     handleMoveToCurrent,
   } = useTracking({
     currentY,
-    track,
+    track: track?.data,
   });
 
   // 처리된 가사 데이터
-  const processedLyrics = useProcessLyrics({ story, track });
+  const processedLyrics = useProcessLyrics({ story: story?.data, track: track?.data });
 
   // 스크롤뷰 스크롤 핸들러
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     handleScrollViewScroll(event);
     measure();
   };
+
+  // 조회수 증가
+  useIncreaseViews({ trackId: track?.id, storyId: story?.id });
 
   return (
     <>
@@ -79,19 +83,19 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
           <View style={styles.topContent}>
             {/* 곡 정보 */}
             <Intro
-              title={track?.title}
-              artists={track?.artists}
-              album={track?.album}
-              albumArt={track?.albumArt}
+              title={track?.data.title}
+              artists={track?.data.artists}
+              album={track?.data.album}
+              albumArt={track?.data.albumArt}
               coverColor={coverColor}
-              publishedAt={track?.publishedAt}
+              publishedAt={track?.data.publishedAt}
             />
 
             {/* 해석 정보 */}
             {story ? <StoryInfo story={story} /> : <StoryInfoSkeleton />}
 
             {/* 개요 */}
-            <Overview overview={story?.overview} isCompleted={isCompleted} />
+            <Overview overview={story?.data.overview} isCompleted={isCompleted} />
           </View>
 
           {/* 가사 */}
@@ -100,7 +104,7 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
               <Lyrics
                 activeSentenceRef={currentRef}
                 lyrics={processedLyrics}
-                lyricsProvider={story?.lyricsProvider}
+                lyricsProvider={story?.data.lyricsProvider}
                 isCompleted={isCompleted}
               />
             </View>

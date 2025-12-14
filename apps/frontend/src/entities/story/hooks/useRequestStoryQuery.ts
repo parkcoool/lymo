@@ -11,6 +11,9 @@ import KnownError from "@/shared/errors/KnownError";
 import { createStreamChannel } from "@/shared/utils/createStreamChannel";
 
 type UseRequestStoryParams = RetrieveTrackInput & { language: Language };
+type UseRequestStoryResult =
+  | { id: string; data: BaseStoryFields & Partial<GeneratedStoryFields> }
+  | undefined;
 
 /**
  * 해석 생성을 요청하고 스냅샷을 구독하는 쿼리 훅입니다.
@@ -27,10 +30,7 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
   return useQuery({
     queryKey: ["request-story", params],
 
-    queryFn: streamedQuery<
-      StoryRequest,
-      (BaseStoryFields & Partial<GeneratedStoryFields>) | undefined
-    >({
+    queryFn: streamedQuery<StoryRequest, UseRequestStoryResult>({
       streamFn: async function* () {
         // 1) 요청 문서 생성
         const storyRequestRef = pushValue(storyRequestsRef);
@@ -88,7 +88,10 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
           // 3) lyricTranslations 변환
           const lyricTranslations = convertToNullableArray(chunk.lyricTranslations);
 
-          return { ...chunk, userAvatar, sectionNotes, lyricTranslations };
+          return {
+            id: chunk.storyId,
+            data: { ...chunk, userAvatar, sectionNotes, lyricTranslations },
+          };
         }
         return undefined;
       },

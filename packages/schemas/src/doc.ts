@@ -55,6 +55,7 @@ export const TrackInfoFieldsSchema = z.object({
   trackAlbum: z.string().nullable(),
   trackAlbumArt: z.string(),
 });
+export type TrackInfoFields = z.infer<typeof TrackInfoFieldsSchema>;
 
 // AI 생성 필드
 export const GeneratedStoryFieldsSchema = z.object({

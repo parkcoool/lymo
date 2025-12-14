@@ -16,7 +16,7 @@ export default function PlayerContent() {
   return (
     <View style={styles.container}>
       {trackSource.from === "manual" && (
-        <FromManual trackId={trackSource.track.id} track={trackSource.track} />
+        <FromManual track={{ id: trackSource.track.id, data: trackSource.track }} />
       )}
       {trackSource.from === "device" && (
         <FromDevice

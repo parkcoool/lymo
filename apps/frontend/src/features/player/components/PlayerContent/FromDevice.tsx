@@ -26,8 +26,8 @@ export default function FromDevice(params: FromDeviceParams) {
   });
 
   // 1) 해석이 존재하지 않는 경우
-  if (story === null) return <StoryRequest track={track?.data} {...params} />;
+  if (story === null) return <StoryRequest track={track} {...params} />;
 
   // 2) 해석이 존재하는 경우
-  return <PlayerView track={track?.data} story={story} />;
+  return <PlayerView track={track} story={story} />;
 }

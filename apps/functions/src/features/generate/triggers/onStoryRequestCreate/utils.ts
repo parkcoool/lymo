@@ -1,4 +1,11 @@
-import { GeneratedStoryFields, GeneratedStoryFieldsSchema, Story, Track } from "@lymo/schemas/doc";
+import {
+  BaseStoryFields,
+  GeneratedStoryFields,
+  GeneratedStoryFieldsSchema,
+  Story,
+  Track,
+  TrackInfoFields,
+} from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
 import { Language, LyricsProvider } from "@lymo/schemas/shared";
 import admin from "firebase-admin";
@@ -28,8 +35,8 @@ export class StoryUpdater {
 
   // story 본 문서
   storyDocRef: DocumentReference<Story>;
-  // storyRequests/{requestId} 문서
-  storyRequestDocRef: Reference;
+  // storyRequests/{requestId} 값
+  storyRequestValueRef: Reference;
 
   lastWrittenAt: number = 0;
   pendingData: Partial<GeneratedStoryFields> = {};
@@ -46,13 +53,14 @@ export class StoryUpdater {
     this.language = language;
     this.lyricsProvider = lyricsProvider;
 
-    // 문서 참조 생성
+    // 참조 생성
     this.storyDocRef = admin.firestore().collection("stories").doc() as DocumentReference<Story>;
-    this.storyRequestDocRef = admin.database().ref(`storyRequests/${requestId}`);
+    this.storyRequestValueRef = admin.database().ref(`storyRequests/${requestId}`);
 
-    // story preview 문서 초기화
-    this.storyRequestDocRef.set({
+    // storyRequest 값 초기화
+    this.storyRequestValueRef.set({
       ...this.baseFields,
+      storyId: this.storyDocRef.id,
       status: "IN_PROGRESS",
     });
   }
@@ -72,7 +80,7 @@ export class StoryUpdater {
 
     // story preview 문서 업데이트 수행
     const now = new Date().toISOString();
-    await this.storyRequestDocRef.update({
+    await this.storyRequestValueRef.update({
       ...this.pendingData,
       updatedAt: now,
       status: "IN_PROGRESS",
@@ -101,7 +109,7 @@ export class StoryUpdater {
 
       await Promise.all([
         // preview 문서 업데이트
-        this.storyRequestDocRef.update({
+        this.storyRequestValueRef.update({
           ...parsedFinalData,
           status: "COMPLETED",
           updatedAt: now,
@@ -112,7 +120,7 @@ export class StoryUpdater {
       ]);
     } catch (error) {
       // 검증 실패 시 story preview 문서의 상태를 FAILED로 업데이트
-      await this.storyRequestDocRef.set({
+      await this.storyRequestValueRef.set({
         status: "FAILED",
         errorCode: ERROR_CODES.STORY_SAVE_FAILED,
       });
@@ -122,9 +130,9 @@ export class StoryUpdater {
   }
 
   /**
-   * story 및 story preview 문서에 공통으로 들어가는 필드들
+   * story 문서 및 storyRequest 값에 공통으로 들어가는 필드들
    */
-  private get baseFields() {
+  private get baseFields(): BaseStoryFields & TrackInfoFields {
     const now = new Date().toISOString();
 
     return {

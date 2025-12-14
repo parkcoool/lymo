@@ -13,6 +13,7 @@ import { LanguageSchema } from "./shared";
 
 export const BaseStoryFieldsSchema = OriginalBaseStoryFieldsSchema.extend({
   userAvatar: OriginalBaseStoryFieldsSchema.shape.userAvatar.optional(),
+  storyId: z.string(),
 });
 
 export const GeneratedStoryFieldsSchema = OriginalGeneratedStoryFieldsSchema.extend({
@@ -23,7 +24,7 @@ export const GeneratedStoryFieldsSchema = OriginalGeneratedStoryFieldsSchema.ext
   ]),
 });
 
-// `storyRequests/{storyRequestId}` 문서 스키마
+// `storyRequests/{storyRequestId}` 값 스키마
 export const StoryRequestSchema = z.union([
   // status가 PENDING일 경우
   z.union([

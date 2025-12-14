@@ -9,12 +9,11 @@ import formatRelativeTime from "@/shared/utils/formatRelativeTime";
 import { styles } from "./styles";
 
 interface StoryInfoProps {
-  story: BaseStoryFields;
+  story: { id: string; data: BaseStoryFields };
 }
 
 export default function StoryInfo({ story }: StoryInfoProps) {
-  const isStoryByBot = story.userId === "bot";
-
+  const isStoryByBot = story.data.userId === "bot";
   return (
     <View style={styles.wrapper}>
       <View style={styles.top}>
@@ -22,7 +21,7 @@ export default function StoryInfo({ story }: StoryInfoProps) {
         {isStoryByBot ? (
           <MaterialIcons name="auto-awesome" size={28} style={styles.botIcon} />
         ) : (
-          <Avatar photo={story.userAvatar} style={styles.avatar} />
+          <Avatar photo={story.data.userAvatar} style={styles.avatar} />
         )}
 
         {/* 이름 */}
@@ -41,7 +40,7 @@ export default function StoryInfo({ story }: StoryInfoProps) {
           </View>
         ) : (
           <View style={styles.usernameWrapper}>
-            <Text style={styles.username}>{story.userName}</Text>
+            <Text style={styles.username}>{story.data.userName}</Text>
             <Text style={styles.usernameSuffix}>의 해석</Text>
           </View>
         )}
@@ -51,19 +50,21 @@ export default function StoryInfo({ story }: StoryInfoProps) {
         {/* 업데이트 날짜 */}
         <View style={styles.stat}>
           <MaterialIcons name="update" size={20} style={styles.statIcon} />
-          <Text style={styles.statText}>{`${formatRelativeTime(story.updatedAt)} 전`}</Text>
+          <Text style={styles.statText}>{`${formatRelativeTime(story.data.updatedAt)} 전`}</Text>
         </View>
 
         {/* 조회수 */}
         <View style={styles.stat}>
           <MaterialIcons name="visibility" size={20} style={styles.statIcon} />
-          <Text style={styles.statText}>{`${story.stats.viewCount.toLocaleString()}회`}</Text>
+          <Text style={styles.statText}>{`${story.data.stats.viewCount.toLocaleString()}회`}</Text>
         </View>
 
         {/* 좋아요 수 */}
         <TouchableOpacity style={[styles.stat, styles.pressable]}>
           <MaterialIcons name="favorite" size={20} style={styles.statIcon} />
-          <Text style={styles.statText}>{`${story.stats.favoriteCount.toLocaleString()}개`}</Text>
+          <Text
+            style={styles.statText}
+          >{`${story.data.stats.favoriteCount.toLocaleString()}개`}</Text>
         </TouchableOpacity>
       </View>
     </View>

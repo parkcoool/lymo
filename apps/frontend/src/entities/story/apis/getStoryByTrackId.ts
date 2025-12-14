@@ -28,5 +28,8 @@ export default async function getStoryByTrackId({ trackId, language }: GetStoryB
   const storyDoc = (await getDocs(q)).docs[0] as
     | FirebaseFirestoreTypes.QueryDocumentSnapshot<Story>
     | undefined;
-  return storyDoc?.data() ?? null;
+  const data = storyDoc?.data();
+
+  if (!data || !storyDoc) return null;
+  return { id: storyDoc.id, data };
 }
