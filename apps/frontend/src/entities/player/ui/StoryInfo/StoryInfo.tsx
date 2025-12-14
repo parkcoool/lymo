@@ -1,0 +1,71 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { BaseStoryFields } from "@lymo/schemas/doc";
+import { View, Text, TouchableOpacity } from "react-native";
+
+import Avatar from "@/entities/auth/ui/Avatar";
+import GradientFill from "@/shared/components/GradientFill";
+import formatRelativeTime from "@/shared/utils/formatRelativeTime";
+
+import { styles } from "./styles";
+
+interface StoryInfoProps {
+  story: BaseStoryFields;
+}
+
+export default function StoryInfo({ story }: StoryInfoProps) {
+  const isStoryByBot = story.userId === "bot";
+
+  return (
+    <View style={styles.wrapper}>
+      <View style={styles.top}>
+        {/* 아바타 */}
+        {isStoryByBot ? (
+          <MaterialIcons name="auto-awesome" size={28} style={styles.botIcon} />
+        ) : (
+          <Avatar photo={story.userAvatar} style={styles.avatar} />
+        )}
+
+        {/* 이름 */}
+        {isStoryByBot ? (
+          <View style={styles.textContainer}>
+            <GradientFill
+              gradientOptions={{
+                colors: ["#a5ffee", "#b152ffff"],
+                start: { x: 0, y: 0 },
+                end: { x: 1, y: 0 },
+              }}
+            >
+              <Text style={styles.botText}>AI가 생성한 해석</Text>
+            </GradientFill>
+            <Text style={styles.warning}>부정확한 정보가 포함되어 있을 수 있습니다.</Text>
+          </View>
+        ) : (
+          <View style={styles.usernameWrapper}>
+            <Text style={styles.username}>{story.userName}</Text>
+            <Text style={styles.usernameSuffix}>의 해석</Text>
+          </View>
+        )}
+      </View>
+
+      <View style={styles.statContainer}>
+        {/* 업데이트 날짜 */}
+        <View style={styles.stat}>
+          <MaterialIcons name="update" size={20} style={styles.statIcon} />
+          <Text style={styles.statText}>{`${formatRelativeTime(story.updatedAt)} 전`}</Text>
+        </View>
+
+        {/* 조회수 */}
+        <View style={styles.stat}>
+          <MaterialIcons name="visibility" size={20} style={styles.statIcon} />
+          <Text style={styles.statText}>{`${story.stats.viewCount.toLocaleString()}회`}</Text>
+        </View>
+
+        {/* 좋아요 수 */}
+        <TouchableOpacity style={[styles.stat, styles.pressable]}>
+          <MaterialIcons name="favorite" size={20} style={styles.statIcon} />
+          <Text style={styles.statText}>{`${story.stats.favoriteCount.toLocaleString()}개`}</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}

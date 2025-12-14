@@ -61,7 +61,11 @@ export default function Header({
           </TouchableOpacity>
 
           {/* 아바타 */}
-          {user && <Avatar photo={user.photoURL ?? undefined} />}
+          {user && (
+            <TouchableOpacity>
+              <Avatar photo={user.photoURL ?? undefined} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 

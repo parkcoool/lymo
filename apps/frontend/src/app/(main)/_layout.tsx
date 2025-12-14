@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import React from "react";
 
-import Header from "@/features/layout/components/Header";
+import Header from "@/entities/layout/ui/Header";
 
 export default function MainLayout() {
   return (

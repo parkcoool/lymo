@@ -9,17 +9,20 @@ import {
   View,
 } from "react-native";
 
+import Header from "@/entities/layout/ui/Header";
 import Intro from "@/entities/player/ui/Intro";
 import Lyrics from "@/entities/player/ui/Lyrics";
 import Overview from "@/entities/player/ui/Overview";
-import Header from "@/features/layout/components/Header";
-import MoveToCurrent from "@/features/player/components/MoveToCurrent";
-import useProcessLyrics from "@/features/player/hooks/useProcessLyrics";
-import useTracking from "@/features/player/hooks/useTracking";
+import StoryInfo from "@/entities/player/ui/StoryInfo";
+import StoryInfoSkeleton from "@/entities/player/ui/StoryInfo/StoryInfoSkeleton";
 import { colors } from "@/shared/constants/colors";
 import useDominantColorQuery from "@/shared/hooks/useDominantColorQuery";
 import useYOffsetInWindow from "@/shared/hooks/useYOffsetInWindow";
 import mixColors from "@/shared/utils/mixColors";
+
+import useProcessLyrics from "../../hooks/useProcessLyrics";
+import useTracking from "../../hooks/useTracking";
+import MoveToCurrent from "../MoveToCurrent";
 
 import { styles } from "./styles";
 
@@ -83,6 +86,9 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
               coverColor={coverColor}
               publishedAt={track?.publishedAt}
             />
+
+            {/* 해석 정보 */}
+            {story ? <StoryInfo story={story} /> : <StoryInfoSkeleton />}
 
             {/* 개요 */}
             <Overview overview={story?.overview} isCompleted={isCompleted} />
