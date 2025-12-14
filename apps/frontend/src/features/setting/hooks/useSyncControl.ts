@@ -35,7 +35,8 @@ export default function useSyncControl(trackId?: string) {
 
     updateSetting((prev) => {
       const newDelayMap = new Map(prev.sync);
-      newDelayMap.set(trackId, rounded);
+      if (rounded === 0) newDelayMap.delete(trackId);
+      else newDelayMap.set(trackId, rounded);
       return { ...prev, sync: newDelayMap };
     });
 
