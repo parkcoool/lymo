@@ -1,6 +1,6 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { Stack } from "expo-router";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import {
   ActivityIndicator,
   NativeScrollEvent,
@@ -40,11 +40,8 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
     [coverColor]
   );
 
-  // 현재 활성화된 문장 View
-  const currentRef = useRef<View>(null);
-
   // 현재 활성화된 문장의 y 좌표 (in window)
-  const { y: currentY, measure } = useYOffsetInWindow(currentRef);
+  const { y: currentY, measure, ref: currentRef } = useYOffsetInWindow();
 
   // 트래킹 관련 로직
   const {
