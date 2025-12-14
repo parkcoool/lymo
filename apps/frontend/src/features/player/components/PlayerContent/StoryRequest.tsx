@@ -1,8 +1,9 @@
 import { Track } from "@lymo/schemas/doc";
 
-import PlayerView from "@/entities/player/ui/PlayerView/PlayerView";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 import useRequestStoryQuery from "@/entities/story/hooks/useRequestStoryQuery";
+
+import PlayerView from "../PlayerView";
 
 type StoryRequestProps = (
   | {

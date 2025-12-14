@@ -4,7 +4,6 @@
     "slug": "lymoapp",
     "scheme": "lymoapp",
     "version": "1.0.0",
-    "newArchEnabled": true,
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

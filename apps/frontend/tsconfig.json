@@ -3,7 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["./src/*"],
       "@lymo/schemas/*": ["../../packages/schemas/src/*"]
     }
   },

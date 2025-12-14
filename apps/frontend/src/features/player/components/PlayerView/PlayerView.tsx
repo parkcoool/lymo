@@ -9,18 +9,17 @@ import {
   View,
 } from "react-native";
 
-import useProcessLyrics from "@/entities/player/hooks/useProcessLyrics";
+import Intro from "@/entities/player/ui/Intro";
 import Lyrics from "@/entities/player/ui/Lyrics";
 import Overview from "@/entities/player/ui/Overview";
 import MoveToCurrent from "@/features/player/components/MoveToCurrent";
+import useProcessLyrics from "@/features/player/hooks/useProcessLyrics";
 import useTracking from "@/features/player/hooks/useTracking";
 import Header from "@/shared/components/Header";
 import { colors } from "@/shared/constants/colors";
 import useDominantColorQuery from "@/shared/hooks/useDominantColorQuery";
 import useYOffsetInWindow from "@/shared/hooks/useYOffsetInWindow";
 import mixColors from "@/shared/utils/mixColors";
-
-import Intro from "../Intro";
 
 import { styles } from "./styles";
 

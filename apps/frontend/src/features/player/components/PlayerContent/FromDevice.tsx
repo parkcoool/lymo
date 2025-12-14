@@ -1,7 +1,8 @@
-import PlayerView from "@/entities/player/ui/PlayerView/PlayerView";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 import useStoryQuery from "@/entities/story/hooks/useStoryQuery";
 import useRetrieveTrack from "@/entities/track/hooks/useRetrieveTrack";
+
+import PlayerView from "../PlayerView";
 
 import StoryRequest from "./StoryRequest";
 
