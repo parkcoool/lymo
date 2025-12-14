@@ -1,20 +1,48 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // 1. Stories 컬렉션 규칙 (핵심 로직)
     match /stories/{storyId} {
-      allow read: if true;
+      allow read: if request.auth != null;
       allow update: if 
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stats']) &&
-        request.resource.data.stats.diff(resource.data.stats).affectedKeys().hasOnly(['viewCount']) &&
-        request.resource.data.stats.viewCount == resource.data.stats.viewCount + 1;
+        request.auth != null &&
+        // 자신의 stats.viewCount만 1 증가했는지
+        hasOnlyViewCountIncrement(request.resource.data, resource.data) &&
+        // track 문서의 stats.viewCount도 1 증가했는지
+        isTrackViewIncremented(resource.data.trackId);
     }
 
+    // 2. Tracks 컬렉션 규칙
     match /tracks/{trackId} {
-      allow read: if true;
+      allow read: if request.auth != null;
       allow update: if 
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stats']) &&
-        request.resource.data.stats.diff(resource.data.stats).affectedKeys().hasOnly(['viewCount']) &&
-        request.resource.data.stats.viewCount == resource.data.stats.viewCount + 1;
+        request.auth != null &&
+        // 자신의 stats.viewCount만 1 증가했는지
+        hasOnlyViewCountIncrement(request.resource.data, resource.data);
+    }
+
+    // ==============================
+    // 공통 함수
+    // ==============================
+
+    // 데이터가 stats.viewCount만 건드렸는지, 그리고 값이 1 증가했는지 확인
+    function hasOnlyViewCountIncrement(newData, oldData) {
+      return 
+        // 1. 최상위에서 stats 필드만 변경되었는지
+        newData.diff(oldData).affectedKeys().hasOnly(['stats']) &&
+        // 2. stats 맵 안에서 viewCount만 변경되었는지
+        newData.stats.diff(oldData.stats).affectedKeys().hasOnly(['viewCount']) &&
+        // 3. 값이 정확히 1 증가했는지
+        newData.stats.viewCount == oldData.stats.viewCount + 1;
+    }
+
+    // 연결된 Track 문서가 이번 요청(트랜잭션)으로 인해 1 증가했는지 미래 상태(getAfter)로 확인
+    function isTrackViewIncremented(trackId) {
+      let trackPath = /databases/$(database)/documents/tracks/$(trackId);
+      
+      // getAfter(미래 값) == get(현재 값) + 1
+      return getAfter(trackPath).data.stats.viewCount == get(trackPath).data.stats.viewCount + 1;
     }
   }
 }

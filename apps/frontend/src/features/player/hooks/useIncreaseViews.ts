@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import useIncreaseStoryViewMutation from "@/entities/story/hooks/useIncreaseStoryViewMutation";
-import useIncreaseTrackViewMutation from "@/entities/track/hooks/useIncreaseTrackViewMutation";
+import useIncreaseViewsMutation from "@/entities/player/hooks/useIncreaseViewsMutation";
 
 interface UseIncreaseViewsParams {
   storyId?: string;
@@ -9,21 +8,14 @@ interface UseIncreaseViewsParams {
 }
 
 export default function useIncreaseViews({ storyId, trackId }: UseIncreaseViewsParams) {
-  const { mutate: increaseTrackView } = useIncreaseTrackViewMutation();
-  const { mutate: increaseStoryView } = useIncreaseStoryViewMutation();
+  const { mutate: increaseViews } = useIncreaseViewsMutation();
 
-  const increasedTrackView = useRef(false);
-  const increasedStoryView = useRef(false);
+  const done = useRef(false);
 
   useEffect(() => {
-    if (trackId && !increasedTrackView.current) {
-      increaseTrackView(trackId);
-      increasedTrackView.current = true;
+    if (storyId && !done.current) {
+      increaseViews({ storyId, trackId });
+      done.current = true;
     }
-
-    if (storyId && !increasedStoryView.current) {
-      increaseStoryView(storyId);
-      increasedStoryView.current = true;
-    }
-  }, [trackId, storyId, increaseTrackView, increaseStoryView]);
+  }, [storyId, trackId, increaseViews]);
 }
