@@ -1,3 +1,5 @@
+import { DeviceMedia } from "./DeviceMedia";
+
 export interface MediaModule {
   /**
    * 알림 접근 권한이 있는지 확인합니다.
@@ -31,13 +33,3 @@ export interface MediaModule {
   addListener: (eventType: string) => void;
   removeListeners: (count: number) => void;
 }
-
-// 'onMediaDataChanged' 이벤트가 전달하는 데이터의 타입을 정의합니다.
-export type DeviceMedia = {
-  title: string;
-  artist: string;
-  album: string | null;
-  duration: number;
-  isPlaying: boolean;
-  albumArt: string; // Base64 문자열
-};

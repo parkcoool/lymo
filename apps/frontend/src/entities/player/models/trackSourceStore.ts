@@ -2,7 +2,7 @@ import { Track } from "@lymo/schemas/doc";
 import { useState, ReactNode, createElement } from "react";
 import { buildContext } from "react-simplikit";
 
-import type { DeviceMedia } from "@/shared/types/mediaModule";
+import type { DeviceMedia } from "@/shared/types/DeviceMedia";
 
 export type TrackSource =
   | {

@@ -1,7 +1,7 @@
 import { createElement, useState, ReactNode } from "react";
 import { buildContext } from "react-simplikit";
 
-import type { DeviceMedia } from "@/shared/types/mediaModule";
+import type { DeviceMedia } from "@/shared/types/DeviceMedia";
 
 interface DeviceMediaContextStates {
   /**

@@ -5,7 +5,7 @@ import { MediaModule } from "@/core/mediaModule";
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 import { useSyncStore } from "@/shared/models/syncStore";
-import type { DeviceMedia } from "@/shared/types/mediaModule";
+import type { DeviceMedia } from "@/shared/types/DeviceMedia";
 
 const eventEmitter = new NativeEventEmitter(MediaModule);
 
