@@ -14,6 +14,7 @@ export default async function getPopularTracks() {
   const trackCollectionRef = collection(firestore, "tracks");
   const q = query(
     trackCollectionRef,
+    orderBy("stats.favoriteCount", "desc"),
     orderBy("stats.viewCount", "desc"),
     orderBy("createdAt", "asc"),
     limit(20)
