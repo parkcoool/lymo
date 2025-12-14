@@ -6,7 +6,7 @@ const functions = getFunctions(undefined, "asia-northeast3");
 if (__DEV__) {
   const debuggerHost = expoConstants.expoConfig?.hostUri;
   const localhost = debuggerHost?.split(":")[0] ?? "localhost";
-  console.log(`Connecting to Firebase Functions at ${localhost}:5001`);
+  console.log(`Connecting to Firebase Functions Emulator at ${localhost}:5001`);
 
   try {
     connectFunctionsEmulator(functions, localhost, 5001);
