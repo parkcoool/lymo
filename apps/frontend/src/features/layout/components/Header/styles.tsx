@@ -17,7 +17,8 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "stretch",
     gap: 16,
-    padding: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
   },
 
   left: {
@@ -39,7 +40,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    gap: 12,
+    gap: 20,
   },
 
   brandWrapper: {

@@ -8,23 +8,23 @@ import { buildContext } from "react-simplikit";
 
 import auth from "@/core/auth";
 
-interface AuthContextStates {
+interface UserContextStates {
   user: FirebaseAuthTypes.User | null;
 }
 
-interface AuthContextActions {
+interface UserContextActions {
   setUser: React.Dispatch<React.SetStateAction<FirebaseAuthTypes.User | null>>;
 }
 
-type AuthContextValues = AuthContextStates & AuthContextActions;
+type UserContextValues = UserContextStates & UserContextActions;
 
-const [AuthContextProvider, useAuthStore] = buildContext<AuthContextValues>("AuthContext", {
+const [UserContextProvider, useUserStore] = buildContext<UserContextValues>("UserContext", {
   user: null,
   setUser: () => {},
 });
 
-function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthContextStates["user"]>(null);
+function UserProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<UserContextStates["user"]>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -47,7 +47,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   // react-simplikit의 buildContext에서 생성된 Provider는 children을 props로 받도록 설계됨
   // eslint-disable-next-line react/no-children-prop
-  return createElement(AuthContextProvider, { user, setUser, children });
+  return createElement(UserContextProvider, { user, setUser, children });
 }
 
-export { AuthProvider, useAuthStore };
+export { UserProvider, useUserStore };

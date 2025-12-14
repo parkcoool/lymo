@@ -6,6 +6,8 @@ import { useRef } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useUserStore } from "@/entities/auth/model/userStore";
+import Avatar from "@/entities/auth/ui/Avatar";
 import SettingBottomSheet from "@/entities/setting/components/SettingBottomSheet";
 import { colors } from "@/shared/constants/colors";
 
@@ -15,7 +17,6 @@ import { styles } from "./styles";
 interface HeaderProps extends NativeStackHeaderProps {
   backgroundColor?: string;
   showBrand?: boolean;
-  avatar?: React.ReactNode;
 }
 
 export default function Header({
@@ -23,8 +24,9 @@ export default function Header({
   navigation,
   backgroundColor,
   showBrand = false,
-  avatar,
 }: HeaderProps) {
+  const { user } = useUserStore();
+
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const handleSettingsOpen = () => bottomSheetRef.current?.present();
 
@@ -53,13 +55,13 @@ export default function Header({
         </View>
 
         <View style={styles.right}>
-          {/* 아바타 */}
-          {avatar}
-
           {/* 설정 버튼 */}
           <TouchableOpacity onPress={handleSettingsOpen}>
             <MaterialIcons name="settings" size={28} style={styles.buttonIcon} />
           </TouchableOpacity>
+
+          {/* 아바타 */}
+          {user && <Avatar photo={user.photoURL ?? undefined} />}
         </View>
       </View>
 

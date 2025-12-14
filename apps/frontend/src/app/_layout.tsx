@@ -6,7 +6,7 @@ import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { AuthProvider } from "@/entities/auth/model/authStore";
+import { UserProvider } from "@/entities/auth/model/userStore";
 import { DeviceMediaProvider } from "@/entities/deviceMedia/models/deviceMediaStore";
 import SyncDeviceMediaProvider from "@/entities/deviceMedia/ui/SyncDeviceMediaProvider";
 import { TrackSourceProvider } from "@/entities/player/models/trackSourceStore";
@@ -23,7 +23,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <AuthProvider>
+        <UserProvider>
           <SettingProvider>
             <DeviceMediaProvider>
               <SyncProvider>
@@ -52,7 +52,7 @@ export default function RootLayout() {
               </SyncProvider>
             </DeviceMediaProvider>
           </SettingProvider>
-        </AuthProvider>
+        </UserProvider>
 
         <StatusBar style="light" translucent backgroundColor="transparent" />
       </SafeAreaProvider>
