@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, LayoutChangeEvent, View } from "react-native";
 
-import Sentence from "@/features/player/components/Sentence";
+import Sentence from "@/entities/player/ui/Sentence";
 
 import { styles } from "./styles";
 

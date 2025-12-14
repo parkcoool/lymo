@@ -20,7 +20,7 @@ interface GetLyricsFromLRCLIBParams {
 }
 
 /**
- * @description LRCLIB에서 가사를 검색하는 헬퍼 함수
+ * LRCLIB에서 가사를 검색하는 헬퍼 함수
  * @param title 노래 제목
  * @param artists 아티스트 이름 배열
  * @param duration 노래 길이 (초)

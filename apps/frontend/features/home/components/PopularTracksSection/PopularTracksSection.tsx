@@ -2,8 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Suspense } from "react";
 import { View, Text } from "react-native";
 
-import Fallback from "../NewTracksSection/Fallback";
-
+import Fallback from "./Fallback";
 import ItemList from "./ItemList";
 import { styles } from "./styles";
 

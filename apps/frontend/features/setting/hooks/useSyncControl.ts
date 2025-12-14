@@ -1,15 +1,15 @@
 import { useRef, useEffect } from "react";
 import { Vibration } from "react-native";
 
-import { useSettingStore } from "@/entities/setting/models/store";
+import { useSettingStore } from "@/entities/setting/models/settingStore";
 import getNewSyncValue from "@/entities/setting/utils/getNewSyncValue";
 
-export default function useSyncControl(trackKey: string | null) {
+export default function useSyncControl(trackId?: string) {
   const { setting, updateSetting } = useSettingStore();
   const intervalRef = useRef<number>(null);
 
   // 현재 값 가져오기
-  const value = trackKey ? setting.sync.get(trackKey) ?? 0 : 0;
+  const value = trackId ? setting.sync.get(trackId) ?? 0 : 0;
 
   // 컴포넌트 언마운트 시 interval 정리
   useEffect(() => {
@@ -29,13 +29,13 @@ export default function useSyncControl(trackKey: string | null) {
   };
 
   const updateValue = (newValue: number) => {
-    if (!trackKey) return;
+    if (!trackId) return;
 
     const rounded = Math.round(newValue / 100) * 100;
 
     updateSetting((prev) => {
       const newDelayMap = new Map(prev.sync);
-      newDelayMap.set(trackKey, rounded);
+      newDelayMap.set(trackId, rounded);
       return { ...prev, sync: newDelayMap };
     });
 
@@ -54,14 +54,14 @@ export default function useSyncControl(trackKey: string | null) {
     updateValue(getNewSyncValue(value, direction));
     intervalRef.current = setInterval(() => {
       updateSetting((prev) => {
-        if (!trackKey) return prev;
+        if (!trackId) return prev;
 
-        const currentVal = prev.sync.get(trackKey) ?? 0;
+        const currentVal = prev.sync.get(trackId) ?? 0;
         const nextVal = getNewSyncValue(currentVal, direction);
         const rounded = Math.round(nextVal / 100) * 100;
 
         const newDelayMap = new Map(prev.sync);
-        newDelayMap.set(trackKey, rounded);
+        newDelayMap.set(trackId, rounded);
 
         return { ...prev, sync: newDelayMap };
       });

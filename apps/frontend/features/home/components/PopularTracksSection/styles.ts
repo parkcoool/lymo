@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { colors } from "@/features/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 
 export const styles = StyleSheet.create({
   section: {

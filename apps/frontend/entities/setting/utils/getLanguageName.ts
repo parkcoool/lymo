@@ -3,8 +3,8 @@ import { Language } from "@lymo/schemas/shared";
 export default function getLanguageName(language: Language): string {
   switch (language) {
     case "en":
-      return "English";
+      return "영어";
     case "ko":
-      return "Korean";
+      return "한국어";
   }
 }

@@ -2,7 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { type Language, LanguageSchema } from "@lymo/schemas/shared";
 import { Text, TouchableOpacity, View } from "react-native";
 
-import { useSettingStore } from "@/entities/setting/models/store";
+import { useSettingStore } from "@/entities/setting/models/settingStore";
 import getLanguageName from "@/entities/setting/utils/getLanguageName";
 
 import { styles } from "./styles";

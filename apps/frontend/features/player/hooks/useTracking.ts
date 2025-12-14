@@ -2,7 +2,7 @@ import { Track } from "@lymo/schemas/doc";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView } from "react-native";
 
-import useWindowSize from "@/features/shared/hooks/useWindowSize";
+import useWindowSize from "@/shared/hooks/useWindowSize";
 
 interface UseTrackingParams {
   currentY: number;

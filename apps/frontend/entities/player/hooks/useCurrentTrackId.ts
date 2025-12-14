@@ -1,0 +1,45 @@
+import { RetrieveTrackInput } from "@lymo/schemas/functions";
+import { useQuery } from "@tanstack/react-query";
+import { usePathname } from "expo-router";
+
+import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
+import retrieveTrack from "@/entities/track/api/retrieveTrack";
+
+/**
+ * 현재 감상 중인 곡의 ID를 반환하는 훅입니다.
+ */
+export default function useCurrentTrackId() {
+  const { trackSource } = useTrackSourceStore();
+  const pathname = usePathname();
+
+  const isInPlayerPage = pathname.startsWith("/player");
+
+  let retrieveTrackParams: RetrieveTrackInput | undefined = undefined;
+  if (trackSource?.from === "device") {
+    retrieveTrackParams = {
+      title: trackSource.track.title,
+      artist: trackSource.track.artist,
+      durationInSeconds: trackSource.track.duration,
+    };
+  }
+
+  const { data: track } = useQuery({
+    queryKey: ["retrieve-track", retrieveTrackParams],
+    queryFn: async () => {
+      if (!retrieveTrackParams) throw new Error("No track source from device");
+      return retrieveTrack(retrieveTrackParams);
+    },
+    select: (res) => {
+      if (res.data.success) return res.data.data;
+      throw new Error(res.data.message || res.data.error);
+    },
+    throwOnError: true,
+    staleTime: 1000 * 60 * 5,
+    enabled: isInPlayerPage && retrieveTrackParams !== undefined,
+  });
+
+  if (isInPlayerPage) {
+    if (trackSource?.from === "manual") return trackSource.track.id;
+    if (track) return track.id;
+  }
+}

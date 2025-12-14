@@ -3,7 +3,7 @@ import { TouchableOpacity, Text } from "react-native";
 import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import useWindowSize from "@/features/shared/hooks/useWindowSize";
+import useWindowSize from "@/shared/hooks/useWindowSize";
 
 import { styles } from "./MoveToCurrent.styles";
 

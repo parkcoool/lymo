@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import React from "react";
 
-import Header from "@/features/shared/components/Header";
+import Header from "@/shared/components/Header";
 
 export default function MainLayout() {
   return (
@@ -14,7 +14,7 @@ export default function MainLayout() {
       <Stack.Screen
         name="index"
         options={{
-          header: (props) => <Header {...props} showLogo />,
+          header: (props) => <Header {...props} showBrand />,
         }}
       />
     </Stack>

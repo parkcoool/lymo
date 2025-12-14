@@ -7,21 +7,21 @@ import { TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import SettingBottomSheet from "@/features/setting/components/SettingBottomSheet";
-import HeaderLogo from "@/features/shared/components/HeaderLogo";
-import { colors } from "@/features/shared/constants/colors";
+import { colors } from "@/shared/constants/colors";
 
-import { styles } from "./Header.styles";
+import Brand from "./Brand";
+import { styles } from "./styles";
 
 interface HeaderProps extends NativeStackHeaderProps {
   backgroundColor?: string;
-  showLogo?: boolean;
+  showBrand?: boolean;
 }
 
 export default function Header({
   back,
   navigation,
   backgroundColor,
-  showLogo = false,
+  showBrand = false,
 }: HeaderProps) {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const handleSettingsOpen = () => bottomSheetRef.current?.present();
@@ -47,10 +47,7 @@ export default function Header({
           )}
 
           {/* 로고 */}
-          {showLogo && <HeaderLogo />}
-
-          {/* 검색 박스 */}
-          {/* <SearchBoxLink style={styles.searchBox} /> */}
+          {showBrand && <Brand />}
         </View>
 
         <View style={styles.right}>

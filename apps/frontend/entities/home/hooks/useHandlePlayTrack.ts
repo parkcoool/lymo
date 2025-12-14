@@ -1,7 +1,7 @@
 import type { Track } from "@lymo/schemas/doc";
 
-import { useSyncStore } from "@/contexts/useSyncStore";
-import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
+import { useSyncStore } from "@/shared/models/syncStore";
+import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 
 /**
  * 곡 감상 핸들러를 반환하는 훅입니다.

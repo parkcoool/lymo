@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Dimensions, type ScaledSize } from "react-native";
 
 /**
- * @description 창의 크기를 가져오는 훅입니다.
+ * 창의 크기를 가져오는 훅입니다.
  * @returns 창의 가로 및 세로 크기
  */
 export default function useWindowSize() {

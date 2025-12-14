@@ -6,12 +6,12 @@ import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { DeviceMediaProvider } from "@/contexts/useDeviceMediaStore";
-import { SettingProvider } from "@/entities/setting/models/store";
-import { SyncProvider } from "@/contexts/useSyncStore";
-import { TrackSourceProvider } from "@/contexts/useTrackSourceStore";
-import SyncDeviceMediaProvider from "@/features/player/components/SyncDeviceMediaProvider";
-import { colors } from "@/features/shared/constants/colors";
+import { DeviceMediaProvider } from "@/entities/deviceMedia/models/deviceMediaStore";
+import { SyncProvider } from "@/shared/models/syncStore";
+import { TrackSourceProvider } from "@/entities/player/models/trackSourceStore";
+import SyncDeviceMediaProvider from "@/entities/deviceMedia/ui/SyncDeviceMediaProvider";
+import { SettingProvider } from "@/entities/setting/models/settingStore";
+import { colors } from "@/shared/constants/colors";
 
 import "@/core/firestore";
 import "@/core/functions";

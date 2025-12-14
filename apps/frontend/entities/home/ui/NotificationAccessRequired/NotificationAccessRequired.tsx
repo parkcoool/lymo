@@ -3,8 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity, View, Text } from "react-native";
 
 import { MediaModule } from "@/core/mediaModule";
-
-import useCheckNotificationListenerPermission from "../../hooks/useCheckNotificationListenerPermission";
+import useCheckNotificationListenerPermission from "@/entities/deviceMedia/hooks/useCheckNotificationListenerPermission";
 
 import Preview from "./Preview";
 import { styles } from "./styles";

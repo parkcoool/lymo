@@ -1,0 +1,61 @@
+import { StyleSheet } from "react-native";
+
+import { colors } from "@/shared/constants/colors";
+
+export const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+  },
+
+  gradient: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
+
+  header: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    gap: 16,
+    padding: 16,
+  },
+
+  left: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+  },
+
+  buttonIcon: {
+    color: colors.onBackground,
+  },
+
+  searchBox: {
+    flex: 1,
+  },
+
+  right: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    gap: 12,
+  },
+
+  brandWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  logoWrapper: {
+    width: 24,
+    height: 24,
+  },
+
+  brandText: {
+    color: colors.onBackground,
+    fontSize: 18,
+    fontWeight: 700,
+  },
+});

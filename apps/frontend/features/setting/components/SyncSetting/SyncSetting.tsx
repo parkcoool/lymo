@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 
+import useCurrentTrackId from "@/entities/player/hooks/useCurrentTrackId";
 import getSyncText from "@/entities/setting/utils/getSyncText";
-import useTrackKey from "@/features/player/hooks/useTrackKey";
 
 import useSyncControl from "../../hooks/useSyncControl";
 
@@ -9,8 +9,9 @@ import Controller from "./Controller";
 import { styles } from "./styles";
 
 export default function SyncSetting() {
-  const trackKey = useTrackKey();
-  const syncControl = useSyncControl(trackKey);
+  const trackId = useCurrentTrackId();
+
+  const syncControl = useSyncControl(trackId);
   if (syncControl === null) return null;
 
   const { value, handlers } = syncControl;

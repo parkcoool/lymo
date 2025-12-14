@@ -3,9 +3,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { TouchableOpacity, View, Image, Text } from "react-native";
 
-import { useDeviceMediaStore } from "@/contexts/useDeviceMediaStore";
-import { useSyncStore } from "@/contexts/useSyncStore";
-import { useTrackSourceStore } from "@/contexts/useTrackSourceStore";
+import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
+import { useSyncStore } from "@/shared/models/syncStore";
+import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
+import getMetadataString from "@/entities/track/utils/getTrackDetailString";
 import { colors } from "@/shared/constants/colors";
 
 import { styles } from "./styles";
@@ -63,7 +64,7 @@ export default function DeviceMedia() {
             {deviceMedia.title}
           </Text>
           <Text style={styles.details} numberOfLines={3}>
-            {deviceMedia.artist} • {deviceMedia.album}
+            {getMetadataString({ artist: deviceMedia.artist, album: deviceMedia.album })}
           </Text>
         </View>
       </View>
