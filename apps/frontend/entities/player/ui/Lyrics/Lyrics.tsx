@@ -2,13 +2,13 @@ import { Lyric, LyricsProvider } from "@lymo/schemas/shared";
 import { Ref, useMemo } from "react";
 import { Text, View } from "react-native";
 
-import { useSyncStore } from "@/shared/models/syncStore";
 import useDeviceMediaTimestamp from "@/entities/deviceMedia/hooks/useDeviceMediaTimestamp";
 import type { Section } from "@/entities/player/models/types";
 import Paragraph from "@/entities/player/ui/Paragraph";
 import Sentence from "@/entities/player/ui/Sentence";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 import getLyricsProviderName from "@/entities/story/utils/getLyricsProviderName";
+import { useSyncStore } from "@/shared/models/syncStore";
 
 import useCurrentTrackId from "../../hooks/useCurrentTrackId";
 

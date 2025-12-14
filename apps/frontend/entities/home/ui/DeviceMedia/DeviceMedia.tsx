@@ -4,10 +4,10 @@ import { router } from "expo-router";
 import { TouchableOpacity, View, Image, Text } from "react-native";
 
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
-import { useSyncStore } from "@/shared/models/syncStore";
 import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 import getMetadataString from "@/entities/track/utils/getTrackDetailString";
 import { colors } from "@/shared/constants/colors";
+import { useSyncStore } from "@/shared/models/syncStore";
 
 import { styles } from "./styles";
 

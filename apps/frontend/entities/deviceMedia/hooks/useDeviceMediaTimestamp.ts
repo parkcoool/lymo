@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
-import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import { MediaModule } from "@/core/mediaModule";
+import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 
 /**
  * 기기에서 재생되는 미디어의 현재 시각을 가져오는 훅입니다.

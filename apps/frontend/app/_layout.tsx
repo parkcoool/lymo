@@ -7,11 +7,11 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { DeviceMediaProvider } from "@/entities/deviceMedia/models/deviceMediaStore";
-import { SyncProvider } from "@/shared/models/syncStore";
-import { TrackSourceProvider } from "@/entities/player/models/trackSourceStore";
 import SyncDeviceMediaProvider from "@/entities/deviceMedia/ui/SyncDeviceMediaProvider";
+import { TrackSourceProvider } from "@/entities/player/models/trackSourceStore";
 import { SettingProvider } from "@/entities/setting/models/settingStore";
 import { colors } from "@/shared/constants/colors";
+import { SyncProvider } from "@/shared/models/syncStore";
 
 import "@/core/firestore";
 import "@/core/functions";

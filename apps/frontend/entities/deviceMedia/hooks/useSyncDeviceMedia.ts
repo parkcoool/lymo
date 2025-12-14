@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { EmitterSubscription, NativeEventEmitter } from "react-native";
 
-import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
-import { useSyncStore } from "@/shared/models/syncStore";
-import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 import { MediaModule } from "@/core/mediaModule";
+import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
+import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
+import { useSyncStore } from "@/shared/models/syncStore";
 import type { DeviceMedia } from "@/shared/types/mediaModule";
 
 const eventEmitter = new NativeEventEmitter(MediaModule);

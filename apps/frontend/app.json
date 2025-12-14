@@ -5,10 +5,6 @@
     "scheme": "lymoapp",
     "version": "1.0.0",
     "newArchEnabled": true,
-    "web": {
-      "output": "static",
-      "favicon": "./assets/favicon.png"
-    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
