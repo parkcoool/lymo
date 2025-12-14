@@ -4,7 +4,7 @@ import { logger } from "firebase-functions";
 import { onValueCreated } from "firebase-functions/database";
 import { defineSecret } from "firebase-functions/params";
 
-import CommonError from "@/features/shared/errors/CommonError";
+import KnownError from "@/features/shared/errors/KnownError";
 import { getOrCreateTrack } from "@/features/shared/tools/getOrCreateTrack";
 
 import { ensureDefaultStory } from "./helpers";
@@ -25,7 +25,7 @@ export const onStoryRequestCreate = onValueCreated(
       const request = event.data.val();
       const input = StoryRequestSchema.parse(request);
 
-      if (input.status !== "PENDING") throw new CommonError(ERROR_CODES.INVALID_INPUT);
+      if (input.status !== "PENDING") throw new KnownError(ERROR_CODES.INVALID_INPUT);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { language, status, ...trackParams } = input;
 
@@ -35,7 +35,7 @@ export const onStoryRequestCreate = onValueCreated(
       // 3) 곡 해석 생성 및 저장
       await ensureDefaultStory({ track: track.data, trackId: track.id, requestId, language });
     } catch (error) {
-      if (error instanceof CommonError) {
+      if (error instanceof KnownError) {
         logger.info(`An error occurred in \`onStoryRequestCreate\`: ${error.code}`, error);
         return;
       }

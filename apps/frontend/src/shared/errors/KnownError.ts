@@ -1,11 +1,11 @@
 import { ErrorCode } from "@lymo/schemas/error";
 
-export default class CommonError extends Error {
+export default class KnownError extends Error {
   code: ErrorCode;
 
   constructor(errorCode: ErrorCode, message?: string) {
     super(message);
-    this.name = "CommonError";
+    this.name = "KnownError";
     this.code = errorCode;
   }
 }

@@ -2,6 +2,8 @@ import { Track } from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
 import { Language } from "@lymo/schemas/shared";
 
+import KnownError from "@/features/shared/errors/KnownError";
+
 import { generateStoryFlow } from "../../flows/generateStory";
 import { copyStoryDoc } from "../../tools/copyStoryDoc";
 import { getStoryDoc } from "../../tools/getStoryDoc";
@@ -45,7 +47,7 @@ export async function ensureDefaultStory({
 
   // 2) 가사 제공자 결정하기
   const lyricsProvider = Object.keys(track.lyrics)[0] as keyof typeof track.lyrics | undefined;
-  if (!lyricsProvider) throw new Error(ERROR_CODES.LYRICS_NOT_FOUND);
+  if (!lyricsProvider) throw new KnownError(ERROR_CODES.LYRICS_PROVIDER_NOT_FOUND);
 
   // 3) StoryUpdater 인스턴스 생성
   const storyUpdater = new StoryUpdater({

@@ -7,6 +7,7 @@ import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack
 import { useEffect, useRef } from "react";
 
 import database from "@/core/database";
+import KnownError from "@/shared/errors/KnownError";
 import { createStreamChannel } from "@/shared/utils/createStreamChannel";
 
 type UseRequestStoryParams = RetrieveTrackInput & { language: Language };
@@ -50,6 +51,11 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
             if (!storyRequest.success) {
               streamChannel.fail(new Error("해석 요청 데이터가 올바르지 않습니다."));
               return;
+            }
+
+            // 오류가 발상한 경우
+            if (storyRequest.data.status === "FAILED") {
+              streamChannel.fail(new KnownError(storyRequest.data.errorCode));
             }
 
             streamChannel.push(storyRequest.data);

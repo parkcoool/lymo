@@ -2,6 +2,7 @@ import { RetrieveTrackInput } from "@lymo/schemas/functions";
 import { useQuery } from "@tanstack/react-query";
 
 import retrieveTrack from "@/entities/track/api/retrieveTrack";
+import KnownError from "@/shared/errors/KnownError";
 
 /**
  * retrieveTrack를 호출하는 쿼리 훅입니다.
@@ -13,7 +14,7 @@ export default function useRetrieveTrack(params: RetrieveTrackInput) {
     queryFn: async () => retrieveTrack(params),
     select: (res) => {
       if (res.data.success) return res.data.data;
-      throw new Error(res.data.message || res.data.error);
+      throw new KnownError(res.data.error, res.data.message);
     },
     throwOnError: true,
     staleTime: 1000 * 60 * 5,

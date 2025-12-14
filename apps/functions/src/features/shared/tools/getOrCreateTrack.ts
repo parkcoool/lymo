@@ -3,7 +3,7 @@ import { ERROR_CODES } from "@lymo/schemas/error";
 import { z } from "genkit";
 
 import ai from "@/core/genkit";
-import CommonError from "@/features/shared/errors/CommonError";
+import KnownError from "@/features/shared/errors/KnownError";
 import getLyricsFromLRCLIB from "@/features/shared/helpers/getLyricsFromLRCLIB";
 import { createTrackDoc } from "@/features/shared/tools/createTrackDoc";
 import { getTrackDoc } from "@/features/shared/tools/getTrackDoc";
@@ -50,7 +50,7 @@ export const getOrCreateTrack = ai.defineTool(
 
       // 1-2) 캐시 miss 시 외부 API에서 조회
       const spotifyResult = await searchSpotify(input);
-      if (!spotifyResult) throw new CommonError(ERROR_CODES.EXTERNAL_TRACK_NOT_FOUND);
+      if (!spotifyResult) throw new KnownError(ERROR_CODES.EXTERNAL_TRACK_NOT_FOUND);
       const trackId = spotifyResult.id;
 
       // 1-3) LRCLIB에서 가사 검색
@@ -59,7 +59,7 @@ export const getOrCreateTrack = ai.defineTool(
         artists: spotifyResult.artists,
         duration: spotifyResult.durationInSeconds,
       });
-      if (!lrclibResult) throw new CommonError(ERROR_CODES.LYRICS_NOT_FOUND);
+      if (!lrclibResult) throw new KnownError(ERROR_CODES.LYRICS_NOT_FOUND);
 
       // 1-4) 곡 데이터 준비
       const now = new Date().toISOString();
@@ -88,7 +88,7 @@ export const getOrCreateTrack = ai.defineTool(
       const trackQuery = await getTrackDoc(input);
       if (trackQuery) return trackQuery;
 
-      throw new CommonError(ERROR_CODES.TRACK_NOT_FOUND);
+      throw new KnownError(ERROR_CODES.TRACK_NOT_FOUND);
     }
   }
 );

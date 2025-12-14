@@ -2,6 +2,7 @@ import { GeneratedStoryFields } from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
 
 import ai from "@/core/genkit";
+import KnownError from "@/features/shared/errors/KnownError";
 
 import { generateLyricsTranslationsFlow } from "../generateLyricTranslations";
 import { generateSectionBreaksFlow } from "../generateSectionBreaks";
@@ -20,7 +21,11 @@ export const generateStoryFlow = ai.defineFlow(
   async ({ track, config: { lyricsProvider, language } }, { sendChunk }) => {
     // 1) 데이터 준비
     const lyrics = track.lyrics[lyricsProvider];
-    if (!lyrics) throw new Error(ERROR_CODES.LYRICS_NOT_FOUND);
+    if (!lyrics)
+      throw new KnownError(
+        ERROR_CODES.LYRICS_NOT_FOUND,
+        `가사 제공자 ${lyricsProvider}의 가사를 찾을 수 없습니다.`
+      );
 
     const result: GeneratedStoryFields = {
       overview: "",

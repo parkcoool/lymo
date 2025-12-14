@@ -26,7 +26,12 @@ export const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  retryButton: {
+  buttonContainer: {
+    gap: 8,
+    width: "60%",
+  },
+
+  button: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     flexDirection: "row",
@@ -37,11 +42,11 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
 
-  retryButtonIcon: {
+  buttonIcon: {
     color: colors.onSurface,
   },
 
-  retryButtonContent: {
+  buttonContent: {
     color: colors.onSurface,
     fontSize: 16,
   },

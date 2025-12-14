@@ -24,7 +24,7 @@ export default function useHandleSetting() {
 
       try {
         const settingJSON = JSON.parse(value);
-        if (!isSettingJSON(settingJSON)) throw new Error("Invalid setting JSON");
+        if (!isSettingJSON(settingJSON)) return;
 
         const parsed = parseSettingJSON(settingJSON);
         setSetting(parsed);
