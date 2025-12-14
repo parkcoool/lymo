@@ -11,6 +11,20 @@ export default function ItemList() {
   const { data: popularTracks } = usePopularTracksQuery();
   const handlePlayTrack = useHandlePlayTrack();
 
+  // 4개 행으로 열 우선 정렬
+  const numRows = 4;
+  const numCols = Math.max(Math.ceil(popularTracks.length / numRows), 2);
+  const reorderedTracks = [];
+
+  for (let col = 0; col < numCols; col++) {
+    for (let row = 0; row < numRows; row++) {
+      const index = row * numCols + col;
+      if (index < popularTracks.length) {
+        reorderedTracks.push(popularTracks[index]);
+      }
+    }
+  }
+
   return (
     <ScrollView horizontal directionalLockEnabled={true} alwaysBounceVertical={false}>
       <FlatList
@@ -18,10 +32,10 @@ export default function ItemList() {
         contentContainerStyle={styles.sectionContentContainer}
         columnWrapperStyle={styles.sectionContentWrapper}
         key={popularTracks.length}
-        numColumns={Math.max(Math.ceil(popularTracks.length / 4), 2)}
+        numColumns={numCols}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
-        data={popularTracks}
+        data={reorderedTracks}
         keyExtractor={(item) => item.id}
         renderItem={({ item: track }) => (
           <Link href={`/player`} key={track.id} asChild>

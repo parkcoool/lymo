@@ -20,7 +20,6 @@ export default async function getPopularTracks() {
     limit(20)
   );
   const trackDocs = (await getDocs(q)) as FirebaseFirestoreTypes.QuerySnapshot<Track>;
-
   const result = trackDocs.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
   return result;
 }
