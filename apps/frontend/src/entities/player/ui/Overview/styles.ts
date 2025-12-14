@@ -35,4 +35,8 @@ export const styles = StyleSheet.create({
   overviewButtonContent: {
     color: colors.onBackground,
   },
+
+  invisible: {
+    opacity: 0,
+  },
 });

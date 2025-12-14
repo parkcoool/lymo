@@ -17,8 +17,10 @@ export default function Overview({ overview, isCompleted = true }: OverviewProps
 
   // 개요 문자열 타이핑 애니메이션 적용
   const displayedOverview = useTypingAnimation(overview, 0.5, !isCompleted);
+  const expandable = displayedOverview.length > 0 && !expanded;
 
   const handleExpand = () => {
+    if (!expandable) return;
     setExpanded(true);
   };
 
@@ -40,17 +42,20 @@ export default function Overview({ overview, isCompleted = true }: OverviewProps
             <Skeleton height={16} width="100%" opacity={0.4} />
             <Skeleton height={16} width="0%" opacity={0.4} />
             <Skeleton height={16} width="80%" opacity={0.4} />
+            <Skeleton height={16} width="100%" opacity={0.4} />
           </View>
         )}
       </View>
 
-      {/* 자세히 보기 상태가 아닐 때만 자세히 보기 버튼 노출 */}
-      {displayedOverview.length > 0 && !expanded && (
-        <TouchableOpacity style={styles.overviewButton} onPress={handleExpand}>
-          <MaterialIcons name={"expand-more"} size={20} style={styles.overviewButtonContent} />
-          <Text style={styles.overviewButtonContent}>자세히 보기</Text>
-        </TouchableOpacity>
-      )}
+      {/* 자세히 보기 버튼 */}
+      <TouchableOpacity
+        style={[styles.overviewButton, !expandable ? styles.invisible : null]}
+        onPress={handleExpand}
+        disabled={!expandable}
+      >
+        <MaterialIcons name={"expand-more"} size={20} style={styles.overviewButtonContent} />
+        <Text style={styles.overviewButtonContent}>자세히 보기</Text>
+      </TouchableOpacity>
     </View>
   );
 }
