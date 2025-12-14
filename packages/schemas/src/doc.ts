@@ -18,9 +18,10 @@ export const TrackSchema = z.object({
 
   createdAt: z.string(),
   stats: z.object({
-    storyCount: z.number(),
+    favoriteCount: z.number(),
     viewCount: z.number(),
   }),
+  storyCount: z.number(),
 });
 export type Track = Omit<z.infer<typeof TrackSchema>, "lyrics"> & {
   lyrics: Partial<Record<LyricsProvider, z.infer<typeof LyricSchema>[]>>;

@@ -115,8 +115,17 @@ export class StoryUpdater {
           updatedAt: now,
         }),
 
-        // 본 문서 업데이트
-        this.storyDocRef.set({ ...this.baseFields, ...parsedFinalData, updatedAt: now }),
+        // 본 문서 업데이트 및 track 문서 storyCount 증가
+        admin.firestore().runTransaction(async (transaction) => {
+          transaction.set(this.storyDocRef, {
+            ...this.baseFields,
+            ...parsedFinalData,
+            updatedAt: now,
+          });
+
+          const trackDocRef = admin.firestore().collection("tracks").doc(this.trackId);
+          transaction.update(trackDocRef, { storyCount: admin.firestore.FieldValue.increment(1) });
+        }),
       ]);
     } catch (error) {
       // 검증 실패 시 story preview 문서의 상태를 FAILED로 업데이트

@@ -72,7 +72,8 @@ export const getOrCreateTrack = ai.defineTool(
         publishedAt: spotifyResult.publishedAt,
         lyrics: { lrclib: lrclibResult.lyrics },
         createdAt: now,
-        stats: { storyCount: 0, viewCount: 0 },
+        stats: { favoriteCount: 0, viewCount: 0 },
+        storyCount: 0,
       };
 
       // 1-5) 캐시 문서 생성
