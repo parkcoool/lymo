@@ -12,7 +12,7 @@ interface GradientFillProps {
 export default function GradientFill({ gradientOptions, children, style }: GradientFillProps) {
   return (
     <MaskedView maskElement={children} style={style}>
-      <LinearGradient {...gradientOptions} style={{ flex: 1 }}>
+      <LinearGradient {...gradientOptions}>
         <View style={{ opacity: 0 }}>{children}</View>
       </LinearGradient>
     </MaskedView>

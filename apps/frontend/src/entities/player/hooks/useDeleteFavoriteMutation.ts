@@ -7,23 +7,19 @@ import { useFavoriteStore } from "../models/favoriteStore";
 
 interface UseDeleteFavoriteMutationProps {
   storyId: string;
-  trackId: string;
 }
 
 /**
  * `storyId`와 `trackId`에 대해 좋아요 삭제를 수행하는 뮤테이션 훅입니다.
  * @returns mutation 객체
  */
-export default function useDeleteFavoriteMutation({
-  storyId,
-  trackId,
-}: UseDeleteFavoriteMutationProps) {
+export default function useDeleteFavoriteMutation({ storyId }: UseDeleteFavoriteMutationProps) {
   const { favoriteDeltaMap, add, setFavoriteDeltaMap } = useFavoriteStore();
   const { user } = useUserStore();
 
   return useMutation({
-    mutationKey: ["delete-favorite", { storyId, trackId }, user?.uid],
-    mutationFn: async () => await deleteFavorite({ storyId, trackId }),
+    mutationKey: ["delete-favorite", { storyId }, user?.uid],
+    mutationFn: async (trackId: string) => await deleteFavorite({ storyId, trackId }),
     onMutate: async (_variables, context) => {
       // favorite 낙관적 업데이트
       const favoriteQueryKey = ["favorite", storyId, user?.uid];

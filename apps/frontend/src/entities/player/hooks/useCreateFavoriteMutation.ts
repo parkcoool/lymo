@@ -7,23 +7,19 @@ import { useFavoriteStore } from "../models/favoriteStore";
 
 interface UseCreateFavoriteMutationProps {
   storyId: string;
-  trackId: string;
 }
 
 /**
  * `storyId`와 `trackId`에 대해 좋아요 생성을 수행하는 뮤테이션 훅입니다.
  * @returns mutation 객체
  */
-export default function useCreateFavoriteMutation({
-  storyId,
-  trackId,
-}: UseCreateFavoriteMutationProps) {
+export default function useCreateFavoriteMutation({ storyId }: UseCreateFavoriteMutationProps) {
   const { favoriteDeltaMap, add, setFavoriteDeltaMap } = useFavoriteStore();
   const { user } = useUserStore();
 
   return useMutation({
-    mutationKey: ["create-favorite", { storyId, trackId }, user?.uid],
-    mutationFn: async () => await createFavorite({ storyId, trackId }),
+    mutationKey: ["create-favorite", { storyId }, user?.uid],
+    mutationFn: async (trackId: string) => await createFavorite({ storyId, trackId }),
     onMutate: async (_variables, context) => {
       // favorite 낙관적 업데이트
       const favoriteQueryKey = ["favorite", storyId, user?.uid];
@@ -41,7 +37,6 @@ export default function useCreateFavoriteMutation({
     },
     onError(_error, _variables, onMutateResult, context) {
       if (!onMutateResult) return;
-      console.error({ storyId, trackId });
 
       // favorite 낙관적 업데이트 롤백
       const favoriteQueryKey = ["favorite", storyId, user?.uid];

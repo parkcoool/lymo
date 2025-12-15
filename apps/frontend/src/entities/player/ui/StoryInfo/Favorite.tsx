@@ -10,7 +10,7 @@ import { styles } from "./styles";
 
 interface FavoriteProps {
   storyId: string;
-  trackId: string;
+  trackId?: string;
   favoriteCount: number;
 }
 
@@ -20,21 +20,19 @@ export default function Favorite({ storyId, trackId, favoriteCount }: FavoritePr
 
   const { mutate: createFavorite, isPending: isCreateFavoritePending } = useCreateFavoriteMutation({
     storyId,
-    trackId,
   });
   const { mutate: deleteFavorite, isPending: isDeleteFavoritePending } = useDeleteFavoriteMutation({
     storyId,
-    trackId,
   });
 
-  const isDisabled = isCreateFavoritePending || isDeleteFavoritePending;
+  const isDisabled = isCreateFavoritePending || isDeleteFavoritePending || !trackId;
 
   // 좋아요 버튼 핸들러
   const handlePressFavorite = () => {
     if (isDisabled) return;
 
-    if (favorite) deleteFavorite();
-    else createFavorite();
+    if (favorite) deleteFavorite(trackId);
+    else createFavorite(trackId);
   };
 
   const adjustedFavoriteCount = favoriteCount + (favoriteDeltaMap.get(storyId) ?? 0);

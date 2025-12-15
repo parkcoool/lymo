@@ -93,7 +93,7 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
             />
 
             {/* 해석 정보 */}
-            {story && track ? (
+            {story ? (
               <Suspense fallback={<StoryInfoSkeleton />}>
                 <Animated.View entering={FadeIn.duration(300)}>
                   <StoryInfo story={story} track={track} isCompleted={isCompleted} />

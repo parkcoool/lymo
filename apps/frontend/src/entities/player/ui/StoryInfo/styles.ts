@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 20,
     gap: 8,
+    height: 128,
   },
 
   top: {

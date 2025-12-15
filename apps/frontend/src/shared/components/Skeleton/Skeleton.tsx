@@ -42,9 +42,9 @@ export default function Skeleton({
     );
     shimmerLoop.start();
 
-    // 0.5초 딜레이 후 0.3초 동안 페이드인 (최대 불투명도 0.8 * opacity)
+    // 0.3초 딜레이 후 0.3초 동안 페이드인 (최대 불투명도 0.8 * opacity)
     const fadeIn = Animated.sequence([
-      Animated.delay(500),
+      Animated.delay(300),
       Animated.timing(animatedOpacity, {
         toValue: 0.8 * opacity,
         duration: 300,

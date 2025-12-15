@@ -11,7 +11,7 @@ import { styles } from "./styles";
 
 interface StoryInfoProps {
   story: { id: string; data: BaseStoryFields };
-  track: { id: string; data: Track };
+  track?: { id: string; data: Track };
   isCompleted: boolean;
 }
 
@@ -67,7 +67,7 @@ export default function StoryInfo({ story, track, isCompleted }: StoryInfoProps)
         {isCompleted && (
           <Favorite
             storyId={story.id}
-            trackId={track.id}
+            trackId={track?.id}
             favoriteCount={story.data.stats.favoriteCount}
           />
         )}
