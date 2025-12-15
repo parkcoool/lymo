@@ -8,6 +8,7 @@ import {
   ScrollView,
   View,
 } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 import Header from "@/entities/layout/ui/Header";
 import Intro from "@/entities/player/ui/Intro";
@@ -94,7 +95,9 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
             {/* 해석 정보 */}
             {story && track ? (
               <Suspense fallback={<StoryInfoSkeleton />}>
-                <StoryInfo story={story} track={track} isCompleted={isCompleted} />
+                <Animated.View entering={FadeIn.duration(300)}>
+                  <StoryInfo story={story} track={track} isCompleted={isCompleted} />
+                </Animated.View>
               </Suspense>
             ) : (
               <StoryInfoSkeleton />
@@ -106,14 +109,14 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
 
           {/* 가사 */}
           {processedLyrics ? (
-            <View collapsable={false}>
+            <Animated.View entering={FadeIn.duration(300)}>
               <Lyrics
                 activeSentenceRef={currentRef}
                 lyrics={processedLyrics}
                 lyricsProvider={story?.data.lyricsProvider}
                 isCompleted={isCompleted}
               />
-            </View>
+            </Animated.View>
           ) : (
             <ActivityIndicator
               style={{ marginTop: 50 }}

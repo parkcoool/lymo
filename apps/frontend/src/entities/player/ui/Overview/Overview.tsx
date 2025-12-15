@@ -1,6 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 import Skeleton from "@/shared/components/Skeleton";
 import { useTypingAnimation } from "@/shared/hooks/useTypingAnimation";
@@ -29,9 +30,11 @@ export default function Overview({ overview, isCompleted = true }: OverviewProps
       {/* 개요 */}
       <View style={{ height: expanded ? undefined : 144, overflow: "hidden" }}>
         {displayedOverview.length > 0 ? (
-          <Text style={styles.overview} numberOfLines={expanded ? undefined : 6}>
-            {displayedOverview}
-          </Text>
+          <Animated.View entering={FadeIn.duration(300)}>
+            <Text style={styles.overview} numberOfLines={expanded ? undefined : 6}>
+              {displayedOverview}
+            </Text>
+          </Animated.View>
         ) : (
           <View style={styles.overviewSkeletonContainer}>
             <Skeleton height={16} width="100%" opacity={0.4} />
