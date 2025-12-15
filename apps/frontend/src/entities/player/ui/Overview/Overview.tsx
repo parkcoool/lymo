@@ -27,9 +27,9 @@ export default function Overview({ overview, isCompleted = true }: OverviewProps
   return (
     <View style={styles.wrapper}>
       {/* 개요 */}
-      <View style={{ height: expanded ? undefined : 192, overflow: "hidden" }}>
+      <View style={{ height: expanded ? undefined : 144, overflow: "hidden" }}>
         {displayedOverview.length > 0 ? (
-          <Text style={styles.overview} numberOfLines={expanded ? undefined : 8}>
+          <Text style={styles.overview} numberOfLines={expanded ? undefined : 6}>
             {displayedOverview}
           </Text>
         ) : (
@@ -39,9 +39,6 @@ export default function Overview({ overview, isCompleted = true }: OverviewProps
             <Skeleton height={16} width="80%" opacity={0.4} />
             <Skeleton height={16} width="0%" opacity={0.4} />
             <Skeleton height={16} width="100%" opacity={0.4} />
-            <Skeleton height={16} width="100%" opacity={0.4} />
-            <Skeleton height={16} width="0%" opacity={0.4} />
-            <Skeleton height={16} width="80%" opacity={0.4} />
             <Skeleton height={16} width="100%" opacity={0.4} />
           </View>
         )}

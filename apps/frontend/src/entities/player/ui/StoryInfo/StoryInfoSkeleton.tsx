@@ -16,9 +16,7 @@ export default function StoryInfoSkeleton() {
       </View>
 
       <View style={styles.statContainer}>
-        <Skeleton width={"20%"} opacity={0.3} style={styles.statSkeleton} />
-        <Skeleton width={"20%"} opacity={0.3} style={styles.statSkeleton} />
-        <Skeleton width={"20%"} opacity={0.3} style={styles.statSkeleton} />
+        <Skeleton width={"100%"} opacity={0.5} style={styles.statSkeleton} />
       </View>
     </View>
   );
