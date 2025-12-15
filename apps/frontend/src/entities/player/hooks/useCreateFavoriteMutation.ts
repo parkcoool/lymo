@@ -1,10 +1,9 @@
-import { Story } from "@lymo/schemas/doc";
 import { useMutation } from "@tanstack/react-query";
 
 import { useUserStore } from "@/entities/auth/model/userStore";
-import { useSettingStore } from "@/entities/setting/models/settingStore";
 
 import createFavorite from "../apis/createFavorite";
+import { useFavoriteStore } from "../models/favoriteStore";
 
 interface UseCreateFavoriteMutationProps {
   storyId: string;
@@ -19,7 +18,7 @@ export default function useCreateFavoriteMutation({
   storyId,
   trackId,
 }: UseCreateFavoriteMutationProps) {
-  const { setting } = useSettingStore();
+  const { favoriteDeltaMap, add, setFavoriteDeltaMap } = useFavoriteStore();
   const { user } = useUserStore();
 
   return useMutation({
@@ -33,43 +32,23 @@ export default function useCreateFavoriteMutation({
       context.client.cancelQueries({ queryKey: favoriteQueryKey });
       context.client.setQueryData<boolean>(favoriteQueryKey, true);
 
-      // story 낙관적 업데이트
-      const storyQueryKey = ["story", trackId, setting.language];
-      const storyPreviousData = context.client.getQueryData<{ id: string; data: Story } | null>(
-        storyQueryKey
-      );
-
-      context.client.cancelQueries({ queryKey: storyQueryKey });
-      context.client.setQueryData<{ id: string; data: Story } | null>(storyQueryKey, (oldData) => {
-        if (!oldData) return oldData;
-        return {
-          ...oldData,
-          data: {
-            ...oldData.data,
-            stats: {
-              ...oldData.data.stats,
-              favoriteCount: oldData.data.stats.favoriteCount + 1,
-            },
-          },
-        };
-      });
+      // favoriteDeltaMap 낙관적 업데이트
+      const favoriteDeltaPreviousData = favoriteDeltaMap;
+      add(storyId, 1);
 
       // 원래 데이터 반환
-      return { favoritePreviousData, storyPreviousData };
+      return { favoritePreviousData, favoriteDeltaPreviousData };
     },
     onError(_error, _variables, onMutateResult, context) {
       if (!onMutateResult) return;
+      console.error({ storyId, trackId });
 
       // favorite 낙관적 업데이트 롤백
       const favoriteQueryKey = ["favorite", storyId, user?.uid];
       context.client.setQueryData<boolean>(favoriteQueryKey, onMutateResult.favoritePreviousData);
 
-      // story 낙관적 업데이트 롤백
-      const storyQueryKey = ["story", trackId, setting.language];
-      context.client.setQueryData<{ id: string; data: Story } | null>(
-        storyQueryKey,
-        onMutateResult.storyPreviousData
-      );
+      // favoriteDeltaMap 낙관적 업데이트 롤백
+      setFavoriteDeltaMap(onMutateResult.favoriteDeltaPreviousData);
 
       // TODO: 에러 표시
     },

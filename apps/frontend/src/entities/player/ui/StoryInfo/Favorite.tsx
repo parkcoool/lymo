@@ -4,6 +4,7 @@ import { TouchableOpacity, Text } from "react-native";
 import useCreateFavoriteMutation from "../../hooks/useCreateFavoriteMutation";
 import useDeleteFavoriteMutation from "../../hooks/useDeleteFavoriteMutation";
 import useFavoriteQuery from "../../hooks/useFavoriteQuery";
+import { useFavoriteStore } from "../../models/favoriteStore";
 
 import { styles } from "./styles";
 
@@ -15,6 +16,7 @@ interface FavoriteProps {
 
 export default function Favorite({ storyId, trackId, favoriteCount }: FavoriteProps) {
   const { data: favorite } = useFavoriteQuery({ storyId });
+  const { favoriteDeltaMap } = useFavoriteStore();
 
   const { mutate: createFavorite, isPending: isCreateFavoritePending } = useCreateFavoriteMutation({
     storyId,
@@ -31,16 +33,11 @@ export default function Favorite({ storyId, trackId, favoriteCount }: FavoritePr
   const handlePressFavorite = () => {
     if (isDisabled) return;
 
-    // 이미 좋아요한 경우
-    if (favorite) {
-      deleteFavorite();
-    }
-
-    // 좋아요하지 않은 경우
-    else {
-      createFavorite();
-    }
+    if (favorite) deleteFavorite();
+    else createFavorite();
   };
+
+  const adjustedFavoriteCount = favoriteCount + (favoriteDeltaMap.get(storyId) ?? 0);
 
   return (
     <TouchableOpacity
@@ -53,7 +50,7 @@ export default function Favorite({ storyId, trackId, favoriteCount }: FavoritePr
         size={20}
         style={favorite ? styles.filledFavoriteIcon : styles.statIcon}
       />
-      <Text style={styles.statText}>{`${favoriteCount.toLocaleString()}개`}</Text>
+      <Text style={styles.statText}>{`${adjustedFavoriteCount.toLocaleString()}개`}</Text>
     </TouchableOpacity>
   );
 }

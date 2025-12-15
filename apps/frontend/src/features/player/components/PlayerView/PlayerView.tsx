@@ -94,7 +94,7 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
             {/* 해석 정보 */}
             {story && track ? (
               <Suspense fallback={<StoryInfoSkeleton />}>
-                <StoryInfo story={story} track={track} />
+                <StoryInfo story={story} track={track} isCompleted={isCompleted} />
               </Suspense>
             ) : (
               <StoryInfoSkeleton />

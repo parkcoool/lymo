@@ -12,9 +12,10 @@ import { styles } from "./styles";
 interface StoryInfoProps {
   story: { id: string; data: BaseStoryFields };
   track: { id: string; data: Track };
+  isCompleted: boolean;
 }
 
-export default function StoryInfo({ story, track }: StoryInfoProps) {
+export default function StoryInfo({ story, track, isCompleted }: StoryInfoProps) {
   const isStoryByBot = story.data.userId === "bot";
 
   return (
@@ -63,11 +64,13 @@ export default function StoryInfo({ story, track }: StoryInfoProps) {
         </View>
 
         {/* 좋아요 수 */}
-        <Favorite
-          storyId={story.id}
-          trackId={track.id}
-          favoriteCount={story.data.stats.favoriteCount}
-        />
+        {isCompleted && (
+          <Favorite
+            storyId={story.id}
+            trackId={track.id}
+            favoriteCount={story.data.stats.favoriteCount}
+          />
+        )}
       </View>
     </View>
   );

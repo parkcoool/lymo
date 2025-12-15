@@ -9,6 +9,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { UserProvider } from "@/entities/auth/model/userStore";
 import { DeviceMediaProvider } from "@/entities/deviceMedia/models/deviceMediaStore";
 import SyncDeviceMediaProvider from "@/entities/deviceMedia/ui/SyncDeviceMediaProvider";
+import { FavoriteProvider } from "@/entities/player/models/favoriteStore";
 import { TrackSourceProvider } from "@/entities/player/models/trackSourceStore";
 import { SettingProvider } from "@/entities/setting/models/settingStore";
 import { colors } from "@/shared/constants/colors";
@@ -28,26 +29,28 @@ export default function RootLayout() {
             <DeviceMediaProvider>
               <SyncProvider>
                 <TrackSourceProvider>
-                  <GestureHandlerRootView>
-                    <BottomSheetModalProvider>
-                      <SyncDeviceMediaProvider>
-                        <View
-                          style={{
-                            flex: 1,
-                            position: "relative",
-                            backgroundColor: colors.background,
-                          }}
-                        >
-                          <Stack
-                            screenOptions={{
-                              headerShown: false,
-                              contentStyle: { backgroundColor: "transparent" },
+                  <FavoriteProvider>
+                    <GestureHandlerRootView>
+                      <BottomSheetModalProvider>
+                        <SyncDeviceMediaProvider>
+                          <View
+                            style={{
+                              flex: 1,
+                              position: "relative",
+                              backgroundColor: colors.background,
                             }}
-                          />
-                        </View>
-                      </SyncDeviceMediaProvider>
-                    </BottomSheetModalProvider>
-                  </GestureHandlerRootView>
+                          >
+                            <Stack
+                              screenOptions={{
+                                headerShown: false,
+                                contentStyle: { backgroundColor: "transparent" },
+                              }}
+                            />
+                          </View>
+                        </SyncDeviceMediaProvider>
+                      </BottomSheetModalProvider>
+                    </GestureHandlerRootView>
+                  </FavoriteProvider>
                 </TrackSourceProvider>
               </SyncProvider>
             </DeviceMediaProvider>
