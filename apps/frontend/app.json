@@ -2,6 +2,7 @@
   "expo": {
     "name": "Lymo",
     "slug": "lymoapp",
+    "scheme": "lymoapp",
     "version": "1.0.0",
     "experiments": {
       "typedRoutes": true,

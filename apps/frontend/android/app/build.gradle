@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
@@ -87,11 +88,6 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
     namespace 'com.parkcool.lymoapp'
     defaultConfig {
         applicationId 'com.parkcool.lymoapp'
@@ -102,12 +98,6 @@ android {
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }
-    
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -141,10 +131,6 @@ android {
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
-}
-
-kotlin {
-    jvmToolchain(17)
 }
 
 // Apply static values from `gradle.properties` to the `android.packagingOptions`
@@ -195,5 +181,3 @@ dependencies {
         implementation jscFlavor
     }
 }
-
-apply plugin: 'com.google.gms.google-services'
