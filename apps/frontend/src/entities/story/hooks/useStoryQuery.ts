@@ -19,12 +19,12 @@ export default function useStoryQuery({
   enabled = true,
 }: UseTrackAndStoryQueryParams) {
   return useQuery({
-    queryKey: ["story", { language, trackId }],
+    queryKey: ["story", trackId, language],
     queryFn: async () => {
       if (!trackId || !language) return null;
       return getStoryByTrackId({ trackId, language });
     },
     enabled,
-    staleTime: 1000 * 60 * 5,
+    staleTime: Infinity,
   });
 }

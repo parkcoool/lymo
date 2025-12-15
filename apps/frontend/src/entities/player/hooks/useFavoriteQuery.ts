@@ -18,6 +18,6 @@ export default function useFavoriteQuery({ storyId }: UseFavoriteQueryParams) {
   return useSuspenseQuery({
     queryKey: ["favorite", storyId, user?.uid],
     queryFn: async () => getFavorite({ storyId }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: Infinity,
   });
 }

@@ -4,34 +4,34 @@ import { useMutation } from "@tanstack/react-query";
 import { useUserStore } from "@/entities/auth/model/userStore";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 
-import createFavorite from "../apis/createFavorite";
+import deleteFavorite from "../apis/deleteFavorite";
 
-interface UseCreateFavoriteMutationProps {
+interface UseDeleteFavoriteMutationProps {
   storyId: string;
   trackId: string;
 }
 
 /**
- * `storyId`와 `trackId`에 대해 좋아요 생성을 수행하는 뮤테이션 훅입니다.
+ * `storyId`와 `trackId`에 대해 좋아요 삭제를 수행하는 뮤테이션 훅입니다.
  * @returns mutation 객체
  */
-export default function useCreateFavoriteMutation({
+export default function useDeleteFavoriteMutation({
   storyId,
   trackId,
-}: UseCreateFavoriteMutationProps) {
+}: UseDeleteFavoriteMutationProps) {
   const { setting } = useSettingStore();
   const { user } = useUserStore();
 
   return useMutation({
-    mutationKey: ["create-favorite", { storyId, trackId }, user?.uid],
-    mutationFn: async () => await createFavorite({ storyId, trackId }),
+    mutationKey: ["delete-favorite", { storyId, trackId }, user?.uid],
+    mutationFn: async () => await deleteFavorite({ storyId, trackId }),
     onMutate: async (_variables, context) => {
       // favorite 낙관적 업데이트
       const favoriteQueryKey = ["favorite", storyId, user?.uid];
       const favoritePreviousData = context.client.getQueryData<boolean>(favoriteQueryKey);
 
       context.client.cancelQueries({ queryKey: favoriteQueryKey });
-      context.client.setQueryData<boolean>(favoriteQueryKey, true);
+      context.client.setQueryData<boolean>(favoriteQueryKey, false);
 
       // story 낙관적 업데이트
       const storyQueryKey = ["story", trackId, setting.language];
@@ -48,7 +48,7 @@ export default function useCreateFavoriteMutation({
             ...oldData.data,
             stats: {
               ...oldData.data.stats,
-              favoriteCount: oldData.data.stats.favoriteCount + 1,
+              favoriteCount: oldData.data.stats.favoriteCount - 1,
             },
           },
         };

@@ -1,14 +1,12 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BaseStoryFields, Track } from "@lymo/schemas/doc";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 
 import Avatar from "@/entities/auth/ui/Avatar";
 import GradientFill from "@/shared/components/GradientFill";
 import formatRelativeTime from "@/shared/utils/formatRelativeTime";
 
-import useCreateFavoriteMutation from "../../hooks/useCreateFavoriteMutation";
-import useFavoriteQuery from "../../hooks/useFavoriteQuery";
-
+import Favorite from "./Favorite";
 import { styles } from "./styles";
 
 interface StoryInfoProps {
@@ -17,36 +15,7 @@ interface StoryInfoProps {
 }
 
 export default function StoryInfo({ story, track }: StoryInfoProps) {
-  const { data: favorite } = useFavoriteQuery({ storyId: story.id });
-  const {
-    mutate: createFavorite,
-    isPending: isCreateFavoritePedning,
-    isSuccess: isCreateFavoriteSuccess,
-    reset: resetCreateFavorite,
-  } = useCreateFavoriteMutation({
-    storyId: story.id,
-    trackId: track.id,
-  });
-
   const isStoryByBot = story.data.userId === "bot";
-
-  // 좋아요 버튼 핸들러
-  const handlePressFavorite = () => {
-    if (isCreateFavoritePedning) return;
-
-    // 이미 좋아요한 경우
-    if (favorite) {
-      resetCreateFavorite();
-      // TODO: 좋아요 취소 뮤테이션 추가
-    }
-
-    // 좋아요하지 않은 경우
-    else {
-      createFavorite();
-    }
-  };
-
-  const favoriteCount = story.data.stats.favoriteCount + (isCreateFavoriteSuccess ? 1 : 0);
 
   return (
     <View style={styles.wrapper}>
@@ -94,14 +63,11 @@ export default function StoryInfo({ story, track }: StoryInfoProps) {
         </View>
 
         {/* 좋아요 수 */}
-        <TouchableOpacity style={[styles.stat, styles.pressable]} onPress={handlePressFavorite}>
-          <MaterialIcons
-            name={favorite ? "favorite" : "favorite-border"}
-            size={20}
-            style={favorite ? styles.filledFavoriteIcon : styles.statIcon}
-          />
-          <Text style={styles.statText}>{`${favoriteCount.toLocaleString()}개`}</Text>
-        </TouchableOpacity>
+        <Favorite
+          storyId={story.id}
+          trackId={track.id}
+          favoriteCount={story.data.stats.favoriteCount}
+        />
       </View>
     </View>
   );
