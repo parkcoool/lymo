@@ -73,6 +73,11 @@ export const StorySchema = BaseStoryFieldsSchema.merge(TrackInfoFieldsSchema).me
 );
 export type Story = z.infer<typeof StorySchema>;
 
+// `stories/{storyId}/favorites/{userId}` 문서 스키마
+export const FavoriteSchema = z.object({
+  createdAt: z.string(),
+});
+
 // ==============================
 // retrieveTrackCache 관련 스키마
 // ==============================

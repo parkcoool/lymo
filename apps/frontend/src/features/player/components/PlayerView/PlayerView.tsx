@@ -1,6 +1,6 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { Stack } from "expo-router";
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import {
   ActivityIndicator,
   NativeScrollEvent,
@@ -92,7 +92,13 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
             />
 
             {/* 해석 정보 */}
-            {story ? <StoryInfo story={story} /> : <StoryInfoSkeleton />}
+            {story && track ? (
+              <Suspense fallback={<StoryInfoSkeleton />}>
+                <StoryInfo story={story} track={track} />
+              </Suspense>
+            ) : (
+              <StoryInfoSkeleton />
+            )}
 
             {/* 개요 */}
             <Overview overview={story?.data.overview} isCompleted={isCompleted} />

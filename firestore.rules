@@ -21,8 +21,10 @@ service cloud.firestore {
         isValidIncrement(request.resource.data, resource.data, 'favoriteCount') &&
         // Track의 좋아요도 같이 올라가는지 확인
         isTrackSynced(resource.data.trackId, 'favoriteCount') &&
-        // 좋아요 기록 문서가 생기는지 확인
-        existsAfter(/databases/$(database)/documents/stories/$(storyId)/favorites/$(request.auth.uid));
+        // 좋아요 문서가 새로 생성되었는지 확인
+        existsAfter(/databases/$(database)/documents/stories/$(storyId)/favorites/$(request.auth.uid)) &&
+        // 현재는 좋아요 문서가 없는지 확인
+        !exists(/databases/$(database)/documents/stories/$(storyId)/favorites/$(request.auth.uid));
     }
 
     // ==============================
@@ -37,7 +39,9 @@ service cloud.firestore {
         request.auth != null &&
         request.auth.uid == userId &&
         // 생성 시 스토리의 좋아요 수가 증가하는지 확인
-        isStorySynced(storyId, 'favoriteCount');
+        isStorySynced(storyId, 'favoriteCount') &&
+        // 좋아요 문서 스키마 검증
+        isValidFavoriteSchema(request.resource.data, userId);
     }
 
     // ==============================
@@ -61,11 +65,23 @@ service cloud.firestore {
     // 공통 함수
     // ==============================
 
+    // favorites 서브컬렉션의 문서 스키마 검증
+    function isValidFavoriteSchema(data, userId) {
+      return 
+        data.keys().hasOnly(['userId', 'createdAt']) &&
+        data.userId == userId &&
+        data.createdAt == request.time;
+    }
+
     // 특정 stats 필드만 1 증가하는지 검증
     function isValidIncrement(newData, oldData, fieldName) {
       return newData.diff(oldData).affectedKeys().hasOnly(['stats']) &&
-             newData.stats.diff(oldData.stats).affectedKeys().hasOnly([fieldName]) &&
-             newData.stats[fieldName] == oldData.stats[fieldName] + 1;
+            // stats 필드 내부의 변경사항이 해당 fieldName 하나뿐인지 확인 
+            newData.stats.diff(oldData.stats).affectedKeys().hasOnly([fieldName]) &&
+            // 타입이 숫자인지 확인
+            (newData.stats[fieldName] is number) &&
+            // 값이 1 증가했는지 확인
+            newData.stats[fieldName] == oldData.stats[fieldName] + 1;
     }
 
     // trackId에 해당하는 track 문서의 특정 stats 필드가 1 증가하는지 검증
@@ -75,7 +91,10 @@ service cloud.firestore {
       let before = get(trackPath);
       
       return after != null && before != null &&
-             after.data.stats[fieldName] == before.data.stats[fieldName] + 1;
+            // 타입이 숫자인지 확인
+            (after.data.stats[fieldName] is number) &&
+            // 값이 1 증가했는지 확인
+            after.data.stats[fieldName] == before.data.stats[fieldName] + 1;
     }
 
     // storyId에 해당하는 story 문서의 특정 stats 필드가 1 증가하는지 검증
@@ -85,7 +104,10 @@ service cloud.firestore {
       let before = get(storyPath);
 
       return after != null && before != null &&
-             after.data.stats[fieldName] == before.data.stats[fieldName] + 1;
+            // 타입이 숫자인지 확인
+            (after.data.stats[fieldName] is number) &&
+            // 값이 1 증가했는지 확인
+            after.data.stats[fieldName] == before.data.stats[fieldName] + 1;
     }
   }
 }

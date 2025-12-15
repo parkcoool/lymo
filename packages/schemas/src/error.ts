@@ -30,6 +30,9 @@ export const errorCode = z.enum([
 
   // 가사 제공자를 찾을 수 없는 경우
   "LYRICS_PROVIDER_NOT_FOUND",
+
+  // 인증되지 않은 경우
+  "UNAUTHORIZED",
 ]);
 export const ERROR_CODES = errorCode.enum;
 export type ErrorCode = z.infer<typeof errorCode>;
@@ -45,4 +48,5 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   TRACK_SAVE_FAILED: "곡 정보를 저장하는 데 실패했습니다.",
   INVALID_INPUT: "잘못된 입력이 제공되었습니다.",
   LYRICS_PROVIDER_NOT_FOUND: "가사 제공자를 찾을 수 없습니다.",
+  UNAUTHORIZED: "로그인이 필요합니다.",
 };

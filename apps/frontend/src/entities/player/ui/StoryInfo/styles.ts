@@ -77,6 +77,10 @@ export const styles = StyleSheet.create({
     color: colors.onBackgroundSubtle,
   },
 
+  filledFavoriteIcon: {
+    color: "#ff6b81",
+  },
+
   statText: {
     fontSize: 14,
     fontWeight: "800",
