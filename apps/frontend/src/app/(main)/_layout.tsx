@@ -14,7 +14,7 @@ export default function MainLayout() {
       <Stack.Screen
         name="index"
         options={{
-          header: (props) => <Header {...props} showBrand />,
+          header: (props) => <Header {...props} brand />,
         }}
       />
     </Stack>
