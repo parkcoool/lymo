@@ -10,7 +10,7 @@ import { styles } from "./ErrorIndicator.styles";
 export default function ErrorIndicator({ error, retry }: ErrorBoundaryProps) {
   const navigation = useNavigation();
 
-  let message = error.message ?? "오류가 발생했어요.";
+  let message = "알 수 없는 오류가 발생했어요.";
 
   if (error instanceof KnownError) {
     if (error.message.length > 0) message = error.message;
