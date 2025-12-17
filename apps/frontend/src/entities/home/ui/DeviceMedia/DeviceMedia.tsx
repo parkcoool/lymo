@@ -47,19 +47,25 @@ export default function DeviceMedia({ deviceMedia }: DeviceMediaProps) {
         <Image source={{ uri: deviceMedia.albumArt }} style={styles.cover} />
 
         {/* 그라데이션 오버레이 */}
-        <LinearGradient style={styles.coverGradient} colors={["transparent", colors.black]} />
+        <LinearGradient
+          style={styles.coverGradient}
+          colors={["transparent", colors.black]}
+          start={[0, 0]}
+          end={[0, 0.8]}
+        />
 
         {/* 곡 정보 */}
         <View style={styles.trackMetadata}>
           {/* 정보 */}
           <View style={styles.information}>
             <MaterialIcons name="audiotrack" size={16} style={styles.informationIcon} />
-            <Text style={styles.informationText}>기기에서 재생 중인 미디어</Text>
+            <Text style={styles.informationText}>기기에서 재생 중인 음악</Text>
           </View>
 
-          <Text style={styles.title} numberOfLines={3}>
+          <Text style={styles.title} numberOfLines={2}>
             {deviceMedia.title}
           </Text>
+
           <Text style={styles.details} numberOfLines={3}>
             {getMetadataString({ artist: deviceMedia.artist, album: deviceMedia.album })}
           </Text>

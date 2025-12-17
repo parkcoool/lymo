@@ -51,6 +51,7 @@ export const styles = StyleSheet.create({
     right: 0,
     padding: 20,
     gap: 12,
+    paddingTop: 80,
   },
 
   titleWrapper: {
