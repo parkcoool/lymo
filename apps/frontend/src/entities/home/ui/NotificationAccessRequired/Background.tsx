@@ -3,7 +3,7 @@ import { Animated, View } from "react-native";
 
 import { styles } from "./styles";
 
-export default function Background() {
+export default function DeviceMediaSectionBackground() {
   // 애니메이션 값
   const floatAnim1 = useRef(new Animated.Value(0)).current;
   const floatAnim2 = useRef(new Animated.Value(0)).current;

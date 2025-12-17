@@ -10,7 +10,6 @@ export const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: colors.surface,
     flexDirection: "column",
-    alignItems: "flex-start",
     height: 400,
     boxShadow: "0 4px 32px rgba(255, 255, 255, 0.1)",
   },
@@ -43,16 +42,6 @@ export const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "#00000040",
-  },
-
-  closeButton: {
-    position: "absolute",
-    top: 16,
-    right: 16,
-  },
-
-  closeIcon: {
-    color: colors.onSurface,
   },
 
   body: {
@@ -113,13 +102,5 @@ export const styles = StyleSheet.create({
     color: colors.onSurface,
     fontSize: 14,
     fontWeight: 700,
-  },
-
-  // Preview
-  previewContainer: {
-    overflow: "hidden",
-    width: "100%",
-    gap: 16,
-    padding: 20,
   },
 });

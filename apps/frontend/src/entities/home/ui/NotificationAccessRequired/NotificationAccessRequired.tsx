@@ -3,24 +3,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity, View, Text } from "react-native";
 
 import { MediaModule } from "@/core/mediaModule";
-import useCheckNotificationListenerPermission from "@/entities/deviceMedia/hooks/useCheckNotificationListenerPermission";
 import GradientFill from "@/shared/components/GradientFill";
 
 import Background from "./Background";
 import { styles } from "./styles";
 
 export default function NotificationAccessRequired() {
-  const granted = useCheckNotificationListenerPermission();
-
-  if (granted) return null;
-
   // 권한 부여 버튼 핸들러
   const handleGrant = () => {
     MediaModule.openNotificationListenerSettings();
   };
 
   return (
-    <View style={[styles.wrapper]}>
+    <View style={styles.wrapper}>
       {/* 배경화면 */}
       <Background />
 
@@ -48,7 +43,7 @@ export default function NotificationAccessRequired() {
         </View>
 
         <Text style={styles.descriptionText}>
-          알림 접근 권한을 허용하면, 재생 중인 음악 정보를 자동으로 인식할 수 있어요.
+          알림 접근 권한을 허용해주세요. 재생 중인 음악 정보를 자동으로 인식할 수 있어요.
         </Text>
 
         {/* 푸터 */}
