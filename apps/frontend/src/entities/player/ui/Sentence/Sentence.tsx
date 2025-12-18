@@ -1,5 +1,6 @@
 import React, { memo, Ref, useEffect, useRef } from "react";
 import { View, Animated } from "react-native";
+import Reanimated, { Easing, LinearTransition } from "react-native-reanimated";
 
 import Skeleton from "@/shared/components/Skeleton";
 import { colors } from "@/shared/constants/colors";
@@ -36,17 +37,23 @@ const Sentence = memo(
     return (
       <View style={styles.container} ref={ref}>
         <Animated.Text style={[styles.sentence, { color }]}>{sentence}</Animated.Text>
-        {/* 번역 스켈레톤 */}
-        {translation === undefined && !isCompleted && (
-          <Skeleton width="70%" height={16} opacity={0.4} />
-        )}
 
-        {/* 번역 텍스트 */}
-        {displayedTranslation.length > 0 && (
-          <Animated.Text style={[styles.translation, { color }]}>
-            {displayedTranslation}
-          </Animated.Text>
-        )}
+        <Reanimated.View
+          style={styles.translationWrapper}
+          layout={LinearTransition.duration(300).easing(Easing.inOut(Easing.quad))}
+        >
+          {/* 번역 스켈레톤 */}
+          {translation === undefined && !isCompleted && (
+            <Skeleton width="70%" height={12} opacity={0.4} />
+          )}
+
+          {/* 번역 텍스트 */}
+          {displayedTranslation.length > 0 && (
+            <Animated.Text style={[styles.translation, { color }]}>
+              {displayedTranslation}
+            </Animated.Text>
+          )}
+        </Reanimated.View>
       </View>
     );
   }

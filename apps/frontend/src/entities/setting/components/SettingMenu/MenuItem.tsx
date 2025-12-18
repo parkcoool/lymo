@@ -3,14 +3,14 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 import { styles } from "./styles";
 
-interface ItemProps {
+interface MenuItemProps {
   icon: keyof typeof MaterialIcons.glyphMap;
   label: string;
   content?: string;
   onPress?: () => void;
 }
 
-export default function Item({ icon, label, content, onPress }: ItemProps) {
+export default function MenuItem({ icon, label, content, onPress }: MenuItemProps) {
   return (
     <TouchableOpacity style={styles.itemWrapper} onPress={onPress}>
       <View style={styles.itemLeft}>
