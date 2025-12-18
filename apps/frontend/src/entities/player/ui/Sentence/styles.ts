@@ -19,11 +19,4 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.onBackgroundSubtle,
   },
-
-  translationWrapper: {
-    minHeight: 18,
-    alignItems: "flex-start",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
 });
