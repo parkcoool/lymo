@@ -48,7 +48,10 @@ export default function Favorite({ storyId, trackId, favoriteCount }: FavoritePr
         size={20}
         style={favorite ? styles.filledFavoriteIcon : styles.statIcon}
       />
-      <Text style={styles.statText}>{`${adjustedFavoriteCount.toLocaleString()}개`}</Text>
+      <Text
+        style={styles.statText}
+        numberOfLines={1}
+      >{`${adjustedFavoriteCount.toLocaleString()}개`}</Text>
     </TouchableOpacity>
   );
 }
