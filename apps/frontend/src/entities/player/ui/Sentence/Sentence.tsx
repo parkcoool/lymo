@@ -2,7 +2,6 @@ import React, { memo, Ref, useEffect } from "react";
 import { View } from "react-native";
 import Animated, {
   Easing,
-  LinearTransition,
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -47,28 +46,26 @@ const Sentence = memo(
     });
 
     return (
-      <Animated.View
-        style={styles.container}
-        ref={ref}
-        layout={LinearTransition.duration(300).easing(Easing.inOut(Easing.quad))}
-      >
+      <View style={styles.container} ref={ref}>
         <Animated.Text style={[styles.sentence, animatedStyle]}>{sentence}</Animated.Text>
 
-        {/* 번역 스켈레톤 */}
-        {translation === undefined && !isCompleted && (
-          <Skeleton width="70%" height={12} opacity={0.4} />
-        )}
+        <View style={styles.translationWrapper}>
+          {/* 번역 스켈레톤 */}
+          {translation === undefined && !isCompleted && (
+            <Skeleton width="70%" height={12} opacity={0.4} />
+          )}
 
-        {/* 번역 텍스트 */}
-        {displayedTranslation.length > 0 && (
-          <Animated.Text
-            style={[styles.translation, animatedStyle]}
-            entering={FadeIn.duration(300)}
-          >
-            {displayedTranslation}
-          </Animated.Text>
-        )}
-      </Animated.View>
+          {/* 번역 텍스트 */}
+          {displayedTranslation.length > 0 && (
+            <Animated.Text
+              style={[styles.translation, animatedStyle]}
+              entering={FadeIn.duration(300)}
+            >
+              {displayedTranslation}
+            </Animated.Text>
+          )}
+        </View>
+      </View>
     );
   }
 );
