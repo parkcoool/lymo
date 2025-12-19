@@ -1,9 +1,12 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BaseStoryFields, Track } from "@lymo/schemas/doc";
+import { Suspense } from "react";
 import { View, Text } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 import Avatar from "@/entities/auth/ui/Avatar";
 import GradientFill from "@/shared/components/GradientFill";
+import Skeleton from "@/shared/components/Skeleton";
 import formatRelativeTime from "@/shared/utils/formatRelativeTime";
 
 import Favorite from "./Favorite";
@@ -64,12 +67,21 @@ export default function StoryInfo({ story, track, isCompleted }: StoryInfoProps)
         </View>
 
         {/* 좋아요 수 */}
-        {isCompleted && (
-          <Favorite
-            storyId={story.id}
-            trackId={track?.id}
-            favoriteCount={story.data.stats.favoriteCount}
-          />
+        {isCompleted ? (
+          <Suspense fallback={<Skeleton style={styles.statSkeleton} opacity={0.3} />}>
+            <Animated.View
+              entering={FadeIn.duration(300)}
+              style={[styles.statWrapper, styles.pressable]}
+            >
+              <Favorite
+                storyId={story.id}
+                trackId={track?.id}
+                favoriteCount={story.data.stats.favoriteCount}
+              />
+            </Animated.View>
+          </Suspense>
+        ) : (
+          <Skeleton style={styles.statSkeleton} opacity={0.3} />
         )}
       </View>
     </View>

@@ -16,14 +16,16 @@ import { styles } from "./styles";
 
 interface HeaderProps extends NativeStackHeaderProps {
   backgroundColor?: string;
-  showBrand?: boolean;
+  brand?: boolean;
+  avatar?: boolean;
 }
 
 export default function Header({
   back,
   navigation,
   backgroundColor,
-  showBrand = false,
+  brand = false,
+  avatar = true,
 }: HeaderProps) {
   const { user } = useUserStore();
 
@@ -51,7 +53,7 @@ export default function Header({
           )}
 
           {/* 로고 */}
-          {showBrand && <Brand />}
+          {brand && <Brand />}
         </View>
 
         <View style={styles.right}>
@@ -61,7 +63,7 @@ export default function Header({
           </TouchableOpacity>
 
           {/* 아바타 */}
-          {user && (
+          {avatar && user && (
             <TouchableOpacity>
               <Avatar photo={user.photoURL ?? undefined} />
             </TouchableOpacity>

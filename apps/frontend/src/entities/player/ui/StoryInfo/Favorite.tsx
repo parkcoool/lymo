@@ -39,7 +39,7 @@ export default function Favorite({ storyId, trackId, favoriteCount }: FavoritePr
 
   return (
     <TouchableOpacity
-      style={[styles.stat, styles.pressable]}
+      style={styles.statContent}
       onPress={handlePressFavorite}
       disabled={isDisabled}
     >

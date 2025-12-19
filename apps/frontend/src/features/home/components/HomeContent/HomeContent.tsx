@@ -1,10 +1,10 @@
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import DeviceMediaDetection from "@/entities/home/ui/DeviceMedia";
-import NotificationAccessRequired from "@/entities/home/ui/NotificationAccessRequired";
 import NewTracksSection from "@/features/home/components/NewTracksSection";
 import PopularTracksSection from "@/features/home/components/PopularTracksSection";
+
+import DeviceMediaSection from "../DeviceMediaSection/DeviceMediaSection";
 
 import { styles } from "./HomeContent.styles";
 
@@ -15,10 +15,7 @@ export default function HomeContent() {
       <SafeAreaView edges={["top"]} style={styles.safeArea} />
 
       {/* 알림 구역 */}
-      <View style={styles.notificationContainer}>
-        <NotificationAccessRequired />
-        <DeviceMediaDetection />
-      </View>
+      <DeviceMediaSection />
 
       <View style={styles.content}>
         {/* 인기 섹션 */}

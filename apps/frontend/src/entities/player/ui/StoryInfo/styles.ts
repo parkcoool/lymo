@@ -94,8 +94,22 @@ export const styles = StyleSheet.create({
     backgroundColor: `${colors.white}10`,
   },
 
+  statWrapper: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+
+  statContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+
   statSkeleton: {
     flex: 1,
-    height: 45,
+    height: "100%",
+    paddingHorizontal: 16,
   },
 });

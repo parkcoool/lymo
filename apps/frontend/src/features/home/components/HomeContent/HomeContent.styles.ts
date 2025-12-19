@@ -10,11 +10,6 @@ export const styles = StyleSheet.create({
     paddingTop: 60,
   },
 
-  notificationContainer: {
-    padding: 12,
-    gap: 12,
-  },
-
   content: {
     gap: 20,
     paddingVertical: 20,

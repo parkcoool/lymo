@@ -3,17 +3,20 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { TouchableOpacity, View, Image, Text } from "react-native";
 
-import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 import getMetadataString from "@/entities/track/utils/getTrackDetailString";
 import { colors } from "@/shared/constants/colors";
 import { useSyncStore } from "@/shared/models/syncStore";
+import { DeviceMedia as DeviceMediaType } from "@/shared/types/DeviceMedia";
 
 import { styles } from "./styles";
 
-export default function DeviceMedia() {
+interface DeviceMediaProps {
+  deviceMedia: DeviceMediaType;
+}
+
+export default function DeviceMedia({ deviceMedia }: DeviceMediaProps) {
   const { setTrackSource } = useTrackSourceStore();
-  const { deviceMedia } = useDeviceMediaStore();
   const { isSynced, setIsSynced } = useSyncStore();
 
   // 연동 버튼 핸들러
@@ -35,12 +38,6 @@ export default function DeviceMedia() {
     setTrackSource({ from: "device", track: deviceMedia });
     router.push("/player");
   };
-
-  // 미디어가 감지되지 않았을 때
-  if (!deviceMedia) {
-    // TODO: 안내 UI 추가
-    return null;
-  }
 
   // 미디어가 감지되었을 때
   return (
