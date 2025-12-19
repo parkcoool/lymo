@@ -87,6 +87,11 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     namespace 'com.parkcool.lymoapp'
     defaultConfig {
         applicationId 'com.parkcool.lymoapp'
@@ -130,6 +135,10 @@ android {
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 // Apply static values from `gradle.properties` to the `android.packagingOptions`

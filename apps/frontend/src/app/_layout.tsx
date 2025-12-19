@@ -17,6 +17,9 @@ import { SyncProvider } from "@/shared/models/syncStore";
 
 import "@/core/firestore";
 import "@/core/functions";
+import "@/core/auth";
+import "@/core/headlessTask";
+import "@/core/database";
 
 const queryClient = new QueryClient();
 

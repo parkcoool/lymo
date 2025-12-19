@@ -1,5 +1,7 @@
 package com.parkcool.lymoapp
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -8,12 +10,14 @@ import android.media.session.MediaController
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
 import android.provider.Settings
+import android.graphics.Bitmap
+import android.util.Base64
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
-import android.graphics.Bitmap
 import java.io.ByteArrayOutputStream
-import android.util.Base64
-import androidx.core.app.NotificationManagerCompat
 
 class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
@@ -37,7 +41,12 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     }
 
     fun updateMediaController(controller: MediaController?) {
-        mediaController?.unregisterCallback(controllerCallback)
+        try {
+            mediaController?.unregisterCallback(controllerCallback)
+        } catch (e: Exception) {
+            // 이미 해제되었거나 문제 발생 시 무시
+        }
+        
         mediaController = controller
         mediaController?.registerCallback(controllerCallback)
         sendMediaData()
@@ -87,9 +96,11 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     }
 
     private fun sendEvent(eventName: String, params: WritableMap?) {
-        context
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            .emit(eventName, params)
+        if (context.hasActiveReactInstance()) {
+            context
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                .emit(eventName, params)
+        }
     }
 
     @ReactMethod
@@ -109,14 +120,18 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         try {
             val mediaSessionManager = context.getSystemService(Context.MEDIA_SESSION_SERVICE) as MediaSessionManager
             val componentName = ComponentName(context, MediaNotificationListener::class.java)
-            val activeSessions = mediaSessionManager.getActiveSessions(componentName)
-
-            if (activeSessions.isNotEmpty()) {
-                updateMediaController(activeSessions[0])
-            } else {
-                updateMediaController(null)
+            
+            try {
+                val activeSessions = mediaSessionManager.getActiveSessions(componentName)
+                if (activeSessions.isNotEmpty()) {
+                    updateMediaController(activeSessions[0])
+                } else {
+                    updateMediaController(null)
+                }
+                promise.resolve(true)
+            } catch (e: SecurityException) {
+                 promise.reject("PERMISSION_ERROR", "Notification Listener permission required.")
             }
-            promise.resolve(true)
         } catch (e: Exception) {
             promise.reject("OBSERVER_ERROR", e.message)
         }
@@ -147,6 +162,39 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         context.startActivity(intent)
     }
 
+    // --- [추가된 기능] 알림 띄우기 (JS에서 호출) ---
+    @ReactMethod
+    fun showInsightNotification(title: String, content: String) {
+        val channelId = "lymo_insight_channel"
+        val notificationId = 101 // 고유 ID (같은 ID로 보내면 덮어쓰기됨)
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // 안드로이드 8.0 (Oreo) 이상에서는 채널 생성이 필수입니다.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, "Lymo Insights", NotificationManager.IMPORTANCE_LOW).apply {
+                description = "Music Insight Notifications"
+                enableVibration(false) // 조용하게
+                enableLights(false)
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        // 알림 생성
+        // 주의: setSmallIcon에는 실제 존재하는 아이콘 리소스 ID를 넣어야 합니다.
+        // 기본적으로 안드로이드 아이콘을 쓰거나, R.drawable.ic_notification 등을 사용하세요.
+        // 여기서는 임시로 시스템 아이콘을 사용합니다.
+        val notification = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(android.R.drawable.ic_dialog_info) 
+            .setContentTitle(title)
+            .setContentText(content)
+            .setPriority(NotificationCompat.PRIORITY_LOW) // 중요도 낮음 (소리 X, 팝업 X)
+            .setAutoCancel(true) // 터치 시 삭제
+            .build()
+
+        notificationManager.notify(notificationId, notification)
+    }
+
     @ReactMethod
     fun addListener(type: String?) {
         // Keep: Required for RN built in Event Emitter Calls.
@@ -157,4 +205,3 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         // Keep: Required for RN built in Event Emitter Calls.
     }
 }
-
