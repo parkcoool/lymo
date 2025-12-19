@@ -7,7 +7,7 @@ import com.facebook.react.jstasks.HeadlessJsTaskConfig
 
 class MediaHeadlessTaskService : HeadlessJsTaskService() {
 
-    // [수정] intent 파라미터에 '?'를 붙여 Nullable로 변경
+    // intent 파라미터에 '?'를 붙여 Nullable로 변경
     override fun getTaskConfig(intent: Intent?): HeadlessJsTaskConfig? {
         // intent가 null일 수 있으므로 안전하게 처리
         val extras = intent?.extras

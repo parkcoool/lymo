@@ -162,7 +162,6 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         context.startActivity(intent)
     }
 
-    // --- [추가된 기능] 알림 띄우기 (JS에서 호출) ---
     @ReactMethod
     fun showInsightNotification(title: String, content: String) {
         val channelId = "lymo_insight_channel"
@@ -170,7 +169,6 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // 안드로이드 8.0 (Oreo) 이상에서는 채널 생성이 필수입니다.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId, "Lymo Insights", NotificationManager.IMPORTANCE_LOW).apply {
                 description = "Music Insight Notifications"
