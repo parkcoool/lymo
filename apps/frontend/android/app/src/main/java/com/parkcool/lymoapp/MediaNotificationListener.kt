@@ -7,8 +7,9 @@ import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.service.notification.NotificationListenerService
-import android.service.notification.StatusBarNotification
 import android.util.Log
 
 class MediaNotificationListener : NotificationListenerService(), MediaSessionManager.OnActiveSessionsChangedListener {
@@ -16,7 +17,17 @@ class MediaNotificationListener : NotificationListenerService(), MediaSessionMan
     private lateinit var mediaSessionManager: MediaSessionManager
     private var lastTrackTitle: String? = null
     
+    // GC 방지용 컨트롤러 참조
     private var activeController: MediaController? = null
+
+    // Debounce를 위한 핸들러
+    private val handler = Handler(Looper.getMainLooper())
+    
+    // 예약된 작업 및 데이터
+    private var pendingRunnable: Runnable? = null
+    private var pendingTitle: String = ""
+    private var pendingArtist: String = ""
+    private var pendingDuration: Double = 0.0
 
     companion object {
         var mediaModule: MediaModule? = null
@@ -32,18 +43,20 @@ class MediaNotificationListener : NotificationListenerService(), MediaSessionMan
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        
         val componentName = ComponentName(this, this.javaClass)
         try {
             mediaSessionManager.addOnActiveSessionsChangedListener(this, componentName)
             findActiveMediaSession()
         } catch (e: SecurityException) {
-            Log.e("LymoListener", "Error connecting listener: ${e.message}")
+            Log.e("LymoListener", "SecurityException: ${e.message}")
         }
     }
 
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
+        // 서비스 종료 시 예약된 작업 취소
+        if (pendingRunnable != null) handler.removeCallbacks(pendingRunnable!!)
+        
         try {
             mediaSessionManager.removeOnActiveSessionsChangedListener(this)
             activeController?.unregisterCallback(mediaControllerCallback)
@@ -65,59 +78,72 @@ class MediaNotificationListener : NotificationListenerService(), MediaSessionMan
             if (activeSessions.isNotEmpty()) {
                 val newController = activeSessions[0]
                 
-                // 기존과 같은 컨트롤러라면 패스 (패키지명으로 대략적 비교)
+                // 이미 연결된 컨트롤러라면 패스
                 if (activeController != null && 
                     newController.packageName == activeController?.packageName) {
                     return
                 }
 
-                Log.d("LymoListener", "Hooking into NEW controller: ${newController.packageName}")
-                
-                // 기존 콜백 제거 및 멤버 변수 업데이트
+                // 기존 콜백 제거 및 새 컨트롤러 등록
                 activeController?.unregisterCallback(mediaControllerCallback)
                 activeController = newController
                 activeController?.registerCallback(mediaControllerCallback)
-
-                // UI 모듈에도 전달 (있으면)
+                
+                // UI 모듈 갱신
                 mediaModule?.updateMediaController(newController)
-            } else {
-                Log.d("LymoListener", "No active media sessions found.")
             }
         } catch (e: Exception) {
             Log.e("LymoListener", "Error finding sessions: ${e.message}")
         }
     }
 
-    // 콜백 객체를 멤버 변수로 선언하여 재사용 및 관리
     private val mediaControllerCallback = object : MediaController.Callback() {
         override fun onMetadataChanged(metadata: MediaMetadata?) {
             super.onMetadataChanged(metadata)
             metadata?.let {
                 val title = it.getString(MediaMetadata.METADATA_KEY_TITLE) ?: ""
                 val artist = it.getString(MediaMetadata.METADATA_KEY_ARTIST) ?: ""
-                
-                Log.d("LymoListener", "Metadata Changed: $title / $artist")
+                val durationLong = it.getLong(MediaMetadata.METADATA_KEY_DURATION)
+                val duration = durationLong.toDouble()
 
                 if (lastTrackTitle == title) return 
 
                 lastTrackTitle = title
-                Log.d("LymoListener", "🎵 New Track Detected: $title by $artist")
-
-                // Headless JS 실행
-                val serviceIntent = Intent(applicationContext, MediaHeadlessTaskService::class.java)
-                val bundle = Bundle().apply {
-                    putString("title", title)
-                    putString("artist", artist)
-                }
-                serviceIntent.putExtras(bundle)
                 
-                try {
-                    startService(serviceIntent)
-                    Log.d("LymoListener", "🚀 Headless Service Started")
-                } catch (e: Exception) {
-                    Log.e("LymoListener", "Failed to start Headless Service: ${e.message}")
+                // 1) 기존 예약된 작업 취소 (곡 스킵)
+                if (pendingRunnable != null) {
+                    handler.removeCallbacks(pendingRunnable!!)
                 }
+
+                // 2) 데이터 업데이트
+                pendingTitle = title
+                pendingArtist = artist
+                pendingDuration = duration
+
+                // 3) 새로운 작업 예약
+                pendingRunnable = Runnable {
+                    triggerHeadlessJs(pendingTitle, pendingArtist, pendingDuration)
+                }
+                
+                // 알림을 띄우기까지의 대기 시간 (ms 단위)
+                handler.postDelayed(pendingRunnable!!, 5000) 
             }
+        }
+    }
+
+    private fun triggerHeadlessJs(title: String, artist: String, duration: Double) {
+        val serviceIntent = Intent(applicationContext, MediaHeadlessTaskService::class.java)
+        val bundle = Bundle().apply {
+            putString("title", title)
+            putString("artist", artist)
+            putDouble("duration", duration) 
+        }
+        serviceIntent.putExtras(bundle)
+        
+        try {
+            startService(serviceIntent)
+        } catch (e: Exception) {
+            Log.e("LymoListener", "Failed to start Headless Service: ${e.message}")
         }
     }
 }

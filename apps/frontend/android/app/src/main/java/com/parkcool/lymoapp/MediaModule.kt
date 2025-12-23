@@ -2,6 +2,7 @@ package com.parkcool.lymoapp
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -12,11 +13,13 @@ import android.media.session.PlaybackState
 import android.provider.Settings
 import android.graphics.Bitmap
 import android.util.Base64
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.parkcool.lymoapp.R
 import java.io.ByteArrayOutputStream
 
 class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -172,22 +175,36 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId, "Lymo Insights", NotificationManager.IMPORTANCE_LOW).apply {
                 description = "Music Insight Notifications"
-                enableVibration(false) // 조용하게
+                enableVibration(false)
                 enableLights(false)
             }
             notificationManager.createNotificationChannel(channel)
         }
 
-        // 알림 생성
-        // 주의: setSmallIcon에는 실제 존재하는 아이콘 리소스 ID를 넣어야 합니다.
-        // 기본적으로 안드로이드 아이콘을 쓰거나, R.drawable.ic_notification 등을 사용하세요.
-        // 여기서는 임시로 시스템 아이콘을 사용합니다.
+        val deepLinkUrl = "lymoapp://player?from=device"
+        
+        // 1) 이 주소를 여는 Intent 생성
+        val intent = Intent(context, MainActivity::class.java)
+        
+        intent.action = Intent.ACTION_VIEW
+        intent.data = Uri.parse(deepLinkUrl)
+        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+        // 2) PendingIntent로 감싸기
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE 
+        )
+
         val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(android.R.drawable.ic_dialog_info) 
+            .setSmallIcon(R.drawable.ic_stat_logo)
             .setContentTitle(title)
             .setContentText(content)
-            .setPriority(NotificationCompat.PRIORITY_LOW) // 중요도 낮음 (소리 X, 팝업 X)
-            .setAutoCancel(true) // 터치 시 삭제
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
             .build()
 
         notificationManager.notify(notificationId, notification)
