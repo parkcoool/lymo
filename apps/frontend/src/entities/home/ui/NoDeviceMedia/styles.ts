@@ -8,16 +8,8 @@ export const styles = StyleSheet.create({
     position: "relative",
     borderRadius: 20,
     overflow: "hidden",
-    backgroundColor: colors.surface,
     flexDirection: "column",
     height: 400,
-  },
-
-  overlay: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#00000040",
   },
 
   body: {
@@ -25,9 +17,19 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 20,
-    paddingBottom: 28,
-    gap: 12,
+    paddingHorizontal: 20,
+    gap: 8,
+  },
+
+  titleWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+
+  titleIcon: {
+    color: colors.onSurface,
   },
 
   title: {
@@ -52,14 +54,7 @@ export const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  ringsContainer: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    paddingBottom: 120,
   },
 
   ring: {
@@ -68,5 +63,15 @@ export const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderColor: "#ffffff",
+  },
+
+  glow: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.white,
+    boxShadow: `0 0 80px 80px ${colors.white}`,
+    opacity: 0.08,
   },
 });

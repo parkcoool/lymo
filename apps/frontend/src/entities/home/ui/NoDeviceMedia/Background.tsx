@@ -12,23 +12,24 @@ import Animated, {
 import { styles } from "./styles";
 
 const DURATION_MS = 5000;
+const RING_COUNT = 4;
 
 export default function Background() {
   return (
     <View style={styles.background}>
-      <View style={styles.ringsContainer}>
-        <Ring delay={0} />
-        <Ring delay={DURATION_MS * (1 / 3)} />
-        <Ring delay={DURATION_MS * (2 / 3)} />
-      </View>
+      {Array.from({ length: RING_COUNT }).map((_, index) => (
+        <Ring key={index} delay={(DURATION_MS / RING_COUNT) * index} />
+      ))}
+
+      <View style={styles.glow} />
     </View>
   );
 }
 
 function Ring({ delay }: { delay: number }) {
   const scale = useSharedValue(0);
-  const width = useSharedValue(6);
-  const opacity = useSharedValue(0.6);
+  const width = useSharedValue(10);
+  const opacity = useSharedValue(0.2);
 
   useEffect(() => {
     scale.value = withDelay(
