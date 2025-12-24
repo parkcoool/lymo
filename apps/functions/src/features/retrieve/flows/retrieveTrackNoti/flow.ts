@@ -38,14 +38,14 @@ export const retrieveTrackNoti = ai.defineFlow(
       if (!track) return { success: true as const, data: null };
 
       // 3) 점수 계산
-      const score =
-        track.scores !== undefined
-          ? (track.scores.trivia * TRIVIA_SCORE_WEIGHT +
-              track.scores.depth * DEPTH_SCORE_WEIGHT +
-              track.scores.impact * IMPACT_SCORE_WEIGHT) /
-            10
-          : 0;
-      if (score < SCORE_THRESHOLD) return { success: true as const, data: null };
+      if (track.scores) {
+        const score =
+          (track.scores.trivia * TRIVIA_SCORE_WEIGHT +
+            track.scores.depth * DEPTH_SCORE_WEIGHT +
+            track.scores.impact * IMPACT_SCORE_WEIGHT) /
+          10;
+        if (0 < score && score < SCORE_THRESHOLD) return { success: true as const, data: null };
+      }
 
       // 4) 문구 생성
       const insight = await generateTrackInsightFlow({

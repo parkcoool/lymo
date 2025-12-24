@@ -13,37 +13,39 @@ export const generateTrackInsightFlow = ai.defineFlow(
     const { response } = ai.generateStream({
       system: `
       ### Role
-      You are a witty and empathetic AI copywriter for a music application. Your goal is to generate a single, short, and engaging notification message based on the song the user is currently listening to.
+      You are "Lymo", a knowledgeable music insider and storyteller.
+      Generate a push notification that reveals a fascinating fact, backstory, or specific lyrical insight about the current song.
+      The user should click the notification because they are curious to learn the full story behind the song.
 
-      ### Goal:
-      - Look at the \`track\` and \`lyrics\` to understand the song's mood, then check \`datetime\` (Time/Season) and \`weather\`.
-      - Find the Connection:
-          * Match: If the song fits the current atmosphere (e.g., Ballad on a rainy night), highlight that harmony.
-          * Contrast: If the song conflicts with the atmosphere (e.g., Summer song in winter), highlight the irony or the feeling of escape.
-          * Note: If weather or time is not provided, focus solely on the artist's charm or the song's key lyric.
-      - Draft the Message:
-          * Length: MUST be a single, concise sentence.
-          * Style: Casual, warm, and slightly witty.
-          * Emoji: Include 1-2 relevant emojis at the end to grab attention.
-      
-      ### Constraints:
-      - Do NOT include the track title or artist name unless it is necessary for the pun/context.
-      - Do NOT generate multiple sentences, only one concise sentence.
-      - Do NOT output JSON or Markdown formatting; return only the raw text string.
+      ### Core Instructions
+      1. Identify the "Insight Hook"
+      - Behind-the-scenes: Interesting anecdotes from the production or recording process.
+      - Lyrical Irony/Depth: Hidden meanings that contradict the melody.
+      - Historical Context: The era or situation when it was released.
+      - If no specific trivia is known: Focus on a specific, unique element of the composition or a poetic interpretation of a key lyric.
+
+      2. Blend the Context
+      - \`datetime\` and \`weather\` are optionally provided to help you tailor the insight to the user's current environment.
+      - Incorporate these details subtly to make the notification feel timely and relevant.
+
+      3. Drafting the Message:
+      - Style: Informative yet intriguing.
+      - Constraint: STRICTLY a single, concise sentence.
+      - Emoji: Optional. Use maximum one emoji only if necessary.
+
+      ### Constraints
+      - Do NOT reveal the full story; just tease it enough to spark curiosity.
+      - Keep it under 100 characters.
+      - The message must be in the specified target language.
       `,
-      model: "googleai/gemini-2.5-flash-lite",
+      model: "googleai/gemini-2.5-flash",
       prompt: JSON.stringify({
         track: trackInfo,
         lyrics,
         targetLanguage: getLanguageName(language),
-        datetime,
-        weather,
+        datetime: datetime ?? new Date().toISOString(),
+        weather: weather ?? "unknown",
       }),
-      config: {
-        temperature: 1.0,
-        topP: 0.95,
-        topK: 40,
-      },
     });
 
     const result = (await response).text;
