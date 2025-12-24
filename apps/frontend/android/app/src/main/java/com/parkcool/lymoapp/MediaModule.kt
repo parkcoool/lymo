@@ -181,7 +181,7 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
             notificationManager.createNotificationChannel(channel)
         }
 
-        val deepLinkUrl = "lymoapp://player?from=device"
+        val deepLinkUrl = "lymoapp://player"
         
         // 1) 이 주소를 여는 Intent 생성
         val intent = Intent(context, MainActivity::class.java)

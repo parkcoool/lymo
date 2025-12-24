@@ -135,6 +135,8 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
       {/* 헤더 설정 */}
       <Stack.Screen
         options={{
+          headerTransparent: true,
+          contentStyle: { backgroundColor: "transparent" },
           header: (props) => (
             <Header {...props} backgroundColor={headerBackgroundColor} avatar={false} />
           ),

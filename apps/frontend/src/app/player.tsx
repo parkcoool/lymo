@@ -1,10 +1,10 @@
 import { ErrorBoundaryProps } from "expo-router";
 
 import ErrorIndicator from "@/features/player/components/ErrorIndicator";
-import PlayerContent from "@/features/player/components/PlayerContent";
+import PlayerPage from "@/features/player/components/PlayerPage";
 
-export default function Player() {
-  return <PlayerContent />;
+export default function Page() {
+  return <PlayerPage />;
 }
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
