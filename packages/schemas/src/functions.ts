@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { TrackSchema } from "./doc";
 import { errorCode } from "./error";
+import { LanguageSchema } from "./shared";
 
 // ==============================
 // 공통 스키마
@@ -43,3 +44,18 @@ export const RetrieveTrackOutputSchema = CommonOutputSchema(
   })
 );
 export type RetrieveTrackOutput = z.infer<typeof RetrieveTrackOutputSchema>;
+
+// ==============================
+// retrieveTrackNoti 관련 스키마
+// ==============================
+export const RetrieveTrackNotiInputSchema = z.object({
+  title: z.string(),
+  artist: z.string(),
+  durationInSeconds: z.number(),
+  language: LanguageSchema,
+  datetime: z.string().optional(),
+  weather: z.string().optional(),
+});
+export type RetrieveTrackNotiInput = z.infer<typeof RetrieveTrackNotiInputSchema>;
+
+export const RetrieveTrackNotiOutputSchema = CommonOutputSchema(z.string().nullable());

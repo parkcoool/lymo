@@ -22,6 +22,14 @@ export const TrackSchema = z.object({
     viewCount: z.number(),
   }),
   storyCount: z.number(),
+
+  scores: z
+    .object({
+      trivia: z.number(),
+      depth: z.number(),
+      impact: z.number(),
+    })
+    .optional(),
 });
 export type Track = Omit<z.infer<typeof TrackSchema>, "lyrics"> & {
   lyrics: Partial<Record<LyricsProvider, z.infer<typeof LyricSchema>[]>>;

@@ -10,7 +10,6 @@ import { getTrackDoc } from "@/features/shared/tools/getTrackDoc";
 import { searchSpotify } from "@/features/shared/tools/searchSpotify";
 
 import { createRetrieveTrackCacheDoc } from "./createRetrieveTrackCacheDoc";
-import { getRetrieveTrackCacheDoc } from "./getRetrieveTrackCacheDoc";
 
 export const InputSchema = z.union([
   z.object({
@@ -41,11 +40,8 @@ export const getOrCreateTrack = ai.defineTool(
     if ("title" in input && "artist" in input && "durationInSeconds" in input) {
       // 1-1) 캐시 조회
       {
-        const trackId = await getRetrieveTrackCacheDoc(input);
-        if (trackId) {
-          const trackQuery = await getTrackDoc({ trackId });
-          if (trackQuery) return trackQuery;
-        }
+        const track = await getTrackDoc(input);
+        if (track) return track;
       }
 
       // 1-2) 캐시 miss 시 외부 API에서 조회
