@@ -1,4 +1,5 @@
 import ai from "@/core/genkit";
+import getLanguageName from "@/features/shared/utils/getLanguageName";
 
 import { InputSchema, StreamSchema, OutputSchema } from "./schemas";
 
@@ -26,7 +27,7 @@ export const generateTrackOverviewFlow = ai.defineFlow(
         - The summary must be written in the given target language.
       `,
       model: "googleai/gemini-2.5-flash",
-      prompt: JSON.stringify({ track: trackInfo, lyrics, targetLanguage: language }),
+      prompt: JSON.stringify({ track: trackInfo, lyrics, targetLanguage: getLanguageName(language) }),
       config: {
         temperature: 0.3,
       },
