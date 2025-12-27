@@ -30,6 +30,13 @@ export interface MediaModule {
    */
   openNotificationListenerSettings(): void;
 
-  addListener: (eventType: string) => void;
-  removeListeners: (count: number) => void;
+  /**
+   * 인사이트 알림을 표시합니다.
+   * @param title 알림 제목
+   * @param content 알림 내용
+   */
+  showInsightNotification(title: string, content: string): void;
+
+  addListener(eventType: string): void;
+  removeListeners(count: number): void;
 }

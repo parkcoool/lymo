@@ -59,3 +59,4 @@ export const RetrieveTrackNotiInputSchema = z.object({
 export type RetrieveTrackNotiInput = z.infer<typeof RetrieveTrackNotiInputSchema>;
 
 export const RetrieveTrackNotiOutputSchema = CommonOutputSchema(z.string().nullable());
+export type RetrieveTrackNotiOutput = z.infer<typeof RetrieveTrackNotiOutputSchema>;
