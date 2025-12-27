@@ -166,6 +166,31 @@ class MediaModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     }
 
     @ReactMethod
+    fun checkNotificationPermission(promise: Promise) {
+        try {
+            val notificationManager = NotificationManagerCompat.from(context)
+            val areNotificationsEnabled = notificationManager.areNotificationsEnabled()
+            promise.resolve(areNotificationsEnabled)
+        } catch (e: Exception) {
+            promise.reject("NOTIFICATION_PERMISSION_CHECK_ERROR", e.message)
+        }
+    }
+
+    @ReactMethod
+    fun requestNotificationPermission() {
+        val intent = Intent()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        } else {
+            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            intent.data = Uri.parse("package:" + context.packageName)
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
+    @ReactMethod
     fun showInsightNotification(title: String, content: String) {
         val channelId = "lymo_insight_channel"
         val notificationId = 101 // 고유 ID (같은 ID로 보내면 덮어쓰기됨)

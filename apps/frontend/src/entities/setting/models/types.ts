@@ -15,6 +15,11 @@ export interface Setting {
    * 문단 요약 표시 여부
    */
   showSectionNotes: boolean;
+
+  /**
+   * 알림 표시 빈도
+   */
+  notificationFrequency?: "always" | "normal" | "minimal" | "never";
 }
 
 /**

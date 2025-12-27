@@ -31,6 +31,16 @@ export interface MediaModule {
   openNotificationListenerSettings(): void;
 
   /**
+   * 알림 권한이 있는지 확인합니다.
+   */
+  checkNotificationPermission(): Promise<boolean>;
+
+  /**
+   * 알림 권한을 요청합니다.
+   */
+  requestNotificationPermission(): void;
+
+  /**
    * 인사이트 알림을 표시합니다.
    * @param title 알림 제목
    * @param content 알림 내용
