@@ -1,11 +1,8 @@
 import { Stack } from "expo-router";
-import { useEffect } from "react";
 import { View } from "react-native";
 
-import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import Header from "@/entities/layout/ui/Header";
 import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
-import { useSyncStore } from "@/shared/models/syncStore";
 
 import PlayerView from "../PlayerView";
 
@@ -14,16 +11,7 @@ import FromManual from "./FromManual";
 import { styles } from "./styles";
 
 export default function PlayerPage() {
-  const { trackSource, setTrackSource } = useTrackSourceStore();
-  const { deviceMedia } = useDeviceMediaStore();
-  const { setIsSynced } = useSyncStore();
-
-  // trackSource가 없으면 deviceMedia로 자동 설정
-  useEffect(() => {
-    if (trackSource || !deviceMedia) return;
-    setIsSynced(true);
-    setTrackSource({ from: "device", track: deviceMedia });
-  }, [trackSource, deviceMedia, setIsSynced, setTrackSource]);
+  const { trackSource } = useTrackSourceStore();
 
   return (
     <>
