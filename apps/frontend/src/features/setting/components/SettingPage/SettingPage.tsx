@@ -9,6 +9,7 @@ import { SettingItem } from "@/entities/setting/ui/SettingItem";
 import PrivacyTipItem from "./PrivacyTipItem";
 import SectionNote from "./SectionNote";
 import { styles } from "./styles";
+import Sync from "./Sync";
 import TranslateLanguage from "./TranslateLanguage";
 
 export default function SettingPage() {
@@ -30,18 +31,7 @@ export default function SettingPage() {
             <View style={styles.divider} />
 
             {/* 기기 음악 연동 */}
-            <SettingItem
-              icon={<MaterialIcons name="music-note" style={styles.icon} size={24} />}
-              title="기기 음악 연동"
-              description="재생 중인 음악 정보를 인식하기"
-            />
-
-            {/* 인사이트 알림 */}
-            <SettingItem
-              icon={<MaterialIcons name="notifications" style={styles.icon} size={24} />}
-              title="인사이트 알림"
-              description="재생 중인 음악의 인사이트를 알림으로 받기"
-            />
+            <Sync />
 
             <View style={styles.divider} />
 

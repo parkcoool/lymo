@@ -7,10 +7,10 @@ export default function getNotificationFrequencyText(frequency: Setting["notific
     case "normal":
       return "보통";
     case "minimal":
-      return "최소한";
+      return "가끔";
     case "never":
-      return "안 함";
+      return "없음";
     default:
-      return "";
+      return "설정 안 함";
   }
 }

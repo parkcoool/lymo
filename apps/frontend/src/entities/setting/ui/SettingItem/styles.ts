@@ -30,4 +30,8 @@ export const styles = StyleSheet.create({
   icon: {
     color: colors.onBackgroundSubtle,
   },
+
+  disabledWrapper: {
+    opacity: 0.5,
+  },
 });

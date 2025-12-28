@@ -19,6 +19,10 @@ export const styles = StyleSheet.create({
 
   itemContainer: {},
 
+  childrenContainer: {
+    paddingLeft: 20,
+  },
+
   icon: {
     color: colors.onBackgroundSubtle,
   },

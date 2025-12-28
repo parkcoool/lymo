@@ -8,11 +8,22 @@ interface SettingItemProps {
   title: string;
   description?: string;
   onPress?: () => void;
+  disabled?: boolean;
 }
 
-export default function SettingItem({ icon, title, description, onPress }: SettingItemProps) {
+export default function SettingItem({
+  icon,
+  title,
+  description,
+  onPress,
+  disabled,
+}: SettingItemProps) {
   return (
-    <TouchableOpacity style={styles.wrapper} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.wrapper, disabled && styles.disabledWrapper]}
+      onPress={onPress}
+      disabled={disabled}
+    >
       <View>{icon}</View>
       <View style={styles.left}>
         <Text style={styles.title}>{title}</Text>

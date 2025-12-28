@@ -10,6 +10,7 @@ interface SettingItemProps {
   description?: string;
   value: boolean;
   onValueChange: (value: boolean) => void;
+  disabled?: boolean;
 }
 
 export default function SettingItem({
@@ -18,13 +19,18 @@ export default function SettingItem({
   description,
   value,
   onValueChange,
+  disabled,
 }: SettingItemProps) {
   const handlePress = () => {
     onValueChange(!value);
   };
 
   return (
-    <TouchableOpacity style={styles.wrapper} onPress={handlePress}>
+    <TouchableOpacity
+      style={[styles.wrapper, disabled && styles.disabledWrapper]}
+      onPress={handlePress}
+      disabled={disabled}
+    >
       <View>{icon}</View>
       <View style={styles.left}>
         <Text style={styles.title}>{title}</Text>
