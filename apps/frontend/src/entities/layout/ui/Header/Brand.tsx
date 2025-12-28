@@ -1,8 +1,8 @@
 import { Text, View } from "react-native";
 
+import Logo from "@/shared/components/Logo";
 import { colors } from "@/shared/constants/colors";
 
-import Logo from "./Logo";
 import { styles } from "./styles";
 
 export default function Brand() {

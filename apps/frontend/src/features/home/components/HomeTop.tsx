@@ -4,7 +4,7 @@ import DeviceMedia from "@/entities/home/ui/DeviceMedia";
 import NoDeviceMedia from "@/entities/home/ui/NoDeviceMedia";
 import NotificationAccessRequired from "@/entities/home/ui/NotificationAccessRequired";
 
-export default function DeviceMediaSection() {
+export default function HomeTop() {
   const { deviceMedia } = useDeviceMediaStore();
   const granted = useCheckNotificationListenerPermission();
 

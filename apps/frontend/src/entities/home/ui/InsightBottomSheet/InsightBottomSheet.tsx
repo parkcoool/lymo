@@ -8,16 +8,12 @@ import { MediaModule } from "@/core/mediaModule";
 import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 
+import Body from "./Body";
 import { styles } from "./styles";
 
-export default function NotificationBottomSheet() {
-  const { setting } = useSettingStore();
+export default function InsightBottomSheet() {
+  const { updateSetting } = useSettingStore();
 
-  if (setting.notificationFrequency) return null;
-  return <Content />;
-}
-
-function Content() {
   const { bottom } = useSafeAreaInsets();
   const granted = useCheckNotificationPermission();
   const ref = useRef<BottomSheetModal>(null);
@@ -43,7 +39,8 @@ function Content() {
 
   // 모달 닫기 핸들러
   const handleDismiss = () => {
-    // 빈도 기본값으로 설정
+    // notificationFrequency가 설정되지 않았다면 'never'로 설정
+    updateSetting((prev) => ({ notificationFrequency: "never", ...prev }));
   };
 
   return (
@@ -64,13 +61,17 @@ function Content() {
       detached
       activeOffsetY={[-20, 20]}
       failOffsetX={[-20, 20]}
+      onDismiss={handleDismiss}
     >
       <BottomSheetView style={styles.content}>
         {/* 상단 */}
         <View style={styles.top}>
-          <Text style={styles.title}>듣고 계신 음악의 인사이트를 가끔씩 전달해드릴게요.</Text>
-          <Text style={styles.description}>인사이트 빈도도 설정에서 정할 수 있어요.</Text>
+          <Text style={styles.title}>듣고 계신 음악의 인사이트를 가끔씩 알려드릴까요?</Text>
+          <Text style={styles.description}>얼마나 자주 알려드릴지 설정에서 정할 수 있어요.</Text>
         </View>
+
+        {/* 바디 */}
+        <Body />
 
         {/* 푸터 */}
         <View style={styles.footer}>
