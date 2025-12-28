@@ -13,7 +13,10 @@ export default function SettingPage() {
         {/* 상단 영역 */}
         <SafeAreaView edges={["top"]} style={styles.safeArea} />
 
-        <View style={styles.content}></View>
+        <View style={styles.content}>
+          {/* 설정 항목들 */}
+          <View style={styles.itemContainer}></View>
+        </View>
       </ScrollView>
 
       <Stack.Screen

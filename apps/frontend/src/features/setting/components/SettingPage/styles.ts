@@ -17,4 +17,6 @@ export const styles = StyleSheet.create({
     gap: 20,
     paddingVertical: 20,
   },
+
+  itemContainer: {},
 });

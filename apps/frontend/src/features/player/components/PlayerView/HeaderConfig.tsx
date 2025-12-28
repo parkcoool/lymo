@@ -3,7 +3,7 @@ import { Stack } from "expo-router";
 import { useRef } from "react";
 
 import Header from "@/entities/layout/ui/Header";
-import SettingBottomSheet from "@/entities/setting/components/SettingBottomSheet";
+import SettingBottomSheet from "@/entities/setting/ui/SettingBottomSheet";
 
 interface HeaderConfigProps {
   backgroundColor: string;
