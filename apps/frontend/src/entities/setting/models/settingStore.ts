@@ -10,11 +10,6 @@ interface SettingContextStates {
    * 앱 설정
    */
   setting: Setting;
-
-  /**
-   * 설정이 로드되었는지 여부
-   */
-  isLoading: boolean;
 }
 
 interface SettingContextActions {
@@ -35,7 +30,6 @@ const [SettingContextProvider, useSettingStore] = buildContext<SettingContextVal
       language: "ko",
       showSectionNotes: true,
     },
-    isLoading: true,
     updateSetting: () => {},
   }
 );

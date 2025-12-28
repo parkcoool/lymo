@@ -1,5 +1,13 @@
-import React, { memo, Ref, useEffect, useRef } from "react";
-import { View, Animated } from "react-native";
+import React, { memo, Ref, useEffect } from "react";
+import { View } from "react-native";
+import Animated, {
+  Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  interpolateColor,
+  FadeIn,
+} from "react-native-reanimated";
 
 import Skeleton from "@/shared/components/Skeleton";
 import { colors } from "@/shared/constants/colors";
@@ -17,36 +25,46 @@ interface SentenceProps {
 
 const Sentence = memo(
   ({ sentence, translation, active, ref, isCompleted = true }: SentenceProps) => {
-    const progress = useRef(new Animated.Value(0)).current;
+    const progress = useSharedValue(active ? 1 : 0);
     const displayedTranslation = useTypingAnimation(translation, 10, !isCompleted);
 
     useEffect(() => {
-      Animated.timing(progress, {
-        toValue: active ? 1 : 0,
+      progress.value = withTiming(active ? 1 : 0, {
         duration: 200,
-        useNativeDriver: false,
-      }).start();
+        easing: Easing.inOut(Easing.quad),
+      });
     }, [active, progress]);
 
-    const color = progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [colors.onBackgroundSubtle, colors.onBackground],
+    const animatedStyle = useAnimatedStyle(() => {
+      const color = interpolateColor(
+        progress.value,
+        [0, 1],
+        [colors.onBackgroundSubtle, colors.onBackground]
+      );
+
+      return { color };
     });
 
     return (
       <View style={styles.container} ref={ref}>
-        <Animated.Text style={[styles.sentence, { color }]}>{sentence}</Animated.Text>
-        {/* 번역 스켈레톤 */}
-        {translation === undefined && !isCompleted && (
-          <Skeleton width="70%" height={16} opacity={0.4} />
-        )}
+        <Animated.Text style={[styles.sentence, animatedStyle]}>{sentence}</Animated.Text>
 
-        {/* 번역 텍스트 */}
-        {displayedTranslation.length > 0 && (
-          <Animated.Text style={[styles.translation, { color }]}>
-            {displayedTranslation}
-          </Animated.Text>
-        )}
+        <View style={styles.translationWrapper}>
+          {/* 번역 스켈레톤 */}
+          {translation === undefined && !isCompleted && (
+            <Skeleton width="70%" height={12} opacity={0.4} />
+          )}
+
+          {/* 번역 텍스트 */}
+          {displayedTranslation.length > 0 && (
+            <Animated.Text
+              style={[styles.translation, animatedStyle]}
+              entering={FadeIn.duration(300)}
+            >
+              {displayedTranslation}
+            </Animated.Text>
+          )}
+        </View>
       </View>
     );
   }

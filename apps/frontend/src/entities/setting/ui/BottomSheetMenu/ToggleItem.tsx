@@ -1,25 +1,30 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Text, TouchableOpacity, View } from "react-native";
 
+import Switch from "@/shared/components/Switch";
+
 import { styles } from "./styles";
 
-interface MenuItemProps {
+interface ToggleItemProps {
   icon: keyof typeof MaterialIcons.glyphMap;
   label: string;
-  content?: string;
-  onPress?: () => void;
+  value: boolean;
+  onValueChange: (value: boolean) => void;
 }
 
-export default function MenuItem({ icon, label, content, onPress }: MenuItemProps) {
+export default function ToggleItem({ icon, label, value, onValueChange }: ToggleItemProps) {
+  const handlePress = () => {
+    onValueChange(!value);
+  };
+
   return (
-    <TouchableOpacity style={styles.itemWrapper} onPress={onPress}>
+    <TouchableOpacity style={styles.itemWrapper} onPress={handlePress}>
       <View style={styles.itemLeft}>
         <MaterialIcons name={icon} size={24} style={styles.itemIcon} />
         <Text style={styles.itemText}>{label}</Text>
       </View>
       <View style={styles.itemRight}>
-        {content && <Text style={styles.itemContent}>{content}</Text>}
-        <MaterialIcons name="chevron-right" size={24} style={styles.itemRightIcon} />
+        <Switch value={value} />
       </View>
     </TouchableOpacity>
   );

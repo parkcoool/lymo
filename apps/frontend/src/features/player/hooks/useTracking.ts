@@ -92,7 +92,7 @@ export default function useTracking({ currentY, track }: UseTrackingParams): Use
     // 이미 트래킹 모드이거나 자동 스크롤 중이면 패스
     if (isTrackingMode || isAutoScrollingRef.current) return;
 
-    const isVisible = currentY > height * 0.1 && currentY < height * 0.9;
+    const isVisible = currentY > height * 0.3 && currentY < height * 0.7;
 
     if (isVisible) {
       // 현재 문장이 화면에 보이면 1초 타이머 시작

@@ -57,13 +57,18 @@ export default function StoryInfo({ story, track, isCompleted }: StoryInfoProps)
         {/* 업데이트 날짜 */}
         <View style={styles.stat}>
           <MaterialIcons name="update" size={20} style={styles.statIcon} />
-          <Text style={styles.statText}>{`${formatRelativeTime(story.data.updatedAt)} 전`}</Text>
+          <Text style={styles.statText} numberOfLines={1}>{`${formatRelativeTime(
+            story.data.updatedAt
+          )} 전`}</Text>
         </View>
 
         {/* 조회수 */}
         <View style={styles.stat}>
           <MaterialIcons name="visibility" size={20} style={styles.statIcon} />
-          <Text style={styles.statText}>{`${story.data.stats.viewCount.toLocaleString()}회`}</Text>
+          <Text
+            style={styles.statText}
+            numberOfLines={1}
+          >{`${story.data.stats.viewCount.toLocaleString()}회`}</Text>
         </View>
 
         {/* 좋아요 수 */}

@@ -13,9 +13,13 @@ export const styles = StyleSheet.create({
   },
 
   noteWrapper: {
-    padding: 16,
     borderRadius: 16,
     backgroundColor: `${colors.white}80`,
+  },
+
+  noteContent: {
+    padding: 16,
+    borderRadius: 16,
     flexDirection: "column",
     gap: 8,
   },

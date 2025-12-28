@@ -71,7 +71,7 @@ export const styles = StyleSheet.create({
     gap: 8,
     flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 4,
   },
 
   statIcon: {

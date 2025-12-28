@@ -1,5 +1,5 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
-import { Suspense, useMemo } from "react";
+import { useMemo } from "react";
 import {
   ActivityIndicator,
   NativeScrollEvent,
@@ -93,11 +93,9 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
 
             {/* 해석 정보 */}
             {story ? (
-              <Suspense fallback={<StoryInfoSkeleton />}>
-                <Animated.View entering={FadeIn.duration(300)}>
-                  <StoryInfo story={story} track={track} isCompleted={isCompleted} />
-                </Animated.View>
-              </Suspense>
+              <Animated.View entering={FadeIn.duration(300)}>
+                <StoryInfo story={story} track={track} isCompleted={isCompleted} />
+              </Animated.View>
             ) : (
               <StoryInfoSkeleton />
             )}

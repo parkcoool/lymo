@@ -25,9 +25,9 @@ export default function NotificationAccessRequired() {
       {/* 설명 */}
       <LinearGradient
         style={styles.body}
-        colors={["transparent", "#000000CC"]}
+        colors={["transparent", "#000000E0"]}
         start={[0, 0]}
-        end={[0, 0.3]}
+        end={[0, 0.5]}
       >
         <View style={styles.titleWrapper}>
           <MaterialIcons name="auto-awesome" style={styles.titleIcon} size={32} />
@@ -38,12 +38,12 @@ export default function NotificationAccessRequired() {
               end: { x: 1, y: 0 },
             }}
           >
-            <Text style={styles.title}>지금 듣고 있는 곡을 AI가 실시간으로 해석해줘요.</Text>
+            <Text style={styles.title}>지금 듣고 있는 음악을 AI가 실시간으로 해석해줘요.</Text>
           </GradientFill>
         </View>
 
         <Text style={styles.descriptionText}>
-          알림 접근 권한을 허용해주세요. 재생 중인 음악 정보를 자동으로 인식할 수 있어요.
+          알림 접근 권한을 허용해주시면, 듣고 있는 음악을 자동으로 인식할게요.
         </Text>
 
         {/* 푸터 */}
