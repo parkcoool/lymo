@@ -1,5 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { View } from "react-native";
+import { router } from "expo-router";
 
 import { MediaModule } from "@/core/mediaModule";
 import useCheckNotificationListenerPermission from "@/entities/deviceMedia/hooks/useCheckNotificationListenerPermission";
@@ -15,6 +15,10 @@ export default function Sync() {
 
   const handleToggle = () => {
     MediaModule.openNotificationListenerSettings();
+  };
+
+  const handleUpdateInsightNotification = () => {
+    router.push("/setting/insight");
   };
 
   return (
@@ -34,6 +38,7 @@ export default function Sync() {
         title="인사이트 알림"
         description={getNotificationFrequencyText(setting.notificationFrequency)}
         disabled={!granted}
+        onPress={handleUpdateInsightNotification}
       />
     </>
   );

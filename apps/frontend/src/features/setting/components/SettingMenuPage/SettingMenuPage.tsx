@@ -1,10 +1,8 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack } from "expo-router";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Header from "@/entities/layout/ui/Header";
-import { SettingItem } from "@/entities/setting/ui/SettingItem";
 
 import PrivacyTipItem from "./PrivacyTipItem";
 import SectionNote from "./SectionNote";
@@ -12,7 +10,7 @@ import { styles } from "./styles";
 import Sync from "./Sync";
 import TranslateLanguage from "./TranslateLanguage";
 
-export default function SettingPage() {
+export default function SettingMenuPage() {
   return (
     <>
       <ScrollView style={styles.container}>
