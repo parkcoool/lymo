@@ -4,8 +4,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { SettingViews } from "@/entities/setting/models/types";
 
+import SettingMenu from "../BottomSheetMenu";
 import Language from "../LanguageSetting";
-import SettingMenu from "../SettingMenu";
 import Sync from "../SyncSetting";
 
 import { styles } from "./styles";

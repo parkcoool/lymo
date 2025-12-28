@@ -13,7 +13,7 @@ interface SettingMenuProps {
   setView: (view: SettingViews) => void;
 }
 
-export default function SettingMenu({ setView }: SettingMenuProps) {
+export default function BottomSheetMenu({ setView }: SettingMenuProps) {
   const trackId = useCurrentTrackId();
   const { setting } = useSettingStore();
 
