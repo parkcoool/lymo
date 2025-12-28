@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { MediaModule } from "@/core/mediaModule";
 
@@ -9,21 +9,15 @@ const CHECK_INTERVAL_MS = 5000;
  * @returns 권한 부여 여부
  */
 export default function useCheckNotificationListenerPermission() {
-  const [granted, setGranted] = useState(false);
-
-  useEffect(() => {
-    if (granted) return;
-
-    const checkPermission = async () => {
-      const granted = await MediaModule.checkNotificationListenerPermission();
-      setGranted(granted);
-    };
-
-    const intervalRef = setInterval(checkPermission, CHECK_INTERVAL_MS);
-    checkPermission();
-
-    return () => clearInterval(intervalRef);
-  }, [granted]);
+  const { data: granted } = useQuery({
+    queryKey: ["notification-listener-permission"],
+    queryFn: () => MediaModule.checkNotificationListenerPermission(),
+    refetchInterval: (query) => {
+      if (query.state.data) return false;
+      return CHECK_INTERVAL_MS;
+    },
+    initialData: false,
+  });
 
   return granted;
 }
