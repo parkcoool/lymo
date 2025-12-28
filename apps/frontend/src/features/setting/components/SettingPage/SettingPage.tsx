@@ -4,9 +4,10 @@ import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Header from "@/entities/layout/ui/Header";
-import SettingItem from "@/entities/setting/ui/SettingItem";
+import { SettingItem } from "@/entities/setting/ui/SettingItem";
 
 import PrivacyTipItem from "./PrivacyTipItem";
+import SectionNote from "./SectionNote";
 import { styles } from "./styles";
 import TranslateLanguage from "./TranslateLanguage";
 
@@ -22,6 +23,11 @@ export default function SettingPage() {
           <View style={styles.itemContainer}>
             {/* 번역 대상 언어 */}
             <TranslateLanguage />
+
+            {/* 문단 이해하기 */}
+            <SectionNote />
+
+            <View style={styles.divider} />
 
             {/* 기기 음악 연동 */}
             <SettingItem

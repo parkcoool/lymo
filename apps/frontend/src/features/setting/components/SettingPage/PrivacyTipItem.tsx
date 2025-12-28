@@ -1,7 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Linking from "expo-linking";
 
-import SettingItem from "@/entities/setting/ui/SettingItem";
+import { SettingItem } from "@/entities/setting/ui/SettingItem";
 
 import { styles } from "./styles";
 

@@ -4,7 +4,7 @@ import { useRef } from "react";
 
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 import SettingBottomSheet from "@/entities/setting/ui/SettingBottomSheet";
-import SettingItem from "@/entities/setting/ui/SettingItem";
+import { SettingItem } from "@/entities/setting/ui/SettingItem";
 import getLanguageName from "@/entities/setting/utils/getLanguageName";
 
 import { styles } from "./styles";
