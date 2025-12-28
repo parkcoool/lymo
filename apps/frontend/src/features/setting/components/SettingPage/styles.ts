@@ -15,8 +15,17 @@ export const styles = StyleSheet.create({
 
   content: {
     gap: 20,
-    paddingVertical: 20,
   },
 
   itemContainer: {},
+
+  icon: {
+    color: colors.onBackgroundSubtle,
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: colors.onBackground,
+    opacity: 0.1,
+  },
 });
