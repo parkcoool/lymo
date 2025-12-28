@@ -1,7 +1,7 @@
-diff --git a/node_modules/@genkit-ai/ai/lib/generate-CZdEFQ8c.d.ts b/node_modules/@genkit-ai/ai/lib/generate-CZdEFQ8c.d.ts
-index eb7a734..d618d89 100644
---- a/node_modules/@genkit-ai/ai/lib/generate-CZdEFQ8c.d.ts
-+++ b/node_modules/@genkit-ai/ai/lib/generate-CZdEFQ8c.d.ts
+diff --git a/node_modules/@genkit-ai/ai/lib/generate-Dfql0iE9.d.ts b/node_modules/@genkit-ai/ai/lib/generate-Dfql0iE9.d.ts
+index 23a6250..b99a0d7 100644
+--- a/node_modules/@genkit-ai/ai/lib/generate-Dfql0iE9.d.ts
++++ b/node_modules/@genkit-ai/ai/lib/generate-Dfql0iE9.d.ts
 @@ -475,7 +475,7 @@ declare function generateOperation<O extends z.ZodTypeAny = z.ZodTypeAny, Custom
  declare function toGenerateActionOptions<O extends z.ZodTypeAny = z.ZodTypeAny, CustomOptions extends z.ZodTypeAny = typeof GenerationCommonConfigSchema>(registry: Registry, options: GenerateOptions<O, CustomOptions>): Promise<GenerateActionOptions>;
  type GenerateStreamOptions<O extends z.ZodTypeAny = z.ZodTypeAny, CustomOptions extends z.ZodTypeAny = typeof GenerationCommonConfigSchema> = Omit<GenerateOptions<O, CustomOptions>, 'streamingCallback'>;
