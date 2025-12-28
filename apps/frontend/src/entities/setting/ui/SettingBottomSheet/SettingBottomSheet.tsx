@@ -12,14 +12,15 @@ import { styles } from "./styles";
 
 interface SettingBottomSheetProps {
   ref?: React.Ref<BottomSheetModal>;
+  defaultView?: SettingViews;
 }
 
-export default function SettingBottomSheet({ ref }: SettingBottomSheetProps) {
+export default function SettingBottomSheet({ ref, defaultView = "menu" }: SettingBottomSheetProps) {
   const { bottom } = useSafeAreaInsets();
-  const [view, setView] = useState<SettingViews>("menu");
+  const [view, setView] = useState<SettingViews>(defaultView);
 
   const handleDismiss = () => {
-    setView("menu");
+    setView(defaultView);
   };
 
   // 렌더링할 내용 결정
