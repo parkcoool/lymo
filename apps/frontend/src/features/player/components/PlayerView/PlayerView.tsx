@@ -1,5 +1,4 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
-import { Stack } from "expo-router";
 import { Suspense, useMemo } from "react";
 import {
   ActivityIndicator,
@@ -10,7 +9,6 @@ import {
 } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 
-import Header from "@/entities/layout/ui/Header";
 import Intro from "@/entities/player/ui/Intro";
 import Lyrics from "@/entities/player/ui/Lyrics";
 import Overview from "@/entities/player/ui/Overview";
@@ -26,6 +24,7 @@ import useProcessLyrics from "../../hooks/useProcessLyrics";
 import useTracking from "../../hooks/useTracking";
 import MoveToCurrent from "../MoveToCurrent";
 
+import HeaderConfig from "./HeaderConfig";
 import { styles } from "./styles";
 
 interface PlayerViewProps {
@@ -133,15 +132,7 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
       </View>
 
       {/* 헤더 설정 */}
-      <Stack.Screen
-        options={{
-          headerTransparent: true,
-          contentStyle: { backgroundColor: "transparent" },
-          header: (props) => (
-            <Header {...props} backgroundColor={headerBackgroundColor} avatar={false} />
-          ),
-        }}
-      />
+      <HeaderConfig backgroundColor={headerBackgroundColor} />
     </>
   );
 }

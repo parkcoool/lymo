@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -12,6 +12,8 @@ import HomeTop from "../HomeTop";
 import { styles } from "./styles";
 
 export default function HomePage() {
+  const handleSettingOpen = () => router.push("/setting");
+
   return (
     <>
       <ScrollView style={styles.container}>
@@ -39,7 +41,7 @@ export default function HomePage() {
         options={{
           headerTransparent: true,
           contentStyle: { backgroundColor: "transparent" },
-          header: (props) => <Header {...props} brand />,
+          header: (props) => <Header {...props} brand onSettingOpen={handleSettingOpen} />,
         }}
       />
     </>

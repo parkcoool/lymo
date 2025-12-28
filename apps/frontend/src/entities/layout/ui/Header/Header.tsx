@@ -1,14 +1,11 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import type { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRef } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useUserStore } from "@/entities/auth/model/userStore";
 import Avatar from "@/entities/auth/ui/Avatar";
-import SettingBottomSheet from "@/entities/setting/components/SettingBottomSheet";
 import { colors } from "@/shared/constants/colors";
 
 import Brand from "./Brand";
@@ -18,6 +15,7 @@ interface HeaderProps extends NativeStackHeaderProps {
   backgroundColor?: string;
   brand?: boolean;
   avatar?: boolean;
+  onSettingOpen?: () => void;
 }
 
 export default function Header({
@@ -26,11 +24,9 @@ export default function Header({
   backgroundColor,
   brand = false,
   avatar = true,
+  onSettingOpen,
 }: HeaderProps) {
   const { user } = useUserStore();
-
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const handleSettingsOpen = () => bottomSheetRef.current?.present();
 
   return (
     <View style={styles.container}>
@@ -58,9 +54,11 @@ export default function Header({
 
         <View style={styles.right}>
           {/* 설정 버튼 */}
-          <TouchableOpacity onPress={handleSettingsOpen}>
-            <MaterialIcons name="settings" size={28} style={styles.buttonIcon} />
-          </TouchableOpacity>
+          {onSettingOpen && (
+            <TouchableOpacity onPress={onSettingOpen}>
+              <MaterialIcons name="settings" size={28} style={styles.buttonIcon} />
+            </TouchableOpacity>
+          )}
 
           {/* 아바타 */}
           {avatar && user && (
@@ -70,9 +68,6 @@ export default function Header({
           )}
         </View>
       </View>
-
-      {/* 설정 바텀시트 */}
-      <SettingBottomSheet ref={bottomSheetRef} />
     </View>
   );
 }

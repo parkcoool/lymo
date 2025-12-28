@@ -17,9 +17,4 @@ export const styles = StyleSheet.create({
     gap: 20,
     paddingVertical: 20,
   },
-
-  topSectionContainer: {
-    padding: 12,
-    gap: 12,
-  },
 });

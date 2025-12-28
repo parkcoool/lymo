@@ -1,7 +1,5 @@
-import { Stack } from "expo-router";
 import { View } from "react-native";
 
-import Header from "@/entities/layout/ui/Header";
 import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 
 import PlayerView from "../PlayerView";
@@ -33,14 +31,6 @@ export default function PlayerPage() {
           )}
         </View>
       )}
-
-      <Stack.Screen
-        options={{
-          headerTransparent: true,
-          contentStyle: { backgroundColor: "transparent" },
-          header: (props) => <Header {...props} avatar={false} />,
-        }}
-      />
     </>
   );
 }
