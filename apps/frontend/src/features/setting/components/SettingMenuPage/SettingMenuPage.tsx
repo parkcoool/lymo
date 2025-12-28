@@ -14,21 +14,27 @@ export default function SettingMenuPage() {
       <SafeAreaView edges={["top"]} style={styles.safeArea} />
 
       <View style={styles.content}>
-        {/* 설정 항목들 */}
         <View style={styles.itemContainer}>
           {/* 번역 대상 언어 */}
           <TranslateLanguage />
 
           {/* 문단 이해하기 */}
           <SectionNote />
+        </View>
 
-          <View style={styles.divider} />
+        {/* =============== */}
+        <View style={styles.divider} />
 
+        <View style={styles.itemContainer}>
           {/* 기기 음악 연동 */}
           <Sync />
+        </View>
 
-          <View style={styles.divider} />
+        {/* =============== */}
+        <View style={styles.divider} />
 
+        <View style={styles.itemContainer}>
+          {/* 개인정보처리방침 */}
           <PrivacyTipItem />
         </View>
       </View>

@@ -45,7 +45,7 @@ const ITEMS = [
   },
 ];
 
-export default function Body() {
+export default function InsightAnimation() {
   const progress = useSharedValue(1);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function Body() {
   }, [progress]);
 
   return (
-    <View style={styles.body}>
+    <View style={styles.wrapper}>
       {ITEMS.map((item) => (
         <Notification key={item.id} {...item} progress={progress} />
       ))}

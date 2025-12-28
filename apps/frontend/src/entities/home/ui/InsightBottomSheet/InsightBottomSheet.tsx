@@ -8,7 +8,8 @@ import { MediaModule } from "@/core/mediaModule";
 import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 
-import Body from "./Body";
+import InsightAnimation from "../InsightAnimation";
+
 import { styles } from "./styles";
 
 export default function InsightBottomSheet() {
@@ -71,7 +72,7 @@ export default function InsightBottomSheet() {
         </View>
 
         {/* 바디 */}
-        <Body />
+        <InsightAnimation />
 
         {/* 푸터 */}
         <View style={styles.footer}>

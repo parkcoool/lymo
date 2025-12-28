@@ -11,9 +11,13 @@ const CHECK_INTERVAL_MS = 5000;
 export default function useCheckNotificationPermission() {
   const { data: granted = false } = useQuery({
     queryKey: ["notification-permission"],
-    queryFn: () => MediaModule.checkNotificationPermission(),
+    queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return MediaModule.checkNotificationPermission();
+    },
     refetchInterval: CHECK_INTERVAL_MS,
     initialData: false,
+    refetchOnWindowFocus: true,
   });
 
   return granted;

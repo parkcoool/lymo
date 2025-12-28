@@ -13,11 +13,11 @@ export const styles = StyleSheet.create({
     paddingTop: 60,
   },
 
-  content: {
-    gap: 20,
-  },
+  content: {},
 
-  itemContainer: {},
+  itemContainer: {
+    paddingVertical: 8,
+  },
 
   childrenContainer: {
     paddingLeft: 20,
