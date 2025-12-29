@@ -24,3 +24,32 @@ export const StoryGenerationStatusSchema = z.enum([
   "FAILED",
 ]);
 export type StoryGenerationStatus = z.infer<typeof StoryGenerationStatusSchema>;
+
+// 반응 이모지
+export const ReactionEmojiSchema = z.enum([
+  "❤️",
+  "🥰",
+  "🫶",
+  "😍",
+  "🔥",
+  "🤘",
+  "💃",
+  "😎",
+  "😭",
+  "🥺",
+  "💔",
+  "🥀",
+  "✨",
+  "🌙",
+  "☁️",
+  "🍷",
+  "🤯",
+  "🫢",
+  "👏",
+  "💯",
+  "🤣",
+  "🤪",
+  "👻",
+  "🎉",
+]);
+export type ReactionEmoji = z.infer<typeof ReactionEmojiSchema>;
