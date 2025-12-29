@@ -41,7 +41,9 @@ export default function HomePage() {
         options={{
           headerTransparent: true,
           contentStyle: { backgroundColor: "transparent" },
-          header: (props) => <Header {...props} brand onSettingOpen={handleSettingOpen} />,
+          header: (props) => (
+            <Header {...props} brand onSettingOpen={handleSettingOpen} avatar={false} />
+          ),
         }}
       />
     </>
