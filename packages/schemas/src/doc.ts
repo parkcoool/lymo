@@ -1,6 +1,12 @@
 import { z } from "zod";
 
-import { LanguageSchema, LyricSchema, LyricsProvider, LyricsProviderSchema } from "./shared";
+import {
+  LanguageSchema,
+  LyricSchema,
+  LyricsProvider,
+  LyricsProviderSchema,
+  ReactionEmojiSchema,
+} from "./shared";
 
 // ==============================
 // track 관련 스키마
@@ -85,6 +91,36 @@ export type Story = z.infer<typeof StorySchema>;
 export const FavoriteSchema = z.object({
   createdAt: z.string(),
 });
+export type Favorite = z.infer<typeof FavoriteSchema>;
+
+// `stories/{storyId}/reactions` 공통 필드
+export const BaseReactionFieldsSchema = z.object({
+  userId: z.string(),
+  createdAt: z.string(),
+  timestampInSeconds: z.number(),
+});
+
+// `stories/{storyId}/reactions` 문서 스키마
+export const ReactionSchema = z.union([
+  BaseReactionFieldsSchema.extend({
+    type: z.literal("emoji"),
+    content: ReactionEmojiSchema,
+  }),
+
+  BaseReactionFieldsSchema.extend({
+    type: z.literal("comment"),
+    content: z.string(),
+  }),
+]);
+export type Reaction = z.infer<typeof ReactionSchema>;
+
+// `stories/{storyId}/buckets/{bucketId}` 문서 스키마
+export const BucketSchema = z.object({
+  start: z.number(),
+  end: z.number(),
+  counts: z.record(z.union([ReactionEmojiSchema, z.literal("comment")]), z.number()),
+});
+export type Bucket = z.infer<typeof BucketSchema>;
 
 // ==============================
 // retrieveTrackCache 관련 스키마
