@@ -5,7 +5,10 @@ import { z } from "genkit";
 import ai from "@/core/genkit";
 
 const InputSchema = z.object({
-  story: StorySchema,
+  story: z.object({
+    id: z.string(),
+    data: StorySchema,
+  }),
   requestId: z.string(),
 });
 
@@ -22,7 +25,8 @@ export const copyStoryDoc = ai.defineTool(
     const storyRequestRef = admin.database().ref(`storyRequests/${requestId}`);
 
     await storyRequestRef.set({
-      ...story,
+      ...story.data,
+      storyId: story.id,
       status: "COMPLETED",
     });
   }

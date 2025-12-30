@@ -41,7 +41,7 @@ export async function ensureDefaultStory({
 
   // 1-1) 존재하면 복사
   if (story) {
-    await copyStoryDoc({ requestId, story: story.data });
+    await copyStoryDoc({ requestId, story });
     return false;
   }
 
