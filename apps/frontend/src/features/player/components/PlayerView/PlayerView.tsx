@@ -117,7 +117,7 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
         )}
 
         {/* 반응 트리거 */}
-        <ReactionTrigger />
+        <ReactionTrigger storyId={story?.id} />
       </View>
 
       {/* 헤더 설정 */}
