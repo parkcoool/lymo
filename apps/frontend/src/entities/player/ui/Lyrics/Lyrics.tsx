@@ -1,16 +1,13 @@
 import { LyricsProvider } from "@lymo/schemas/shared";
-import { Ref, useMemo } from "react";
+import { Ref } from "react";
 import { Text, View } from "react-native";
 
 import useActiveSentence from "@/entities/deviceMedia/hooks/useActiveSentence";
 import type { Section } from "@/entities/player/models/types";
 import Paragraph from "@/entities/player/ui/Paragraph";
 import Sentence from "@/entities/player/ui/Sentence";
-import { useSettingStore } from "@/entities/setting/models/settingStore";
 import getLyricsProviderName from "@/entities/story/utils/getLyricsProviderName";
 import { useSyncStore } from "@/shared/models/syncStore";
-
-import useCurrentTrackId from "../../hooks/useCurrentTrackId";
 
 import { styles } from "./styles";
 
@@ -27,17 +24,10 @@ export default function Lyrics({
   activeSentenceRef,
   isCompleted = true,
 }: LyricsProps) {
-  const { setting } = useSettingStore();
-  const trackId = useCurrentTrackId();
   const { isSynced } = useSyncStore();
 
-  const delay = useMemo(
-    () => (trackId ? setting.sync.get(trackId) ?? 0 : 0) / 1000,
-    [setting.sync, trackId]
-  );
   const [activeSectionIndex, activeSentenceIndex] = useActiveSentence({
     lyrics,
-    delayInSeconds: delay,
     enabled: isSynced,
   });
 

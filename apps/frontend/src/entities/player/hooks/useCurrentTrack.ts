@@ -8,9 +8,9 @@ import retrieveTrack from "@/entities/track/api/retrieveTrack";
 import KnownError from "@/shared/errors/KnownError";
 
 /**
- * 현재 감상 중인 곡의 ID를 반환하는 훅입니다.
+ * 현재 감상 중인 곡의 정보를 반환하는 훅입니다.
  */
-export default function useCurrentTrackId() {
+export default function useCurrentTrack() {
   const { trackSource } = useTrackSourceStore();
   const pathname = usePathname();
 
@@ -45,7 +45,10 @@ export default function useCurrentTrackId() {
   });
 
   if (isInPlayerPage) {
-    if (trackSource?.from === "manual") return trackSource.track.id;
-    if (track) return track.id;
+    if (trackSource?.from === "manual") {
+      const { id, ...data } = trackSource.track;
+      return { id, data };
+    }
+    if (track) return track;
   }
 }

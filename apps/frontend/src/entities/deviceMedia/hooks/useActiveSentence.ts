@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 import { MediaModule } from "@/core/mediaModule";
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
+import useTimestampDelayInSeconds from "@/entities/player/hooks/useTimestampDelay";
 import { Section } from "@/entities/player/models/types";
 
 interface UseActiveSentenceParams {
@@ -14,18 +15,17 @@ interface UseActiveSentenceParams {
  * 기기에서 재생되는 미디어의 현재 시각을 바탕으로 현재 하이라이트될 섹션과 가사 문장의 인덱스를 반환하는 훅입니다.
  *
  * @param lyrics 가사 데이터
- * @param delayInSeconds 가사 싱크 조정값 (초 단위, 기본값: 0)
  * @param enabled 활성화 여부 (기본값: true)
  *
  * @returns [현재 하이라이트된 섹션 인덱스, 현재 하이라이트된 문장 인덱스]
  */
 export default function useActiveSentence({
   lyrics,
-  delayInSeconds = 0,
   enabled = true,
 }: UseActiveSentenceParams): [number, number] {
   const { deviceMedia } = useDeviceMediaStore();
   const isPlaying = deviceMedia?.isPlaying ?? false;
+  const delayInSeconds = useTimestampDelayInSeconds();
 
   const [activeSectionIndex, setActiveSectionIndex] = useState(-1);
   const [activeLyricIndex, setActiveLyricIndex] = useState(-1);
