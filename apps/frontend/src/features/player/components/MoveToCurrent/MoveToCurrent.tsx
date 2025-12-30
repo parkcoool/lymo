@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import useWindowSize from "@/shared/hooks/useWindowSize";
 
-import { styles } from "./MoveToCurrent.styles";
+import { styles } from "./styles";
 
 interface MoveToCurrentProps {
   activeSentenceY: number;

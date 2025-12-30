@@ -23,6 +23,7 @@ import useIncreaseViews from "../../hooks/useIncreaseViews";
 import useProcessLyrics from "../../hooks/useProcessLyrics";
 import useTracking from "../../hooks/useTracking";
 import MoveToCurrent from "../MoveToCurrent";
+import ReactionTrigger from "../ReactionTrigger";
 
 import HeaderConfig from "./HeaderConfig";
 import { styles } from "./styles";
@@ -127,6 +128,9 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
         {!isTrackingMode && (
           <MoveToCurrent activeSentenceY={currentY} onPress={handleMoveToCurrent} />
         )}
+
+        {/* 반응 트리거 */}
+        <ReactionTrigger />
       </View>
 
       {/* 헤더 설정 */}
