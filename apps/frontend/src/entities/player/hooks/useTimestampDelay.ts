@@ -17,7 +17,7 @@ export default function useTimestampDelayInSeconds() {
 
   if (currentTrack === undefined) return 0;
 
-  let delay = syncMap.get(currentTrack.id) ?? 0;
+  let delay = (syncMap.get(currentTrack.id) ?? 0) / 1000;
   if (deviceDuration !== undefined)
     delay += Math.abs(currentTrack.data.durationInSeconds - deviceDuration);
 
