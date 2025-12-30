@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { colors } from "@/shared/constants/colors";
 
 export const styles = StyleSheet.create({
-  wrapper: {
+  triggerWrapper: {
     position: "absolute",
     right: 20,
   },
@@ -20,5 +20,34 @@ export const styles = StyleSheet.create({
 
   icon: {
     color: colors.black,
+  },
+
+  // emojiContainer
+
+  emojiContainer: {
+    position: "absolute",
+    right: 20,
+    width: 48,
+    maxHeight: 240,
+    borderRadius: 24,
+    overflow: "hidden",
+  },
+
+  emojiContentContainer: {
+    alignItems: "center",
+    gap: 12,
+  },
+
+  emojiWrapper: {
+    width: 48,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 24,
+    backgroundColor: `${colors.white}80`,
+  },
+
+  emoji: {
+    fontSize: 24,
   },
 });

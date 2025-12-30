@@ -1,12 +1,6 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { useMemo } from "react";
-import {
-  ActivityIndicator,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  View,
-} from "react-native";
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 
 import Intro from "@/entities/player/ui/Intro";
@@ -14,7 +8,6 @@ import Lyrics from "@/entities/player/ui/Lyrics";
 import Overview from "@/entities/player/ui/Overview";
 import StoryInfo from "@/entities/player/ui/StoryInfo";
 import StoryInfoSkeleton from "@/entities/player/ui/StoryInfo/StoryInfoSkeleton";
-import { colors } from "@/shared/constants/colors";
 import useDominantColorQuery from "@/shared/hooks/useDominantColorQuery";
 import useYOffsetInWindow from "@/shared/hooks/useYOffsetInWindow";
 import mixColors from "@/shared/utils/mixColors";
@@ -106,7 +99,7 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
           </View>
 
           {/* 가사 */}
-          {processedLyrics ? (
+          {processedLyrics && (
             <Animated.View entering={FadeIn.duration(300)}>
               <Lyrics
                 activeSentenceRef={currentRef}
@@ -115,12 +108,6 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
                 isCompleted={isCompleted}
               />
             </Animated.View>
-          ) : (
-            <ActivityIndicator
-              style={{ marginTop: 50 }}
-              size={60}
-              color={colors.onBackgroundSubtle}
-            />
           )}
         </ScrollView>
 
