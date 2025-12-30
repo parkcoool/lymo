@@ -31,14 +31,16 @@ const Paragraph = memo(({ note, active, children, isCompleted = true }: Paragrap
   const parsedNote = note === "null" ? null : note;
   const displayedNote = useTypingAnimation(parsedNote, 10, !isCompleted);
 
-  const progress = useSharedValue(active && parsedNote !== null ? 1 : 0);
+  const actuallyActive = active && parsedNote !== null && setting.showSectionNotes;
+
+  const progress = useSharedValue(actuallyActive ? 1 : 0);
 
   useEffect(() => {
-    progress.value = withTiming(active && parsedNote !== null ? 1 : 0, {
+    progress.value = withTiming(actuallyActive ? 1 : 0, {
       duration: 300,
       easing: Easing.inOut(Easing.quad),
     });
-  }, [parsedNote, active, progress]);
+  }, [actuallyActive, progress]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
