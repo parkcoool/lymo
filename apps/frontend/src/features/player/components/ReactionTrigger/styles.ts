@@ -26,8 +26,8 @@ export const styles = StyleSheet.create({
 
   emojiContainer: {
     position: "absolute",
-    right: 20,
-    width: 48,
+    right: 20 - 8,
+    width: 48 + 16,
     maxHeight: 240,
     borderRadius: 24,
     overflow: "hidden",
@@ -36,6 +36,7 @@ export const styles = StyleSheet.create({
   emojiContentContainer: {
     alignItems: "center",
     gap: 12,
+    paddingVertical: 8,
   },
 
   emojiWrapper: {

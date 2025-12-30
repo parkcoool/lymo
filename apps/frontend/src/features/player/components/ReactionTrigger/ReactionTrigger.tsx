@@ -2,7 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ReactionEmojiSchema } from "@lymo/schemas/shared";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, ZoomIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { styles } from "./styles";
@@ -29,8 +29,11 @@ export default function ReactionTrigger() {
           entering={FadeIn.duration(300)}
           exiting={FadeOut.duration(300)}
         >
-          {ReactionEmojiSchema.options.map((emoji) => (
-            <Animated.View key={emoji}>
+          {ReactionEmojiSchema.options.map((emoji, index) => (
+            <Animated.View
+              key={emoji}
+              entering={ZoomIn.springify().delay(Math.max(0, 4 - index) * 50)}
+            >
               <TouchableOpacity style={styles.emojiWrapper}>
                 <Text style={styles.emoji}>{emoji}</Text>
               </TouchableOpacity>
