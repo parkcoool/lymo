@@ -1,7 +1,7 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { useMemo } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn, LayoutAnimationConfig } from "react-native-reanimated";
 
 import Intro from "@/entities/player/ui/Intro";
 import Lyrics from "@/entities/player/ui/Lyrics";
@@ -9,7 +9,9 @@ import Overview from "@/entities/player/ui/Overview";
 import StoryInfo from "@/entities/player/ui/StoryInfo";
 import StoryInfoSkeleton from "@/entities/player/ui/StoryInfo/StoryInfoSkeleton";
 import useDominantColorQuery from "@/shared/hooks/useDominantColorQuery";
+import useWindowSize from "@/shared/hooks/useWindowSize";
 import useYOffsetInWindow from "@/shared/hooks/useYOffsetInWindow";
+import { useSyncStore } from "@/shared/models/syncStore";
 import mixColors from "@/shared/utils/mixColors";
 
 import useIncreaseViews from "../../hooks/useIncreaseViews";
@@ -38,6 +40,9 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
     [coverColor]
   );
 
+  const { height } = useWindowSize();
+  const { isSynced } = useSyncStore();
+
   // 현재 활성화된 문장의 y 좌표 (in window)
   const { y: currentY, measure, ref: currentRef } = useYOffsetInWindow();
 
@@ -64,6 +69,11 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
 
   // 조회수 증가
   useIncreaseViews({ trackId: track?.id, storyId: story?.id });
+
+  // 렌더링 여부 결정
+  const shouldShowMoveToCurrent =
+    !isTrackingMode && (currentY < 0 || currentY + 100 > height) && isSynced;
+  const shouldShowReactionTrigger = !!story?.id && isSynced && isCompleted;
 
   return (
     <>
@@ -111,13 +121,19 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
           )}
         </ScrollView>
 
-        {/* 현재 가사로 이동 */}
-        {!isTrackingMode && (
-          <MoveToCurrent activeSentenceY={currentY} onPress={handleMoveToCurrent} />
-        )}
+        <LayoutAnimationConfig skipEntering>
+          {/* 현재 가사로 이동 */}
+          {shouldShowMoveToCurrent && (
+            <MoveToCurrent
+              activeSentenceY={currentY}
+              onPress={handleMoveToCurrent}
+              height={height}
+            />
+          )}
 
-        {/* 반응 트리거 */}
-        <ReactionTrigger storyId={story?.id} />
+          {/* 반응 트리거 */}
+          {shouldShowReactionTrigger && <ReactionTrigger storyId={story.id} />}
+        </LayoutAnimationConfig>
       </View>
 
       {/* 헤더 설정 */}
