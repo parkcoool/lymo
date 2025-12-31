@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
   triggerWrapper: {
     position: "absolute",
     right: 20,
+    zIndex: 10,
   },
 
   button: {
@@ -31,6 +32,7 @@ export const styles = StyleSheet.create({
     maxHeight: 240,
     borderRadius: 24,
     overflow: "hidden",
+    zIndex: 10,
   },
 
   emojiContentContainer: {

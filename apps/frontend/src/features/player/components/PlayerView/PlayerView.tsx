@@ -22,6 +22,7 @@ import ReactionTrigger from "../ReactionTrigger";
 
 import HeaderConfig from "./HeaderConfig";
 import { styles } from "./styles";
+import Emojis from "@/entities/reaction/ui";
 
 interface PlayerViewProps {
   track?: { id: string; data: Track };
@@ -133,6 +134,8 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
 
           {/* 반응 트리거 */}
           {shouldShowReactionTrigger && <ReactionTrigger storyId={story.id} />}
+
+          {story && <Emojis storyId={story.id} />}
         </LayoutAnimationConfig>
       </View>
 

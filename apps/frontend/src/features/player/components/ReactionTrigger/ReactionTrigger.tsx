@@ -1,7 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { ReactionEmojiSchema } from "@lymo/schemas/shared";
+import { ReactionEmoji, ReactionEmojiSchema } from "@lymo/schemas/shared";
 import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, Vibration, View } from "react-native";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -12,7 +12,7 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { MediaModule } from "@/core/mediaModule";
-import createEmojiReaction from "@/entities/reaction/apis/createEmojiReaction";
+import useCreateEmojiReactionMutation from "@/entities/reaction/hooks/useCreateEmojiReactionMutation";
 
 import { styles } from "./styles";
 
@@ -24,20 +24,18 @@ const slideInDown = SlideInDown.springify();
 const slideOutDown = SlideOutDown.springify();
 
 export default function ReactionTrigger({ storyId }: ReactionTriggerProps) {
+  const { mutate: createEmojiReaction } = useCreateEmojiReactionMutation({ storyId });
   const { bottom } = useSafeAreaInsets();
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggleOpen = () => setIsOpen((prev) => !prev);
 
-  const handleEmojiPress = async (emoji: string) => {
+  const handleEmojiPress = async (emoji: ReactionEmoji) => {
+    Vibration.vibrate(10);
     const timestampInSeconds = (await MediaModule.getCurrentPosition()) / 1000;
 
-    await createEmojiReaction({
-      storyId,
-      timestampInSeconds,
-      emoji,
-    });
+    createEmojiReaction({ timestampInSeconds, emoji });
   };
 
   return (
