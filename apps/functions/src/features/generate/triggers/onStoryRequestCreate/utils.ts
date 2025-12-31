@@ -1,5 +1,6 @@
 import {
   BaseStoryFields,
+  Bucket,
   GeneratedStoryFields,
   GeneratedStoryFieldsSchema,
   Story,
@@ -10,7 +11,7 @@ import { ERROR_CODES } from "@lymo/schemas/error";
 import { Language, LyricsProvider } from "@lymo/schemas/shared";
 import admin from "firebase-admin";
 import { Reference } from "firebase-admin/database";
-import { DocumentReference } from "firebase-admin/firestore";
+import { CollectionReference, DocumentReference } from "firebase-admin/firestore";
 
 const MIN_DELAY_BETWEEN_WRITES = 500;
 
@@ -37,6 +38,7 @@ export class StoryUpdater {
   storyDocRef: DocumentReference<Story>;
   // storyRequests/{requestId} 값
   storyRequestValueRef: Reference;
+  bucketsCollectionRef: CollectionReference<Bucket>;
 
   lastWrittenAt: number = 0;
   pendingData: Partial<GeneratedStoryFields> = {};
@@ -56,6 +58,9 @@ export class StoryUpdater {
     // 참조 생성
     this.storyDocRef = admin.firestore().collection("stories").doc() as DocumentReference<Story>;
     this.storyRequestValueRef = admin.database().ref(`storyRequests/${requestId}`);
+    this.bucketsCollectionRef = this.storyDocRef.collection(
+      "buckets"
+    ) as CollectionReference<Bucket>;
 
     // storyRequest 값 초기화
     this.storyRequestValueRef.set({
@@ -115,13 +120,24 @@ export class StoryUpdater {
           updatedAt: now,
         }),
 
-        // 본 문서 업데이트 및 track 문서 storyCount 증가
+        // 본 문서 업데이트 설정, buckets 서브컬렉션 생성, track 문서 storyCount 증가
         admin.firestore().runTransaction(async (transaction) => {
           transaction.set(this.storyDocRef, {
             ...this.baseFields,
             ...parsedFinalData,
             updatedAt: now,
           });
+
+          for (let i = 0; i < this.track.durationInSeconds; i += 5) {
+            const bucketDocRef = this.bucketsCollectionRef.doc(
+              Math.floor(i / 5).toString()
+            ) as DocumentReference<Bucket>;
+            transaction.set(bucketDocRef, {
+              start: i,
+              end: i + 5,
+              counts: {},
+            });
+          }
 
           const trackDocRef = admin.firestore().collection("tracks").doc(this.trackId);
           transaction.update(trackDocRef, { storyCount: admin.firestore.FieldValue.increment(1) });
