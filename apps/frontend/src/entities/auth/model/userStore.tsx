@@ -31,9 +31,6 @@ function UserProvider({ children }: { children: ReactNode }) {
       // 사용자가 로그인되어 있으면 상태 업데이트
       if (user) {
         setUser(user);
-        console.log(
-          `User is signed in with UID: ${user.uid}${user.isAnonymous ? " (anonymous)" : ""}`
-        );
       }
 
       // 로그인되지 않았으면 익명 로그인

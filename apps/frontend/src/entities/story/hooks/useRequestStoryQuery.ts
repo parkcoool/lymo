@@ -44,9 +44,6 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
         const existingSnapshot = await get(storyRequestRef);
         if (!existingSnapshot.exists()) {
           await set(storyRequestRef, { ...params, status: "PENDING" });
-          console.log(`Created new story request with ID: ${id}`);
-        } else {
-          console.log(`Using existing story request with ID: ${id}`);
         }
 
         // 2) 스트림 채널 생성
