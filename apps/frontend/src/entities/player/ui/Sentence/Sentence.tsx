@@ -9,7 +9,6 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 
-import Skeleton from "@/shared/components/Skeleton";
 import { colors } from "@/shared/constants/colors";
 
 import { styles } from "./styles";
@@ -48,11 +47,6 @@ const Sentence = memo(
         <Animated.Text style={[styles.sentence, animatedStyle]}>{sentence}</Animated.Text>
 
         <View style={styles.translationWrapper}>
-          {/* 번역 스켈레톤 */}
-          {translation === undefined && !isCompleted && (
-            <Skeleton width="70%" height={12} opacity={0.4} />
-          )}
-
           {/* 번역 텍스트 */}
           {translation && (
             <Animated.Text
