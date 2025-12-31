@@ -1,12 +1,19 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ReactionEmojiSchema } from "@lymo/schemas/shared";
 import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import Animated, { FadeIn, FadeOut, ZoomIn } from "react-native-reanimated";
+import { Text, TouchableOpacity } from "react-native";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  ZoomIn,
+  SlideInDown,
+  SlideOutDown,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { MediaModule } from "@/core/mediaModule";
 import createEmojiReaction from "@/entities/reaction/apis/createEmojiReaction";
+import { useSyncStore } from "@/shared/models/syncStore";
 
 import { styles } from "./styles";
 
@@ -14,8 +21,12 @@ interface ReactionTriggerProps {
   storyId?: string;
 }
 
+const slideInDown = SlideInDown.springify();
+const slideOutDown = SlideOutDown.springify();
+
 export default function ReactionTrigger({ storyId }: ReactionTriggerProps) {
   const { bottom } = useSafeAreaInsets();
+  const { isSynced } = useSyncStore();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -33,15 +44,22 @@ export default function ReactionTrigger({ storyId }: ReactionTriggerProps) {
     });
   };
 
+  const enabled = !!storyId && isSynced;
+  if (!enabled) return null;
+
   return (
     <>
-      <View style={[styles.triggerWrapper, { bottom: bottom + 20 }]}>
+      <Animated.View
+        entering={slideInDown}
+        exiting={slideOutDown}
+        style={[styles.triggerWrapper, { bottom: bottom + 20 }]}
+      >
         <TouchableOpacity style={styles.button} onPress={handleToggleOpen}>
           <MaterialIcons style={styles.icon} size={20} name="add-reaction" />
         </TouchableOpacity>
-      </View>
+      </Animated.View>
 
-      {isOpen && (
+      {enabled && isOpen && (
         <Animated.ScrollView
           style={[styles.emojiContainer, { bottom: bottom + 88 }]}
           contentContainerStyle={styles.emojiContentContainer}

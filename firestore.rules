@@ -93,7 +93,6 @@ service cloud.firestore {
       return 
         data.userId == userId &&
         (data.timestampInSeconds is number) &&
-        (data.createdAt is string) &&
         (
           (data.type == 'emoji' && isAllowedEmoji(data.content)) ||
           (data.type == 'comment' && (data.content is string) && data.content.size() > 0 && data.content.size() <= 300)
