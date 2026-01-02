@@ -55,7 +55,7 @@ const Paragraph = memo(({ note, active, children, isCompleted = true }: Paragrap
   return (
     <Animated.View
       style={[styles.wrapper, animatedStyle]}
-      layout={LinearTransition.duration(300).easing(Easing.inOut(Easing.quad))}
+      layout={LinearTransition.duration(300).springify()}
     >
       {/* 문단 해석 */}
       {setting.showSectionNotes && parsedNote && (
@@ -78,7 +78,7 @@ const Paragraph = memo(({ note, active, children, isCompleted = true }: Paragrap
       {/* 문장 */}
       <Animated.View
         style={styles.sentenceContainer}
-        layout={LinearTransition.duration(300).easing(Easing.inOut(Easing.quad))}
+        layout={LinearTransition.duration(300).springify()}
       >
         {children}
       </Animated.View>

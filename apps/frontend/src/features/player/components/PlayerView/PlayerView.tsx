@@ -8,6 +8,7 @@ import Lyrics from "@/entities/player/ui/Lyrics";
 import Overview from "@/entities/player/ui/Overview";
 import StoryInfo from "@/entities/player/ui/StoryInfo";
 import StoryInfoSkeleton from "@/entities/player/ui/StoryInfo/StoryInfoSkeleton";
+import Emojis from "@/entities/reaction/ui";
 import useDominantColorQuery from "@/shared/hooks/useDominantColorQuery";
 import useWindowSize from "@/shared/hooks/useWindowSize";
 import useYOffsetInWindow from "@/shared/hooks/useYOffsetInWindow";
@@ -22,7 +23,6 @@ import ReactionTrigger from "../ReactionTrigger";
 
 import HeaderConfig from "./HeaderConfig";
 import { styles } from "./styles";
-import Emojis from "@/entities/reaction/ui";
 
 interface PlayerViewProps {
   track?: { id: string; data: Track };
