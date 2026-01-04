@@ -3,6 +3,7 @@ import {
   GeneratedStoryFields,
   GeneratedStoryFieldsSchema,
   Story,
+  StorySchema,
   Track,
   TrackInfoFields,
 } from "@lymo/schemas/doc";
@@ -85,6 +86,16 @@ export class StoryUpdater {
       updatedAt: now,
       status: "IN_PROGRESS",
     });
+
+    // pendingData가 완전하면 story 본 문서도 업데이트
+    try {
+      const ensuredPendingData = StorySchema.parse(this.pendingData);
+      await this.storyDocRef.set({
+        ...this.baseFields,
+        ...ensuredPendingData,
+        updatedAt: now,
+      });
+    } catch {}
 
     // 마지막 업데이트 시간 갱신
     this.lastWrittenAt = nowTimestamp;
