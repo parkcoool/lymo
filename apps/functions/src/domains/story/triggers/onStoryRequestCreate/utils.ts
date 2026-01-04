@@ -145,6 +145,9 @@ export class StoryUpdater {
         errorCode: ERROR_CODES.STORY_SAVE_FAILED,
       });
 
+      // 본 문서 삭제
+      await this.storyDocRef.delete();
+
       throw error;
     }
   }
