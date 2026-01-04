@@ -2,6 +2,7 @@ import { logger } from "firebase-functions";
 import { z } from "genkit";
 
 import ai from "@/core/genkit";
+import getLanguageName from "@/features/shared/utils/getLanguageName";
 
 import { InputSchema, OutputSchema, StreamSchema } from "./schemas";
 
@@ -46,7 +47,7 @@ export const generateSectionNotesFlow = ai.defineFlow(
           ["Summary of the first section", "Summary of the second section", null, "Summary of the fourth section"]
       `,
         model: "googleai/gemini-2.5-flash",
-        prompt: JSON.stringify({ track, lyrics, targetLanguage: language }),
+        prompt: JSON.stringify({ track, lyrics, targetLanguage: getLanguageName(language) }),
         output: { schema: z.string().nullable().array() },
         config: {
           // 재시도 시 temperature 점진적 증가
