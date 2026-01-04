@@ -53,3 +53,11 @@ export const ReactionEmojiSchema = z.enum([
   "🍷",
 ]);
 export type ReactionEmoji = z.infer<typeof ReactionEmojiSchema>;
+
+// 단어 해석 스키마
+export const WordNoteSchema = z.object({
+  lyricIndex: z.number(),
+  word: z.string(),
+  note: z.string(),
+});
+export type WordNote = z.infer<typeof WordNoteSchema>;

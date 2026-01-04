@@ -6,6 +6,7 @@ import {
   LyricsProvider,
   LyricsProviderSchema,
   ReactionEmojiSchema,
+  WordNoteSchema,
 } from "./shared";
 
 // ==============================
@@ -78,6 +79,7 @@ export const GeneratedStoryFieldsSchema = z.object({
   sectionBreaks: z.number().array(),
   lyricTranslations: z.string().nullable().array(),
   sectionNotes: z.string().nullable().array(),
+  wordNotes: WordNoteSchema.array().optional(),
 });
 export type GeneratedStoryFields = z.infer<typeof GeneratedStoryFieldsSchema>;
 
