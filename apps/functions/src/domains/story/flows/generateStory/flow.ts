@@ -2,10 +2,9 @@ import { GeneratedStoryFields } from "@lymo/schemas/doc";
 import { ERROR_CODES } from "@lymo/schemas/error";
 
 import { ai } from "@/config";
-import { generateLyricsTranslationsFlow } from "@/domains/lyric/flows/generateLyricTranslations";
-import { generateSectionBreaksFlow } from "@/domains/story/flows/generateSectionBreaks";
-import { generateSectionNotesFlow } from "@/domains/story/flows/generateSectionNotes";
-import { generateTrackOverviewFlow } from "@/domains/track/flows/generateTrackOverview";
+import { generateWordNotesFlow, generateLyricsTranslationsFlow } from "@/domains/lyric";
+import { generateSectionBreaksFlow, generateSectionNotesFlow } from "@/domains/story";
+import { generateTrackOverviewFlow } from "@/domains/track";
 import KnownError from "@/shared/errors/KnownError";
 
 import { InputSchema, OutputSchema, StreamSchema } from "./schemas";
@@ -34,7 +33,7 @@ export const generateStoryFlow = ai.defineFlow(
     };
 
     await Promise.all([
-      // 2) 섹션 구분 및 섹션 해석 생성
+      // 2) 섹션 구분, 섹션 해석, 단어 해석 생성
       (async () => {
         const sectionedLyrics: string[][] = [];
 
@@ -93,6 +92,26 @@ export const generateStoryFlow = ai.defineFlow(
           sectionNotes = await output;
           result.sectionNotes = sectionNotes;
           sendChunk({ sectionNotes });
+        }
+
+        // 2-3) 단어 해석 생성
+        {
+          // 2-3-1) generateWordNotesFlow 실행
+          const { output, stream } = generateWordNotesFlow.stream({
+            trackInfo: { title: track.title, artists: track.artists, album: track.album },
+            lyrics: lyrics.map((lyric) => lyric.text),
+            config: { language },
+          });
+
+          // 2-3-2) 스트림 처리
+          for await (const chunk of stream) {
+            sendChunk({ wordNotes: chunk });
+          }
+
+          // 2-3-3) 결과 처리
+          const wordNotes = await output;
+          result.wordNotes = wordNotes;
+          sendChunk({ wordNotes });
         }
       })(),
 
