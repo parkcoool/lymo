@@ -16,7 +16,7 @@ export default defineConfig([
 
   // 공통 설정
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    files: ["**/*.{ts,mts,cts,tsx}"],
     rules: {
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
@@ -68,7 +68,7 @@ export default defineConfig([
 
   // frontend 전용 설정
   {
-    files: ["apps/frontend/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    files: ["apps/frontend/**/*.{ts,mts,cts,tsx}"],
     extends: [
       {
         ...reactPlugin.configs.flat.recommended,
@@ -105,7 +105,7 @@ export default defineConfig([
 
   // functions 전용 설정
   {
-    files: ["apps/functions/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    files: ["apps/functions/**/*.{ts,mts,cts,tsx}"],
     languageOptions: {
       parserOptions: {
         project: "apps/functions/tsconfig.json",
