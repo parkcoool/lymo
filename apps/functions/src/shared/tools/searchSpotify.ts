@@ -47,7 +47,7 @@ export const searchSpotify = ai.defineTool(
     let mostAccurateTrack: SpotifyApi.TrackObjectFull = tracks[0];
     let highestScore = -1;
     for (const track of tracks) {
-      const score = getAccurationScore(track, { title, artist, durationInSeconds });
+      const score = getAccuracyScore(track, { title, artist, durationInSeconds });
       if (score > highestScore) {
         highestScore = score;
         mostAccurateTrack = track;
@@ -74,7 +74,7 @@ const SCORE_WEIGHTS = {
   durationInSeconds: 0.5,
 };
 
-function getAccurationScore(
+function getAccuracyScore(
   track: SpotifyApi.TrackObjectFull,
   query: { title: string; artist: string; durationInSeconds: number }
 ): number {
