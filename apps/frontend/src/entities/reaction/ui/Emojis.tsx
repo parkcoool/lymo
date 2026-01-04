@@ -2,19 +2,21 @@ import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import Animated, {
-  FadeIn,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
   withTiming,
   Easing,
+  withDelay,
 } from "react-native-reanimated";
 
 import useActiveBucketIndex from "../hooks/useActiveBucket";
 import useReactionBucketsQuery from "../hooks/useReactionBucketsQuery";
 
 import { styles } from "./styles";
+
+const EMOJI_TIMEOUT_MS = 3000; // >= 2500
 
 interface EmojisProps {
   storyId: string;
@@ -23,12 +25,12 @@ interface EmojisProps {
 const FloatingEmoji = ({ emoji }: { emoji: string }) => {
   const translateY = useSharedValue(0);
   const translateX = useSharedValue(0);
-  const opacity = useSharedValue(1);
+  const opacity = useSharedValue(0);
 
   useEffect(() => {
-    // 랜덤한 속도로 위로 올라가기 (5~8초)
-    const duration = 5000 + Math.random() * 3000;
-    const distance = -(500 + Math.random() * 100);
+    // 랜덤한 속도로 위로 올라가기
+    const duration = EMOJI_TIMEOUT_MS + Math.random() * 2000;
+    const distance = -(300 + Math.random() * 100);
 
     translateY.value = withTiming(distance, {
       duration,
@@ -54,10 +56,10 @@ const FloatingEmoji = ({ emoji }: { emoji: string }) => {
       true
     );
 
-    // 3초 후부터 2초 동안 opacity를 1에서 0으로
+    // 0.5초 동안 나타나고, 대기 후 2초 동안 사라지기
     opacity.value = withSequence(
-      withTiming(1, { duration: 3000 }),
-      withTiming(0, { duration: 2000 })
+      withTiming(1, { duration: 500 }),
+      withDelay(EMOJI_TIMEOUT_MS - 2500, withTiming(0, { duration: 2000 }))
     );
   }, [translateX, translateY, opacity]);
 
@@ -67,7 +69,7 @@ const FloatingEmoji = ({ emoji }: { emoji: string }) => {
   }));
 
   return (
-    <Animated.View style={[styles.emojiWrapper, animatedStyle]} entering={FadeIn}>
+    <Animated.View style={[styles.emojiWrapper, animatedStyle]}>
       <Text style={styles.emoji}>{emoji}</Text>
     </Animated.View>
   );
