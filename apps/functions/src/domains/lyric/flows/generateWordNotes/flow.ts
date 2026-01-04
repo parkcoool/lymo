@@ -1,4 +1,5 @@
 import { vertexAI } from "@genkit-ai/google-genai";
+import { WordNote } from "@lymo/schemas/shared";
 
 import { ai } from "@/config";
 
@@ -61,13 +62,21 @@ export const generateWordNotesFlow = ai.defineFlow(
 
     for await (const chunk of stream) {
       if (!chunk.output) continue;
-      const filtered = chunk.output.filter((item) => lyrics[item.lyricIndex].includes(item.word));
+      const filtered = filterWordNotes(chunk.output, lyrics);
 
       sendChunk(filtered);
     }
 
     const result = (await response).output;
-    const filtered = result?.filter((item) => lyrics[item.lyricIndex].includes(item.word)) ?? [];
+
+    if (!result) return [];
+    const filtered = filterWordNotes(result, lyrics);
     return filtered;
   }
 );
+
+const filterWordNotes = (wordNotes: WordNote[], lyrics: string[]) => {
+  return wordNotes.filter((item) =>
+    lyrics[item.lyricIndex].toLowerCase().includes(item.word.toLocaleLowerCase())
+  );
+};
