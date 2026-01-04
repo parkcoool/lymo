@@ -31,18 +31,27 @@ export default function useCreateEmojiReactionMutation({ storyId }: CreateEmojiR
       });
 
       context.client.setQueryData<Bucket[]>(["reaction-buckets", storyId], (oldData) => {
-        if (!oldData) return oldData;
+        let newData: Bucket[] = [];
+        let newCounts: Partial<Record<ReactionEmoji, number>> = {};
 
         const index = Math.floor(timestampInSeconds / 5);
-        const bucket = oldData[index];
-        if (!bucket) return oldData;
 
-        const newCounts = { ...bucket.counts };
-        newCounts[emoji] = (newCounts[emoji] ?? 0) + 1;
+        if (oldData && oldData[index]) {
+          newCounts = { ...oldData[index].counts };
+          newCounts[emoji] = (newCounts[emoji] ?? 0) + 1;
 
-        const newBucket = { ...bucket, counts: newCounts };
-        const newData = [...oldData];
-        newData[index] = newBucket;
+          const newBucket: Bucket = { ...oldData[index], counts: newCounts };
+          newData = [...oldData];
+          newData[index] = newBucket;
+        } else {
+          newCounts[emoji] = 1;
+          const newBucket: Bucket = {
+            start: index * 5,
+            end: index * 5 + 5,
+            counts: newCounts,
+          };
+          newData[index] = newBucket;
+        }
 
         return newData;
       });

@@ -1,5 +1,4 @@
-import * as Crypto from "expo-crypto";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -11,8 +10,7 @@ import Animated, {
   withDelay,
 } from "react-native-reanimated";
 
-import useActiveBucketIndex from "../hooks/useActiveBucket";
-import useReactionBucketsQuery from "../hooks/useReactionBucketsQuery";
+import useEmojiQueue from "../hooks/useEmojiQueue";
 
 import { styles } from "./styles";
 
@@ -76,53 +74,7 @@ const FloatingEmoji = ({ emoji }: { emoji: string }) => {
 };
 
 export default function Emojis({ storyId }: EmojisProps) {
-  const { data: buckets } = useReactionBucketsQuery({ storyId });
-  const activeBucketIndex = useActiveBucketIndex();
-
-  const [queue, setQueue] = useState<{ id: string; emoji: string }[]>([]);
-
-  useEffect(() => {
-    if (activeBucketIndex === undefined || !buckets) return;
-    const counts = buckets[activeBucketIndex]?.counts;
-    if (!counts) return;
-
-    const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0);
-
-    if (totalCount > 15) {
-      // TODO: 너무 많으면 개수 조절
-    }
-
-    const newEmojis = Object.entries(counts).flatMap(([emoji, count]) =>
-      Array.from({ length: count }).map(() => emoji)
-    );
-
-    if (newEmojis.length === 0) return;
-
-    let index = 0;
-    const addEmoji = () => {
-      setQueue((prev) => {
-        const newQueue = [...prev];
-        newQueue.unshift({ id: Crypto.randomUUID(), emoji: newEmojis[index] });
-        index++;
-        return newQueue;
-      });
-
-      // 5초 후에 큐에서 제거
-      setTimeout(
-        () =>
-          setQueue((prev) => {
-            const newQueue = [...prev];
-            newQueue.pop();
-            return newQueue;
-          }),
-        5000
-      );
-    };
-    const interval = setInterval(addEmoji, 5000 / newEmojis.length);
-    addEmoji();
-
-    return () => clearInterval(interval);
-  }, [activeBucketIndex, buckets]);
+  const queue = useEmojiQueue({ storyId });
 
   return (
     <View style={styles.container} pointerEvents="none">
