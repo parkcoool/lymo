@@ -23,7 +23,7 @@ export const copyStoryDoc = ai.defineTool(
 
     await storyRequestRef.set({
       ...story,
-      status: "COMPLETED",
+      status: "FINISHED",
     });
   }
 );

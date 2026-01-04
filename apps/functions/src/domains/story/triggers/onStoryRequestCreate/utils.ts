@@ -84,23 +84,25 @@ export class StoryUpdater {
     const nowTimestamp = Date.now();
     if (nowTimestamp - this.lastWrittenAt < MIN_DELAY_BETWEEN_WRITES) return false;
 
+    // pendingData가 완전한지 확인
+    const parseResult = StorySchema.safeParse(this.pendingData);
+
     // story preview 문서 업데이트 수행
     const now = new Date().toISOString();
     await this.storyRequestValueRef.update({
       ...this.pendingData,
       updatedAt: now,
-      status: "IN_PROGRESS",
+      status: parseResult.success ? "COMPLETE" : "IN_PROGRESS",
     });
 
     // pendingData가 완전하면 story 본 문서도 업데이트
-    try {
-      const ensuredPendingData = StorySchema.parse(this.pendingData);
+    if (parseResult.success) {
       await this.storyDocRef.set({
         ...this.baseFields,
-        ...ensuredPendingData,
+        ...parseResult.data,
         updatedAt: now,
       });
-    } catch {}
+    }
 
     // 마지막 업데이트 시간 갱신
     this.lastWrittenAt = nowTimestamp;
@@ -127,7 +129,7 @@ export class StoryUpdater {
         // preview 문서 업데이트
         this.storyRequestValueRef.update({
           ...parsedFinalData,
-          status: "COMPLETED",
+          status: "FINISHED",
           updatedAt: now,
         }),
 

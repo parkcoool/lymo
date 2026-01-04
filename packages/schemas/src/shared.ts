@@ -21,6 +21,7 @@ export const StoryGenerationStatusSchema = z.enum([
   "PENDING",
   "IN_PROGRESS",
   "COMPLETED",
+  "FINISHED",
   "FAILED",
 ]);
 export type StoryGenerationStatus = z.infer<typeof StoryGenerationStatusSchema>;

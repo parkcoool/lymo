@@ -56,7 +56,6 @@ export default function Lyrics({
                   translation={lyric.translation}
                   active={isActive}
                   ref={isActive ? activeSentenceRef : undefined}
-                  isCompleted={isCompleted}
                 />
               );
             })}

@@ -18,49 +18,46 @@ interface SentenceProps {
   translation?: string | null;
   active: boolean;
   ref?: Ref<View>;
-  isCompleted?: boolean;
 }
 
-const Sentence = memo(
-  ({ sentence, translation, active, ref, isCompleted = true }: SentenceProps) => {
-    const progress = useSharedValue(active ? 1 : 0);
+const Sentence = memo(({ sentence, translation, active, ref }: SentenceProps) => {
+  const progress = useSharedValue(active ? 1 : 0);
 
-    useEffect(() => {
-      progress.value = withTiming(active ? 1 : 0, {
-        duration: 200,
-        easing: Easing.inOut(Easing.quad),
-      });
-    }, [active, progress]);
-
-    const animatedStyle = useAnimatedStyle(() => {
-      const color = interpolateColor(
-        progress.value,
-        [0, 1],
-        [colors.onBackgroundSubtle, colors.onBackground]
-      );
-
-      return { color };
+  useEffect(() => {
+    progress.value = withTiming(active ? 1 : 0, {
+      duration: 200,
+      easing: Easing.inOut(Easing.quad),
     });
+  }, [active, progress]);
 
-    return (
-      <View style={styles.container} ref={ref}>
-        <Animated.Text style={[styles.sentence, animatedStyle]}>{sentence}</Animated.Text>
-
-        <View style={styles.translationWrapper}>
-          {/* 번역 텍스트 */}
-          {translation && (
-            <Animated.Text
-              style={[styles.translation, animatedStyle]}
-              entering={FadeIn.duration(300)}
-            >
-              {translation}
-            </Animated.Text>
-          )}
-        </View>
-      </View>
+  const animatedStyle = useAnimatedStyle(() => {
+    const color = interpolateColor(
+      progress.value,
+      [0, 1],
+      [colors.onBackgroundSubtle, colors.onBackground]
     );
-  }
-);
+
+    return { color };
+  });
+
+  return (
+    <View style={styles.container} ref={ref}>
+      <Animated.Text style={[styles.sentence, animatedStyle]}>{sentence}</Animated.Text>
+
+      <View style={styles.translationWrapper}>
+        {/* 번역 텍스트 */}
+        {translation && (
+          <Animated.Text
+            style={[styles.translation, animatedStyle]}
+            entering={FadeIn.duration(300)}
+          >
+            {translation}
+          </Animated.Text>
+        )}
+      </View>
+    </View>
+  );
+});
 
 Sentence.displayName = "Sentence";
 

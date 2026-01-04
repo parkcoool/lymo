@@ -31,11 +31,13 @@ export default function StoryRequest(props: StoryRequestProps) {
 
   if (error) throw error;
 
+  const isCompleted = !isFetching || story?.status === "COMPLETED" || story?.status === "FINISHED";
+
   return (
     <PlayerView
       track={"track" in props ? props.track : undefined}
       story={story}
-      isCompleted={!isFetching}
+      isCompleted={isCompleted}
     />
   );
 }

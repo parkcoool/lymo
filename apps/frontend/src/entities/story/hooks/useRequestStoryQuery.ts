@@ -1,7 +1,7 @@
 import { BaseStoryFields, GeneratedStoryFields } from "@lymo/schemas/doc";
 import { RetrieveTrackInput } from "@lymo/schemas/functions";
 import { StoryRequest, StoryRequestSchema } from "@lymo/schemas/rtdb";
-import { Language } from "@lymo/schemas/shared";
+import { Language, StoryGenerationStatus } from "@lymo/schemas/shared";
 import { ref, onValue, Unsubscribe, set, get } from "@react-native-firebase/database";
 import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
 import * as Crypto from "expo-crypto";
@@ -13,7 +13,11 @@ import { createStreamChannel } from "@/shared/utils/createStreamChannel";
 
 type UseRequestStoryParams = RetrieveTrackInput & { language: Language };
 type UseRequestStoryResult =
-  | { id: string; data: BaseStoryFields & Partial<GeneratedStoryFields> }
+  | {
+      id: string;
+      data: BaseStoryFields & Partial<GeneratedStoryFields>;
+      status: StoryGenerationStatus;
+    }
   | undefined;
 
 /**
@@ -71,7 +75,7 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
             streamChannel.push(storyRequest.data);
 
             // 생성이 완료된 경우
-            if (storyRequest.data.status === "COMPLETED") {
+            if (storyRequest.data.status === "FINISHED") {
               unsubscribe.current?.();
               streamChannel.close();
             }
@@ -91,7 +95,11 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
 
       reducer: (_acc, chunk) => {
         if (chunk === undefined) return chunk;
-        if (chunk.status === "IN_PROGRESS" || chunk.status === "COMPLETED") {
+        if (
+          chunk.status === "IN_PROGRESS" ||
+          chunk.status === "COMPLETED" ||
+          chunk.status === "FINISHED"
+        ) {
           // 1) userAvatar 변환
           // string | null | undefined -> string | null 타입으로 변환
           const userAvatar = chunk.userAvatar ?? null;
@@ -105,6 +113,7 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
           return {
             id: chunk.storyId,
             data: { ...chunk, userAvatar, sectionNotes, lyricTranslations },
+            status: chunk.status,
           };
         }
         return undefined;

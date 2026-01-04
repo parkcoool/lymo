@@ -53,6 +53,11 @@ export const StoryRequestSchema = z.union([
     status: z.literal("COMPLETED"),
   }),
 
+  // status가 FINISHED일 경우
+  BaseStoryFieldsSchema.merge(GeneratedStoryFieldsSchema).extend({
+    status: z.literal("FINISHED"),
+  }),
+
   // status가 FAILED일 경우
   z.object({
     status: z.literal("FAILED"),
