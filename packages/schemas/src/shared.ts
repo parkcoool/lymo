@@ -24,3 +24,11 @@ export const StoryGenerationStatusSchema = z.enum([
   "FAILED",
 ]);
 export type StoryGenerationStatus = z.infer<typeof StoryGenerationStatusSchema>;
+
+// 단어 해석 스키마
+export const WordNoteSchema = z.object({
+  lyricIndex: z.number(),
+  word: z.string(),
+  note: z.string(),
+});
+export type WordNote = z.infer<typeof WordNoteSchema>;

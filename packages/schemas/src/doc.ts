@@ -1,6 +1,12 @@
 import { z } from "zod";
 
-import { LanguageSchema, LyricSchema, LyricsProvider, LyricsProviderSchema } from "./shared";
+import {
+  LanguageSchema,
+  LyricSchema,
+  LyricsProvider,
+  LyricsProviderSchema,
+  WordNoteSchema,
+} from "./shared";
 
 // ==============================
 // track 관련 스키마
@@ -72,6 +78,7 @@ export const GeneratedStoryFieldsSchema = z.object({
   sectionBreaks: z.number().array(),
   lyricTranslations: z.string().nullable().array(),
   sectionNotes: z.string().nullable().array(),
+  wordNotes: WordNoteSchema.array().optional(),
 });
 export type GeneratedStoryFields = z.infer<typeof GeneratedStoryFieldsSchema>;
 
