@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import useCurrentTrackId from "@/entities/player/hooks/useCurrentTrackId";
+import useCurrentTrack from "@/entities/player/hooks/useCurrentTrack";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 import type { SettingViews } from "@/entities/setting/models/types";
 import getLanguageName from "@/entities/setting/utils/getLanguageName";
@@ -15,17 +15,17 @@ interface SettingMenuProps {
 }
 
 export default function BottomSheetMenu({ setView }: SettingMenuProps) {
-  const trackId = useCurrentTrackId();
+  const currentTrack = useCurrentTrack();
   const { setting, updateSetting } = useSettingStore();
 
   return (
     <View style={styles.container}>
       {/* 곡 별 가사 싱크 */}
-      {trackId && (
+      {currentTrack && (
         <MenuItem
           icon="sync"
           label="곡 별 가사 싱크"
-          content={getSyncText(setting.sync.get(trackId) ?? 0)}
+          content={getSyncText(setting.sync.get(currentTrack.id) ?? 0)}
           onPress={() => setView("sync")}
         />
       )}

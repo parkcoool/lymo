@@ -1,16 +1,13 @@
-import { Lyric, LyricsProvider } from "@lymo/schemas/shared";
-import { Ref, useMemo } from "react";
+import { LyricsProvider } from "@lymo/schemas/shared";
+import { Ref } from "react";
 import { Text, View } from "react-native";
 
-import useDeviceMediaTimestamp from "@/entities/deviceMedia/hooks/useDeviceMediaTimestamp";
+import useActiveSentence from "@/entities/deviceMedia/hooks/useActiveSentence";
 import type { Section } from "@/entities/player/models/types";
 import Paragraph from "@/entities/player/ui/Paragraph";
 import Sentence from "@/entities/player/ui/Sentence";
-import { useSettingStore } from "@/entities/setting/models/settingStore";
 import getLyricsProviderName from "@/entities/story/utils/getLyricsProviderName";
 import { useSyncStore } from "@/shared/models/syncStore";
-
-import useCurrentTrackId from "../../hooks/useCurrentTrackId";
 
 import { styles } from "./styles";
 
@@ -27,17 +24,12 @@ export default function Lyrics({
   activeSentenceRef,
   isCompleted = true,
 }: LyricsProps) {
-  const { setting } = useSettingStore();
-  const trackId = useCurrentTrackId();
-  const timestamp = useDeviceMediaTimestamp();
   const { isSynced } = useSyncStore();
 
-  // 설정에 의해 조정된 타임스탬프
-  const delay = useMemo(
-    () => (trackId ? setting.sync.get(trackId) ?? 0 : 0) / 1000,
-    [setting.sync, trackId]
-  );
-  const adjustedTimestamp = timestamp + delay;
+  const [activeSectionIndex, activeSentenceIndex] = useActiveSentence({
+    lyrics,
+    enabled: isSynced,
+  });
 
   // 가사 제공자 이름
   const lyricsProviderName = lyricsProvider ? getLyricsProviderName(lyricsProvider) : null;
@@ -49,11 +41,12 @@ export default function Lyrics({
           <Paragraph
             key={sectionIndex}
             note={section.note}
-            active={isSynced && isActiveParagraph(section, adjustedTimestamp)}
+            active={activeSectionIndex === sectionIndex}
             isCompleted={isCompleted}
           >
             {section.lyrics.map((lyric, lyricIndex) => {
-              const isActive = isSynced && isActiveSentence(lyric, adjustedTimestamp);
+              const isActive =
+                activeSectionIndex === sectionIndex && activeSentenceIndex === lyricIndex;
               const sentenceKey = `${sectionIndex}-${lyricIndex}`;
 
               return (
@@ -79,11 +72,3 @@ export default function Lyrics({
     </View>
   );
 }
-
-const isActiveParagraph = (section: Section, timestamp: number) =>
-  section.lyrics.length > 0 &&
-  section.lyrics[0].start <= timestamp &&
-  timestamp < section.lyrics[section.lyrics.length - 1].end;
-
-const isActiveSentence = (lyric: Lyric, timestamp: number) =>
-  lyric.start <= timestamp && timestamp < lyric.end;

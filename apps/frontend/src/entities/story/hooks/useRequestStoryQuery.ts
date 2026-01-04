@@ -2,8 +2,9 @@ import { BaseStoryFields, GeneratedStoryFields } from "@lymo/schemas/doc";
 import { RetrieveTrackInput } from "@lymo/schemas/functions";
 import { StoryRequest, StoryRequestSchema } from "@lymo/schemas/rtdb";
 import { Language } from "@lymo/schemas/shared";
-import { ref, push as pushValue, onValue, Unsubscribe, set } from "@react-native-firebase/database";
+import { ref, onValue, Unsubscribe, set, get } from "@react-native-firebase/database";
 import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
+import * as Crypto from "expo-crypto";
 import { useEffect, useRef } from "react";
 
 import database from "@/core/database";
@@ -31,10 +32,19 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
     queryKey: ["request-story", params],
 
     queryFn: streamedQuery<StoryRequest, UseRequestStoryResult>({
-      streamFn: async function* () {
+      streamFn: async function* (context) {
         // 1) 요청 문서 생성
-        const storyRequestRef = pushValue(storyRequestsRef);
-        await set(storyRequestRef, { ...params, status: "PENDING" });
+        const id = await Crypto.digestStringAsync(
+          Crypto.CryptoDigestAlgorithm.MD5,
+          JSON.stringify(params)
+        );
+        const storyRequestRef = ref(database, `storyRequests/${id}`);
+
+        // 기존에 문서가 없는 경우에만 새로 생성
+        const existingSnapshot = await get(storyRequestRef);
+        if (!existingSnapshot.exists()) {
+          await set(storyRequestRef, { ...params, status: "PENDING" });
+        }
 
         // 2) 스트림 채널 생성
         const streamChannel = createStreamChannel<StoryRequest>();
@@ -71,6 +81,10 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
           async (err) => streamChannel.fail(err)
         );
 
+        context.signal.addEventListener("abort", () => {
+          streamChannel.close();
+        });
+
         yield* streamChannel.iterator();
         unsubscribe.current?.();
       },
@@ -99,14 +113,9 @@ export default function useRequestStoryQuery(params: UseRequestStoryParams) {
       initialValue: undefined,
     }),
 
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
     retry: false,
   });
 }
-
-const storyRequestsRef = ref(database, `storyRequests`);
 
 /**
  * `Record<number, string>` 또는 `(string | null)[]` 형태의 데이터를 `(string | null)[]` 배열로 변환합니다.

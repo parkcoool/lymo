@@ -9,9 +9,7 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 
-import Skeleton from "@/shared/components/Skeleton";
 import { colors } from "@/shared/constants/colors";
-import { useTypingAnimation } from "@/shared/hooks/useTypingAnimation";
 
 import { styles } from "./styles";
 
@@ -26,7 +24,6 @@ interface SentenceProps {
 const Sentence = memo(
   ({ sentence, translation, active, ref, isCompleted = true }: SentenceProps) => {
     const progress = useSharedValue(active ? 1 : 0);
-    const displayedTranslation = useTypingAnimation(translation, 10, !isCompleted);
 
     useEffect(() => {
       progress.value = withTiming(active ? 1 : 0, {
@@ -50,18 +47,13 @@ const Sentence = memo(
         <Animated.Text style={[styles.sentence, animatedStyle]}>{sentence}</Animated.Text>
 
         <View style={styles.translationWrapper}>
-          {/* 번역 스켈레톤 */}
-          {translation === undefined && !isCompleted && (
-            <Skeleton width="70%" height={12} opacity={0.4} />
-          )}
-
           {/* 번역 텍스트 */}
-          {displayedTranslation.length > 0 && (
+          {translation && (
             <Animated.Text
               style={[styles.translation, animatedStyle]}
               entering={FadeIn.duration(300)}
             >
-              {displayedTranslation}
+              {translation}
             </Animated.Text>
           )}
         </View>

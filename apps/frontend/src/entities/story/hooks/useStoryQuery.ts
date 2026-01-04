@@ -25,6 +25,6 @@ export default function useStoryQuery({
       return getStoryByTrackId({ trackId, language });
     },
     enabled,
-    staleTime: Infinity,
+    staleTime: (query) => (query.state.data ? Infinity : 0),
   });
 }

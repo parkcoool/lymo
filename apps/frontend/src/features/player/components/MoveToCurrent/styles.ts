@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.white,
-    opacity: 0.7,
+    opacity: 0.8,
   },
 
   text: {

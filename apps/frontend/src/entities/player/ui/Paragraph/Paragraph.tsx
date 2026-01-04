@@ -8,8 +8,8 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   interpolateColor,
-  FadeIn,
-  FadeOut,
+  FadeOutUp,
+  FadeInUp,
 } from "react-native-reanimated";
 
 import { useSettingStore } from "@/entities/setting/models/settingStore";
@@ -31,14 +31,16 @@ const Paragraph = memo(({ note, active, children, isCompleted = true }: Paragrap
   const parsedNote = note === "null" ? null : note;
   const displayedNote = useTypingAnimation(parsedNote, 10, !isCompleted);
 
-  const progress = useSharedValue(active && parsedNote !== null ? 1 : 0);
+  const actuallyActive = active && parsedNote !== null && setting.showSectionNotes;
+
+  const progress = useSharedValue(actuallyActive ? 1 : 0);
 
   useEffect(() => {
-    progress.value = withTiming(active && parsedNote !== null ? 1 : 0, {
+    progress.value = withTiming(actuallyActive ? 1 : 0, {
       duration: 300,
       easing: Easing.inOut(Easing.quad),
     });
-  }, [parsedNote, active, progress]);
+  }, [actuallyActive, progress]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
@@ -56,25 +58,22 @@ const Paragraph = memo(({ note, active, children, isCompleted = true }: Paragrap
       layout={LinearTransition.duration(300).easing(Easing.inOut(Easing.quad))}
     >
       {/* 문단 해석 */}
-      <Animated.View
-        style={styles.noteWrapper}
-        layout={LinearTransition.duration(300).easing(Easing.inOut(Easing.quad))}
-      >
-        {setting.showSectionNotes && parsedNote && (
-          <Animated.View
-            style={styles.noteContent}
-            entering={FadeIn.duration(300)}
-            exiting={FadeOut.duration(300)}
-          >
+      {setting.showSectionNotes && parsedNote && (
+        <Animated.View
+          style={styles.noteWrapper}
+          entering={FadeInUp.duration(300)}
+          exiting={FadeOutUp.duration(300)}
+        >
+          <View style={styles.noteContent}>
             <View style={styles.noteHeader}>
               <MaterialIcons name="lightbulb" size={20} style={styles.noteIcon} />
               <Text style={styles.noteTitle}>이해하기</Text>
             </View>
 
             <Text style={styles.note}>{displayedNote}</Text>
-          </Animated.View>
-        )}
-      </Animated.View>
+          </View>
+        </Animated.View>
+      )}
 
       {/* 문장 */}
       <Animated.View

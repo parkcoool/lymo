@@ -25,6 +25,35 @@ export const StoryGenerationStatusSchema = z.enum([
 ]);
 export type StoryGenerationStatus = z.infer<typeof StoryGenerationStatusSchema>;
 
+// 반응 이모지
+export const ReactionEmojiSchema = z.enum([
+  "🔥",
+  "❤️",
+  "😭",
+  "🤘",
+  "🤣",
+  "👏",
+  "🥺",
+  "😍",
+  "😎",
+  "🤯",
+  "💯",
+  "💔",
+  "🫶",
+  "✨",
+  "🌙",
+  "🎉",
+  "🥰",
+  "💃",
+  "🥀",
+  "☁️",
+  "🫢",
+  "🤪",
+  "👻",
+  "🍷",
+]);
+export type ReactionEmoji = z.infer<typeof ReactionEmojiSchema>;
+
 // 단어 해석 스키마
 export const WordNoteSchema = z.object({
   lyricIndex: z.number(),

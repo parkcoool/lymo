@@ -1,31 +1,28 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
 import { useMemo } from "react";
-import {
-  ActivityIndicator,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  View,
-} from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from "react-native";
+import Animated, { FadeIn, LayoutAnimationConfig } from "react-native-reanimated";
 
 import Intro from "@/entities/player/ui/Intro";
 import Lyrics from "@/entities/player/ui/Lyrics";
 import Overview from "@/entities/player/ui/Overview";
 import StoryInfo from "@/entities/player/ui/StoryInfo";
 import StoryInfoSkeleton from "@/entities/player/ui/StoryInfo/StoryInfoSkeleton";
-import { colors } from "@/shared/constants/colors";
 import useDominantColorQuery from "@/shared/hooks/useDominantColorQuery";
+import useWindowSize from "@/shared/hooks/useWindowSize";
 import useYOffsetInWindow from "@/shared/hooks/useYOffsetInWindow";
+import { useSyncStore } from "@/shared/models/syncStore";
 import mixColors from "@/shared/utils/mixColors";
 
 import useIncreaseViews from "../../hooks/useIncreaseViews";
 import useProcessLyrics from "../../hooks/useProcessLyrics";
 import useTracking from "../../hooks/useTracking";
 import MoveToCurrent from "../MoveToCurrent";
+import ReactionTrigger from "../ReactionTrigger";
 
 import HeaderConfig from "./HeaderConfig";
 import { styles } from "./styles";
+import Emojis from "@/entities/reaction/ui";
 
 interface PlayerViewProps {
   track?: { id: string; data: Track };
@@ -43,6 +40,9 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
     () => mixColors([coverColor ?? "#000000", "#000000CC"]),
     [coverColor]
   );
+
+  const { height } = useWindowSize();
+  const { isSynced } = useSyncStore();
 
   // 현재 활성화된 문장의 y 좌표 (in window)
   const { y: currentY, measure, ref: currentRef } = useYOffsetInWindow();
@@ -70,6 +70,11 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
 
   // 조회수 증가
   useIncreaseViews({ trackId: track?.id, storyId: story?.id });
+
+  // 렌더링 여부 결정
+  const shouldShowMoveToCurrent =
+    !isTrackingMode && (currentY < 0 || currentY + 100 > height) && isSynced;
+  const shouldShowReactionTrigger = !!story?.id && isSynced && isCompleted;
 
   return (
     <>
@@ -105,7 +110,7 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
           </View>
 
           {/* 가사 */}
-          {processedLyrics ? (
+          {processedLyrics && (
             <Animated.View entering={FadeIn.duration(300)}>
               <Lyrics
                 activeSentenceRef={currentRef}
@@ -114,19 +119,24 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
                 isCompleted={isCompleted}
               />
             </Animated.View>
-          ) : (
-            <ActivityIndicator
-              style={{ marginTop: 50 }}
-              size={60}
-              color={colors.onBackgroundSubtle}
-            />
           )}
         </ScrollView>
 
-        {/* 현재 가사로 이동 */}
-        {!isTrackingMode && (
-          <MoveToCurrent activeSentenceY={currentY} onPress={handleMoveToCurrent} />
-        )}
+        <LayoutAnimationConfig skipEntering>
+          {/* 현재 가사로 이동 */}
+          {shouldShowMoveToCurrent && (
+            <MoveToCurrent
+              activeSentenceY={currentY}
+              onPress={handleMoveToCurrent}
+              height={height}
+            />
+          )}
+
+          {/* 반응 트리거 */}
+          {shouldShowReactionTrigger && <ReactionTrigger storyId={story.id} />}
+
+          {story && <Emojis storyId={story.id} />}
+        </LayoutAnimationConfig>
       </View>
 
       {/* 헤더 설정 */}
