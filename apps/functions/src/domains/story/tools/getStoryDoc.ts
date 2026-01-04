@@ -1,0 +1,44 @@
+import { Story, StorySchema } from "@lymo/schemas/doc";
+import { LanguageSchema } from "@lymo/schemas/shared";
+import admin from "firebase-admin";
+import { CollectionReference } from "firebase-admin/firestore";
+import { z } from "genkit";
+
+import { ai } from "@/config";
+
+const InputSchema = z.object({
+  trackId: z.string(),
+  userId: z.string(),
+  language: LanguageSchema,
+});
+
+const OutputSchema = z
+  .object({
+    id: z.string(),
+    data: StorySchema,
+  })
+  .nullable();
+
+export const getStoryDoc = ai.defineTool(
+  {
+    name: "getStoryDoc",
+    inputSchema: InputSchema,
+    outputSchema: OutputSchema,
+    description: "Retrieve a story document from DB",
+  },
+  async ({ trackId, userId, language }) => {
+    const storyCollectionRef = admin
+      .firestore()
+      .collection("stories") as CollectionReference<Story>;
+    const q = storyCollectionRef
+      .where("trackId", "==", trackId)
+      .where("userId", "==", userId)
+      .where("language", "==", language)
+      .limit(1);
+
+    const story = (await q.get()).docs[0];
+
+    if (story?.exists) return { id: story.id, data: story.data() };
+    return null;
+  }
+);
