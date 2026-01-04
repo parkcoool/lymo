@@ -126,7 +126,6 @@ export const generateStoryFlow = ai.defineFlow(
         // 4-1) generateTrackOverviewFlow 실행
         const { output, stream } = generateTrackOverviewFlow.stream({
           trackInfo: { title: track.title, artists: track.artists, album: track.album },
-          lyrics: lyrics.map((lyric) => lyric.text),
           config: { language },
         });
 

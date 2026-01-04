@@ -7,9 +7,6 @@ export const InputSchema = z.object({
     artists: z.string().array().describe("The artists of the song"),
     album: z.string().nullable().describe("The album of the song"),
   }),
-  lyrics: z
-    .array(z.string().describe("A sentence from the lyrics"))
-    .describe("The lyrics of the song"),
   config: z.object({
     language: LanguageSchema.describe("The language for the summary"),
   }),
