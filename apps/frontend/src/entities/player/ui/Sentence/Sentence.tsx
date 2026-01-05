@@ -7,7 +7,9 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   interpolateColor,
+  interpolate,
   FadeIn,
+  FadeOut,
 } from "react-native-reanimated";
 
 import { colors } from "@/shared/constants/colors";
@@ -29,12 +31,12 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
 
   useEffect(() => {
     progress.value = withTiming(active ? 1 : 0, {
-      duration: 200,
+      duration: 300,
       easing: Easing.inOut(Easing.quad),
     });
   }, [active, progress]);
 
-  const animatedStyle = useAnimatedStyle(() => {
+  const animatedSentenceStyle = useAnimatedStyle(() => {
     const color = interpolateColor(
       progress.value,
       [0, 1],
@@ -42,6 +44,12 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
     );
 
     return { color };
+  });
+
+  const animatedTooltipStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(progress.value, [0, 1], [0.5, 1]);
+
+    return { opacity };
   });
 
   const sentenceContent = useMemo(() => {
@@ -74,33 +82,41 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
 
   return (
     <View style={styles.container} ref={ref}>
-      <Animated.Text style={[styles.sentence, animatedStyle]}>{sentenceContent}</Animated.Text>
+      {/* 원문 */}
+      <Animated.Text style={[styles.sentence, animatedSentenceStyle]}>
+        {sentenceContent}
+      </Animated.Text>
 
-      {wordNote && (
-        <Animated.View
-          style={[
-            styles.tooltip,
-            { backgroundColor: `${getHighlightColor(wordNote.lyricIndex)}CC` },
-          ]}
-        >
-          <View style={styles.tooltipBackground}>
-            <Text style={styles.wordNoteSource}>{wordNote.word}</Text>
-            <Text style={styles.wordNote}>{wordNote.note}</Text>
-          </View>
-        </Animated.View>
-      )}
-
+      {/* 번역 */}
       <View style={styles.translationWrapper}>
         {/* 번역 텍스트 */}
         {translation && (
           <Animated.Text
-            style={[styles.translation, animatedStyle]}
+            style={[styles.translation, animatedSentenceStyle]}
             entering={FadeIn.duration(300)}
           >
             {translation}
           </Animated.Text>
         )}
       </View>
+
+      {/* 단어 해석 */}
+      {wordNote && (
+        <Animated.View entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+          <Animated.View
+            style={[
+              styles.tooltip,
+              { backgroundColor: `${getHighlightColor(wordNote.lyricIndex)}CC` },
+              animatedTooltipStyle,
+            ]}
+          >
+            <View style={styles.tooltipBackground}>
+              <Text style={styles.wordNoteSource}>{wordNote.word}</Text>
+              <Text style={styles.wordNote}>{wordNote.note}</Text>
+            </View>
+          </Animated.View>
+        </Animated.View>
+      )}
     </View>
   );
 });

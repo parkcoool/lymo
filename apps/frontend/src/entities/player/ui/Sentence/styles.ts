@@ -38,15 +38,15 @@ export const styles = StyleSheet.create({
 
   tooltipBackground: {
     backgroundColor: "rgba(0, 0, 0, 0.7)",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     gap: 4,
   },
 
   wordNoteSource: {
     fontSize: 12,
     color: colors.onBackgroundSubtle,
-    fontWeight: 700,
+    fontWeight: 800,
   },
 
   wordNote: {
