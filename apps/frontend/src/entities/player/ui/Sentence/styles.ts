@@ -29,21 +29,28 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 700,
     color: colors.onBackground,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
 
   tooltip: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    maxWidth: "70%",
-    alignSelf: "flex-start",
+    borderRadius: 12,
+    overflow: "hidden",
   },
 
-  tooltipText: {
+  tooltipBackground: {
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 4,
+  },
+
+  wordNoteSource: {
     fontSize: 12,
-    color: colors.black,
-    fontWeight: "500",
+    color: colors.onBackgroundSubtle,
+    fontWeight: 700,
+  },
+
+  wordNote: {
+    fontSize: 14,
+    color: colors.onBackground,
   },
 });

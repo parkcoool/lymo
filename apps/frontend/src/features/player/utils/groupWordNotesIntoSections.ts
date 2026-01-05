@@ -7,7 +7,7 @@ interface GroupWordNotesIntoSectionsParams {
 }
 
 /**
- * 단어 해석을 섹션별로 그룹화하고, lyricIndex를 섹션 내 인덱스로 변환합니다.
+ * 단어 해석을 섹션별로 그룹화합니다.
  * @param wordNotes 전체 단어 해석 목록
  * @param sectionBreaks 문단 구분 인덱스 배열
  * @param lyricsLength 전체 가사 길이
@@ -31,10 +31,7 @@ export default function groupWordNotesIntoSections({
       .filter((note) => note.lyricIndex >= startIdx && note.lyricIndex < endIdx)
       .forEach((note) => {
         const lyricIndex = note.lyricIndex - startIdx;
-        sectionWordNotes[lyricIndex] = {
-          ...note,
-          lyricIndex,
-        };
+        sectionWordNotes[lyricIndex] = note;
       });
 
     sections.push(sectionWordNotes);

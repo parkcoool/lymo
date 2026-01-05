@@ -55,7 +55,16 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
     return (
       <>
         <Text>{before}</Text>
-        <Text style={styles.highlight}>{word}</Text>
+        <Text
+          style={[
+            styles.highlight,
+            {
+              backgroundColor: `${getHighlightColor(wordNote.lyricIndex)}33`,
+            },
+          ]}
+        >
+          {word}
+        </Text>
         <Text>{after}</Text>
       </>
     );
@@ -66,8 +75,16 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
       <Animated.Text style={[styles.sentence, animatedStyle]}>{sentenceContent}</Animated.Text>
 
       {wordNote && (
-        <Animated.View style={styles.tooltip}>
-          <Text style={styles.tooltipText}>{wordNote.note}</Text>
+        <Animated.View
+          style={[
+            styles.tooltip,
+            { backgroundColor: `${getHighlightColor(wordNote.lyricIndex)}CC` },
+          ]}
+        >
+          <View style={styles.tooltipBackground}>
+            <Text style={styles.wordNoteSource}>{wordNote.word}</Text>
+            <Text style={styles.wordNote}>{wordNote.note}</Text>
+          </View>
         </Animated.View>
       )}
 
@@ -89,3 +106,17 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
 Sentence.displayName = "Sentence";
 
 export default Sentence;
+
+const getHighlightColor = (index: number) => {
+  const highlightColors = [
+    "#FF0000",
+    "#FFA500",
+    "#FFFF00",
+    "#008000",
+    "#0000FF",
+    "#4B0082",
+    "#EE82EE",
+  ];
+
+  return highlightColors[index % highlightColors.length];
+};
