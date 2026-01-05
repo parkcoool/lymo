@@ -1,5 +1,5 @@
 import { BaseStoryFields, GeneratedStoryFields, Track } from "@lymo/schemas/doc";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, View } from "react-native";
 import Animated, { FadeIn, LayoutAnimationConfig } from "react-native-reanimated";
 
@@ -17,6 +17,7 @@ import mixColors from "@/shared/utils/mixColors";
 
 import useIncreaseViews from "../../hooks/useIncreaseViews";
 import useProcessLyrics from "../../hooks/useProcessLyrics";
+import useProcessWordNotes from "../../hooks/useProcessWordNotes";
 import useTracking from "../../hooks/useTracking";
 import MoveToCurrent from "../MoveToCurrent";
 import ReactionTrigger from "../ReactionTrigger";
@@ -59,8 +60,9 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
     track: track?.data,
   });
 
-  // 처리된 가사 데이터
+  // 가사 및 단어 해석 처리
   const processedLyrics = useProcessLyrics({ story: story?.data, track: track?.data });
+  const processedWordNotes = useProcessWordNotes({ story: story?.data, track: track?.data });
 
   // 스크롤뷰 스크롤 핸들러
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -115,6 +117,7 @@ export default function PlayerView({ track, story, isCompleted = true }: PlayerV
               <Lyrics
                 activeSentenceRef={currentRef}
                 lyrics={processedLyrics}
+                wordNotes={processedWordNotes}
                 lyricsProvider={story?.data.lyricsProvider}
                 isCompleted={isCompleted}
               />
