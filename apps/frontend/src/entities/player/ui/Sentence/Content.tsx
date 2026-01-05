@@ -11,12 +11,15 @@ interface ContentProps {
 }
 
 export default function Content({ sentence, wordNote }: ContentProps) {
-  if (!wordNote?.word || !sentence.includes(wordNote.word)) {
+  if (
+    !wordNote?.word ||
+    !sentence.toLowerCase().includes(wordNote.word.toLowerCase())
+  ) {
     return sentence;
   }
 
   const word = wordNote.word;
-  const index = sentence.indexOf(word);
+  const index = sentence.toLowerCase().indexOf(word.toLowerCase());
   const before = sentence.substring(0, index);
   const after = sentence.substring(index + word.length);
 
