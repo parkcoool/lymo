@@ -54,9 +54,9 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
 
     return (
       <>
-        {before}
-        <Text style={{ backgroundColor: "rgba(255, 255, 0, 0.2)" }}>{word}</Text>
-        {after}
+        <Text>{before}</Text>
+        <Text style={styles.highlight}>{word}</Text>
+        <Text>{after}</Text>
       </>
     );
   }, [sentence, wordNote]);

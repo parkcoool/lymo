@@ -24,4 +24,10 @@ export const styles = StyleSheet.create({
     minHeight: 24,
     justifyContent: "center",
   },
+
+  highlight: {
+    fontSize: 20,
+    fontWeight: 700,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
 });
