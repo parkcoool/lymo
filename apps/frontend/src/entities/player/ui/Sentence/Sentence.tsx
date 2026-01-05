@@ -1,5 +1,5 @@
 import { WordNote } from "@lymo/schemas/shared";
-import React, { memo, Ref, useEffect, useMemo } from "react";
+import React, { memo, Ref, useEffect } from "react";
 import { View, Text } from "react-native";
 import Animated, {
   Easing,
@@ -16,6 +16,7 @@ import { colors } from "@/shared/constants/colors";
 
 import getHighlightColor from "../../utils/getHighlightColor";
 
+import Content from "./Content";
 import { styles } from "./styles";
 
 interface SentenceProps {
@@ -52,39 +53,11 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
     return { opacity };
   });
 
-  const sentenceContent = useMemo(() => {
-    if (!wordNote?.word || !sentence.includes(wordNote.word)) {
-      return sentence;
-    }
-
-    const word = wordNote.word;
-    const index = sentence.indexOf(word);
-    const before = sentence.substring(0, index);
-    const after = sentence.substring(index + word.length);
-
-    return (
-      <>
-        <Text>{before}</Text>
-        <Text
-          style={[
-            styles.highlight,
-            {
-              backgroundColor: `${getHighlightColor(wordNote.lyricIndex)}33`,
-            },
-          ]}
-        >
-          {word}
-        </Text>
-        <Text>{after}</Text>
-      </>
-    );
-  }, [sentence, wordNote]);
-
   return (
     <View style={styles.container} ref={ref}>
       {/* 원문 */}
       <Animated.Text style={[styles.sentence, animatedSentenceStyle]}>
-        {sentenceContent}
+        <Content sentence={sentence} wordNote={wordNote} />
       </Animated.Text>
 
       {/* 번역 */}
