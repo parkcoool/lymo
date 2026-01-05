@@ -31,7 +31,7 @@ export const generateWordNotesFlow = ai.defineFlow(
         - Do NOT include the word itself in the note.
 
         3. Format & Length
-        - Length Limit: **Extremely concise.** Remove unnecessary words to minimize length.
+        - Length Limit: Keep it within 1~2 sentences. Remove unnecessary words to minimize length.
         - Style: Use noun phrases or short sentence fragments. Avoid full sentences if they add unnecessary length.
         - Example: Instead of "It is a slang term for doing something secretly", write "Slang for doing something secretly".
 
