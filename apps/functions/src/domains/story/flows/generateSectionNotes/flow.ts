@@ -1,3 +1,4 @@
+import { vertexAI } from "@genkit-ai/google-genai";
 import { logger } from "firebase-functions";
 import { z } from "genkit";
 
@@ -14,6 +15,8 @@ export const generateSectionNotesFlow = ai.defineFlow(
     outputSchema: OutputSchema,
   },
   async ({ trackInfo: track, lyrics, config: { language } }, { sendChunk }) => {
+    if (lyrics.length <= 1) return [];
+
     let retry = 0;
     let result: (string | null)[] | null = null;
 
@@ -21,23 +24,28 @@ export const generateSectionNotesFlow = ai.defineFlow(
       const { stream, response } = ai.generateStream({
         system: `
           ### Role
-          Specialized Lyric Annotator (Focus on Hidden Meanings & Trivia)
+          Specialized Lyric Annotator (Focus on Context, Trivia & Behind-the-Scenes)
 
           ### Selection & Analysis Guidelines
-          **1. Strict Selection Criteria (High Threshold)**
-          - **DEFAULT TO NULL**: Assume the user understands the lyrics. Only provide an analysis if the section contains specific elements that are **impossible to understand** without external context or deep interpretation.
-          - **Trigger Conditions (Only interpret if):**
-              - Contains obscure cultural references, specific slang, or artist-specific lore.
-              - Contains highly abstract metaphors where the intended meaning is completely different from the literal words.
-          - **Skip Condition**: If the lyrics are emotional, poetic, or narrative but intuitively understandable, you **MUST** output \`null\`.
+          1. Information Gathering
+          - USE WEB SEARCH: Actively search the web to find accurate and interesting facts, trivia, and context about the song and its specific sections.
 
-          **2. Targeted Insight (Pinpoint Focus)**
-          - **Do NOT cover the whole section**: If an analysis is triggered, focus **ONLY** on the specific phrase, word, or concept that requires explanation.
-          - **Ignore the obvious**: Do not explain the surrounding lines that are self-explanatory. Just explain the "why" or "what" of the difficult part.
+          2. Content Focus (Broader Context over Word Definitions)
+          - Do NOT explain individual words or phrases unless they are crucial for the bigger picture.
+          - Instead, provide interesting insights such as:
+              - Section Meaning: The role or emotional weight of this section within the whole song's narrative.
+              - Behind-the-Scenes: Stories about the recording, writing, or production of this specific part.
+              - Performer Info: Interesting facts about the member/artist singing this part (if applicable/known).
+              - Trivia: Any unique facts related to this section.
 
-          **3. Format & Length**
-          - **Length Limit**: Strictly limit the output to **2~3 sentences**.
-          - **Tone**: Informative and insightful, like a 'Genius.com' annotation or a director's commentary.
+          3. Selection Criteria
+          - SKIP THE OBVIOUS: If the meaning is easily inferable by anyone, DO NOT explain it.
+          - ACTIVELY RETURN NULL: If there is no specific interesting backstory, trivia, or deeper narrative significance, you MUST output \`null\`. Do not force an explanation.
+          - Only provide output if you find something worth reading that goes beyond a simple summary of the lyrics.
+
+          4. Format & Length
+          - Length Limit: Strictly limit the output to 2~3 sentences.
+          - Tone: Informative, engaging, and insightful, like a 'Genius.com' annotation or a director's commentary.
 
           ### Output Format
           - All summaries must be written in the given target language.
@@ -46,12 +54,11 @@ export const generateSectionNotesFlow = ai.defineFlow(
           ### Output Example
           ["Summary of the first section", "Summary of the second section", null, "Summary of the fourth section"]
       `,
-        model: "googleai/gemini-2.5-flash",
+        model: vertexAI.model("gemini-2.5-flash"),
         prompt: JSON.stringify({ track, lyrics, targetLanguage: getLanguageName(language) }),
         output: { schema: z.string().nullable().array() },
         config: {
-          // 재시도 시 temperature 점진적 증가
-          temperature: retry * 0.2 + 0.3,
+          googleSearchRetrieval: {},
         },
       });
 
