@@ -28,6 +28,22 @@ export const styles = StyleSheet.create({
   highlight: {
     fontSize: 20,
     fontWeight: 700,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    color: colors.onBackground,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+  },
+
+  tooltip: {
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    maxWidth: "70%",
+    alignSelf: "flex-start",
+  },
+
+  tooltipText: {
+    fontSize: 12,
+    color: colors.black,
+    fontWeight: "500",
   },
 });

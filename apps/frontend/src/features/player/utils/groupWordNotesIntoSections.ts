@@ -25,12 +25,17 @@ export default function groupWordNotesIntoSections({
     const startIdx = paragraphStartIndices[p];
     const endIdx = paragraphStartIndices[p + 1];
 
-    const sectionWordNotes = wordNotes
+    const sectionWordNotes: WordNote[] = [];
+
+    wordNotes
       .filter((note) => note.lyricIndex >= startIdx && note.lyricIndex < endIdx)
-      .map((note) => ({
-        ...note,
-        lyricIndex: note.lyricIndex - startIdx,
-      }));
+      .forEach((note) => {
+        const lyricIndex = note.lyricIndex - startIdx;
+        sectionWordNotes[lyricIndex] = {
+          ...note,
+          lyricIndex,
+        };
+      });
 
     sections.push(sectionWordNotes);
   }

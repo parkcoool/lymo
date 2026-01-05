@@ -1,4 +1,3 @@
-import { vertexAI } from "@genkit-ai/google-genai";
 import { WordNote } from "@lymo/schemas/shared";
 
 import { ai } from "@/config";
@@ -37,7 +36,6 @@ export const generateWordNotesFlow = ai.defineFlow(
         - Example: Instead of "It is a slang term for doing something secretly", write "Slang for doing something secretly".
 
         4. Verification & Accuracy
-        - Mandatory Verification: Use web search to verify the meaning of slang, idioms, or ambiguous terms.
         - Exclude Uncertain Terms: If a term's meaning is ambiguous, controversial, or cannot be definitively confirmed in the specific context of the lyrics, exclude it. Do not guess.
         - Contextual Accuracy: Ensure the interpretation fits the specific context of the song. Avoid generic or incorrect slang definitions that do not apply.
 
@@ -48,16 +46,13 @@ export const generateWordNotesFlow = ai.defineFlow(
           - \`word\`: The selected word or phrase, exactly as it appears in the lyrics.
           - \`note\`: The corresponding annotation.
         `,
-      model: vertexAI.model("gemini-2.5-flash"),
+      model: "gemini-2.5-flash",
       prompt: JSON.stringify({
         track,
         lyrics: lyrics.map((sentence, index) => `[${index}] ${sentence}`),
         targetLanguage: language,
       }),
       output: { schema: OutputSchema },
-      config: {
-        googleSearchRetrieval: {},
-      },
     });
 
     for await (const chunk of stream) {

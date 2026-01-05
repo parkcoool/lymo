@@ -65,6 +65,12 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
     <View style={styles.container} ref={ref}>
       <Animated.Text style={[styles.sentence, animatedStyle]}>{sentenceContent}</Animated.Text>
 
+      {wordNote && (
+        <Animated.View style={styles.tooltip}>
+          <Text style={styles.tooltipText}>{wordNote.note}</Text>
+        </Animated.View>
+      )}
+
       <View style={styles.translationWrapper}>
         {/* 번역 텍스트 */}
         {translation && (

@@ -10,7 +10,7 @@ interface UseProcessWordNotesParams {
 
 /**
  * 처리된 단어 해석을 반환하는 훅입니다.
- * 반환하는 단어 해석은 섹션별로 그룹화되어 있고, 각 단어 해석의 lyricsIndex는 섹션 내 가사 인덱스로 변환됩니다.
+ * 반환하는 단어 해석은 섹션별로 그룹화되어 있고, 각 단어 해석은 섹션 내 문장의 인덱스에 해당하는 인덱스에 위치합니다.
  * @returns 섹션별로 그룹화된 단어 해석 목록 (2차원 배열)
  */
 export default function useProcessWordNotes({ track, story }: UseProcessWordNotesParams) {
