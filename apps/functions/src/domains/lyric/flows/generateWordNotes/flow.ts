@@ -71,7 +71,10 @@ export const generateWordNotesFlow = ai.defineFlow(
 );
 
 const filterWordNotes = (wordNotes: WordNote[], lyrics: string[]) => {
-  return wordNotes.filter((item) =>
-    lyrics[item.lyricIndex].toLowerCase().includes(item.word.toLocaleLowerCase())
-  );
+  return wordNotes.filter((item) => {
+    const lyric = lyrics[item.lyricIndex];
+    if (!lyric) return false;
+
+    return lyric.toLowerCase().includes(item.word.toLowerCase());
+  });
 };
