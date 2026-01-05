@@ -12,6 +12,8 @@ import Animated, {
 
 import { colors } from "@/shared/constants/colors";
 
+import getHighlightColor from "../../utils/getHighlightColor";
+
 import { styles } from "./styles";
 
 interface SentenceProps {
@@ -106,17 +108,3 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
 Sentence.displayName = "Sentence";
 
 export default Sentence;
-
-const getHighlightColor = (index: number) => {
-  const highlightColors = [
-    "#FF0000",
-    "#FFA500",
-    "#FFFF00",
-    "#008000",
-    "#0000FF",
-    "#4B0082",
-    "#EE82EE",
-  ];
-
-  return highlightColors[index % highlightColors.length];
-};
