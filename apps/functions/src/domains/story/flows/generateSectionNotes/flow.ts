@@ -97,7 +97,13 @@ export const generateSectionNotesFlow = ai.defineFlow(
           // 문단 요약 개수가 입력된 문단 개수와 일치하면 결과 반환
           if (output.length === lyrics.length)
             return output.map((item) => (item?.trim() === "null" ? null : item));
-        } catch {}
+        } catch (error) {
+          logger.warn(`generateSectionNotesFlow: failed to parse final response output.`, {
+            error,
+            retry,
+            track,
+          });
+        }
       } catch (error) {
         if (error instanceof ValidationError) {
           logger.warn(`generateSectionNotesFlow: ValidationError occurred.`, {
