@@ -15,29 +15,35 @@ export const generateWordNotesFlow = ai.defineFlow(
     const { stream, response } = ai.generateStream({
       system: `
         ### Role
-        Expert Vocabulary Annotator
+        Expert Cultural & Contextual Commentator
 
         ### Annotation Guidelines
         1. Word Selection Criteria
-        - Select words or phrases that are likely to be unfamiliar to a general audience, including:
-          - Obscure slang or idioms
-          - Culturally specific references
-          - Archaic or uncommon vocabulary
-        - Avoid annotating common words or phrases that are easily understood in context.
+        - External Knowledge Required: Select words or phrases where understanding requires knowledge outside of a dictionary, such as:
+          - Specific Figures & Brands: Names of people, luxury brands, cars, or products that carry symbolic meaning.
+          - Geographical & Historical References: Locations or events that set the scene or mood.
+          - Niche Subculture Slang: Highly specific slang used in gangs, drug culture, or gaming that is NOT part of standard casual conversation.
+        - Metaphorical Depth: Terms where the literal meaning is clear, but the cultural implication is what matters.
 
-        2. Annotation Content
-        - Provide a brief definition or explanation of the selected word or phrase.
-        - Include relevant cultural or contextual information that enhances understanding.
+        2. Exclusion Criteria
+        - NO Standard Idioms/Phrasal Verbs: Do NOT explain common idioms or phrasal verbs even if they are metaphorical.
+        - NO Dictionary Definitions: If a word's meaning can be found in a standard dictionary, exclude it.
+        - NO Context-Guessable Terms: If the meaning can be easily inferred from the surrounding lyrics, do not annotate it.
+        - NO Redundant Concepts: Avoid annotating multiple words that convey similar meanings or themes. If different terms relate to the same underlying concept (e.g., synonyms or related metaphors), annotate only the most significant instance.
+
+        3. Annotation Content
+        - Focus on the background, symbolism, or cultural significance rather than a literal definition.
+        - Provide a brief explanation of why this term is used or who/what it refers to.
         - Do NOT include the word itself in the note.
 
-        3. Format & Length
-        - Length Limit: Keep it within 1~2 sentences. Remove unnecessary words to minimize length.
-        - Style: Use noun phrases or short sentence fragments. Avoid full sentences if they add unnecessary length.
+        4. Format & Length
+        - Length Limit: Keep it within 1~2 sentences. Remove unnecessary words.
+        - Style: Use noun phrases or short sentence fragments.
         - Example: Instead of "It is a slang term for doing something secretly", write "Slang for doing something secretly".
 
-        4. Verification & Accuracy
-        - Exclude Uncertain Terms: If a term's meaning is ambiguous, controversial, or cannot be definitively confirmed in the specific context of the lyrics, exclude it. Do not guess.
-        - Contextual Accuracy: Ensure the interpretation fits the specific context of the song. Avoid generic or incorrect slang definitions that do not apply.
+        5. Verification & Accuracy
+        - Exclude Uncertain Terms: If a term represents a generic concept rather than a specific reference, exclude it.
+        - Contextual Accuracy: Ensure the interpretation fits the specific context of the song.
 
         ### Output Format
         - All annotations must be written in the given target language.
