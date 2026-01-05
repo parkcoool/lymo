@@ -35,7 +35,7 @@ export default function useSyncDeviceMedia() {
 
         // 성공적으로 시작
         else {
-          console.log("Media observer started");
+          // console.log("Media observer started");
 
           const handleMediaUpdate = (newDeviceMedia: DeviceMedia | null) => {
             if (newDeviceMedia == null) return;

@@ -1,4 +1,4 @@
-import { LyricsProvider } from "@lymo/schemas/shared";
+import { LyricsProvider, WordNote } from "@lymo/schemas/shared";
 import { Ref } from "react";
 import { Text, View } from "react-native";
 
@@ -14,6 +14,7 @@ import { styles } from "./styles";
 interface LyricsProps {
   lyrics: Section[];
   lyricsProvider?: LyricsProvider;
+  wordNotes?: WordNote[][];
   activeSentenceRef: Ref<View>;
   isCompleted?: boolean;
 }
@@ -21,6 +22,7 @@ interface LyricsProps {
 export default function Lyrics({
   lyrics,
   lyricsProvider,
+  wordNotes,
   activeSentenceRef,
   isCompleted = true,
 }: LyricsProps) {
@@ -54,6 +56,7 @@ export default function Lyrics({
                   key={sentenceKey}
                   sentence={lyric.text}
                   translation={lyric.translation}
+                  wordNote={wordNotes?.[sectionIndex]?.[lyricIndex]}
                   active={isActive}
                   ref={isActive ? activeSentenceRef : undefined}
                 />

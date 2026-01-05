@@ -79,13 +79,13 @@ export const GeneratedStoryFieldsSchema = z.object({
   sectionBreaks: z.number().array(),
   lyricTranslations: z.string().nullable().array(),
   sectionNotes: z.string().nullable().array(),
-  wordNotes: WordNoteSchema.array().optional(),
+  wordNotes: WordNoteSchema.array(),
 });
 export type GeneratedStoryFields = z.infer<typeof GeneratedStoryFieldsSchema>;
 
 // `stories/{storyId}` 문서 스키마
 export const StorySchema = BaseStoryFieldsSchema.merge(TrackInfoFieldsSchema).merge(
-  GeneratedStoryFieldsSchema
+  GeneratedStoryFieldsSchema.partial()
 );
 export type Story = z.infer<typeof StorySchema>;
 

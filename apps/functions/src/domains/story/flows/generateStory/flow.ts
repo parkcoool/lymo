@@ -30,6 +30,7 @@ export const generateStoryFlow = ai.defineFlow(
       sectionBreaks: [],
       sectionNotes: [],
       lyricTranslations: [],
+      wordNotes: [],
     };
 
     await Promise.all([

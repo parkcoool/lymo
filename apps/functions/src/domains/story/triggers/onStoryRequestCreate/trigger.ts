@@ -15,6 +15,7 @@ export const onStoryRequestCreate = onValueCreated(
   {
     ref: "/storyRequests/{requestId}",
     region: "us-central1",
+    timeoutSeconds: 300,
     secrets: [spotifyClientSecret],
   },
   async (event) => {
