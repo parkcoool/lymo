@@ -46,7 +46,7 @@ export const generateWordNotesFlow = ai.defineFlow(
           - \`word\`: The selected word or phrase, exactly as it appears in the lyrics.
           - \`note\`: The corresponding annotation.
         `,
-      model: "gemini-2.5-flash",
+      model: "googleai/gemini-2.5-flash",
       prompt: JSON.stringify({
         track,
         lyrics: lyrics.map((sentence, index) => `[${index}] ${sentence}`),
