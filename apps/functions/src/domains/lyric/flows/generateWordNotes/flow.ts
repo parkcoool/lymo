@@ -1,4 +1,4 @@
-import { WordNote } from "@lymo/schemas/shared";
+import { WordNote, WordNoteSchema } from "@lymo/schemas/shared";
 
 import { ai } from "@/config";
 
@@ -63,18 +63,34 @@ export const generateWordNotesFlow = ai.defineFlow(
     }
 
     const result = (await response).output;
+    console.log(result);
 
     if (!result) return [];
     const filtered = filterWordNotes(result, lyrics);
+
+    console.log(filtered);
     return filtered;
   }
 );
 
 const filterWordNotes = (wordNotes: WordNote[], lyrics: string[]) => {
   return wordNotes.filter((item) => {
+    if (!WordNoteSchema.safeParse(item).success) {
+      console.log("Invalid WordNote schema:", item);
+      return false;
+    }
     const lyric = lyrics[item.lyricIndex];
-    if (!lyric) return false;
+    if (!lyric) {
+      console.log("Lyric not found for index:", item.lyricIndex);
+      return false;
+    }
 
-    return lyric.toLowerCase().includes(item.word.toLowerCase());
+    const includes = lyric.toLowerCase().includes(item.word.toLowerCase());
+    if (!includes) {
+      console.log(`Word "${item.word}" not found in lyric:`, lyric);
+      return false;
+    }
+
+    return true;
   });
 };
