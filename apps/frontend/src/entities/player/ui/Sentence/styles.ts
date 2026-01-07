@@ -24,4 +24,33 @@ export const styles = StyleSheet.create({
     minHeight: 24,
     justifyContent: "center",
   },
+
+  highlight: {
+    fontSize: 20,
+    fontWeight: 700,
+    color: colors.onBackground,
+  },
+
+  tooltip: {
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+
+  tooltipBackground: {
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 4,
+  },
+
+  wordNoteSource: {
+    fontSize: 12,
+    color: colors.onBackgroundSubtle,
+    fontWeight: 800,
+  },
+
+  wordNote: {
+    fontSize: 14,
+    color: colors.onBackground,
+  },
 });

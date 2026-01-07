@@ -54,7 +54,7 @@ export const StoryRequestSchema = z.union([
   }),
 
   // status가 FINISHED일 경우
-  BaseStoryFieldsSchema.merge(GeneratedStoryFieldsSchema).extend({
+  BaseStoryFieldsSchema.merge(GeneratedStoryFieldsSchema.partial()).extend({
     status: z.literal("FINISHED"),
   }),
 
