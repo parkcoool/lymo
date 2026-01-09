@@ -10,17 +10,25 @@ import android.media.session.PlaybackState
 import android.os.Build
 import android.provider.Settings
 import android.util.Base64
+import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import java.io.ByteArrayOutputStream
 
 class MediaNotificationListenerModule : Module() {
+  
+  companion object {
+    private const val TAG = "MediaNotiListenerModule"
+  }
+  
   private val context: Context
     get() = appContext.reactContext ?: throw IllegalStateException("React context is not available")
   
   private var mediaSessionManager: MediaSessionManager? = null
   private var sessionListener: MediaSessionManager.OnActiveSessionsChangedListener? = null
+  private var currentController: MediaController? = null
+  private var controllerCallback: MediaController.Callback? = null
   
   override fun definition() = ModuleDefinition {
     Name("MediaNotificationListener")
@@ -169,20 +177,75 @@ class MediaNotificationListenerModule : Module() {
     val componentName = ComponentName(context, MediaNotificationListenerService::class.java)
     
     sessionListener = MediaSessionManager.OnActiveSessionsChangedListener { controllers ->
-      val sessionInfo = if (controllers.isNullOrEmpty()) {
-        mapOf("hasSession" to false)
-      } else {
-        buildMediaSessionInfo(controllers.first())
-      }
+      Log.d(TAG, "Active sessions changed: ${controllers?.size ?: 0} sessions")
       
-      sendEvent("onMediaSessionChanged", sessionInfo)
+      if (controllers.isNullOrEmpty()) {
+        sendEvent("onMediaSessionChanged", mapOf("hasSession" to false))
+        unregisterControllerCallback()
+      } else {
+        val controller = controllers.first()
+        registerControllerCallback(controller)
+        sendMediaSessionInfo(controller)
+      }
     }
 
-    manager.addOnActiveSessionsChangedListener(sessionListener!!, componentName)
+    try {
+      manager.addOnActiveSessionsChangedListener(sessionListener!!, componentName)
+      Log.d(TAG, "Successfully added session listener")
+      
+      // 초기 세션 등록
+      val activeSessions = manager.getActiveSessions(componentName)
+      if (activeSessions.isNotEmpty()) {
+        registerControllerCallback(activeSessions.first())
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "Failed to add session listener", e)
+      throw e
+    }
+  }
+  
+  // MediaController 콜백 등록
+  private fun registerControllerCallback(controller: MediaController) {
+    // 기존 콜백 해제
+    unregisterControllerCallback()
+    
+    currentController = controller
+    controllerCallback = object : MediaController.Callback() {
+      override fun onMetadataChanged(metadata: android.media.MediaMetadata?) {
+        Log.d(TAG, "Metadata changed: ${metadata?.getString(android.media.MediaMetadata.METADATA_KEY_TITLE)}")
+        sendMediaSessionInfo(controller)
+      }
+      
+      override fun onPlaybackStateChanged(state: PlaybackState?) {
+        Log.d(TAG, "Playback state changed: ${state?.state}")
+        sendMediaSessionInfo(controller)
+      }
+    }
+    
+    controller.registerCallback(controllerCallback!!)
+    Log.d(TAG, "Registered controller callback for ${controller.packageName}")
+  }
+  
+  // MediaController 콜백 해제
+  private fun unregisterControllerCallback() {
+    controllerCallback?.let { callback ->
+      currentController?.unregisterCallback(callback)
+      Log.d(TAG, "Unregistered controller callback")
+    }
+    currentController = null
+    controllerCallback = null
+  }
+  
+  // 미디어 세션 정보를 이벤트로 전송
+  private fun sendMediaSessionInfo(controller: MediaController) {
+    val sessionInfo = buildMediaSessionInfo(controller)
+    sendEvent("onMediaSessionChanged", sessionInfo)
   }
 
   // 미디어 세션 관찰을 중지하는 함수
   private fun stopObservingMediaSession() {
+    unregisterControllerCallback()
+    
     sessionListener?.let {
       mediaSessionManager?.removeOnActiveSessionsChangedListener(it)
       sessionListener = null

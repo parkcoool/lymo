@@ -1,9 +1,21 @@
 package expo.modules.medianotificationlistener
 
 import android.service.notification.NotificationListenerService
+import android.util.Log
 
 class MediaNotificationListenerService : NotificationListenerService() {
-  // This service is required to access media sessions
-  // The service doesn't need to do anything, it just needs to exist
-  // so that the MediaSessionManager can use it as a ComponentName
+  
+  companion object {
+    private const val TAG = "MediaNotiListener"
+  }
+  
+  override fun onListenerConnected() {
+    super.onListenerConnected()
+    Log.d(TAG, "NotificationListenerService connected")
+  }
+  
+  override fun onListenerDisconnected() {
+    super.onListenerDisconnected()
+    Log.d(TAG, "NotificationListenerService disconnected")
+  }
 }

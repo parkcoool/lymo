@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 
-import MediaNotificationListenerModule, { MediaSession } from "modules/media-notification-listener";
+import MediaNotificationListenerModule, {
+  MediaSessionInfo,
+} from "modules/media-notification-listener";
 
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
@@ -18,7 +20,10 @@ export default function useSyncDeviceMedia() {
   const { isSynced } = useSyncStore();
 
   useEffect(() => {
-    const handleMediaSessionChange = (mediaSession: MediaSession) => {
+    const handleMediaSessionChange = (mediaSessionInfo: MediaSessionInfo) => {
+      if (!mediaSessionInfo.hasSession) return;
+      const { hasSession, ...mediaSession } = mediaSessionInfo;
+
       if (mediaSession.durationInMs === 0) return;
       if (mediaSession.artist === "" || mediaSession.title === "") return;
 
@@ -37,16 +42,23 @@ export default function useSyncDeviceMedia() {
 
     const subscription = MediaNotificationListenerModule.addListener(
       "onMediaSessionChanged",
-      (mediaSessionInfo) => {
-        if (mediaSessionInfo.hasSession) {
-          const { hasSession, ...mediaSession } = mediaSessionInfo;
-          handleMediaSessionChange(mediaSession);
-        }
-      }
+      handleMediaSessionChange
     );
+
+    MediaNotificationListenerModule.startObservingMediaSession()
+      .then(async () => {
+        console.log("Started observing media session");
+        handleMediaSessionChange(await MediaNotificationListenerModule.getCurrentMediaSession());
+      })
+      .catch((error) => {
+        // TODO: 에러 표시
+        console.error("Failed to start observing media session:", error);
+      });
 
     return () => {
       if (subscription) subscription.remove();
+      MediaNotificationListenerModule.stopObservingMediaSession();
+      console.log("Stopped observing media session");
     };
 
     // setHasPermission, setDeviceMedia와 setTrackSource는 안정적임.
