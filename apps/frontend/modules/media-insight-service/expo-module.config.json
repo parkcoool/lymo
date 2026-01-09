@@ -1,0 +1,9 @@
+{
+  "platforms": ["android"],
+  "apple": {
+    "modules": ["MediaInsightServiceModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.mediainsightservice.MediaInsightServiceModule"]
+  }
+}
