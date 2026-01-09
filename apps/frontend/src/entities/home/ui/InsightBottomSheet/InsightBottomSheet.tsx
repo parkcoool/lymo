@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { TouchableOpacity, View, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaNotificationListenerModule from "modules/media-notification-listener";
 import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 
@@ -35,7 +35,7 @@ export default function InsightBottomSheet() {
 
   // 권한 부여 버튼 핸들러
   const handleGrant = () => {
-    MediaModule.requestNotificationPermission();
+    MediaNotificationListenerModule.requestNotificationPermission();
   };
 
   // 모달 닫기 핸들러

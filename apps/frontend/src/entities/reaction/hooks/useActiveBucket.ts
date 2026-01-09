@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaNotificationListenerModule from "modules/media-notification-listener";
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import useTimestampDelayInSeconds from "@/entities/player/hooks/useTimestampDelay";
 
@@ -22,7 +22,7 @@ export default function useActiveBucketIndex() {
     const updateTimestamp = async () => {
       if (!isPlaying) return;
 
-      const timestamp = (await MediaModule.getCurrentPosition()) / 1000;
+      const timestamp = (await MediaNotificationListenerModule.getCurrentPosition()) / 1000;
 
       // 상태값 업데이트
       const index = Math.floor(timestamp / 5);

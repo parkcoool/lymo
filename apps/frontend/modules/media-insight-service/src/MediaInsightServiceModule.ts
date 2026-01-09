@@ -37,6 +37,13 @@ declare class MediaInsightServiceModule extends NativeModule<MediaInsightService
    * 알림 접근 허용 설정 화면을 엽니다.
    */
   openNotificationListenerSettings(): void;
+
+  /**
+   * 인사이트 알림을 표시합니다
+   * @param title 알림 제목 (곡 제목)
+   * @param message 인사이트 메시지
+   */
+  showInsightNotification(title: string, message: string): void;
 }
 
 export default requireNativeModule<MediaInsightServiceModule>("MediaInsightService");

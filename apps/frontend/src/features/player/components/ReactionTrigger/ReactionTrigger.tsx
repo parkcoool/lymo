@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaNotificationListenerModule from "modules/media-notification-listener";
 import useCreateEmojiReactionMutation from "@/entities/reaction/hooks/useCreateEmojiReactionMutation";
 
 import { styles } from "./styles";
@@ -33,7 +33,7 @@ export default function ReactionTrigger({ storyId }: ReactionTriggerProps) {
 
   const handleEmojiPress = async (emoji: ReactionEmoji) => {
     Vibration.vibrate(10);
-    const timestampInSeconds = (await MediaModule.getCurrentPosition()) / 1000;
+    const timestampInSeconds = (await MediaNotificationListenerModule.getCurrentPosition()) / 1000;
 
     createEmojiReaction({ timestampInSeconds, emoji });
   };

@@ -28,7 +28,10 @@
         "POST_NOTIFICATIONS",
         "BIND_NOTIFICATION_LISTENER_SERVICE"
       ],
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "notification": {
+        "icon": "./assets/notification-icon.png"
+      }
     },
 
     "experiments": {

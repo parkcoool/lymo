@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaNotificationListenerModule from "modules/media-notification-listener";
 
 const CHECK_INTERVAL_MS = 5000;
 
@@ -12,7 +12,7 @@ export default function useCheckNotificationListenerPermission() {
   const { data: granted } = useQuery({
     queryKey: ["notification-listener-permission"],
     queryFn: () => {
-      return MediaModule.checkNotificationListenerPermission();
+      return MediaNotificationListenerModule.checkNotificationListenerPermission();
     },
     refetchInterval: CHECK_INTERVAL_MS,
     initialData: false,

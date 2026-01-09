@@ -1,8 +1,13 @@
 package expo.modules.mediainsightservice
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
+import androidx.core.app.NotificationCompat
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -43,6 +48,11 @@ class MediaInsightServiceModule : Module() {
     Function("openNotificationListenerSettings") {
       openNotificationListenerSettings()
     }
+    
+    // 인사이트 알림 표시
+    Function("showInsightNotification") { title: String, message: String ->
+      showInsightNotification(title, message)
+    }
   }
   
   private fun setServiceEnabled(enabled: Boolean) {
@@ -80,4 +90,59 @@ class MediaInsightServiceModule : Module() {
     }
     context.startActivity(intent)
   }
-}
+  
+  private fun showInsightNotification(title: String, message: String) {
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val channelId = "lymo_insight"
+    
+    // Android 8.0 이상에서는 채널 생성 필요
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      val channel = NotificationChannel(
+        channelId,
+        "음악 인사이트",
+        NotificationManager.IMPORTANCE_DEFAULT
+      ).apply {
+        description = "재생 중인 음악에 대한 인사이트 알림"
+      }
+      notificationManager.createNotificationChannel(channel)
+    }
+    
+    // 앱 실행 Intent
+    val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+      flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    }
+    
+    val pendingIntent = PendingIntent.getActivity(
+      context,
+      0,
+      intent,
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+    
+    // 알림 생성
+    val notification = NotificationCompat.Builder(context, channelId)
+      .setContentTitle(title)
+      .setContentText(message)
+      .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+      .setSmallIcon(getNotificationIcon())
+      .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+      .setAutoCancel(true)
+      .setContentIntent(pendingIntent)
+      .build()
+    
+    notificationManager.notify(System.currentTimeMillis().toInt(), notification)
+  }
+  
+  private fun getNotificationIcon(): Int {
+    val notificationIconId = context.resources.getIdentifier(
+      "notification_icon",
+      "drawable",
+      context.packageName
+    )
+    
+    if (notificationIconId != 0) {
+      return notificationIconId
+    }
+    
+    return context.applicationInfo.icon
+  }

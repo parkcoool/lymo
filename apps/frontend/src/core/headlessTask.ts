@@ -2,9 +2,10 @@ import { Language } from "@lymo/schemas/shared";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppRegistry, LogBox } from "react-native";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaInsightServiceModule from "modules/media-insight-service";
+import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import retrieveTrackNoti from "@/entities/noti/api/retrieveTrackNoti";
-import { Setting } from "@/entities/setting/models/types";
 import isSettingJSON from "@/entities/setting/utils/isSettingJSON";
 import parseSettingJSON from "@/entities/setting/utils/parseSettingJSON";
 
@@ -13,78 +14,60 @@ LogBox.ignoreLogs([
   "registerHeadlessTask or registerCancellableHeadlessTask called multiple times",
 ]);
 
-const FREQUENCY_THRESHOLDS = {
-  always: 0,
-  normal: 1000 * 60 * 60, // 1시간
-  minimal: 1000 * 60 * 60 * 3, // 3시간
-};
+/**
+ * MediaInsightService에서 트리거된 Headless Task
+ */
+const LymoMediaTask = async (data: {
+  title: string;
+  artist: string;
+  duration: number;
+  packageName?: string;
+}) => {
+  try {
+    // 1) 언어 설정 가져오기
+    let language: Language = "ko";
 
-const LymoMediaTask = async (data: { title: string; artist: string; duration: number }) => {
-  // 1) 설정 불러오기
-  let language: Language;
-  let notificationFrequency: Setting["notificationFrequency"];
-
-  const settingString = await AsyncStorage.getItem("setting");
-
-  // 2) 언어 설정 파싱
-  if (!settingString) {
-    language = "ko";
-  } else {
-    try {
-      const settingJSON = JSON.parse(settingString);
-      if (!isSettingJSON(settingJSON)) return;
-      const parsed = parseSettingJSON(settingJSON);
-      language = parsed.language;
-      notificationFrequency = parsed.notificationFrequency;
-    } catch {
-      language = "ko";
+    const settingString = await AsyncStorage.getItem("setting");
+    if (settingString) {
+      try {
+        const settingJSON = JSON.parse(settingString);
+        if (isSettingJSON(settingJSON)) {
+          const parsed = parseSettingJSON(settingJSON);
+          language = parsed.language;
+        }
+      } catch (error) {
+        console.error("[LymoMediaTask] Failed to parse settings:", error);
+      }
     }
-  }
 
-  if (!notificationFrequency || notificationFrequency === "never") return;
-
-  // 3) 가장 최근 알림 전송 시각 가져오기
-  let lastTimestamp = 0;
-  try {
-    lastTimestamp = parseInt((await AsyncStorage.getItem("lastInsightTimestamp")) ?? "0");
-  } catch {}
-
-  const nowTimestamp = Date.now();
-  const delta = nowTimestamp - lastTimestamp;
-  if (delta < FREQUENCY_THRESHOLDS[notificationFrequency]) return;
-
-  // 4) 메시지 가져오기
-  let message: string;
-  try {
+    // 2) Firebase Cloud Functions에서 인사이트 가져오기
     const { data: response } = await retrieveTrackNoti({
-      ...data,
-      durationInSeconds: data.duration,
+      title: data.title,
+      artist: data.artist,
+      durationInSeconds: Math.floor(data.duration / 1000), // ms → seconds
       language,
     });
 
-    if (!response.success || !response.data) return;
-    message = response.data;
-  } catch {
-    return;
-  }
+    if (!response.success || !response.data) {
+      console.log("[LymoMediaTask] No insight data received");
+      return;
+    }
 
-  // 5) 현재 재생 중인 트랙이 아닐 경우 알림 표시 안 함
-  const deviceMedia = await MediaModule.getCurrentMediaState();
-  if (!deviceMedia || deviceMedia.title !== data.title) return;
+    const message = response.data;
 
-  // 6) 최근 알림 전송 시각 저장
-  try {
-    await AsyncStorage.setItem("lastInsightTimestamp", nowTimestamp.toString());
-  } catch {}
+    // 3) 현재 재생 중인 트랙 확인 (다른 곡으로 넘어갔을 수 있음)
+    const deviceMedia = await MediaNotificationListenerModule.getCurrentMediaSession();
+    if (!deviceMedia.hasSession || deviceMedia.title !== data.title) {
+      console.log("[LymoMediaTask] Track changed, skipping notification");
+      return;
+    }
 
-  try {
-    // 7) 알림 표시
-    MediaModule.showInsightNotification(`${data.title}`, message);
+    // 4) 알림 표시
+    MediaInsightServiceModule.showInsightNotification(data.title, message);
+    console.log("[LymoMediaTask] Notification shown successfully");
   } catch (error) {
-    console.error("[HeadlessJS] Error:", error);
+    console.error("[LymoMediaTask] Error:", error);
   }
-
-  return Promise.resolve();
 };
 
 AppRegistry.registerHeadlessTask("LymoMediaTask", () => LymoMediaTask);

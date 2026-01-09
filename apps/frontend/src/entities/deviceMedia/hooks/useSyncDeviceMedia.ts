@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { EmitterSubscription, NativeEventEmitter } from "react-native";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaNotificationListenerModule from "modules/media-notification-listener";
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 import { useSyncStore } from "@/shared/models/syncStore";
 import type { DeviceMedia } from "@/shared/types/DeviceMedia";
 
-const eventEmitter = new NativeEventEmitter(MediaModule);
+const eventEmitter = new NativeEventEmitter(MediaNotificationListenerModule);
 
 /**
  * @description
@@ -55,7 +55,7 @@ export default function useSyncDeviceMedia() {
           // 5초마다 폴링
           const pollMediaState = async () => {
             try {
-              const mediaState = await MediaModule.getCurrentMediaState();
+              const mediaState = await MediaNotificationListenerModule.getCurrentMediaState();
               handleMediaUpdate(mediaState);
             } catch (e) {
               console.error("Failed to poll media state", e);
@@ -82,10 +82,10 @@ export default function useSyncDeviceMedia() {
 // 권한 확인 및 옵저버 시작
 const startObserver = async (setHasPermission: (value: boolean) => void) => {
   try {
-    const isGranted = await MediaModule.checkNotificationListenerPermission();
+    const isGranted = await MediaNotificationListenerModule.checkNotificationListenerPermission();
     setHasPermission(isGranted);
 
-    if (isGranted) return await MediaModule.startObserver();
+    if (isGranted) return await MediaNotificationListenerModule.startObserver();
   } catch (error) {
     console.error("Failed to check permission", error);
   }

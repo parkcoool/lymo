@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import useTimestampDelayInSeconds from "@/entities/player/hooks/useTimestampDelay";
 import { Section } from "@/entities/player/models/types";
@@ -36,7 +37,7 @@ export default function useActiveSentence({
     const updateTimestamp = async () => {
       if (!isPlaying || !enabled) return;
 
-      const timestamp = (await MediaModule.getCurrentPosition()) / 1000;
+      const timestamp = (await MediaNotificationListenerModule.getCurrentPosition()) / 1000;
 
       // 상태값 업데이트
       const activeSectionIndex = getActiveSectionIndex(lyrics, timestamp + delayInSeconds);
