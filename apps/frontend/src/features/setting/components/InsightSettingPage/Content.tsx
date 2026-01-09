@@ -2,6 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View, Text, TouchableOpacity } from "react-native";
 
 import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
 import InsightAnimation from "@/entities/home/ui/InsightAnimation";
 import { useSettingStore } from "@/entities/setting/models/settingStore";

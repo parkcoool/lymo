@@ -12,6 +12,7 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import useCreateEmojiReactionMutation from "@/entities/reaction/hooks/useCreateEmojiReactionMutation";
 
 import { styles } from "./styles";

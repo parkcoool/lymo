@@ -5,6 +5,7 @@ import { TouchableOpacity, View, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 

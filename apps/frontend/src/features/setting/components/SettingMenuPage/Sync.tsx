@@ -2,6 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 
 import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import useCheckNotificationListenerPermission from "@/entities/deviceMedia/hooks/useCheckNotificationListenerPermission";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 import { SettingItem, SettingToggleItem } from "@/entities/setting/ui/SettingItem";

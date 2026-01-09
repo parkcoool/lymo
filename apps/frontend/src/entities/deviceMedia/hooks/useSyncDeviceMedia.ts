@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { EmitterSubscription, NativeEventEmitter } from "react-native";
 
 import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 import { useSyncStore } from "@/shared/models/syncStore";

@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity, View, Text } from "react-native";
 
 import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import GradientFill from "@/shared/components/GradientFill";
 
 import Background from "./Background";

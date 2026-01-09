@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import useTimestampDelayInSeconds from "@/entities/player/hooks/useTimestampDelay";
 
