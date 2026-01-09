@@ -146,3 +146,4 @@ class MediaInsightServiceModule : Module() {
     
     return context.applicationInfo.icon
   }
+}
