@@ -3,14 +3,17 @@ package expo.modules.medianotificationlistener
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
 import android.os.Build
 import android.provider.Settings
+import android.util.Base64
 import androidx.core.app.NotificationManagerCompat
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
+import java.io.ByteArrayOutputStream
 
 class MediaNotificationListenerModule : Module() {
   private val context: Context
@@ -90,8 +93,23 @@ class MediaNotificationListenerModule : Module() {
       "position" to playbackState?.position,
       "playbackSpeed" to playbackState?.playbackSpeed,
       "state" to getPlaybackStateName(playbackState?.state),
-      "isPlaying" to (playbackState?.state == PlaybackState.STATE_PLAYING)
+      "isPlaying" to (playbackState?.state == PlaybackState.STATE_PLAYING),
+      "albumArtBase64" to getAlbumArtBase64(metadata)
     )
+  }
+
+  // 앨범 아트를 base64로 인코딩하는 함수
+  private fun getAlbumArtBase64(metadata: android.media.MediaMetadata?): String? {
+    val bitmap = metadata?.getBitmap(android.media.MediaMetadata.METADATA_KEY_ALBUM_ART) ?: return null
+    
+    return try {
+      val byteArrayOutputStream = ByteArrayOutputStream()
+      bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+      val byteArray = byteArrayOutputStream.toByteArray()
+      "data:image/png;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP)
+    } catch (e: Exception) {
+      null
+    }
   }
 
   // 재생 상태를 문자열로 변환하는 함수

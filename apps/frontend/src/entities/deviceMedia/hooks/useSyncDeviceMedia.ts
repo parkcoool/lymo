@@ -1,14 +1,11 @@
 import { useEffect } from "react";
-import { EmitterSubscription, NativeEventEmitter } from "react-native";
 
-import MediaNotificationListenerModule from "modules/media-notification-listener";
+import MediaNotificationListenerModule, { MediaSession } from "modules/media-notification-listener";
 
 import { useDeviceMediaStore } from "@/entities/deviceMedia/models/deviceMediaStore";
 import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 import { useSyncStore } from "@/shared/models/syncStore";
 import type { DeviceMedia } from "@/shared/types/DeviceMedia";
-
-const eventEmitter = new NativeEventEmitter(MediaNotificationListenerModule);
 
 /**
  * @description
@@ -16,81 +13,43 @@ const eventEmitter = new NativeEventEmitter(MediaNotificationListenerModule);
  * `isSynced`이면 이를 `trackSourceStore`에도 등록합니다.
  */
 export default function useSyncDeviceMedia() {
-  const { setData: setDeviceMedia, setHasPermission } = useDeviceMediaStore();
+  const { setData: setDeviceMedia } = useDeviceMediaStore();
   const { setTrackSource } = useTrackSourceStore();
   const { isSynced } = useSyncStore();
 
   useEffect(() => {
-    let subscription: EmitterSubscription;
-    let intervalId: number;
+    const handleMediaSessionChange = (mediaSession: MediaSession) => {
+      if (mediaSession.durationInMs === 0) return;
+      if (mediaSession.artist === "" || mediaSession.title === "") return;
 
-    (async () => {
-      while (true) {
-        const success = await startObserver(setHasPermission);
+      const deviceMedia: DeviceMedia = {
+        title: mediaSession.title,
+        artist: mediaSession.artist,
+        album: mediaSession.album === "" ? null : mediaSession.album,
+        isPlaying: mediaSession.isPlaying,
+        albumArtBase64: mediaSession.albumArtBase64,
+        durationInSeconds: Math.floor(mediaSession.durationInMs / 1000),
+      };
 
-        // 시작에 실패했으면 5초 후에 재시도
-        if (!success) {
-          console.warn("Failed to start media observer");
-          await new Promise((resolve) => setTimeout(resolve, 5000));
-        }
+      setDeviceMedia(deviceMedia);
+      if (isSynced) setTrackSource({ from: "device", track: deviceMedia });
+    };
 
-        // 성공적으로 시작
-        else {
-          // console.log("Media observer started");
-
-          const handleMediaUpdate = (newDeviceMedia: DeviceMedia | null) => {
-            if (newDeviceMedia == null) return;
-            if (newDeviceMedia.duration === 0) return;
-            const fixedDeviceMedia = {
-              ...newDeviceMedia,
-              duration: Math.floor(newDeviceMedia.duration / 1000),
-            };
-
-            setDeviceMedia(fixedDeviceMedia);
-            if (isSynced) setTrackSource({ from: "device", track: fixedDeviceMedia });
-          };
-
-          // 이벤트 리스너 등록
-          subscription = eventEmitter.addListener("onMediaDataChanged", handleMediaUpdate);
-
-          // 5초마다 폴링
-          const pollMediaState = async () => {
-            try {
-              const mediaState = await MediaNotificationListenerModule.getCurrentMediaState();
-              handleMediaUpdate(mediaState);
-            } catch (e) {
-              console.error("Failed to poll media state", e);
-            }
-          };
-          intervalId = setInterval(pollMediaState, 5000);
-          pollMediaState();
-
-          // 성공적으로 시작했으므로 루프 종료
-          break;
+    const subscription = MediaNotificationListenerModule.addListener(
+      "onMediaSessionChanged",
+      (mediaSessionInfo) => {
+        if (mediaSessionInfo.hasSession) {
+          const { hasSession, ...mediaSession } = mediaSessionInfo;
+          handleMediaSessionChange(mediaSession);
         }
       }
-    })();
+    );
 
     return () => {
       if (subscription) subscription.remove();
-      if (intervalId) clearInterval(intervalId);
     };
+
     // setHasPermission, setDeviceMedia와 setTrackSource는 안정적임.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSynced]);
 }
-
-// 권한 확인 및 옵저버 시작
-const startObserver = async (setHasPermission: (value: boolean) => void) => {
-  try {
-    const isGranted = await MediaNotificationListenerModule.checkNotificationListenerPermission();
-    setHasPermission(isGranted);
-
-    if (isGranted) return await MediaNotificationListenerModule.startObserver();
-  } catch (error) {
-    console.error("Failed to check permission", error);
-  }
-
-  setHasPermission(false);
-  return false;
-};

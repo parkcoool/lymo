@@ -12,7 +12,7 @@ export default function useCheckNotificationListenerPermission() {
   const { data: granted } = useQuery({
     queryKey: ["notification-listener-permission"],
     queryFn: () => {
-      return MediaNotificationListenerModule.checkNotificationListenerPermission();
+      return MediaNotificationListenerModule.hasNotificationListenerPermission();
     },
     refetchInterval: CHECK_INTERVAL_MS,
     initialData: false,

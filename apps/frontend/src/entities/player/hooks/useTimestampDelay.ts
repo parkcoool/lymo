@@ -13,7 +13,7 @@ export default function useTimestampDelayInSeconds() {
   const { deviceMedia } = useDeviceMediaStore();
 
   const { sync: syncMap } = setting;
-  const { duration: deviceDuration } = deviceMedia ?? {};
+  const { durationInSeconds: deviceDuration } = deviceMedia ?? {};
 
   if (currentTrack === undefined) return 0;
 
