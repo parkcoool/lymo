@@ -9,6 +9,8 @@ import { useTrackSourceStore } from "@/entities/player/models/trackSourceStore";
 import { useSyncStore } from "@/shared/models/syncStore";
 import type { DeviceMedia } from "@/shared/types/DeviceMedia";
 
+import useCheckNotificationListenerPermission from "./useCheckNotificationListenerPermission";
+
 /**
  * @description
  * 기기에서 재생되는 미디어를 `deviceMediaStore`에 등록하는 훅입니다.
@@ -18,8 +20,11 @@ export default function useSyncDeviceMedia() {
   const { setData: setDeviceMedia } = useDeviceMediaStore();
   const { setTrackSource } = useTrackSourceStore();
   const { isSynced } = useSyncStore();
+  const granted = useCheckNotificationListenerPermission();
 
   useEffect(() => {
+    if (!granted) return;
+
     const handleMediaSessionChange = (mediaSessionInfo: MediaSessionInfo) => {
       if (!mediaSessionInfo.hasSession) return;
       const { hasSession, ...mediaSession } = mediaSessionInfo;
@@ -63,5 +68,5 @@ export default function useSyncDeviceMedia() {
 
     // setHasPermission, setDeviceMedia와 setTrackSource는 안정적임.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSynced]);
+  }, [isSynced, granted]);
 }
