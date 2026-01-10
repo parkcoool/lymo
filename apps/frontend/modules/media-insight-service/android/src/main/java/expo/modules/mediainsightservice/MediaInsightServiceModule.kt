@@ -11,11 +11,15 @@ import android.os.Build
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.app.ActivityCompat
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
-import expo.modules.interfaces.permissions.Permissions
 
 class MediaInsightServiceModule : Module() {
+  
+  companion object {
+    private const val REQUEST_CODE_POST_NOTIFICATIONS = 1001
+  }
   
   private val context: Context
     get() = appContext.reactContext ?: throw IllegalStateException("React context is not available")
@@ -59,8 +63,8 @@ class MediaInsightServiceModule : Module() {
     }
     
     // 알림 표시 권한 요청 (Android 13+)
-    AsyncFunction("requestPostNotificationPermission") { promise: expo.modules.kotlin.Promise ->
-      requestPostNotificationPermission(promise)
+    Function("requestPostNotificationPermission") {
+      requestPostNotificationPermission()
     }
     
     // 인사이트 알림 표시
@@ -117,23 +121,20 @@ class MediaInsightServiceModule : Module() {
     ) == PackageManager.PERMISSION_GRANTED
   }
   
-  private fun requestPostNotificationPermission(promise: expo.modules.kotlin.Promise) {
+  private fun requestPostNotificationPermission() {
     // Android 13 미만에서는 권한이 필요 없음
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-      promise.resolve(true)
       return
     }
     
-    val permissions = appContext.permissions ?: throw IllegalStateException("Permissions module is not available")
+    // 현재 액티비티 가져오기
+    val activity = appContext.currentActivity ?: return
     
-    permissions.askForPermissions(
+    // 권한 요청 다이얼로그 표시
+    ActivityCompat.requestPermissions(
+      activity,
       arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-      object : Permissions.OnPermissionResultListener {
-        override fun onPermissionResult(permissionsResult: Map<String, Permissions.PermissionResponse>) {
-          val granted = permissionsResult[Manifest.permission.POST_NOTIFICATIONS]?.status == Permissions.PermissionStatus.GRANTED
-          promise.resolve(granted)
-        }
-      }
+      REQUEST_CODE_POST_NOTIFICATIONS
     )
   }
   

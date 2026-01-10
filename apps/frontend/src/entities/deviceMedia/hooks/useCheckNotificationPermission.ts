@@ -5,10 +5,11 @@ import MediaInsightServiceModule from "modules/media-insight-service";
 const CHECK_INTERVAL_MS = 5000;
 
 /**
- * 알림 권한 부여 여부를 주기적으로 확인하는 쿼리 훅
+ * 알림 권한 부여 여부를 주기적으로 확인하는 훅
+ * @return 권한 부여 여부
  */
-export default function useCheckNotificationPermissionQuery() {
-  return useQuery({
+export default function useCheckNotificationPermission() {
+  const { data: granted } = useQuery({
     queryKey: ["notification-permission"],
     queryFn: () => {
       return MediaInsightServiceModule.hasPostNotificationPermission();
@@ -17,4 +18,6 @@ export default function useCheckNotificationPermissionQuery() {
     initialData: false,
     refetchOnWindowFocus: true,
   });
+
+  return granted;
 }

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 
 import MediaInsightServiceModule from "modules/media-insight-service";
 
-import useCheckNotificationPermissionQuery from "@/entities/deviceMedia/hooks/useCheckNotificationPermissionQuery";
+import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
 import InsightAnimation from "@/entities/home/ui/InsightAnimation";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 import { Setting } from "@/entities/setting/models/types";
@@ -14,12 +14,11 @@ import { styles } from "./styles";
 
 export default function Content() {
   const { updateSetting, setting } = useSettingStore();
-  const { data: granted, refetch } = useCheckNotificationPermissionQuery();
+  const granted = useCheckNotificationPermission();
 
   // 권한 부여 버튼 핸들러
   const handleGrant = async () => {
-    await MediaInsightServiceModule.requestPostNotificationPermission();
-    await refetch();
+    MediaInsightServiceModule.requestPostNotificationPermission();
   };
 
   // 옵션 변경 핸들러

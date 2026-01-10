@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import MediaNotificationListenerModule from "modules/media-notification-listener";
 
-import useCheckNotificationPermissionQuery from "@/entities/deviceMedia/hooks/useCheckNotificationPermissionQuery";
+import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 
 import InsightAnimation from "../InsightAnimation";
@@ -17,7 +17,7 @@ export default function InsightBottomSheet() {
   const { updateSetting } = useSettingStore();
 
   const { bottom } = useSafeAreaInsets();
-  const { data: granted } = useCheckNotificationPermissionQuery();
+  const granted = useCheckNotificationPermission();
   const ref = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
