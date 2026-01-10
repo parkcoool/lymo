@@ -21,18 +21,17 @@ export default function InsightBottomSheet() {
   const ref = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
-    let timeout: number | undefined;
-    if (!granted)
-      timeout = setTimeout(() => {
+    // 권한이 부여되지 않았으면 모달 표시
+    if (!granted) {
+      const timeout = setTimeout(() => {
         ref.current?.present();
       }, 1000);
 
-    return () => {
-      if (timeout) clearTimeout(timeout);
-    };
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
   }, [granted]);
-
-  if (granted) return null;
 
   // 권한 부여 버튼 핸들러
   const handleGrant = () => {
@@ -42,7 +41,12 @@ export default function InsightBottomSheet() {
   // 모달 닫기 핸들러
   const handleDismiss = () => {
     // notificationFrequency가 설정되지 않았다면 'never'로 설정
-    updateSetting((prev) => ({ notificationFrequency: "never", ...prev }));
+    updateSetting((prev) => {
+      if (prev.notificationFrequency === undefined)
+        return { ...prev, notificationFrequency: "never" };
+
+      return prev;
+    });
   };
 
   return (
