@@ -34,9 +34,11 @@ export default function ReactionTrigger({ storyId }: ReactionTriggerProps) {
 
   const handleEmojiPress = async (emoji: ReactionEmoji) => {
     Vibration.vibrate(10);
-    const timestampInSeconds = (await MediaNotificationListenerModule.getCurrentPosition()) / 1000;
+    const mediaSessionInfo = await MediaNotificationListenerModule.getCurrentMediaSession();
+    if (!mediaSessionInfo.hasSession) return;
+    const timestampInSeconds = mediaSessionInfo.position / 1000;
 
-    createEmojiReaction({ timestampInSeconds, emoji });
+    createEmojiReaction({ timestampInSeconds: timestampInSeconds, emoji });
   };
 
   return (

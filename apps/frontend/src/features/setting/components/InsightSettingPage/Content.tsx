@@ -1,9 +1,9 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View, Text, TouchableOpacity } from "react-native";
 
-import MediaNotificationListenerModule from "modules/media-notification-listener";
+import MediaInsightServiceModule from "modules/media-insight-service";
 
-import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
+import useCheckNotificationPermissionQuery from "@/entities/deviceMedia/hooks/useCheckNotificationPermissionQuery";
 import InsightAnimation from "@/entities/home/ui/InsightAnimation";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 import { Setting } from "@/entities/setting/models/types";
@@ -14,11 +14,12 @@ import { styles } from "./styles";
 
 export default function Content() {
   const { updateSetting, setting } = useSettingStore();
-  const granted = useCheckNotificationPermission();
+  const { data: granted, refetch } = useCheckNotificationPermissionQuery();
 
   // 권한 부여 버튼 핸들러
-  const handleGrant = () => {
-    MediaNotificationListenerModule.requestNotificationPermission();
+  const handleGrant = async () => {
+    await MediaInsightServiceModule.requestPostNotificationPermission();
+    await refetch();
   };
 
   // 옵션 변경 핸들러

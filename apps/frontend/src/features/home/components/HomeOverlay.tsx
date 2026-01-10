@@ -1,15 +1,15 @@
 import useCheckNotificationListenerPermission from "@/entities/deviceMedia/hooks/useCheckNotificationListenerPermission";
-import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
+import useCheckNotificationPermissionQuery from "@/entities/deviceMedia/hooks/useCheckNotificationPermissionQuery";
 import InsightBottomSheet from "@/entities/home/ui/InsightBottomSheet";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 
 export default function HomeOverlay() {
   const { setting } = useSettingStore();
-  const notificaitonListenerGranted = useCheckNotificationListenerPermission();
-  const notificaitonGranted = useCheckNotificationPermission();
+  const notificationListenerGranted = useCheckNotificationListenerPermission();
+  const { data: notificationGranted } = useCheckNotificationPermissionQuery();
 
-  if (!notificaitonListenerGranted) return null;
-  if (notificaitonGranted) return null;
+  if (!notificationListenerGranted) return null;
+  if (notificationGranted) return null;
   if (setting.notificationFrequency) return null;
 
   return <InsightBottomSheet />;
