@@ -88,9 +88,9 @@ class MediaInsightServiceModule : Module() {
     prefs.edit().putString("notificationFrequency", frequency).apply()
   }
   
-  private fun getNotificationFrequency(): String {
+  private fun getNotificationFrequency(): String? {
     val prefs = context.getSharedPreferences("lymo_media_insight", Context.MODE_PRIVATE)
-    return prefs.getString("notificationFrequency", "normal") ?: "normal"
+    return prefs.getString("notificationFrequency", null)
   }
   
   private fun hasNotificationListenerPermission(): Boolean {

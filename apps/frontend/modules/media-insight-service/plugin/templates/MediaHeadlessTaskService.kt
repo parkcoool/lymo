@@ -7,8 +7,8 @@ import com.facebook.react.jstasks.HeadlessJsTaskConfig
 
 class MediaHeadlessTaskService : HeadlessJsTaskService() {
   
-  override fun getTaskConfig(intent: Intent): HeadlessJsTaskConfig? {
-    val extras = intent.extras ?: return null
+  override fun getTaskConfig(intent: Intent?): HeadlessJsTaskConfig? {
+    val extras = intent?.extras ?: return null
     
     return HeadlessJsTaskConfig(
       "MediaInsightTask",

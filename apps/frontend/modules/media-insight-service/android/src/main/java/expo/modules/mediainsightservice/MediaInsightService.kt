@@ -14,6 +14,8 @@ class MediaInsightService : NotificationListenerService() {
   
   private var mediaSessionManager: MediaSessionManager? = null
   private var sessionListener: MediaSessionManager.OnActiveSessionsChangedListener? = null
+  private var currentController: MediaController? = null
+  private var controllerCallback: MediaController.Callback? = null
   private var lastTrackKey = ""
   private var lastNotificationTime = 0L
   
@@ -30,7 +32,6 @@ class MediaInsightService : NotificationListenerService() {
   
   override fun onListenerConnected() {
     super.onListenerConnected()
-    Log.d(TAG, "NotificationListenerService connected")
     
     val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     val isEnabled = prefs.getBoolean(KEY_IS_ENABLED, false)
@@ -42,7 +43,6 @@ class MediaInsightService : NotificationListenerService() {
   
   override fun onListenerDisconnected() {
     super.onListenerDisconnected()
-    Log.d(TAG, "NotificationListenerService disconnected")
     stopMonitoringMediaSessions()
   }
   
@@ -54,16 +54,19 @@ class MediaInsightService : NotificationListenerService() {
       val componentName = ComponentName(this, MediaInsightService::class.java)
       
       sessionListener = MediaSessionManager.OnActiveSessionsChangedListener { controllers ->
-        handleSessionsChanged(controllers)
+        if (controllers.isNullOrEmpty()) {
+          unregisterControllerCallback()
+        } else {
+          registerControllerCallback(controllers.first())
+        }
       }
       
       mediaSessionManager?.addOnActiveSessionsChangedListener(sessionListener!!, componentName)
-      Log.d(TAG, "Started monitoring media sessions")
       
       // 초기 세션 체크
       val activeSessions = mediaSessionManager?.getActiveSessions(componentName)
-      if (activeSessions != null) {
-        handleSessionsChanged(activeSessions)
+      if (!activeSessions.isNullOrEmpty()) {
+        registerControllerCallback(activeSessions.first())
       }
     } catch (e: Exception) {
       Log.e(TAG, "Error starting media session monitoring", e)
@@ -71,50 +74,66 @@ class MediaInsightService : NotificationListenerService() {
   }
   
   private fun stopMonitoringMediaSessions() {
+    unregisterControllerCallback()
+    
     sessionListener?.let {
       mediaSessionManager?.removeOnActiveSessionsChangedListener(it)
       sessionListener = null
     }
     mediaSessionManager = null
-    Log.d(TAG, "Stopped monitoring media sessions")
   }
   
-  private fun handleSessionsChanged(controllers: List<MediaController>?) {
-    val controller = controllers?.firstOrNull() ?: run {
-      lastTrackKey = ""
-      return
+  // MediaController 콜백 등록
+  private fun registerControllerCallback(controller: MediaController) {
+    unregisterControllerCallback()
+    
+    currentController = controller
+    controllerCallback = object : MediaController.Callback() {
+      override fun onMetadataChanged(metadata: android.media.MediaMetadata?) {
+        checkAndTrigger(controller)
+      }
+      
+      override fun onPlaybackStateChanged(state: PlaybackState?) {
+        checkAndTrigger(controller)
+      }
     }
     
+    controller.registerCallback(controllerCallback!!)
+    checkAndTrigger(controller)
+  }
+  
+  // MediaController 콜백 해제
+  private fun unregisterControllerCallback() {
+    controllerCallback?.let { callback ->
+      currentController?.unregisterCallback(callback)
+    }
+    currentController = null
+    controllerCallback = null
+  }
+  
+  // 미디어 정보 체크 및 Headless Task 트리거
+  private fun checkAndTrigger(controller: MediaController) {
     val metadata = controller.metadata
     val playbackState = controller.playbackState
     
     // 재생 중인지 확인
-    if (playbackState?.state != PlaybackState.STATE_PLAYING) {
-      return
-    }
+    if (playbackState?.state != PlaybackState.STATE_PLAYING) return
     
-    val title = metadata?.getString(MediaMetadata.METADATA_KEY_TITLE) ?: return
-    val artist = metadata?.getString(MediaMetadata.METADATA_KEY_ARTIST) ?: ""
-    val duration = metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L
+    val title = metadata?.getString(android.media.MediaMetadata.METADATA_KEY_TITLE) ?: return
+    val artist = metadata?.getString(android.media.MediaMetadata.METADATA_KEY_ARTIST) ?: ""
+    val duration = metadata?.getLong(android.media.MediaMetadata.METADATA_KEY_DURATION) ?: 0L
     val packageName = controller.packageName
     
     // 중복 요청 방지 (같은 트랙)
     val trackKey = "$title-$artist"
-    if (trackKey == lastTrackKey) {
-      return
-    }
+    if (trackKey == lastTrackKey) return
     
     // 빈도 체크
-    if (!shouldTriggerNotification()) {
-      Log.d(TAG, "Notification frequency threshold not met, skipping")
-      return
-    }
+    if (!shouldTriggerNotification()) return
     
     // 조건 충족 → Headless JS 트리거
     lastTrackKey = trackKey
     lastNotificationTime = System.currentTimeMillis()
-    
-    Log.d(TAG, "Triggering headless task for: $title by $artist")
     triggerHeadlessTask(title, artist, duration, packageName)
   }
   
@@ -122,9 +141,7 @@ class MediaInsightService : NotificationListenerService() {
     val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     val frequency = prefs.getString(KEY_NOTIFICATION_FREQUENCY, "normal") ?: "normal"
     
-    if (frequency == "never") {
-      return false
-    }
+    if (frequency == "never") return false
     
     val threshold = when (frequency) {
       "always" -> FREQUENCY_ALWAYS
@@ -145,15 +162,12 @@ class MediaInsightService : NotificationListenerService() {
     packageName: String
   ) {
     try {
-      // HeadlessJsTaskService로 Intent 전송
       val intent = Intent(this, Class.forName("com.parkcool.lymoapp.MediaHeadlessTaskService"))
       intent.putExtra("title", title)
       intent.putExtra("artist", artist)
       intent.putExtra("duration", duration)
       intent.putExtra("packageName", packageName)
-      
       startService(intent)
-      Log.d(TAG, "Headless task service started")
     } catch (e: Exception) {
       Log.e(TAG, "Error triggering headless task", e)
     }

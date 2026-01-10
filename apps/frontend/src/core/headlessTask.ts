@@ -12,6 +12,7 @@ import parseSettingJSON from "@/entities/setting/utils/parseSettingJSON";
 // 개발 중 Headless Task 중복 등록 경고 무시
 LogBox.ignoreLogs([
   "registerHeadlessTask or registerCancellableHeadlessTask called multiple times",
+  "registerHeadlessTask or registerCancellableHeadlessTask called multiple times for same key 'MediaInsightTask'",
 ]);
 
 /**
@@ -23,7 +24,6 @@ const MediaInsightTask = async (data: {
   duration: number;
   packageName?: string;
 }) => {
-  console.log(data.title, data.artist, data.duration, data.packageName);
   try {
     // 1) 언어 설정 가져오기
     let language: Language = "ko";

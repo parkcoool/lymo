@@ -24,9 +24,9 @@ declare class MediaInsightServiceModule extends NativeModule<MediaInsightService
 
   /**
    * 현재 설정된 알림 빈도를 가져옵니다.
-   * @returns 알림 빈도
+   * @returns 알림 빈도 (설정되지 않았으면 null)
    */
-  getNotificationFrequency(): NotificationFrequency;
+  getNotificationFrequency(): NotificationFrequency | null;
 
   /**
    * 알림 접근 권한이 부여되었는지 확인합니다.
