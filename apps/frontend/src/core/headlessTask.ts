@@ -17,12 +17,13 @@ LogBox.ignoreLogs([
 /**
  * MediaInsightService에서 트리거된 Headless Task
  */
-const LymoMediaTask = async (data: {
+const MediaInsightTask = async (data: {
   title: string;
   artist: string;
   duration: number;
   packageName?: string;
 }) => {
+  console.log(data.title, data.artist, data.duration, data.packageName);
   try {
     // 1) 언어 설정 가져오기
     let language: Language = "ko";
@@ -36,7 +37,7 @@ const LymoMediaTask = async (data: {
           language = parsed.language;
         }
       } catch (error) {
-        console.error("[LymoMediaTask] Failed to parse settings:", error);
+        console.error("[MediaInsightTask] Failed to parse settings:", error);
       }
     }
 
@@ -49,7 +50,7 @@ const LymoMediaTask = async (data: {
     });
 
     if (!response.success || !response.data) {
-      console.log("[LymoMediaTask] No insight data received");
+      console.log("[MediaInsightTask] No insight data received");
       return;
     }
 
@@ -58,16 +59,16 @@ const LymoMediaTask = async (data: {
     // 3) 현재 재생 중인 트랙 확인 (다른 곡으로 넘어갔을 수 있음)
     const deviceMedia = await MediaNotificationListenerModule.getCurrentMediaSession();
     if (!deviceMedia.hasSession || deviceMedia.title !== data.title) {
-      console.log("[LymoMediaTask] Track changed, skipping notification");
+      console.log("[MediaInsightTask] Track changed, skipping notification");
       return;
     }
 
     // 4) 알림 표시
     MediaInsightServiceModule.showInsightNotification(data.title, message);
-    console.log("[LymoMediaTask] Notification shown successfully");
+    console.log("[MediaInsightTask] Notification shown successfully");
   } catch (error) {
-    console.error("[LymoMediaTask] Error:", error);
+    console.error("[MediaInsightTask] Error:", error);
   }
 };
 
-AppRegistry.registerHeadlessTask("LymoMediaTask", () => LymoMediaTask);
+AppRegistry.registerHeadlessTask("MediaInsightTask", () => MediaInsightTask);
