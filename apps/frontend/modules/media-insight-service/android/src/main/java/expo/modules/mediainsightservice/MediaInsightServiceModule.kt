@@ -1,15 +1,19 @@
 package expo.modules.mediainsightservice
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
+import expo.modules.interfaces.permissions.Permissions
 
 class MediaInsightServiceModule : Module() {
   
@@ -47,6 +51,16 @@ class MediaInsightServiceModule : Module() {
     // 알림 접근 허용 설정 화면 열기
     Function("openNotificationListenerSettings") {
       openNotificationListenerSettings()
+    }
+    
+    // 알림 표시 권한 확인 (Android 13+)
+    Function("hasPostNotificationPermission") {
+      hasPostNotificationPermission()
+    }
+    
+    // 알림 표시 권한 요청 (Android 13+)
+    AsyncFunction("requestPostNotificationPermission") { promise: expo.modules.kotlin.Promise ->
+      requestPostNotificationPermission(promise)
     }
     
     // 인사이트 알림 표시
@@ -89,6 +103,38 @@ class MediaInsightServiceModule : Module() {
       flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     context.startActivity(intent)
+  }
+  
+  private fun hasPostNotificationPermission(): Boolean {
+    // Android 13 미만에서는 권한이 필요 없음
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+      return true
+    }
+    
+    return ContextCompat.checkSelfPermission(
+      context,
+      Manifest.permission.POST_NOTIFICATIONS
+    ) == PackageManager.PERMISSION_GRANTED
+  }
+  
+  private fun requestPostNotificationPermission(promise: expo.modules.kotlin.Promise) {
+    // Android 13 미만에서는 권한이 필요 없음
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+      promise.resolve(true)
+      return
+    }
+    
+    val permissions = appContext.permissions ?: throw IllegalStateException("Permissions module is not available")
+    
+    permissions.askForPermissions(
+      arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+      object : Permissions.OnPermissionResultListener {
+        override fun onPermissionResult(permissionsResult: Map<String, Permissions.PermissionResponse>) {
+          val granted = permissionsResult[Manifest.permission.POST_NOTIFICATIONS]?.status == Permissions.PermissionStatus.GRANTED
+          promise.resolve(granted)
+        }
+      }
+    )
   }
   
   private fun showInsightNotification(title: String, message: String) {

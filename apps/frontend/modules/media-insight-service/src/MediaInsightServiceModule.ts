@@ -39,6 +39,18 @@ declare class MediaInsightServiceModule extends NativeModule<MediaInsightService
   openNotificationListenerSettings(): void;
 
   /**
+   * 알림 표시 권한이 있는지 확인합니다 (Android 13+)
+   * @returns Android 13 미만에서는 항상 true, 13 이상에서는 POST_NOTIFICATIONS 권한 여부
+   */
+  hasPostNotificationPermission(): boolean;
+
+  /**
+   * 알림 표시 권한을 요청합니다 (Android 13+)
+   * @returns 권한이 허용되면 true, 거부되면 false (Android 13 미만에서는 항상 true)
+   */
+  requestPostNotificationPermission(): Promise<boolean>;
+
+  /**
    * 인사이트 알림을 표시합니다
    * @param title 알림 제목 (곡 제목)
    * @param message 인사이트 메시지
