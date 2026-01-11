@@ -1,6 +1,6 @@
 import { Language } from "@lymo/schemas/shared";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AppRegistry, LogBox } from "react-native";
+import { AppRegistry } from "react-native";
 
 import MediaInsightServiceModule from "modules/media-insight-service";
 import MediaNotificationListenerModule from "modules/media-notification-listener";
@@ -8,12 +8,6 @@ import MediaNotificationListenerModule from "modules/media-notification-listener
 import retrieveTrackNoti from "@/entities/noti/api/retrieveTrackNoti";
 import isSettingJSON from "@/entities/setting/utils/isSettingJSON";
 import parseSettingJSON from "@/entities/setting/utils/parseSettingJSON";
-
-// 개발 중 Headless Task 중복 등록 경고 무시
-LogBox.ignoreLogs([
-  "registerHeadlessTask or registerCancellableHeadlessTask called multiple times",
-  "registerHeadlessTask or registerCancellableHeadlessTask called multiple times for same key 'MediaInsightTask'",
-]);
 
 /**
  * MediaInsightService에서 트리거된 Headless Task
@@ -24,6 +18,18 @@ const MediaInsightTask = async (data: {
   duration: number;
   packageName?: string;
 }) => {
+  if (!data.title) {
+    console.log("[MediaInsightTask] No title provided, skipping");
+    return;
+  }
+
+  if (!data.artist) {
+    console.log("[MediaInsightTask] No artist provided, skipping");
+    return;
+  }
+
+  console.log(data);
+
   try {
     // 1) 언어 설정 가져오기
     let language: Language = "ko";
