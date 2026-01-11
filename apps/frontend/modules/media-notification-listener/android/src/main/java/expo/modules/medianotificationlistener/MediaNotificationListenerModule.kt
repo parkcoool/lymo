@@ -37,7 +37,7 @@ class MediaNotificationListenerModule : Module() {
     Events("onMediaSessionChanged")
 
     // 현재 미디어 세션 정보 가져오기
-    AsyncFunction("getCurrentMediaSession") {
+    Function("getCurrentMediaSession") {
       getCurrentMediaSessionInfo()
     }
 

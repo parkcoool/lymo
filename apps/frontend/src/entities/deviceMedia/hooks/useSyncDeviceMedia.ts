@@ -53,7 +53,7 @@ export default function useSyncDeviceMedia() {
     MediaNotificationListenerModule.startObservingMediaSession()
       .then(async () => {
         console.log("Started observing media session");
-        handleMediaSessionChange(await MediaNotificationListenerModule.getCurrentMediaSession());
+        handleMediaSessionChange(MediaNotificationListenerModule.getCurrentMediaSession());
       })
       .catch((error) => {
         // TODO: 에러 표시

@@ -61,7 +61,7 @@ const MediaInsightTask = async (data: {
     const message = response.data;
 
     // 3) 현재 재생 중인 트랙 확인 (다른 곡으로 넘어갔을 수 있음)
-    const deviceMedia = await MediaNotificationListenerModule.getCurrentMediaSession();
+    const deviceMedia = MediaNotificationListenerModule.getCurrentMediaSession();
     if (!deviceMedia.hasSession || deviceMedia.title !== data.title) {
       console.log("[MediaInsightTask] Track changed, skipping notification");
       return;
