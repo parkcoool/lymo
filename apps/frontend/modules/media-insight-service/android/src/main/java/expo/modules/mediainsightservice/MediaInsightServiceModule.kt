@@ -147,15 +147,18 @@ class MediaInsightServiceModule : Module() {
       val channel = NotificationChannel(
         channelId,
         "음악 인사이트",
-        NotificationManager.IMPORTANCE_DEFAULT
+        NotificationManager.IMPORTANCE_LOW
       ).apply {
         description = "재생 중인 음악에 대한 인사이트 알림"
+        setSound(null, null)
+        enableVibration(false)
       }
       notificationManager.createNotificationChannel(channel)
     }
     
-    // 앱 실행 Intent
-    val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+    // 딥링크로 player 화면 열기
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+      data = android.net.Uri.parse("lymoapp://player?source=notification")
       flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
     }
     
@@ -166,31 +169,29 @@ class MediaInsightServiceModule : Module() {
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
     
-    // 알림 생성
+    // 알림 생성 (조용한 알림)
     val notification = NotificationCompat.Builder(context, channelId)
       .setContentTitle(title)
       .setContentText(message)
       .setStyle(NotificationCompat.BigTextStyle().bigText(message))
       .setSmallIcon(getNotificationIcon())
-      .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+      .setPriority(NotificationCompat.PRIORITY_LOW)
       .setAutoCancel(true)
       .setContentIntent(pendingIntent)
+      .setSound(null)
+      .setVibrate(null)
+      .setOnlyAlertOnce(true)
       .build()
     
     notificationManager.notify(System.currentTimeMillis().toInt(), notification)
   }
   
   private fun getNotificationIcon(): Int {
-    val notificationIconId = context.resources.getIdentifier(
-      "notification_icon",
-      "drawable",
-      context.packageName
-    )
+    // app.json의 android.notification.icon에서 생성된 리소스
+    val drawableId = context.resources.getIdentifier("notification_icon", "drawable", context.packageName)
+    if (drawableId != 0) return drawableId
     
-    if (notificationIconId != 0) {
-      return notificationIconId
-    }
-    
-    return context.applicationInfo.icon
+    // 폴백: 안드로이드 기본 알림 아이콘
+    return android.R.drawable.ic_dialog_info
   }
 }
