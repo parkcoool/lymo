@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.app.ActivityCompat
@@ -47,16 +46,6 @@ class MediaInsightServiceModule : Module() {
       getNotificationFrequency()
     }
     
-    // 알림 접근 권한 확인
-    Function("hasNotificationListenerPermission") {
-      hasNotificationListenerPermission()
-    }
-    
-    // 알림 접근 허용 설정 화면 열기
-    Function("openNotificationListenerSettings") {
-      openNotificationListenerSettings()
-    }
-    
     // 알림 표시 권한 확인 (Android 13+)
     Function("hasPostNotificationPermission") {
       hasPostNotificationPermission()
@@ -76,6 +65,11 @@ class MediaInsightServiceModule : Module() {
   private fun setServiceEnabled(enabled: Boolean) {
     val prefs = context.getSharedPreferences("lymo_media_insight", Context.MODE_PRIVATE)
     prefs.edit().putBoolean("isEnabled", enabled).apply()
+    
+    if (enabled) {
+      val intent = Intent(context, MediaInsightService::class.java)
+      context.startService(intent)
+    }
   }
   
   private fun isServiceEnabled(): Boolean {
@@ -91,22 +85,6 @@ class MediaInsightServiceModule : Module() {
   private fun getNotificationFrequency(): String? {
     val prefs = context.getSharedPreferences("lymo_media_insight", Context.MODE_PRIVATE)
     return prefs.getString("notificationFrequency", null)
-  }
-  
-  private fun hasNotificationListenerPermission(): Boolean {
-    val enabledListeners = Settings.Secure.getString(
-      context.contentResolver,
-      "enabled_notification_listeners"
-    )
-    val packageName = context.packageName
-    return enabledListeners?.contains(packageName) == true
-  }
-  
-  private fun openNotificationListenerSettings() {
-    val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
-      flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    }
-    context.startActivity(intent)
   }
   
   private fun hasPostNotificationPermission(): Boolean {

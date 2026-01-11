@@ -1,5 +1,6 @@
 package expo.modules.mediainsightservice
 
+import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -7,10 +8,10 @@ import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
-import android.service.notification.NotificationListenerService
+import android.os.IBinder
 import android.util.Log
 
-class MediaInsightService : NotificationListenerService() {
+class MediaInsightService : Service() {
   
   private var mediaSessionManager: MediaSessionManager? = null
   private var sessionListener: MediaSessionManager.OnActiveSessionsChangedListener? = null
@@ -30,19 +31,21 @@ class MediaInsightService : NotificationListenerService() {
     private const val FREQUENCY_MINIMAL = 3L * 60L * 60L * 1000L // 3시간
   }
   
-  override fun onListenerConnected() {
-    super.onListenerConnected()
-    
+  override fun onBind(intent: Intent?): IBinder? = null
+  
+  override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     val isEnabled = prefs.getBoolean(KEY_IS_ENABLED, false)
     
     if (isEnabled) {
       startMonitoringMediaSessions()
     }
+    
+    return START_STICKY
   }
   
-  override fun onListenerDisconnected() {
-    super.onListenerDisconnected()
+  override fun onDestroy() {
+    super.onDestroy()
     stopMonitoringMediaSessions()
   }
   
@@ -51,7 +54,11 @@ class MediaInsightService : NotificationListenerService() {
     
     try {
       mediaSessionManager = getSystemService(Context.MEDIA_SESSION_SERVICE) as MediaSessionManager
-      val componentName = ComponentName(this, MediaInsightService::class.java)
+      // MediaNotificationListenerService를 ComponentName으로 사용
+      val componentName = ComponentName(
+        this,
+        "expo.modules.medianotificationlistener.MediaNotificationListenerService"
+      )
       
       sessionListener = MediaSessionManager.OnActiveSessionsChangedListener { controllers ->
         if (controllers.isNullOrEmpty()) {
