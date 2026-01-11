@@ -29,6 +29,8 @@ class MediaNotificationListenerModule : Module() {
   private var sessionListener: MediaSessionManager.OnActiveSessionsChangedListener? = null
   private var currentController: MediaController? = null
   private var controllerCallback: MediaController.Callback? = null
+  private var lastTrackId: String? = null
+  private var lastEncodedAlbumArt: String? = null
   
   override fun definition() = ModuleDefinition {
     Name("MediaNotificationListener")
@@ -108,14 +110,41 @@ class MediaNotificationListenerModule : Module() {
 
   // 앨범 아트를 base64로 인코딩하는 함수
   private fun getAlbumArtBase64(metadata: android.media.MediaMetadata?): String? {
-    val bitmap = metadata?.getBitmap(android.media.MediaMetadata.METADATA_KEY_ALBUM_ART) ?: return null
+    if (metadata == null) {
+      lastTrackId = null
+      lastEncodedAlbumArt = null
+      return null
+    }
+
+    val title = metadata.getString(android.media.MediaMetadata.METADATA_KEY_TITLE) ?: ""
+    val artist = metadata.getString(android.media.MediaMetadata.METADATA_KEY_ARTIST) ?: ""
+
+    // 제목, 아티스트를 조합하여 고유 ID 생성
+    val currentTrackId = "${title}-${artist}"
+
+    // 같은 트랙이면 기존 인코딩된 이미지 재사용
+    if (currentTrackId == lastTrackId && lastEncodedAlbumArt != null) {
+      return lastEncodedAlbumArt
+    }
+    
+    lastTrackId = currentTrackId
+    val bitmap = metadata.getBitmap(android.media.MediaMetadata.METADATA_KEY_ALBUM_ART)
+
+    if (bitmap == null) {
+      lastEncodedAlbumArt = null
+      return null
+    }
     
     return try {
       val byteArrayOutputStream = ByteArrayOutputStream()
       bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
       val byteArray = byteArrayOutputStream.toByteArray()
-      "data:image/png;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP)
+      val encoded = "data:image/png;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP)
+      lastEncodedAlbumArt = encoded
+      encoded
     } catch (e: Exception) {
+      // 인코딩 실패 시 캐시 초기화하지 않음 (다음 시도 위해)
+      // 다만 현재 트랙에 대한 인코딩이 실패했으므로 null 반환
       null
     }
   }
@@ -234,6 +263,8 @@ class MediaNotificationListenerModule : Module() {
     }
     currentController = null
     controllerCallback = null
+    lastTrackId = null
+    lastEncodedAlbumArt = null
   }
   
   // 미디어 세션 정보를 이벤트로 전송
