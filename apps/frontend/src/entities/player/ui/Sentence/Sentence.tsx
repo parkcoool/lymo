@@ -14,8 +14,6 @@ import Animated, {
 
 import { colors } from "@/shared/constants/colors";
 
-import getHighlightColor from "../../utils/getHighlightColor";
-
 import Content from "./Content";
 import { styles } from "./styles";
 
@@ -76,13 +74,7 @@ const Sentence = memo(({ sentence, translation, wordNote, active, ref }: Sentenc
       {/* 단어 해석 */}
       {wordNote && (
         <Animated.View entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
-          <Animated.View
-            style={[
-              styles.tooltip,
-              { backgroundColor: `${getHighlightColor(wordNote.lyricIndex)}CC` },
-              animatedTooltipStyle,
-            ]}
-          >
+          <Animated.View style={[styles.tooltip, animatedTooltipStyle]}>
             <View style={styles.tooltipBackground}>
               <Text style={styles.wordNoteSource}>{wordNote.word}</Text>
               <Text style={styles.wordNote}>{wordNote.note}</Text>
