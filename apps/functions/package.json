@@ -14,6 +14,7 @@
     "@genkit-ai/google-genai": "^1.19.2",
     "@google-cloud/firestore": "^7.11.6",
     "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
     "fastest-levenshtein": "^1.0.16",
     "firebase-admin": "^13.5.0",
     "firebase-functions": "^7.0.2",
@@ -23,6 +24,7 @@
     "syllable": "^5.0.1"
   },
   "devDependencies": {
+    "@types/graphql": "^14.2.3",
     "@types/spotify-web-api-node": "^5.0.11",
     "firebase-functions-test": "^3.1.0",
     "tsc-alias": "^1.8.16",
