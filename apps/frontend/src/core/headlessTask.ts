@@ -28,8 +28,6 @@ const MediaInsightTask = async (data: {
     return;
   }
 
-  console.log(data);
-
   try {
     // 1) 언어 설정 가져오기
     let language: Language = "ko";

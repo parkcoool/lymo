@@ -1,5 +1,6 @@
 package expo.modules.mediainsightservice
 
+import android.app.ActivityManager
 import android.app.Service
 import android.content.ComponentName
 import android.content.Context
@@ -126,6 +127,9 @@ class MediaInsightService : Service() {
     // 재생 중인지 확인
     if (playbackState?.state != PlaybackState.STATE_PLAYING) return
     
+    // 앱이 포그라운드에 있으면 알림 표시 안 함
+    if (isAppInForeground()) return
+    
     val title = metadata?.getString(android.media.MediaMetadata.METADATA_KEY_TITLE) ?: return
     val artist = metadata?.getString(android.media.MediaMetadata.METADATA_KEY_ARTIST) ?: ""
     val duration = metadata?.getLong(android.media.MediaMetadata.METADATA_KEY_DURATION) ?: 0L
@@ -142,6 +146,20 @@ class MediaInsightService : Service() {
     lastTrackKey = trackKey
     lastNotificationTime = System.currentTimeMillis()
     triggerHeadlessTask(title, artist, duration, packageName)
+  }
+  
+  private fun isAppInForeground(): Boolean {
+    val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val appProcesses = activityManager.runningAppProcesses ?: return false
+    
+    val packageName = applicationContext.packageName
+    for (processInfo in appProcesses) {
+      if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+          processInfo.processName == packageName) {
+        return true
+      }
+    }
+    return false
   }
   
   private fun shouldTriggerNotification(): Boolean {
