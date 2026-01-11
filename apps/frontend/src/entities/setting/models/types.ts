@@ -25,7 +25,7 @@ export interface Setting {
 /**
  * AsyncStorage에 저장하기 위한 JSON 형태의 `Setting` 타입
  */
-export type SettingJSON = Omit<Setting, "sync"> & {
+export type SettingJSON = Omit<Setting, "sync" | "notificationFrequency"> & {
   /**
    * 곡 별 가사 싱크 지연 시간 (ms)
    */

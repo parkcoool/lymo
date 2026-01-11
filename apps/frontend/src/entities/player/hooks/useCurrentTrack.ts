@@ -21,7 +21,7 @@ export default function useCurrentTrack() {
     retrieveTrackParams = {
       title: trackSource.track.title,
       artist: trackSource.track.artist,
-      durationInSeconds: trackSource.track.duration,
+      durationInSeconds: trackSource.track.durationInSeconds,
     };
   }
 

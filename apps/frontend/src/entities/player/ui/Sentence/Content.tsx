@@ -1,8 +1,6 @@
 import { WordNote } from "@lymo/schemas/shared";
 import { Text } from "react-native";
 
-import getHighlightColor from "../../utils/getHighlightColor";
-
 import { styles } from "./styles";
 
 interface ContentProps {
@@ -11,10 +9,7 @@ interface ContentProps {
 }
 
 export default function Content({ sentence, wordNote }: ContentProps) {
-  if (
-    !wordNote?.word ||
-    !sentence.toLowerCase().includes(wordNote.word.toLowerCase())
-  ) {
+  if (!wordNote?.word || !sentence.toLowerCase().includes(wordNote.word.toLowerCase())) {
     return sentence;
   }
 
@@ -26,16 +21,7 @@ export default function Content({ sentence, wordNote }: ContentProps) {
   return (
     <>
       <Text>{before}</Text>
-      <Text
-        style={[
-          styles.highlight,
-          {
-            backgroundColor: `${getHighlightColor(wordNote.lyricIndex)}33`,
-          },
-        ]}
-      >
-        {word}
-      </Text>
+      <Text style={styles.highlight}>{word}</Text>
       <Text>{after}</Text>
     </>
   );

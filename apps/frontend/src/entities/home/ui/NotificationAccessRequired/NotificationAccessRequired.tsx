@@ -2,7 +2,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity, View, Text } from "react-native";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import GradientFill from "@/shared/components/GradientFill";
 
 import Background from "./Background";
@@ -11,7 +12,7 @@ import { styles } from "./styles";
 export default function NotificationAccessRequired() {
   // 권한 부여 버튼 핸들러
   const handleGrant = () => {
-    MediaModule.openNotificationListenerSettings();
+    MediaNotificationListenerModule.openNotificationListenerSettings();
   };
 
   return (

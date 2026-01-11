@@ -44,7 +44,7 @@ export default function DeviceMedia({ deviceMedia }: DeviceMediaProps) {
     <View style={styles.wrapper}>
       <View style={[styles.coverWrapper]}>
         {/* 커버 이미지 */}
-        <Image source={{ uri: deviceMedia.albumArt }} style={styles.cover} />
+        <Image source={{ uri: deviceMedia.albumArtBase64 }} style={styles.cover} />
 
         {/* 그라데이션 오버레이 */}
         <LinearGradient

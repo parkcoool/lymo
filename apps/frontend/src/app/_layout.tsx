@@ -7,6 +7,8 @@ import { AppState, AppStateStatus, Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import MediaInsightServiceModule from "modules/media-insight-service";
+
 import { UserProvider } from "@/entities/auth/model/userStore";
 import { DeviceMediaProvider } from "@/entities/deviceMedia/models/deviceMediaStore";
 import SyncDeviceMediaProvider from "@/entities/deviceMedia/ui/SyncDeviceMediaProvider";
@@ -32,6 +34,7 @@ function onAppStateChange(status: AppStateStatus) {
 
 export default function RootLayout() {
   useEffect(() => {
+    MediaInsightServiceModule.setEnabled(true);
     const subscription = AppState.addEventListener("change", onAppStateChange);
     return () => subscription.remove();
   }, []);

@@ -11,8 +11,14 @@ export default function useMergedTrack(track: Partial<Track>): Partial<Track> {
   // 기기에서 재생 중인 곡 정보 처리
   const track1: Partial<Track> = {};
   if (trackSource?.from === "device") {
-    const { isPlaying, duration, artist, ...overlap } = trackSource.track;
-    Object.assign(track1, { ...overlap, durationInSeconds: duration, artists: [artist] });
+    const {
+      isPlaying,
+      durationInSeconds: duration,
+      artist,
+      albumArtBase64: albumArt,
+      ...overlap
+    } = trackSource.track;
+    Object.assign(track1, { ...overlap, durationInSeconds: duration, artists: [artist], albumArt });
   }
 
   // 주어진 곡 정보 처리

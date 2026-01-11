@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 
+import MediaInsightServiceModule from "modules/media-insight-service/src/MediaInsightServiceModule";
+
 import type { Setting } from "../models/types";
 import convertSettingToJSON from "../utils/convertSettingToJSON";
 import isSettingJSON from "../utils/isSettingJSON";
@@ -17,8 +19,9 @@ export default function useHandleSetting() {
     showSectionNotes: true,
   });
 
-  // 마운트 시 설정을 AsyncStorage에서 불러오기
+  // 마운트 시
   useEffect(() => {
+    // AsyncStorage에서 설정 불러오기
     AsyncStorage.getItem("setting").then((value) => {
       if (!value) return;
 
@@ -27,9 +30,16 @@ export default function useHandleSetting() {
         if (!isSettingJSON(settingJSON)) return;
 
         const parsed = parseSettingJSON(settingJSON);
-        setSetting(parsed);
+        setSetting((prev) => ({ ...prev, ...parsed }));
       } catch {}
     });
+
+    // MediaInsightService에서 알림 빈도 설정 불러오기
+    const notificationFrequency = MediaInsightServiceModule.getNotificationFrequency() ?? undefined;
+    setSetting((prev) => ({ ...prev, notificationFrequency }));
+    MediaInsightServiceModule.setEnabled(
+      notificationFrequency !== "never" && notificationFrequency !== undefined
+    );
   }, []);
 
   // 설정 업데이트 함수
@@ -37,14 +47,31 @@ export default function useHandleSetting() {
     if (typeof newSetting === "function") {
       setSetting((prev) => {
         const updated = newSetting(prev);
+
         const settingJSON = convertSettingToJSON(updated);
         AsyncStorage.setItem("setting", JSON.stringify(settingJSON));
+
+        const { notificationFrequency } = updated;
+        if (notificationFrequency)
+          MediaInsightServiceModule.setNotificationFrequency(notificationFrequency);
+        MediaInsightServiceModule.setEnabled(
+          notificationFrequency !== "never" && notificationFrequency !== undefined
+        );
+
         return updated;
       });
     } else {
       setSetting(newSetting);
+
       const settingJSON = convertSettingToJSON(newSetting);
       AsyncStorage.setItem("setting", JSON.stringify(settingJSON));
+
+      const { notificationFrequency } = newSetting;
+      if (notificationFrequency)
+        MediaInsightServiceModule.setNotificationFrequency(notificationFrequency);
+      MediaInsightServiceModule.setEnabled(
+        notificationFrequency !== "never" && notificationFrequency !== undefined
+      );
     }
   };
 

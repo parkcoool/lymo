@@ -1,7 +1,8 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View, Text, TouchableOpacity } from "react-native";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaInsightServiceModule from "modules/media-insight-service";
+
 import useCheckNotificationPermission from "@/entities/deviceMedia/hooks/useCheckNotificationPermission";
 import InsightAnimation from "@/entities/home/ui/InsightAnimation";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
@@ -16,8 +17,8 @@ export default function Content() {
   const granted = useCheckNotificationPermission();
 
   // 권한 부여 버튼 핸들러
-  const handleGrant = () => {
-    MediaModule.requestNotificationPermission();
+  const handleGrant = async () => {
+    MediaInsightServiceModule.requestPostNotificationPermission();
   };
 
   // 옵션 변경 핸들러

@@ -4,7 +4,7 @@ export type DeviceMedia = {
   title: string;
   artist: string;
   album: string | null;
-  duration: number;
+  durationInSeconds: number;
   isPlaying: boolean;
-  albumArt: string; // Base64 문자열
+  albumArtBase64?: string;
 };

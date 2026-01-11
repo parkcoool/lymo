@@ -1,7 +1,8 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 
-import { MediaModule } from "@/core/mediaModule";
+import MediaNotificationListenerModule from "modules/media-notification-listener";
+
 import useCheckNotificationListenerPermission from "@/entities/deviceMedia/hooks/useCheckNotificationListenerPermission";
 import { useSettingStore } from "@/entities/setting/models/settingStore";
 import { SettingItem, SettingToggleItem } from "@/entities/setting/ui/SettingItem";
@@ -14,7 +15,7 @@ export default function Sync() {
   const granted = useCheckNotificationListenerPermission();
 
   const handleToggle = () => {
-    MediaModule.openNotificationListenerSettings();
+    MediaNotificationListenerModule.openNotificationListenerSettings();
   };
 
   const handleUpdateInsightNotification = () => {
