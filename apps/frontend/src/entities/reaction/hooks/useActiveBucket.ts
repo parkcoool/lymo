@@ -23,7 +23,7 @@ export default function useActiveBucketIndex() {
     const updateTimestamp = async () => {
       if (!isPlaying) return;
 
-      const mediaSessionInfo = await MediaNotificationListenerModule.getCurrentMediaSession();
+      const mediaSessionInfo = MediaNotificationListenerModule.getCurrentMediaSession();
       if (!mediaSessionInfo.hasSession) return;
       const timestampInSeconds = mediaSessionInfo.position / 1000;
 

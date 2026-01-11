@@ -32,9 +32,9 @@ export default function ReactionTrigger({ storyId }: ReactionTriggerProps) {
 
   const handleToggleOpen = () => setIsOpen((prev) => !prev);
 
-  const handleEmojiPress = async (emoji: ReactionEmoji) => {
+  const handleEmojiPress = (emoji: ReactionEmoji) => {
     Vibration.vibrate(10);
-    const mediaSessionInfo = await MediaNotificationListenerModule.getCurrentMediaSession();
+    const mediaSessionInfo = MediaNotificationListenerModule.getCurrentMediaSession();
     if (!mediaSessionInfo.hasSession) return;
     const timestampInSeconds = mediaSessionInfo.position / 1000;
 

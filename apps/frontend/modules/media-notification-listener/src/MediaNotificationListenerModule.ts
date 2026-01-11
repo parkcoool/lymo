@@ -8,9 +8,9 @@ import {
 declare class MediaNotificationListenerModule extends NativeModule<MediaNotificationListenerModuleEvents> {
   /**
    * 현재 미디어 세션 정보를 가져옵니다
-   * @returns 현재 미디어 세션 정보를 담은 Promise
+   * @returns 현재 미디어 세션 정보
    */
-  getCurrentMediaSession(): Promise<MediaSessionInfo>;
+  getCurrentMediaSession(): MediaSessionInfo;
 
   /**
    * 알림 접근 권한이 부여되었는지 확인합니다

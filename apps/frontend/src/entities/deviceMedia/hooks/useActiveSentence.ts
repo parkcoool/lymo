@@ -32,12 +32,10 @@ export default function useActiveSentence({
   const [activeLyricIndex, setActiveLyricIndex] = useState(-1);
 
   useEffect(() => {
-    if (!isPlaying || !enabled) return;
-
     const updateTimestamp = async () => {
       if (!isPlaying || !enabled) return;
 
-      const mediaSessionInfo = await MediaNotificationListenerModule.getCurrentMediaSession();
+      const mediaSessionInfo = MediaNotificationListenerModule.getCurrentMediaSession();
       if (!mediaSessionInfo.hasSession) return;
       const timestampInSeconds = mediaSessionInfo.position / 1000;
 
