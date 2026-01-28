@@ -27,3 +27,13 @@ yarn-error.*
 *.tsbuildinfo
 
 google-services.json
+
+/android
+
+# Expo native modules build outputs
+**/android/build/
+**/android/.cxx/
+**/android/local.properties
+**/ios/build/
+**/ios/Pods/
+**/ios/.xcode.env.local

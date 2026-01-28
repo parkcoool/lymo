@@ -24,6 +24,10 @@
     "android_bypass_emulator_url_remap": true
   },
   "emulators": {
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true,
     "firestore": {
       "port": 8080,
       "host": "0.0.0.0"
@@ -32,13 +36,13 @@
       "port": 5001,
       "host": "0.0.0.0"
     },
-    "ui": {
-      "enabled": true
-    },
     "database": {
       "port": 9000,
       "host": "0.0.0.0"
     },
-    "singleProjectMode": true
+    "auth": {
+      "port": 9099,
+      "host": "0.0.0.0"
+    }
   }
 }

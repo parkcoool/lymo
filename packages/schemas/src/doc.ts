@@ -1,7 +1,13 @@
 import { z } from "zod";
 
-import { errorCode } from "./error";
-import { LanguageSchema, LyricSchema, LyricsProvider, LyricsProviderSchema } from "./shared";
+import {
+  LanguageSchema,
+  LyricSchema,
+  LyricsProvider,
+  LyricsProviderSchema,
+  ReactionEmojiSchema,
+  WordNoteSchema,
+} from "./shared";
 
 // ==============================
 // track 관련 스키마
@@ -19,9 +25,18 @@ export const TrackSchema = z.object({
 
   createdAt: z.string(),
   stats: z.object({
-    storyCount: z.number(),
+    favoriteCount: z.number(),
     viewCount: z.number(),
   }),
+  storyCount: z.number(),
+
+  scores: z
+    .object({
+      trivia: z.number(),
+      depth: z.number(),
+      impact: z.number(),
+    })
+    .optional(),
 });
 export type Track = Omit<z.infer<typeof TrackSchema>, "lyrics"> & {
   lyrics: Partial<Record<LyricsProvider, z.infer<typeof LyricSchema>[]>>;
@@ -56,6 +71,7 @@ export const TrackInfoFieldsSchema = z.object({
   trackAlbum: z.string().nullable(),
   trackAlbumArt: z.string(),
 });
+export type TrackInfoFields = z.infer<typeof TrackInfoFieldsSchema>;
 
 // AI 생성 필드
 export const GeneratedStoryFieldsSchema = z.object({
@@ -63,55 +79,50 @@ export const GeneratedStoryFieldsSchema = z.object({
   sectionBreaks: z.number().array(),
   lyricTranslations: z.string().nullable().array(),
   sectionNotes: z.string().nullable().array(),
+  wordNotes: WordNoteSchema.array(),
 });
 export type GeneratedStoryFields = z.infer<typeof GeneratedStoryFieldsSchema>;
 
 // `stories/{storyId}` 문서 스키마
 export const StorySchema = BaseStoryFieldsSchema.merge(TrackInfoFieldsSchema).merge(
-  GeneratedStoryFieldsSchema
+  GeneratedStoryFieldsSchema.partial()
 );
 export type Story = z.infer<typeof StorySchema>;
 
-// ==============================
-// storyRequest 관련 스키마
-// ==============================
+// `stories/{storyId}/favorites/{userId}` 문서 스키마
+export const FavoriteSchema = z.object({
+  createdAt: z.string(),
+});
+export type Favorite = z.infer<typeof FavoriteSchema>;
 
-// `storyRequests/{storyRequestId}` 문서 스키마
-export const StoryRequestSchema = z.union([
-  // status가 PENDING일 경우
-  z.union([
-    z.object({
-      status: z.literal("PENDING"),
-      language: LanguageSchema,
-      trackId: z.string(),
-    }),
+// `stories/{storyId}/reactions` 공통 필드
+export const BaseReactionFieldsSchema = z.object({
+  userId: z.string(),
+  createdAt: z.string(),
+  timestampInSeconds: z.number(),
+});
 
-    z.object({
-      status: z.literal("PENDING"),
-      language: LanguageSchema,
-      title: z.string(),
-      artist: z.string(),
-      durationInSeconds: z.number(),
-    }),
-  ]),
-
-  // status가 IN_PROGRESS일 경우
-  BaseStoryFieldsSchema.merge(GeneratedStoryFieldsSchema.partial()).extend({
-    status: z.literal("IN_PROGRESS"),
+// `stories/{storyId}/reactions` 문서 스키마
+export const ReactionSchema = z.union([
+  BaseReactionFieldsSchema.extend({
+    type: z.literal("emoji"),
+    content: ReactionEmojiSchema,
   }),
 
-  // status가 COMPLETED일 경우
-  BaseStoryFieldsSchema.merge(GeneratedStoryFieldsSchema).extend({
-    status: z.literal("COMPLETED"),
-  }),
-
-  // status가 FAILED일 경우
-  z.object({
-    status: z.literal("FAILED"),
-    errorCode: errorCode,
+  BaseReactionFieldsSchema.extend({
+    type: z.literal("comment"),
+    content: z.string(),
   }),
 ]);
-export type StoryRequest = z.infer<typeof StoryRequestSchema>;
+export type Reaction = z.infer<typeof ReactionSchema>;
+
+// `stories/{storyId}/buckets/{bucketId}` 문서 스키마
+export const BucketSchema = z.object({
+  start: z.number(),
+  end: z.number(),
+  counts: z.record(z.union([ReactionEmojiSchema, z.literal("comment")]), z.number()),
+});
+export type Bucket = z.infer<typeof BucketSchema>;
 
 // ==============================
 // retrieveTrackCache 관련 스키마

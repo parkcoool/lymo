@@ -1,0 +1,147 @@
+import { BaseStoryFields, GeneratedStoryFields } from "@lymo/schemas/doc";
+import { RetrieveTrackInput } from "@lymo/schemas/functions";
+import { StoryRequest, StoryRequestSchema } from "@lymo/schemas/rtdb";
+import { Language, StoryGenerationStatus } from "@lymo/schemas/shared";
+import { ref, onValue, Unsubscribe, set, get } from "@react-native-firebase/database";
+import { experimental_streamedQuery as streamedQuery, useQuery } from "@tanstack/react-query";
+import * as Crypto from "expo-crypto";
+import { useEffect, useRef } from "react";
+
+import database from "@/core/database";
+import KnownError from "@/shared/errors/KnownError";
+import { createStreamChannel } from "@/shared/utils/createStreamChannel";
+
+type UseRequestStoryParams = RetrieveTrackInput & { language: Language };
+type UseRequestStoryResult =
+  | {
+      id: string;
+      data: BaseStoryFields & Partial<GeneratedStoryFields>;
+      status: StoryGenerationStatus;
+    }
+  | undefined;
+
+/**
+ * 해석 생성을 요청하고 스냅샷을 구독하는 쿼리 훅입니다.
+ * @param params 요청 파라미터
+ * @returns 요청 상태를 반환합니다.
+ */
+export default function useRequestStoryQuery(params: UseRequestStoryParams) {
+  const unsubscribe = useRef<Unsubscribe>(null);
+
+  useEffect(() => {
+    return () => unsubscribe.current?.();
+  }, []);
+
+  return useQuery({
+    queryKey: ["request-story", params],
+
+    queryFn: streamedQuery<StoryRequest, UseRequestStoryResult>({
+      streamFn: async function* (context) {
+        // 1) 요청 문서 생성
+        const id = await Crypto.digestStringAsync(
+          Crypto.CryptoDigestAlgorithm.MD5,
+          JSON.stringify(params)
+        );
+        const storyRequestRef = ref(database, `storyRequests/${id}`);
+
+        // 기존에 문서가 없는 경우에만 새로 생성
+        const existingSnapshot = await get(storyRequestRef);
+        if (!existingSnapshot.exists()) {
+          await set(storyRequestRef, { ...params, status: "PENDING" });
+        }
+
+        // 2) 스트림 채널 생성
+        const streamChannel = createStreamChannel<StoryRequest>();
+
+        // 3) 기존 구독 해제 및 새 구독 시작
+        unsubscribe.current?.();
+        unsubscribe.current = onValue(
+          storyRequestRef,
+
+          // 3-1) 스냅샷 업데이트 처리
+          async (snapshot) => {
+            const storyRequest = StoryRequestSchema.safeParse(snapshot.val());
+
+            if (!storyRequest.success) {
+              streamChannel.fail(new Error("해석 요청 데이터가 올바르지 않습니다."));
+              return;
+            }
+
+            // 오류가 발상한 경우
+            if (storyRequest.data.status === "FAILED") {
+              streamChannel.fail(new KnownError(storyRequest.data.errorCode));
+            }
+
+            streamChannel.push(storyRequest.data);
+
+            // 생성이 완료된 경우
+            if (storyRequest.data.status === "FINISHED") {
+              unsubscribe.current?.();
+              streamChannel.close();
+            }
+          },
+
+          // 3-2) 에러 처리
+          async (err) => streamChannel.fail(err)
+        );
+
+        context.signal.addEventListener("abort", () => {
+          streamChannel.close();
+        });
+
+        yield* streamChannel.iterator();
+        unsubscribe.current?.();
+      },
+
+      reducer: (_acc, chunk) => {
+        if (chunk === undefined) return chunk;
+        if (
+          chunk.status === "IN_PROGRESS" ||
+          chunk.status === "COMPLETED" ||
+          chunk.status === "FINISHED"
+        ) {
+          // 1) userAvatar 변환
+          // string | null | undefined -> string | null 타입으로 변환
+          const userAvatar = chunk.userAvatar ?? null;
+
+          // 2) sectionNotes 변환
+          const sectionNotes = convertToNullableArray(chunk.sectionNotes);
+
+          // 3) lyricTranslations 변환
+          const lyricTranslations = convertToNullableArray(chunk.lyricTranslations);
+
+          return {
+            id: chunk.storyId,
+            data: { ...chunk, userAvatar, sectionNotes, lyricTranslations },
+            status: chunk.status,
+          };
+        }
+        return undefined;
+      },
+
+      initialValue: undefined,
+    }),
+
+    retry: false,
+  });
+}
+
+/**
+ * `Record<number, string>` 또는 `(string | null)[]` 형태의 데이터를 `(string | null)[]` 배열로 변환합니다.
+ */
+function convertToNullableArray(
+  data: Record<number, string> | (string | null)[] | undefined
+): (string | null)[] {
+  if (!data) return [];
+
+  if (Array.isArray(data)) {
+    return [...data];
+  }
+
+  const maxIndex = Math.max(...Object.keys(data).map((k) => Number(k)));
+  const result: (string | null)[] = [];
+  for (let i = 0; i <= maxIndex; i++) {
+    result.push(data[i] ?? null);
+  }
+  return result;
+}

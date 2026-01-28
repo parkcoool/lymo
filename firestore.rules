@@ -1,12 +1,138 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ==============================
+    // stories 컬렉션
+    // ==============================
     match /stories/{storyId} {
-      allow read: if true;
+      allow read: if request.auth != null;
+      
+      allow update: if 
+        request.auth != null &&
+        (
+           isValidStatsIncrement(request.resource.data, resource.data, 'viewCount') ||
+           isValidStatsIncrement(request.resource.data, resource.data, 'favoriteCount') ||
+           isValidStatsDecrement(request.resource.data, resource.data, 'favoriteCount')
+        );
     }
 
+    // ==============================
+    // stories favorites 서브컬렉션
+    // ==============================
+    match /stories/{storyId}/favorites/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      allow create: if 
+        request.auth != null &&
+        request.auth.uid == userId &&
+        isValidFavoriteDocSchema(request.resource.data, userId);
+
+      allow delete: if
+        request.auth != null &&
+        request.auth.uid == userId;
+    }
+
+    // ==============================
+    // stories reactions 서브컬렉션
+    // ==============================
+    match /stories/{storyId}/reactions/{reactionId} {
+      allow read: if request.auth != null;
+      
+      allow create: if
+        request.auth != null &&
+        request.resource.data.userId == request.auth.uid &&
+        isValidReactionDocSchema(request.resource.data, request.auth.uid);
+
+      allow delete: if 
+        request.auth != null && 
+        resource.data.userId == request.auth.uid;
+    }
+
+    // ==============================
+    // stories buckets 서브컬렉션
+    // ==============================
+    match /stories/{storyId}/buckets/{bucketId} {
+      allow read: if request.auth != null;
+
+      allow update: if
+        request.auth != null &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['counts']) &&
+        (request.resource.data.counts is map) &&
+        isValidBucketKeys(request.resource.data.counts) &&
+        isValidBucketCountIncrement(request.resource.data.counts, resource.data.counts);
+    }
+
+    // ==============================
+    // tracks 컬렉션
+    // ==============================
     match /tracks/{trackId} {
-      allow read: if true;
+      allow read: if request.auth != null;
+
+      allow update: if 
+        request.auth != null &&
+        (
+          isValidStatsIncrement(request.resource.data, resource.data, 'viewCount') ||
+          isValidStatsIncrement(request.resource.data, resource.data, 'favoriteCount') ||
+          isValidStatsDecrement(request.resource.data, resource.data, 'favoriteCount')
+        );
+    }
+
+    // ==============================
+    // 함수
+    // ==============================
+
+    function isValidFavoriteDocSchema(data, userId) {
+      return 
+        data.keys().hasOnly(['userId', 'createdAt']) &&
+        data.userId == userId &&
+        data.createdAt == request.time;
+    }
+
+    function isValidReactionDocSchema(data, userId) {
+      return 
+        data.userId == userId &&
+        (data.timestampInSeconds is number) &&
+        (
+          (data.type == 'emoji' && isAllowedEmoji(data.content)) ||
+          (data.type == 'comment' && (data.content is string) && data.content.size() > 0 && data.content.size() <= 300)
+        );
+    }
+
+    function isAllowedEmoji(emoji) {
+      return emoji in [
+        "🔥", "❤️", "😭", "🤘", "🤣", "👏", "🥺", "😍", 
+        "😎", "🤯", "💯", "💔", "🫶", "✨", "🌙", "🎉", 
+        "🥰", "💃", "🥀", "☁️", "🫢", "🤪", "👻", "🍷"
+      ];
+    }
+
+    function isValidBucketKeys(countsMap) {
+      return countsMap.keys().hasOnly([
+        "🔥", "❤️", "😭", "🤘", "🤣", "👏", "🥺", "😍", 
+        "😎", "🤯", "💯", "💔", "🫶", "✨", "🌙", "🎉", 
+        "🥰", "💃", "🥀", "☁️", "🫢", "🤪", "👻", "🍷",
+        "comment" 
+      ]);
+    }
+
+    function isValidBucketCountIncrement(newCounts, oldCounts) {
+      return newCounts.diff(oldCounts).affectedKeys().size() == 1;
+    }
+
+    function isValidStatsIncrement(newData, oldData, fieldName) {
+      return newData.diff(oldData).affectedKeys().hasOnly(['stats']) &&
+             newData.stats.diff(oldData.stats).affectedKeys().hasOnly([fieldName]) &&
+             (newData.stats[fieldName] is number) &&
+             newData.stats[fieldName] == oldData.stats[fieldName] + 1;
+    }
+
+    function isValidStatsDecrement(newData, oldData, fieldName) {
+      return newData.diff(oldData).affectedKeys().hasOnly(['stats']) &&
+             newData.stats.diff(oldData.stats).affectedKeys().hasOnly([fieldName]) &&
+             (newData.stats[fieldName] is number) &&
+             newData.stats[fieldName] == oldData.stats[fieldName] - 1 &&
+             newData.stats[fieldName] >= 0;
     }
   }
 }

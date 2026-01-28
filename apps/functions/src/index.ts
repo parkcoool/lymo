@@ -1,4 +1,6 @@
-import "@/core/admin";
+import "@/config/firebase";
 
-export { onStoryRequestCreate } from "./features/generate/triggers/onStoryRequestCreate";
-export { retrieveTrack } from "./features/retrieve/flows/retrieveTrack";
+// Export Firebase Functions and Genkit Flows
+export { onStoryRequestCreate } from "./domains/story";
+export { retrieveTrack } from "./domains/track";
+export { retrieveTrackNoti } from "./domains/notification";

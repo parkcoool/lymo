@@ -1,0 +1,73 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import type { NativeStackHeaderProps } from "@react-navigation/native-stack";
+import { LinearGradient } from "expo-linear-gradient";
+import { TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useUserStore } from "@/entities/auth/model/userStore";
+import Avatar from "@/entities/auth/ui/Avatar";
+import { colors } from "@/shared/constants/colors";
+
+import Brand from "./Brand";
+import { styles } from "./styles";
+
+interface HeaderProps extends NativeStackHeaderProps {
+  backgroundColor?: string;
+  brand?: boolean;
+  avatar?: boolean;
+  onSettingOpen?: () => void;
+}
+
+export default function Header({
+  back,
+  navigation,
+  backgroundColor,
+  brand = false,
+  avatar = true,
+  onSettingOpen,
+}: HeaderProps) {
+  const { user } = useUserStore();
+
+  return (
+    <View style={styles.container}>
+      {/* 그라데이션 오버레이 */}
+      <LinearGradient
+        style={styles.gradient}
+        colors={[backgroundColor ?? colors.background, "transparent"]}
+      />
+
+      {/* 상단 영역 */}
+      <SafeAreaView edges={["top"]} />
+
+      <View style={styles.header}>
+        <View style={styles.left}>
+          {/* 뒤로 가기 버튼 */}
+          {back && (
+            <TouchableOpacity onPress={navigation.goBack}>
+              <MaterialIcons name="chevron-left" size={28} style={styles.buttonIcon} />
+            </TouchableOpacity>
+          )}
+
+          {/* 로고 */}
+          {brand && <Brand />}
+        </View>
+
+        <View style={styles.right}>
+          {/* 설정 버튼 */}
+          {onSettingOpen && (
+            <TouchableOpacity onPress={onSettingOpen}>
+              <MaterialIcons name="settings" size={28} style={styles.buttonIcon} />
+            </TouchableOpacity>
+          )}
+
+          {/* 아바타 */}
+          {avatar && user && (
+            <TouchableOpacity>
+              <Avatar photo={user.photoURL ?? undefined} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+}
