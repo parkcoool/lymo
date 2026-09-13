@@ -1,0 +1,6 @@
+interface:
+  display_name: "Lymo 회의"
+  short_description: "Lymo 회의를 기록하고 문서 PR을 만듭니다"
+  default_prompt: "Use $lymo-meeting to start a focused Lymo project meeting."
+policy:
+  allow_implicit_invocation: false
