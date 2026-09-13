@@ -10,11 +10,13 @@
 - Android와 iOS의 최소 지원 OS 및 플랫폼별 식별자
 - Android Share Target의 진입 Activity와 탐색 처리 방식
 - iOS App Group과 딥 링크 형식
+- Android, iOS, 서버, 공통 계약·픽스처의 모듈 경계와 데이터 소유권을 어떻게 나눌 것인가? — 출처: [2026-09-13 문서 체계와 공개 원칙 회의](meetings/2026-09-13-documentation-structure.md#미결-사항)
 
 ## 제공업체와 데이터
 
 - Spotify, Apple Music, YouTube Music의 지원 URL 형식과 정책
 - 가사 및 제공업체 데이터의 라이선스
+- 검증된 사실, 제공업체 데이터, 커뮤니티 기여, AI 추론의 출처와 신뢰 수준을 데이터와 UI에서 어떻게 구분할 것인가? — 출처: [2026-09-13 문서 체계와 공개 원칙 회의](meetings/2026-09-13-documentation-structure.md#미결-사항)
 
 ## 서버
 
@@ -22,6 +24,7 @@
 
 ## 가져오기와 사용자 경험
 
+- `TrackImport`, `CanonicalTrack`, `importId` 계약의 필드, 상태 전이, 오류, 버전과 픽스처 형식을 어떻게 정의할 것인가? — 출처: [2026-09-13 문서 체계와 공개 원칙 회의](meetings/2026-09-13-documentation-structure.md#미결-사항)
 - 공유 API와 `importId`의 생명주기, 중복 처리, 만료 정책
 - 플랫폼별 공유 수신 저장소와 최근 가져오기 보존 기간
 - iOS 알림 정책

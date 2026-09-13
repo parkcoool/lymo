@@ -7,6 +7,8 @@ description: Start, facilitate, and close a Lymo product or engineering meeting.
 
 Run the meeting in the current Codex task. Treat the meeting note as historical evidence; keep current project truth in `AGENTS.md`, `docs/PROJECT_CONTEXT.md`, `docs/OPEN_QUESTIONS.md`, contracts, and ADRs.
 
+Treat every committed meeting artifact as potentially public. If repository visibility cannot be verified, use the public-safe default described below.
+
 ## Choose the mode
 
 - `start <topic>`: start or frame a meeting. If the invocation has no subcommand, infer `start` only when the user is clearly opening a meeting; otherwise ask whether they want to start or close one.
@@ -26,17 +28,26 @@ Remind the user at start to finish with `$lymo-meeting close`. Discussion betwee
    - follow-up actions and unresolved questions.
 4. Do not silently turn a proposal into a decision. Do not promise platform or provider behavior that has not been verified.
 5. Keep a concise rolling ledger in the conversation when a decision, reversal, action item, or open question appears. Do not write a transcript or mutate the repository during the active meeting unless the user separately requests it.
+6. Identify material that is not safe for a public repository while the meeting is active. Do not repeat sensitive details merely to classify them.
+
+## Public-safe records
+
+- Record decisions, rationale, impact, rejected or deferred alternatives, follow-up actions, unresolved questions, and sanitized evidence. Do not publish a transcript.
+- Exclude secrets, credentials, personal or account identifiers, private provider communications, unapproved business details, exploit-ready unpublished vulnerability details, full shared URLs, full lyrics, raw logs, and large recordings.
+- Include screenshots only when they materially support a conclusion and sensitive information has been removed.
+- If sensitive information is necessary to understand a decision, do not silently omit it and produce a misleading record. Ask whether to publish an agreed public-safe summary or stop publication and keep the material in an approved private location.
+- Never assume that deleting a committed artifact removes it from Git history or existing forks.
 
 ## Close and document
 
-Before publishing, check that the conversation contains enough information to distinguish decisions from proposals. Ask a focused question if ownership, decision status, or a material ambiguity is missing. Never fill gaps by guessing.
+Before publishing, check that the conversation contains enough information to distinguish decisions from proposals. Ask a focused question if ownership, decision status, public-safe wording, or a material ambiguity is missing. Never fill gaps by guessing.
 
 Then perform the following workflow:
 
 1. Re-read the applicable repository instructions and current canonical documents. Fetch `origin/dev`.
-2. Create a uniquely named `docs/meeting-<yyyymmdd>-<topic>` branch directly from the latest `origin/dev` in an isolated temporary worktree. Do not reuse the caller's branch, stage its files, or copy its uncommitted changes.
+2. Create a uniquely named `docs/<short-kebab-case>` branch directly from the latest `origin/dev` in an isolated temporary worktree. Name it after the primary published outcome, not the meeting process. Use `docs/meeting-<yyyymmdd>-<topic>` only when the meeting record is the primary change, and add a date or numeric suffix when needed for uniqueness. Do not reuse the caller's branch, stage its files, or copy its uncommitted changes.
 3. Require `AGENTS.md`, `docs/DEVELOPMENT_CONVENTIONS.md`, `docs/PROJECT_CONTEXT.md`, and `docs/OPEN_QUESTIONS.md` in that worktree. If they are absent, stop and report which prerequisite branch or PR must land first.
-4. Create `docs/meetings/YYYY-MM-DD-<topic>.md` from [the meeting-note template](assets/meeting-note-template.md). Use the Asia/Seoul calendar date and a short lowercase ASCII kebab-case topic. Summarize faithfully rather than dumping the transcript.
+4. Create `docs/meetings/YYYY-MM-DD-<topic>.md` from [the meeting-note template](assets/meeting-note-template.md). Use the Asia/Seoul calendar date and a short lowercase ASCII kebab-case topic. Summarize decisions and their necessary context faithfully rather than dumping the transcript.
 5. Update canonical documents in the same change when the meeting changed current truth:
    - use an ADR for decisions required by the repository conventions;
    - update `docs/PROJECT_CONTEXT.md` for current support or technical direction;
@@ -50,8 +61,8 @@ Then perform the following workflow:
 
    The meeting note's `미결 사항` section must contain the same question. Existing legacy questions do not need a fabricated meeting origin.
 7. Run `python3 .agents/skills/lymo-meeting/scripts/validate_open_question_origins.py --base-ref origin/dev` from the isolated worktree. Resolve every failure before committing.
-8. Review the diff for factual attribution, accidental secrets or sensitive data, unrelated changes, and broken relative links. Stage only files created or changed by this meeting.
-9. Commit with the repository convention, normally `docs(meeting): <한국어 회의 요약>을 기록한다.` Push the meeting branch and create a PR targeting `dev`; never push directly to `dev`, merge the PR, force-push, or delete branches.
+8. Review the diff for factual attribution, public-repository suitability, accidental secrets or sensitive data, unrelated changes, and broken relative links. Confirm that every committed detail may remain in Git history, and stage only files created or changed by this meeting.
+9. Commit and title the PR according to the repository convention, using a scope and summary that describe the primary published outcome. Use `docs(meeting): <한국어 회의 요약>을 기록한다.` only when the meeting record is the primary change. Push the branch and create a PR targeting `dev`; never push directly to `dev`, merge the PR, force-push, or delete branches.
 10. Use the repository PR template. Include the meeting-note path, canonical documents changed, validation command and result, remaining risks, and any dependency on another PR.
 11. Report the meeting-note path, decision and open-question counts, commit, branch, PR URL, checks run, and anything not verified. Remove the temporary worktree only after confirming it is clean and the branch and PR are available remotely.
 
