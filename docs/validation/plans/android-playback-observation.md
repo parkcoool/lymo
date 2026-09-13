@@ -13,6 +13,15 @@
 - 실제 Android 기기에서 실행 가능한 최소 재생 관찰 구현이 있어야 한다.
 - 시험할 음악 앱, 권한, 신뢰 가능한 상태의 판정 기준이 정의되어야 한다.
 
+## V1 참고 구현
+
+`archive/v1` 브랜치의 아래 코드는 동작과 검증 항목을 찾기 위한 참고 자료다. 링크는 현재 보관 커밋 `1a09dc5`에 고정한다.
+
+- [`MediaNotificationListenerModule.kt`](https://github.com/parkcoool/lymo/blob/1a09dc5a838eb71698271d5e257b2083eb5365a6/apps/frontend/modules/media-notification-listener/android/src/main/java/expo/modules/medianotificationlistener/MediaNotificationListenerModule.kt): 알림 접근 권한, 활성 미디어 세션 선택, 메타데이터와 재생 상태 콜백을 확인할 수 있다.
+- [`useSyncDeviceMedia.ts`](https://github.com/parkcoool/lymo/blob/1a09dc5a838eb71698271d5e257b2083eb5365a6/apps/frontend/src/entities/deviceMedia/hooks/useSyncDeviceMedia.ts): 네이티브 이벤트 구독, 불완전한 메타데이터 필터링과 앱 상태 반영 흐름을 확인할 수 있다.
+
+V1은 Expo·React Native 구조이며 실제 기기 지원 범위가 검증된 기준 구현이 아니다. 첫 활성 세션 선택, 권한 오류, 오래된 상태와 재생 위치 정확도를 포함한 동작을 그대로 이식하지 말고 PoC에서 다시 검증한다.
+
 ## 범위
 
 - 권한 허용과 거부
