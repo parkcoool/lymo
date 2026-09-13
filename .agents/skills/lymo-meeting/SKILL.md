@@ -45,7 +45,7 @@ Before publishing, check that the conversation contains enough information to di
 Then perform the following workflow:
 
 1. Re-read the applicable repository instructions and current canonical documents. Fetch `origin/dev`.
-2. Create a uniquely named `docs/meeting-<yyyymmdd>-<topic>` branch directly from the latest `origin/dev` in an isolated temporary worktree. Do not reuse the caller's branch, stage its files, or copy its uncommitted changes.
+2. Create a uniquely named `docs/<short-kebab-case>` branch directly from the latest `origin/dev` in an isolated temporary worktree. Name it after the primary published outcome, not the meeting process. Use `docs/meeting-<yyyymmdd>-<topic>` only when the meeting record is the primary change, and add a date or numeric suffix when needed for uniqueness. Do not reuse the caller's branch, stage its files, or copy its uncommitted changes.
 3. Require `AGENTS.md`, `docs/DEVELOPMENT_CONVENTIONS.md`, `docs/PROJECT_CONTEXT.md`, and `docs/OPEN_QUESTIONS.md` in that worktree. If they are absent, stop and report which prerequisite branch or PR must land first.
 4. Create `docs/meetings/YYYY-MM-DD-<topic>.md` from [the meeting-note template](assets/meeting-note-template.md). Use the Asia/Seoul calendar date and a short lowercase ASCII kebab-case topic. Summarize decisions and their necessary context faithfully rather than dumping the transcript.
 5. Update canonical documents in the same change when the meeting changed current truth:
@@ -62,7 +62,7 @@ Then perform the following workflow:
    The meeting note's `미결 사항` section must contain the same question. Existing legacy questions do not need a fabricated meeting origin.
 7. Run `python3 .agents/skills/lymo-meeting/scripts/validate_open_question_origins.py --base-ref origin/dev` from the isolated worktree. Resolve every failure before committing.
 8. Review the diff for factual attribution, public-repository suitability, accidental secrets or sensitive data, unrelated changes, and broken relative links. Confirm that every committed detail may remain in Git history, and stage only files created or changed by this meeting.
-9. Commit with the repository convention, normally `docs(meeting): <한국어 회의 요약>을 기록한다.` Push the meeting branch and create a PR targeting `dev`; never push directly to `dev`, merge the PR, force-push, or delete branches.
+9. Commit and title the PR according to the repository convention, using a scope and summary that describe the primary published outcome. Use `docs(meeting): <한국어 회의 요약>을 기록한다.` only when the meeting record is the primary change. Push the branch and create a PR targeting `dev`; never push directly to `dev`, merge the PR, force-push, or delete branches.
 10. Use the repository PR template. Include the meeting-note path, canonical documents changed, validation command and result, remaining risks, and any dependency on another PR.
 11. Report the meeting-note path, decision and open-question counts, commit, branch, PR URL, checks run, and anything not verified. Remove the temporary worktree only after confirming it is clean and the branch and PR are available remotely.
 
