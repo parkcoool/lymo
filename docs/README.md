@@ -10,6 +10,7 @@
 | [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md) | 변경 가능한 기술 방향, 지원 범위와 검증 상태 |
 | [`OPEN_QUESTIONS.md`](OPEN_QUESTIONS.md) | 아직 결정하거나 검증해야 하는 질문 |
 | [`DEVELOPMENT_CONVENTIONS.md`](DEVELOPMENT_CONVENTIONS.md) | 개발, 테스트, 문서, Git과 PR 규칙 |
+| `product/` | 사용자 기능, 화면, 상태와 사용자 관점 완료 조건. 첫 제품 명세 작성 시 생성 |
 | [`decisions/`](decisions/) | 확정된 중요한 결정과 대안, 결과를 설명하는 ADR |
 | `contracts/` | 플랫폼 공통 인터페이스, 데이터 형식과 픽스처. 첫 계약 결정 시 생성 |
 | [`validation/`](validation/) | 실제 기기 PoC 계획, 기록 방법과 정제된 결과 |
