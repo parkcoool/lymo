@@ -1,6 +1,6 @@
 ---
 name: lymo-meeting
-description: Start, facilitate, and close a Lymo product or engineering meeting. Use only when the user explicitly invokes $lymo-meeting to discuss a bounded topic or to turn that discussion into a meeting note, canonical-document updates, a commit, and a dev-targeted PR.
+description: Start, facilitate, and close a Lymo product or engineering meeting with a live side ledger. Use only when the user explicitly invokes $lymo-meeting to discuss a bounded topic or to turn that discussion into a meeting note, canonical-document updates, a commit, and a dev-targeted PR.
 ---
 
 # Lymo Meeting
@@ -27,8 +27,35 @@ Remind the user at start to finish with `$lymo-meeting close`. Discussion betwee
    - decisions the user explicitly accepts;
    - follow-up actions and unresolved questions.
 4. Do not silently turn a proposal into a decision. Do not promise platform or provider behavior that has not been verified.
-5. Keep a concise rolling ledger in the conversation when a decision, reversal, action item, or open question appears. Do not write a transcript or mutate the repository during the active meeting unless the user separately requests it.
+5. Keep a concise rolling ledger in the live side preview described below when a decision, reversal, action item, or open question appears. Do not write a transcript or mutate the repository during the active meeting; the temporary ledger state is outside the repository.
 6. Identify material that is not safe for a public repository while the meeting is active. Do not repeat sensitive details merely to classify them.
+
+## Live side ledger
+
+At meeting start, launch the reusable [live ledger server](scripts/serve_live_ledger.py) with the meeting topic. It creates a small JSON state file in a private temporary directory and prints its path and a loopback-only URL:
+
+```bash
+python3 .agents/skills/lymo-meeting/scripts/serve_live_ledger.py --topic "<meeting topic>"
+```
+
+Keep the running command's session ID and the printed state path for the duration of the meeting. Open the printed URL as a rendered page in the visible in-app browser on the right and preserve that tab for the meeting. Never open [the HTML template](assets/live-ledger.html) as a file target because that displays source code instead of the ledger. If the local server or browser requires approval, request it at action time. If a rendered side preview is unavailable, keep the rolling ledger in the conversation and state that limitation rather than claiming the preview is live.
+
+The JSON state has this stable shape:
+
+```json
+{
+  "version": 1,
+  "topic": "<meeting topic>",
+  "status": "논의 중",
+  "updatedAt": "<ISO 8601 timestamp with Asia/Seoul offset>",
+  "decisions": ["<accepted decision>"],
+  "actions": [{"text": "<observable action>", "owner": "<owner>"}],
+  "open": ["<unresolved question>"],
+  "deferred": ["<rejected, deferred, or superseded alternative and brief reason>"]
+}
+```
+
+Update only this small state file and only after a material ledger change. Keep entries short, move superseded decisions to `deferred`, and set `updatedAt` to the actual change time. Do not update timestamps for unchanged discussion, copy the transcript, reread or rewrite the HTML template, or spend model turns refreshing the browser: the page polls the JSON locally and updates its relative clock without model work. Apply the public-safe exclusions to the temporary state as well as the final record.
 
 ## Public-safe records
 
@@ -41,6 +68,8 @@ Remind the user at start to finish with `$lymo-meeting close`. Discussion betwee
 ## Close and document
 
 Before publishing, check that the conversation contains enough information to distinguish decisions from proposals. Ask a focused question if ownership, decision status, public-safe wording, or a material ambiguity is missing. Never fill gaps by guessing.
+
+Set the live ledger status to `종결 정리 중` before preparing the record. After successful publication, set it to `종결`, allow the preview to receive the last state, then stop the retained server session. The server removes the temporary state it created when it exits. If publication fails, keep the live ledger and its server available with the other recovery artifacts.
 
 Then perform the following workflow:
 
