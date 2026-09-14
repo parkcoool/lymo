@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lymo Meeting Ledger</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --background: light-dark(#f8f7f3, #171816);
+      --panel: light-dark(#ffffff, #222320);
+      --text: light-dark(#20221f, #f1f2ed);
+      --muted: light-dark(#6d7169, #aeb2a8);
+      --line: light-dark(#dedfd9, #3c3e38);
+      --accent: light-dark(#526d4e, #a5c69f);
+      --accent-soft: light-dark(#e8efe4, #293628);
+      --warning: light-dark(#946c2e, #e2b768);
+      --warning-soft: light-dark(#f8eedb, #382f20);
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--background);
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 300px; }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: 18px; font-weight: 500; }
+    h2 { font-size: 13px; font-weight: 500; color: var(--muted); }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px 20px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker { margin-bottom: 4px; color: var(--muted); font-size: 12px; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .metric { padding: 13px 18px; background: var(--panel); }
+    .metric strong { display: block; margin-top: 3px; font-size: 20px; font-weight: 500; }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+      gap: 1px;
+      background: var(--line);
+    }
+    .column { min-width: 0; padding: 18px 20px; background: var(--background); }
+    .section + .section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+
+    ul { display: grid; gap: 9px; margin: 10px 0 0; padding: 0; list-style: none; }
+    li {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+      font-size: 14px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .open-items .mark { background: var(--warning-soft); color: var(--warning); }
+    .meta { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .empty { color: var(--muted); }
+
+    .footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 11px 20px;
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .content { grid-template-columns: 1fr; }
+      .header, .column { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <p class="kicker">LYMO MEETING LEDGER</p>
+      <h1 id="topic">Lymo 회의</h1>
+    </div>
+    <div class="status"><span class="status-dot" aria-hidden="true"></span><span id="status">준비 중</span></div>
+  </header>
+
+  <div class="metrics" aria-label="회의 현황 요약">
+    <div class="metric"><h2>결정</h2><strong id="decision-count">0</strong></div>
+    <div class="metric"><h2>후속 액션</h2><strong id="action-count">0</strong></div>
+    <div class="metric"><h2>미결</h2><strong id="open-count">0</strong></div>
+  </div>
+
+  <main class="content">
+    <div class="column">
+      <section class="section">
+        <h2>결정 사항</h2>
+        <ul id="decisions"></ul>
+      </section>
+      <section class="section">
+        <h2>미결 사항</h2>
+        <ul id="open-items" class="open-items"></ul>
+      </section>
+    </div>
+    <div class="column">
+      <section class="section">
+        <h2>후속 액션</h2>
+        <ul id="actions"></ul>
+      </section>
+      <section class="section">
+        <h2>보류한 대안</h2>
+        <ul id="deferred"></ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span id="updated" aria-live="polite">장부를 불러오는 중</span>
+  </footer>
+
+  <script>
+    (() => {
+      const elements = {
+        topic: document.getElementById("topic"),
+        status: document.getElementById("status"),
+        decisions: document.getElementById("decisions"),
+        actions: document.getElementById("actions"),
+        open: document.getElementById("open-items"),
+        deferred: document.getElementById("deferred"),
+        decisionCount: document.getElementById("decision-count"),
+        actionCount: document.getElementById("action-count"),
+        openCount: document.getElementById("open-count"),
+        updated: document.getElementById("updated")
+      };
+      let state = null;
+      let lastPayload = "";
+
+      const item = (mark, text, meta = "") => {
+        const row = document.createElement("li");
+        const badge = document.createElement("span");
+        const body = document.createElement("div");
+        const copy = document.createElement("div");
+        badge.className = "mark";
+        badge.textContent = mark;
+        copy.textContent = text;
+        body.append(copy);
+        if (meta) {
+          const detail = document.createElement("div");
+          detail.className = "meta";
+          detail.textContent = meta;
+          body.append(detail);
+        }
+        row.append(badge, body);
+        return row;
+      };
+
+      const fill = (element, values, map) => {
+        element.replaceChildren();
+        if (!values.length) {
+          const empty = document.createElement("li");
+          empty.className = "empty";
+          empty.textContent = "없음";
+          element.append(empty);
+          return;
+        }
+        values.forEach(value => element.append(map(value)));
+      };
+
+      const formatAbsolute = iso => {
+        const parts = new Intl.DateTimeFormat("ko-KR", {
+          timeZone: "Asia/Seoul",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hourCycle: "h23"
+        }).formatToParts(new Date(iso));
+        const value = Object.fromEntries(parts.map(part => [part.type, part.value]));
+        return `${value.year}-${value.month}-${value.day} ${value.hour}:${value.minute} KST`;
+      };
+
+      const formatRelative = iso => {
+        const seconds = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+        if (seconds < 10) return "방금 전";
+        if (seconds < 60) return `${seconds}초 전`;
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes}분 전`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours}시간 전`;
+        return `${Math.floor(hours / 24)}일 전`;
+      };
+
+      const renderTime = () => {
+        if (!state?.updatedAt) return;
+        const next = `최근 갱신 ${formatAbsolute(state.updatedAt)} · ${formatRelative(state.updatedAt)}`;
+        if (elements.updated.textContent !== next) elements.updated.textContent = next;
+      };
+
+      const render = next => {
+        state = next;
+        const decisions = Array.isArray(next.decisions) ? next.decisions : [];
+        const actions = Array.isArray(next.actions) ? next.actions : [];
+        const open = Array.isArray(next.open) ? next.open : [];
+        const deferred = Array.isArray(next.deferred) ? next.deferred : [];
+        elements.topic.textContent = next.topic || "Lymo 회의";
+        elements.status.textContent = next.status || "논의 중";
+        elements.decisionCount.textContent = decisions.length;
+        elements.actionCount.textContent = actions.length;
+        elements.openCount.textContent = open.length;
+        fill(elements.decisions, decisions, value => item("✓", value));
+        fill(elements.actions, actions, value => item("→", value.text, value.owner ? `담당 ${value.owner}` : ""));
+        fill(elements.open, open, value => item("?", value));
+        fill(elements.deferred, deferred, value => item("–", value));
+        renderTime();
+      };
+
+      const refresh = async () => {
+        try {
+          const response = await fetch(`/state.json?t=${Date.now()}`, { cache: "no-store" });
+          if (!response.ok) return;
+          const next = await response.json();
+          const payload = JSON.stringify(next);
+          if (payload !== lastPayload) {
+            lastPayload = payload;
+            render(next);
+          }
+        } catch (_) {
+          // Keep the last valid ledger visible while a write or server restart completes.
+        }
+      };
+
+      refresh();
+      window.setInterval(refresh, 1500);
+      window.setInterval(renderTime, 1000);
+    })();
+  </script>
+</body>
+</html>
